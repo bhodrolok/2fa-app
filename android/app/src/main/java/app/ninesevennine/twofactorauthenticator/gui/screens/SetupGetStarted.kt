@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +23,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -66,9 +69,12 @@ fun SetupGetStarted(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
-                painter = painterResource(R.drawable.unknown002),
+                painter = painterResource(R.drawable.app_icon),
                 contentDescription = null,
-                modifier = Modifier.size(152.dp),
+                modifier = Modifier
+                    .size(152.dp)
+                    .shadow(elevation = 6.dp, shape = RoundedCornerShape(48.dp), clip = false)
+                    .clip(RoundedCornerShape(48.dp)),
                 tint = Color.Unspecified
             )
 
