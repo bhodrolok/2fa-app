@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/unknown002.svg" alt="2fa icon" width="150"/>
+  <img src="assets/2fa.svg" alt="2fa icon" width="150"/>
 </p>
 <h1 align="center">2fa</h1>
 <h4 align="center">Manage one-time passwords securely, offline and without tracking</h4>
@@ -44,7 +44,7 @@ Key features:
 ## Requirements
 
 Android:
-- Android 14 (SDK 34) or later (versions are always 2 years behind the latest update)
+- Android 14 (SDK 34) or later (versions are always 2 years behind the latest stable update)
 - Google Pixel 6a or better
 - ARM64 (arm64-v8a) CPU
 - StrongBox / Secure Element support
@@ -62,10 +62,10 @@ All releases are signed with the followig certificate fingerprints:
 If you have any problems using **2fa**, you found a bug or just have a question, do not hesitate to reach us on:
 
 - Teamspeak Group Chat `#979:chat-9.tmspk.net` (preferred)
-- [Discordy](https://discord.gg/zxgXNzhYJu)
+- [Discord](https://discord.gg/zxgXNzhYJu)
 - [Bluesky](https://bsky.app/profile/979.st)
 
-If you would like to support and accelerate our work, please consider donating [here]().
+If you would like to support and accelerate our work, please consider donating [here](https://979.st/en/donate/).
 
 ## License
 
