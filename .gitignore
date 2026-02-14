@@ -1,0 +1,32 @@
+.DS_Store
+
+# appcore
+appcore/.cargo
+appcore/Cargo.lock
+appcore/target
+
+# android
+android/.gradle
+android/.idea
+android/.kotlin
+android/.gitignore
+android/build
+android/local.properties
+android/gradlew
+android/gradlew.bat
+android/gradle/gradle-daemon-jvm.properties
+android/app/build
+android/app/standard
+android/app/accrescent
+android/app/play
+
+# just in case
+**/*.jks
+**/*.keystore*
+*.pem
+*.key
+keystore.properties
+fabric.properties
+crashlytics.properties
+.env
+.env.*

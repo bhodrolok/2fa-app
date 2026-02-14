@@ -1,0 +1,151 @@
+package app.ninesevennine.twofactorauthenticator.gui.screens
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Contrast
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import app.ninesevennine.twofactorauthenticator.R
+import app.ninesevennine.twofactorauthenticator.features.Config
+import app.ninesevennine.twofactorauthenticator.features.Theme
+import app.ninesevennine.twofactorauthenticator.features.ThemeOption
+import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect
+import app.ninesevennine.twofactorauthenticator.gui.elements.LeftButtonHeader
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedRadioButton
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedRefreshButton
+import kotlinx.serialization.Serializable
+
+@Serializable
+object SelectThemeRoute
+
+@Composable
+fun SelectTheme(navController: NavController) {
+    val context = LocalContext.current
+
+    val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    val bottomInset = WindowInsets.statusBars.asPaddingValues().calculateBottomPadding()
+
+    var showRefreshButton by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        showRefreshButton = true
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Column(
+                modifier = Modifier.widthIn(max = 500.dp).padding(horizontal = 16.dp)
+            ) {
+                Spacer(modifier = Modifier.height(topInset + 86.dp))
+
+                RoundedRadioButton(
+                    imageVector = Icons.Default.LightMode,
+                    tint = Theme.colors.primary,
+                    text = stringResource(R.string.theme_light),
+                    enabled = Theme.currentOption(context) == ThemeOption.LIGHT
+                ) {
+                    Theme.set(context, ThemeOption.LIGHT)
+                    Config.save(context)
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                RoundedRadioButton(
+                    imageVector = Icons.Default.DarkMode,
+                    tint = Theme.colors.primary,
+                    text = stringResource(R.string.theme_dark),
+                    enabled = Theme.currentOption(context) == ThemeOption.DARK
+                ) {
+                    Theme.set(context, ThemeOption.DARK)
+                    Config.save(context)
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                RoundedRadioButton(
+                    imageVector = Icons.Default.Contrast,
+                    tint = Theme.colors.primary,
+                    text = stringResource(R.string.theme_pitch_black),
+                    enabled = Theme.currentOption(context) == ThemeOption.PITCH_BLACK
+                ) {
+                    Theme.set(context, ThemeOption.PITCH_BLACK)
+                    ShimmerEffect.register()
+                    Config.save(context)
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                AnimatedVisibility(
+                    visible = showRefreshButton && Theme.themeOption != ThemeOption.SYSTEM,
+                    enter = slideInVertically(
+                        initialOffsetY = { fullHeight -> -fullHeight / 4 },
+                        animationSpec = spring(stiffness = 250f, dampingRatio = 0.85f)
+                    ) + scaleIn(
+                        initialScale = 0.9f,
+                        animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing)
+                    ) + fadeIn(animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing)),
+                    exit = fadeOut(
+                        animationSpec = tween(durationMillis = 300)
+                    ) + scaleOut(
+                        targetScale = 0.9f,
+                        animationSpec = tween(durationMillis = 300)
+                    )
+                ) {
+                    RoundedRefreshButton(stringResource(R.string.common_use_system_default)) {
+                        Theme.set(context, ThemeOption.SYSTEM)
+                        Config.save(context)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(bottomInset + 192.dp))
+            }
+        }
+
+        LeftButtonHeader(
+            title = stringResource(R.string.select_theme),
+            onBack = {
+                navController.popBackStack()
+            }
+        )
+    }
+}
