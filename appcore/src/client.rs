@@ -135,13 +135,35 @@ impl Client {
         }
 
         let query_lower = query.to_lowercase();
-        let max_distance = match query_lower.len() {
-            0..=2 => 1,
-            3..=4 => 2,
-            _ => 3,
+
+        fn ngram_overlap_score(query: &str, target: &str) -> f32 {
+            let query_chars: Vec<char> = query.chars().collect();
+            let target_chars: Vec<char> = target.chars().collect();
+
+            let query_ngrams: Vec<(char, char)> =
+                query_chars.windows(2).map(|w| (w[0], w[1])).collect();
+            let target_ngrams: Vec<(char, char)> =
+                target_chars.windows(2).map(|w| (w[0], w[1])).collect();
+
+            if query_ngrams.is_empty() || target_ngrams.is_empty() {
+                return 0.0;
+            }
+
+            let common_count = query_ngrams
+                .iter()
+                .filter(|bg| target_ngrams.contains(bg))
+                .count();
+
+            (2 * common_count) as f32 / (query_ngrams.len() + target_ngrams.len()) as f32
+        }
+
+        let threshold: f32 = match query_lower.len() {
+            0..=3 => 0.3,
+            4..=6 => 0.5,
+            _ => 0.6,
         };
 
-        let mut filtered: Vec<(&Account, usize)> = self
+        let mut filtered: Vec<(&Account, f32)> = self
             .accounts
             .iter()
             .filter_map(|account| {
@@ -149,28 +171,33 @@ impl Client {
                 let issuer_lower = account.issuer.to_lowercase();
                 let note_lower = account.note.to_lowercase();
 
-                if name_lower.contains(&query_lower)
-                    || issuer_lower.contains(&query_lower)
-                    || note_lower.contains(&query_lower)
-                {
-                    let name_dist = strsim::levenshtein(&query_lower, &name_lower);
-                    let issuer_dist = strsim::levenshtein(&query_lower, &issuer_lower);
-                    return Some((account, name_dist.min(issuer_dist)));
+                let mut name_score = ngram_overlap_score(&query_lower, &name_lower);
+                let mut issuer_score = ngram_overlap_score(&query_lower, &issuer_lower);
+                let note_score = if note_lower.contains(&query_lower) {
+                    1.0
+                } else {
+                    0.0
+                };
+
+                if name_lower.contains(&query_lower) {
+                    name_score = name_score.max(1.0);
                 }
 
-                let name_dist = strsim::levenshtein(&query_lower, &name_lower);
-                let issuer_dist = strsim::levenshtein(&query_lower, &issuer_lower);
-                let min_dist = name_dist.min(issuer_dist);
+                if issuer_lower.contains(&query_lower) {
+                    issuer_score = issuer_score.max(1.0);
+                }
 
-                if min_dist <= max_distance {
-                    Some((account, min_dist))
+                let best_score = name_score.max(issuer_score).max(note_score);
+
+                if best_score >= threshold {
+                    Some((account, best_score))
                 } else {
                     None
                 }
             })
             .collect();
 
-        filtered.sort_unstable_by_key(|(_, distance)| *distance);
+        filtered.sort_unstable_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
 
         filtered
             .into_iter()

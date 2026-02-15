@@ -209,6 +209,14 @@ fun Edit(navController: NavController) {
                         {
                             RustInterface().setEditAccountCodeType(it)
                             codeType = it
+
+                            if (it == CodeType.STEAM) {
+                                period = "30"
+                                digits = "5"
+                                periodError = false
+                                digitsError = false
+                            }
+
                             updateCount++
                         },
                         { it.displayName },

@@ -170,7 +170,7 @@ fun OtpTileMinimalistic(
                         } else {
                             codeScopeJob = codeScope.launch {
                                 try {
-                                    delay(150)
+                                    delay(200)
                                     if (Config.isUsingTapToRevealCodes) {
                                         isCodeRevealed = !isCodeRevealed
                                     }
