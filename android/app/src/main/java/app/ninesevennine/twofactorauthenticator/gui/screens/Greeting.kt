@@ -78,6 +78,9 @@ fun Greeting(navController: NavController) {
         }
     }
 
+    val biometricUnlockText = stringResource(R.string.common_biometric_unlock)
+    val cancelText = stringResource(R.string.common_cancel)
+
     LaunchedEffect(Unit) {
         if (Config.isUsingBiometrics) {
             if (!SecureElement.loadBiometricKey()) {
@@ -92,6 +95,8 @@ fun Greeting(navController: NavController) {
         }
 
         SecureElement.loadSecret(
+            title = biometricUnlockText,
+            negative = cancelText,
             onSuccess = { secret ->
                 scope.launch(Dispatchers.IO) {
                     RustInterface().setSecret(secret)

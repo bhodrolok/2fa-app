@@ -6,7 +6,7 @@ class RustInterface {
     }
 
     external fun generateClientSeedWithEntropy(entropyArray: IntArray)
-    external fun setAutomaticInternalBackupsPassword(password: String)
+    external fun setAutomaticInternalBackupsPassphrase(passphrase: String)
     external fun getSecret(): ByteArray
     external fun setSecret(secretArray: ByteArray)
 
@@ -37,12 +37,12 @@ class RustInterface {
 
     external fun exportAccountsUsingSeed(): String
     external fun exportAccountsUsingAutomaticInternalBackups(): String
-    external fun exportAccounts(password: String): String
-    external fun exportAccountsAegis(password: String): String
+    external fun exportAccounts(passphrase: String): String
+    external fun exportAccountsAegis(passphrase: String): String
     external fun importAccountsUsingSeed(data: String): Boolean
-    external fun importAccounts(password: String, data: String): Boolean
+    external fun importAccounts(passphrase: String, data: String): Boolean
     external fun importAccountsDB001(data: String): Boolean
-    external fun importAccountsAegis(password: String, data: String): Boolean
+    external fun importAccountsAegis(passphrase: String, data: String): Boolean
 }
 
 enum class CodeType(val displayName: String) {

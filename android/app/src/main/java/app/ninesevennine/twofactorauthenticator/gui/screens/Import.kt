@@ -60,7 +60,7 @@ fun Import(navController: NavController) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    var password by remember { mutableStateOf("") }
+    var passphrase by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var importData by remember { mutableStateOf("") }
     var importFilename by remember { mutableStateOf("") }
@@ -100,7 +100,7 @@ fun Import(navController: NavController) {
         // intercept the system back button when loading.
     }
 
-    val isPasswordValid = password.isNotBlank()
+    val isPassphraseValid = passphrase.isNotBlank()
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -137,10 +137,10 @@ fun Import(navController: NavController) {
             Spacer(modifier = Modifier.height(12.dp))
 
             ConfidentialTextBox(
-                title = stringResource(R.string.common_password),
-                value = password,
-                onValueChange = { if (!isLoading) password = it },
-                error = !isPasswordValid
+                title = stringResource(R.string.common_passphrase),
+                value = passphrase,
+                onValueChange = { if (!isLoading) passphrase = it },
+                error = !isPassphraseValid
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -150,7 +150,7 @@ fun Import(navController: NavController) {
             ) {
                 AnimatedVisibility(importError) {
                     Text(
-                        text = stringResource(R.string.common_incorrect_password_or_invalid_file),
+                        text = stringResource(R.string.common_incorrect_passphrase_or_invalid_file),
                         modifier = Modifier.fillMaxWidth(),
                         color = Theme.colors.error,
                         fontSize = 14.sp,
@@ -164,7 +164,7 @@ fun Import(navController: NavController) {
 
             AnimatedVisibility(
                 modifier = Modifier.padding(top = 6.dp),
-                visible = password.isNotBlank() && importData.isNotEmpty()
+                visible = passphrase.isNotBlank() && importData.isNotEmpty()
             ) {
                 RoundedButton(
                     text = if (isLoading) spinnerText() else stringResource(R.string.common_import)
@@ -175,7 +175,7 @@ fun Import(navController: NavController) {
                     importError = false
 
                     scope.launch(Dispatchers.IO) {
-                        val result = RustInterface().importAccounts(password, importData)
+                        val result = RustInterface().importAccounts(passphrase, importData)
 
                         if (result) {
                             AccountManagement.saveAccountsUsingSeed(context)

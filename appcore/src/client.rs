@@ -3,24 +3,24 @@ use crate::features::otpauth::{self, Account, AccountTruncated};
 use crate::utils::color::generate_account_color;
 
 pub const SEED_SIZE: usize = 64;
-pub const AUTOMATIC_INTERNAL_BACKUPS_PASSWORD_HASH_SIZE: usize = 56;
-pub const AUTOMATIC_INTERNAL_BACKUPS_PASSWORD_SALT_SIZE: usize = 16;
+pub const AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_HASH_SIZE: usize = 56;
+pub const AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_SALT_SIZE: usize = 16;
 pub const SECRET_SIZE: usize = SEED_SIZE
-    + AUTOMATIC_INTERNAL_BACKUPS_PASSWORD_HASH_SIZE
-    + AUTOMATIC_INTERNAL_BACKUPS_PASSWORD_SALT_SIZE;
+    + AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_HASH_SIZE
+    + AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_SALT_SIZE;
 
 pub struct Client {
     pub seed: [u8; SEED_SIZE],
-    pub automatic_internal_backups_password_hash:
-        [u8; AUTOMATIC_INTERNAL_BACKUPS_PASSWORD_HASH_SIZE],
-    pub automatic_internal_backups_password_salt:
-        [u8; AUTOMATIC_INTERNAL_BACKUPS_PASSWORD_SALT_SIZE],
+    pub automatic_internal_backups_passphrase_hash:
+        [u8; AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_HASH_SIZE],
+    pub automatic_internal_backups_passphrase_salt:
+        [u8; AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_SALT_SIZE],
     pub edit: Option<Account>,
     pub accounts: Vec<Account>,
 }
 
 impl Client {
-    pub fn set_automatic_internal_backups_password(&mut self, password: &str) {
+    pub fn set_automatic_internal_backups_passphrase(&mut self, passphrase: &str) {
         use sha3::Digest;
 
         let mut hasher = sha3::Sha3_512::new();
@@ -32,21 +32,21 @@ impl Client {
 
         let hash = hasher.finalize();
 
-        let mut salt = [0u8; AUTOMATIC_INTERNAL_BACKUPS_PASSWORD_SALT_SIZE];
-        salt.copy_from_slice(&hash[..AUTOMATIC_INTERNAL_BACKUPS_PASSWORD_SALT_SIZE]);
+        let mut salt = [0u8; AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_SALT_SIZE];
+        salt.copy_from_slice(&hash[..AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_SALT_SIZE]);
 
         // m: 256 MiB t: 4 p: 2
         let params = argon2::Params::new(256 * 1024, 4, 2, None).unwrap();
         let argon2 =
             argon2::Argon2::new(argon2::Algorithm::Argon2id, argon2::Version::V0x13, params);
 
-        let mut out = [0u8; AUTOMATIC_INTERNAL_BACKUPS_PASSWORD_HASH_SIZE];
+        let mut out = [0u8; AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_HASH_SIZE];
         argon2
-            .hash_password_into(password.as_bytes(), &salt, &mut out)
+            .hash_password_into(passphrase.as_bytes(), &salt, &mut out)
             .unwrap();
 
-        self.automatic_internal_backups_password_hash = out;
-        self.automatic_internal_backups_password_salt = salt;
+        self.automatic_internal_backups_passphrase_hash = out;
+        self.automatic_internal_backups_passphrase_salt = salt;
     }
 
     pub fn get_secret(&self) -> [u8; SECRET_SIZE] {
@@ -54,11 +54,11 @@ impl Client {
 
         secret[..SEED_SIZE].copy_from_slice(&self.seed);
 
-        secret[SEED_SIZE..SEED_SIZE + AUTOMATIC_INTERNAL_BACKUPS_PASSWORD_HASH_SIZE]
-            .copy_from_slice(&self.automatic_internal_backups_password_hash);
+        secret[SEED_SIZE..SEED_SIZE + AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_HASH_SIZE]
+            .copy_from_slice(&self.automatic_internal_backups_passphrase_hash);
 
-        secret[SEED_SIZE + AUTOMATIC_INTERNAL_BACKUPS_PASSWORD_HASH_SIZE..]
-            .copy_from_slice(&self.automatic_internal_backups_password_salt);
+        secret[SEED_SIZE + AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_HASH_SIZE..]
+            .copy_from_slice(&self.automatic_internal_backups_passphrase_salt);
 
         secret
     }
@@ -66,13 +66,15 @@ impl Client {
     pub fn set_secret(&mut self, secret: &[u8; SECRET_SIZE]) {
         self.seed.copy_from_slice(&secret[..SEED_SIZE]);
 
-        self.automatic_internal_backups_password_hash
+        self.automatic_internal_backups_passphrase_hash
             .copy_from_slice(
-                &secret[SEED_SIZE..SEED_SIZE + AUTOMATIC_INTERNAL_BACKUPS_PASSWORD_HASH_SIZE],
+                &secret[SEED_SIZE..SEED_SIZE + AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_HASH_SIZE],
             );
 
-        self.automatic_internal_backups_password_salt
-            .copy_from_slice(&secret[SEED_SIZE + AUTOMATIC_INTERNAL_BACKUPS_PASSWORD_HASH_SIZE..]);
+        self.automatic_internal_backups_passphrase_salt
+            .copy_from_slice(
+                &secret[SEED_SIZE + AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_HASH_SIZE..],
+            );
     }
 
     pub fn set_edit_account_empty(&mut self) {
@@ -277,10 +279,10 @@ impl Default for Client {
     fn default() -> Self {
         Self {
             seed: [0u8; SEED_SIZE],
-            automatic_internal_backups_password_hash: [0u8;
-                AUTOMATIC_INTERNAL_BACKUPS_PASSWORD_HASH_SIZE],
-            automatic_internal_backups_password_salt: [0u8;
-                AUTOMATIC_INTERNAL_BACKUPS_PASSWORD_SALT_SIZE],
+            automatic_internal_backups_passphrase_hash: [0u8;
+                AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_HASH_SIZE],
+            automatic_internal_backups_passphrase_salt: [0u8;
+                AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_SALT_SIZE],
             edit: None,
             accounts: Vec::new(),
         }

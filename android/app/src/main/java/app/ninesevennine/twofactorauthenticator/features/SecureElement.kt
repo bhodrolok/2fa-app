@@ -223,6 +223,8 @@ object SecureElement {
     }
 
     fun decryptBiometric(
+        title: String,
+        negative: String,
         data: ByteArray,
         onSuccess: (ByteArray) -> Unit,
         onError: () -> Unit,
@@ -264,8 +266,8 @@ object SecureElement {
         )
 
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Biometric Unlock")
-            .setNegativeButtonText("Cancel")
+            .setTitle(title)
+            .setNegativeButtonText(negative)
             .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
             .build()
 
@@ -291,6 +293,8 @@ object SecureElement {
     }
 
     fun loadSecret(
+        title: String,
+        negative: String,
         onSuccess: (ByteArray) -> Unit,
         onError: () -> Unit,
         onCancel: () -> Unit = {}
@@ -314,7 +318,7 @@ object SecureElement {
         }
 
         if (Config.isUsingBiometrics) {
-            decryptBiometric(encryptedSecret, onSuccess, onError, onCancel)
+            decryptBiometric(title, negative, encryptedSecret, onSuccess, onError, onCancel)
         } else {
             val decryptedSecret = decryptRegular(encryptedSecret)
             if (decryptedSecret != null) {

@@ -56,6 +56,9 @@ fun SetupBiometricUnlock(navController: NavController) {
         )
     }
 
+    val biometricUnlockText = stringResource(R.string.common_biometric_unlock)
+    val cancelText = stringResource(R.string.common_cancel)
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -128,6 +131,8 @@ fun SetupBiometricUnlock(navController: NavController) {
                     }
 
                     SecureElement.decryptBiometric(
+                        title = biometricUnlockText,
+                        negative = cancelText,
                         data = encrypted,
                         onSuccess = { decryptedBytes ->
                             if (decryptedBytes.contentEquals(plainTextBytes)) {

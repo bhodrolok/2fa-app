@@ -28,11 +28,11 @@ impl Client {
     }
 
     pub fn export_accounts_using_automatic_internal_backups(&self) -> String {
-        let key: [u8; XCHACHA20_KEY_SIZE] = self.automatic_internal_backups_password_hash
+        let key: [u8; XCHACHA20_KEY_SIZE] = self.automatic_internal_backups_passphrase_hash
             [0..XCHACHA20_KEY_SIZE]
             .try_into()
             .unwrap();
-        let nonce: [u8; XCHACHA20_NONCE_SIZE] = self.automatic_internal_backups_password_hash
+        let nonce: [u8; XCHACHA20_NONCE_SIZE] = self.automatic_internal_backups_passphrase_hash
             [XCHACHA20_KEY_SIZE..XCHACHA20_KEY_SIZE + XCHACHA20_NONCE_SIZE]
             .try_into()
             .unwrap();
@@ -41,13 +41,13 @@ impl Client {
 
         serde_json::json!({
             "version": 2,
-            "salt": data_encoding::BASE64.encode(&self.automatic_internal_backups_password_salt),
+            "salt": data_encoding::BASE64.encode(&self.automatic_internal_backups_passphrase_salt),
             "db": db
         })
         .to_string()
     }
 
-    pub fn export_accounts(&self, password: &str) -> String {
+    pub fn export_accounts(&self, passphrase: &str) -> String {
         use sha3::Digest;
 
         let mut hasher = sha3::Sha3_512::new();
@@ -69,7 +69,7 @@ impl Client {
 
         let mut out = [0u8; XCHACHA20_KEY_SIZE + XCHACHA20_NONCE_SIZE];
         argon2
-            .hash_password_into(password.as_bytes(), &salt, &mut out)
+            .hash_password_into(passphrase.as_bytes(), &salt, &mut out)
             .unwrap();
 
         let key: [u8; XCHACHA20_KEY_SIZE] = out[..XCHACHA20_KEY_SIZE].try_into().unwrap();
@@ -176,7 +176,7 @@ impl Client {
         self.import_accounts_db_002(db, &key, &nonce)
     }
 
-    pub fn import_accounts(&mut self, password: &str, data: &str) -> bool {
+    pub fn import_accounts(&mut self, passphrase: &str, data: &str) -> bool {
         use chacha20poly1305::{KeyInit, aead::AeadMut};
 
         let obj: serde_json::Value = match serde_json::from_str(data) {
@@ -214,7 +214,7 @@ impl Client {
 
                 let mut out = [0u8; XCHACHA20_KEY_SIZE + XCHACHA20_NONCE_SIZE];
                 if argon2
-                    .hash_password_into(password.as_bytes(), &salt, &mut out)
+                    .hash_password_into(passphrase.as_bytes(), &salt, &mut out)
                     .is_err()
                 {
                     return false;
@@ -282,7 +282,7 @@ impl Client {
 
                 let mut out = [0u8; KEY_SIZE + NONCE_SIZE];
                 if argon2
-                    .hash_password_into(format!("979{}", password).as_bytes(), &salt, &mut out)
+                    .hash_password_into(format!("979{}", passphrase).as_bytes(), &salt, &mut out)
                     .is_err()
                 {
                     return false;

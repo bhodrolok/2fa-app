@@ -70,6 +70,9 @@ fun BiometricUnlock(navController: NavController) {
         // intercept the system back button when loading.
     }
 
+    val biometricUnlockText = stringResource(R.string.common_biometric_unlock)
+    val cancelText = stringResource(R.string.common_cancel)
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.TopCenter
@@ -196,6 +199,8 @@ fun BiometricUnlock(navController: NavController) {
 
                             withContext(Dispatchers.Main) {
                                 SecureElement.decryptBiometric(
+                                    title = biometricUnlockText,
+                                    negative = cancelText,
                                     data = encrypted,
                                     onSuccess = { decryptedBytes ->
                                         if (decryptedBytes.contentEquals(plainTextBytes)) {
