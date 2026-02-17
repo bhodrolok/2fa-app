@@ -29,13 +29,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Config
-import app.ninesevennine.twofactorauthenticator.features.SecureElement
+import app.ninesevennine.twofactorauthenticator.features.KeyStoreManagement
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
@@ -86,8 +85,7 @@ fun SetupGetStarted(navController: NavController) {
                 color = Theme.colors.primary,
                 fontSize = 20.sp,
                 fontFamily = InterVariable,
-                fontWeight = FontWeight.W700,
-                textAlign = TextAlign.Center
+                fontWeight = FontWeight.W700
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -98,8 +96,7 @@ fun SetupGetStarted(navController: NavController) {
                 color = Theme.colors.primary,
                 fontSize = 14.sp,
                 fontFamily = InterVariable,
-                fontWeight = FontWeight.W500,
-                textAlign = TextAlign.Center
+                fontWeight = FontWeight.W500
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -114,16 +111,23 @@ fun SetupGetStarted(navController: NavController) {
                 scope.launch(Dispatchers.IO) {
                     Config.hasCompletedSetup = false
 
-                    SecureElement.deleteRegularKey()
-                    SecureElement.deleteBiometricKey()
+                    KeyStoreManagement.deleteRegularKey()
+                    KeyStoreManagement.deleteBiometricKey()
 
-                    SecureElement.generateRegularKey()
-                    if (!SecureElement.loadRegularKey()) {
+                    if (!KeyStoreManagement.generateRegularKey(strongBoxBacked = true)) {
+                        KeyStoreManagement.generateRegularKey(strongBoxBacked = false)
+                    }
+
+                    if (!KeyStoreManagement.loadRegularKey()) {
                         return@launch
                     }
 
-                    if (SecureElement.isBiometricAvailable()) {
-                        if (!SecureElement.generateBiometricKey() || !SecureElement.loadBiometricKey()) {
+                    if (KeyStoreManagement.isBiometricAvailable()) {
+                        if (!KeyStoreManagement.generateBiometricKey(strongBoxBacked = true)) {
+                            KeyStoreManagement.generateBiometricKey(strongBoxBacked = false)
+                        }
+
+                        if (!KeyStoreManagement.loadBiometricKey()) {
                             return@launch
                         }
                     }

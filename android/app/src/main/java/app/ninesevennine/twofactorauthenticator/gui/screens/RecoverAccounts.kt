@@ -55,7 +55,7 @@ fun RecoverAccounts(navController: NavController) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    var passphrase by remember { mutableStateOf("") }
+    var pass by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var recoveryError by remember { mutableStateOf(true) }
 
@@ -63,7 +63,7 @@ fun RecoverAccounts(navController: NavController) {
         // intercept the system back button when loading.
     }
 
-    val isPassphraseValid = passphrase.isNotBlank()
+    val isPassValid = pass.isNotBlank()
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -100,10 +100,10 @@ fun RecoverAccounts(navController: NavController) {
             Spacer(modifier = Modifier.height(12.dp))
 
             ConfidentialTextBox(
-                title = stringResource(R.string.common_passphrase),
-                value = passphrase,
-                onValueChange = { if (!isLoading) passphrase = it },
-                error = !isPassphraseValid
+                title = stringResource(R.string.common_pass),
+                value = pass,
+                onValueChange = { if (!isLoading) pass = it },
+                error = !isPassValid
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -113,7 +113,7 @@ fun RecoverAccounts(navController: NavController) {
             ) {
                 AnimatedVisibility(recoveryError) {
                     Text(
-                        text = stringResource(R.string.common_incorrect_passphrase),
+                        text = stringResource(R.string.common_incorrect_pass),
                         modifier = Modifier.fillMaxWidth(),
                         color = Theme.colors.error,
                         fontSize = 14.sp,
@@ -127,7 +127,7 @@ fun RecoverAccounts(navController: NavController) {
 
             AnimatedVisibility(
                 modifier = Modifier.padding(top = 6.dp),
-                visible = passphrase.isNotBlank()
+                visible = pass.isNotBlank()
             ) {
                 RoundedButton(
                     text = if (isLoading) spinnerText() else stringResource(R.string.common_recover_accounts)
@@ -145,7 +145,7 @@ fun RecoverAccounts(navController: NavController) {
                             return@launch
                         }
 
-                        val result = RustInterface().importAccounts(passphrase, data)
+                        val result = RustInterface().importAccounts(pass, data)
 
                         if (result) {
                             AccountManagement.saveAccountsUsingSeed(context)

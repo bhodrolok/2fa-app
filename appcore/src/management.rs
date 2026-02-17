@@ -28,11 +28,11 @@ impl Client {
     }
 
     pub fn export_accounts_using_automatic_internal_backups(&self) -> String {
-        let key: [u8; XCHACHA20_KEY_SIZE] = self.automatic_internal_backups_passphrase_hash
+        let key: [u8; XCHACHA20_KEY_SIZE] = self.automatic_internal_backups_pass_hash
             [0..XCHACHA20_KEY_SIZE]
             .try_into()
             .unwrap();
-        let nonce: [u8; XCHACHA20_NONCE_SIZE] = self.automatic_internal_backups_passphrase_hash
+        let nonce: [u8; XCHACHA20_NONCE_SIZE] = self.automatic_internal_backups_pass_hash
             [XCHACHA20_KEY_SIZE..XCHACHA20_KEY_SIZE + XCHACHA20_NONCE_SIZE]
             .try_into()
             .unwrap();
@@ -41,13 +41,13 @@ impl Client {
 
         serde_json::json!({
             "version": 2,
-            "salt": data_encoding::BASE64.encode(&self.automatic_internal_backups_passphrase_salt),
+            "salt": data_encoding::BASE64.encode(&self.automatic_internal_backups_pass_salt),
             "db": db
         })
         .to_string()
     }
 
-    pub fn export_accounts(&self, passphrase: &str) -> String {
+    pub fn export_accounts(&self, pass: &str) -> String {
         use sha3::Digest;
 
         let mut hasher = sha3::Sha3_512::new();
@@ -69,7 +69,7 @@ impl Client {
 
         let mut out = [0u8; XCHACHA20_KEY_SIZE + XCHACHA20_NONCE_SIZE];
         argon2
-            .hash_password_into(passphrase.as_bytes(), &salt, &mut out)
+            .hash_password_into(pass.as_bytes(), &salt, &mut out)
             .unwrap();
 
         let key: [u8; XCHACHA20_KEY_SIZE] = out[..XCHACHA20_KEY_SIZE].try_into().unwrap();
@@ -176,7 +176,7 @@ impl Client {
         self.import_accounts_db_002(db, &key, &nonce)
     }
 
-    pub fn import_accounts(&mut self, passphrase: &str, data: &str) -> bool {
+    pub fn import_accounts(&mut self, pass: &str, data: &str) -> bool {
         use chacha20poly1305::{KeyInit, aead::AeadMut};
 
         let obj: serde_json::Value = match serde_json::from_str(data) {
@@ -214,7 +214,7 @@ impl Client {
 
                 let mut out = [0u8; XCHACHA20_KEY_SIZE + XCHACHA20_NONCE_SIZE];
                 if argon2
-                    .hash_password_into(passphrase.as_bytes(), &salt, &mut out)
+                    .hash_password_into(pass.as_bytes(), &salt, &mut out)
                     .is_err()
                 {
                     return false;
@@ -282,7 +282,7 @@ impl Client {
 
                 let mut out = [0u8; KEY_SIZE + NONCE_SIZE];
                 if argon2
-                    .hash_password_into(format!("979{}", passphrase).as_bytes(), &salt, &mut out)
+                    .hash_password_into(format!("979{}", pass).as_bytes(), &salt, &mut out)
                     .is_err()
                 {
                     return false;
@@ -398,8 +398,14 @@ impl Client {
                 _ => Algorithm::SHA1,
             };
 
+            let mut period = obj.get("period").and_then(|v| v.as_u64()).unwrap_or(30);
+            if period < 10 {
+                continue;
+            }
+
             let mut digits = obj.get("digits").and_then(|v| v.as_u64()).unwrap_or(6) as u32;
             if code_type == CodeType::STEAM {
+                period = 30;
                 digits = 5;
             }
             if digits < 4 || digits > 10 {
@@ -407,14 +413,6 @@ impl Client {
             }
 
             let counter = obj.get("counter").and_then(|v| v.as_u64()).unwrap_or(0);
-            // if counter < 0 {
-            //     continue;
-            // }
-
-            let period = obj.get("period").and_then(|v| v.as_u64()).unwrap_or(30);
-            if period < 10 {
-                continue;
-            }
 
             let color = obj
                 .get("color")
@@ -427,7 +425,7 @@ impl Client {
                         None
                     }
                 })
-                .unwrap_or(0xffffffff);
+                .unwrap_or(utils::colors::GRAY);
 
             let account = Account {
                 id,
@@ -529,9 +527,6 @@ impl Client {
             }
 
             let counter = obj.get("counter").and_then(|v| v.as_u64()).unwrap_or(0);
-            // if counter < 0 {
-            //     continue;
-            // }
 
             let period = obj.get("period").and_then(|v| v.as_u64()).unwrap_or(30);
             if period < 10 {
@@ -549,7 +544,7 @@ impl Client {
                 digits,
                 counter,
                 period,
-                color: utils::color::generate_account_color(),
+                color: utils::colors::GRAY,
             };
 
             new_accounts.push(account);

@@ -213,6 +213,10 @@ fun Edit(navController: NavController) {
                             if (it == CodeType.STEAM) {
                                 period = "30"
                                 digits = "5"
+
+                                RustInterface().setEditAccountPeriod(30)
+                                RustInterface().setEditAccountDigits(5)
+
                                 periodError = false
                                 digitsError = false
                             }
@@ -343,11 +347,6 @@ fun Edit(navController: NavController) {
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     return@EditHeader
-                }
-
-                if (codeType == CodeType.STEAM) {
-                    RustInterface().setEditAccountPeriod(30)
-                    RustInterface().setEditAccountDigits(5)
                 }
 
                 scope.launch(Dispatchers.IO) {

@@ -8,7 +8,7 @@ use crate::{
 };
 
 impl Client {
-    pub fn export_accounts_aegis(&self, passphrase: &str) -> String {
+    pub fn export_accounts_aegis(&self, pass: &str) -> String {
         use aes_gcm::{Aes256Gcm, KeyInit, aead::Aead};
         use scrypt::Params as ScryptParams;
         use sha3::Digest;
@@ -93,7 +93,7 @@ impl Client {
         let params = ScryptParams::new((N as f64).log2() as u8, R, P, 32).unwrap();
 
         let mut derived_key = [0u8; 32];
-        scrypt::scrypt(passphrase.as_bytes(), &salt, &params, &mut derived_key).unwrap();
+        scrypt::scrypt(pass.as_bytes(), &salt, &params, &mut derived_key).unwrap();
 
         let mut key_nonce = [0u8; 12];
         getrandom::fill(&mut key_nonce).unwrap();
@@ -135,7 +135,7 @@ impl Client {
         .to_string()
     }
 
-    pub fn import_accounts_aegis(&mut self, passphrase: &str, data: &str) -> bool {
+    pub fn import_accounts_aegis(&mut self, pass: &str, data: &str) -> bool {
         use aes_gcm::{Aes256Gcm, KeyInit, aead::Aead};
 
         let obj: serde_json::Value = match serde_json::from_str(data) {
@@ -266,7 +266,7 @@ impl Client {
             };
 
             let mut derived_key = [0u8; 32];
-            if scrypt::scrypt(passphrase.as_bytes(), &salt, &params, &mut derived_key).is_err() {
+            if scrypt::scrypt(pass.as_bytes(), &salt, &params, &mut derived_key).is_err() {
                 continue;
             }
 
@@ -411,8 +411,14 @@ impl Client {
                 _ => Algorithm::SHA1,
             };
 
+            let mut period = info.get("period").and_then(|v| v.as_u64()).unwrap_or(30);
+            if period < 10 {
+                continue;
+            }
+
             let mut digits = info.get("digits").and_then(|v| v.as_u64()).unwrap_or(6) as u32;
             if code_type == CodeType::STEAM {
+                period = 30;
                 digits = 5;
             }
             if digits < 4 || digits > 10 {
@@ -420,11 +426,6 @@ impl Client {
             }
 
             let counter = info.get("counter").and_then(|v| v.as_u64()).unwrap_or(0);
-
-            let period = info.get("period").and_then(|v| v.as_u64()).unwrap_or(30);
-            if period < 10 {
-                continue;
-            }
 
             let account = Account {
                 id,
@@ -437,7 +438,7 @@ impl Client {
                 digits,
                 counter,
                 period,
-                color: utils::color::generate_account_color(),
+                color: utils::colors::GRAY,
             };
 
             new_accounts.push(account);

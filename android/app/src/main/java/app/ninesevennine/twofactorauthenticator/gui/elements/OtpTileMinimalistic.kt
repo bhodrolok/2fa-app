@@ -75,8 +75,7 @@ fun OtpTileMinimalistic(
     navController: NavController,
     account: AccountTruncated,
     updateCount: Int = 0,
-    onCounterChange: (Long) -> Unit = {},
-    isEditing: Boolean = false
+    onCounterChange: (Long) -> Unit = {}
 ) {
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
@@ -196,12 +195,7 @@ fun OtpTileMinimalistic(
                     Modifier.tiltShimmer(shape)
                 } else {
                     Modifier
-                        .then(
-                            if (isEditing)
-                                Modifier
-                            else
-                                Modifier.graphicsLayer(colorFilter = ColorFilter.tint(Color(account.color), BlendMode.Multiply))
-                        )
+                        .graphicsLayer(colorFilter = ColorFilter.tint(Color(account.color), BlendMode.Multiply))
                         .background(colors.light)
                         .border(1.dp, colors.medium, shape)
                 }
@@ -325,10 +319,8 @@ fun OtpTileMinimalistic(
                                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                 view.playSoundEffect(SoundEffectConstants.CLICK)
 
-                                if (!isEditing) {
-                                    RustInterface().copyAccountIntoEditAccount(account.id)
-                                    navController.navigate(EditRoute)
-                                }
+                                RustInterface().copyAccountIntoEditAccount(account.id)
+                                navController.navigate(EditRoute)
                             }
                         ),
                     Alignment.Center

@@ -45,15 +45,15 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setAutomaticInternalBackupsPassphrase(
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setAutomaticInternalBackupsPass(
     mut env: JNIEnv,
     _class: JClass,
-    passphrase: JString,
+    pass: JString,
 ) {
-    let passphrase: String = env.get_string(&passphrase).unwrap().into();
+    let pass: String = env.get_string(&pass).unwrap().into();
 
     let mut client = CLIENT.lock().unwrap();
-    client.set_automatic_internal_backups_passphrase(&passphrase);
+    client.set_automatic_internal_backups_pass(&pass);
 }
 
 #[unsafe(no_mangle)]
@@ -539,12 +539,12 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_exportAccounts(
     mut env: JNIEnv,
     _class: JClass,
-    passphrase: JString,
+    pass: JString,
 ) -> jstring {
-    let passphrase: String = env.get_string(&passphrase).unwrap().into();
+    let pass: String = env.get_string(&pass).unwrap().into();
 
     let client = CLIENT.lock().unwrap();
-    let data = client.export_accounts(&passphrase);
+    let data = client.export_accounts(&pass);
 
     env.new_string(data).unwrap().into_raw()
 }
@@ -553,12 +553,12 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_exportAccountsAegis(
     mut env: JNIEnv,
     _class: JClass,
-    passphrase: JString,
+    pass: JString,
 ) -> jstring {
-    let passphrase: String = env.get_string(&passphrase).unwrap().into();
+    let pass: String = env.get_string(&pass).unwrap().into();
 
     let client = CLIENT.lock().unwrap();
-    let data = client.export_accounts_aegis(&passphrase);
+    let data = client.export_accounts_aegis(&pass);
 
     env.new_string(data).unwrap().into_raw()
 }
@@ -584,15 +584,15 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_importAccounts(
     mut env: JNIEnv,
     _class: JClass,
-    passphrase: JString,
+    pass: JString,
     data: JString,
 ) -> jboolean {
-    let passphrase: String = env.get_string(&passphrase).unwrap().into();
+    let pass: String = env.get_string(&pass).unwrap().into();
     let data: String = env.get_string(&data).unwrap().into();
 
     let mut client = CLIENT.lock().unwrap();
 
-    if client.import_accounts(&passphrase, &data) {
+    if client.import_accounts(&pass, &data) {
         1
     } else {
         0
@@ -620,15 +620,15 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_importAccountsAegis(
     mut env: JNIEnv,
     _class: JClass,
-    passphrase: JString,
+    pass: JString,
     data: JString,
 ) -> jboolean {
-    let passphrase: String = env.get_string(&passphrase).unwrap().into();
+    let pass: String = env.get_string(&pass).unwrap().into();
     let data: String = env.get_string(&data).unwrap().into();
 
     let mut client = CLIENT.lock().unwrap();
 
-    if client.import_accounts_aegis(&passphrase, &data) {
+    if client.import_accounts_aegis(&pass, &data) {
         1
     } else {
         0

@@ -1,6 +1,6 @@
 use crate::{
     features::codegen::{Algorithm, CodeType},
-    utils::color::generate_account_color,
+    utils::{self},
 };
 use url::Url;
 
@@ -83,6 +83,11 @@ pub fn parse(url: &str) -> Option<Account> {
         }
     }
 
+    if code_type == CodeType::STEAM {
+        period = 30;
+        digits = 5;
+    }
+
     let secret = data_encoding::BASE32_NOPAD
         .decode(secret_str?.to_uppercase().as_bytes())
         .ok()?;
@@ -98,7 +103,7 @@ pub fn parse(url: &str) -> Option<Account> {
         digits,
         counter,
         period,
-        color: generate_account_color(),
+        color: utils::colors::GRAY,
     })
 }
 

@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Config
-import app.ninesevennine.twofactorauthenticator.features.SecureElement
+import app.ninesevennine.twofactorauthenticator.features.KeyStoreManagement
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
@@ -52,7 +52,7 @@ object SetupBiometricUnlockRoute
 fun SetupBiometricUnlock(navController: NavController) {
     val isFullBiometricAvailable by remember {
         mutableStateOf(
-            SecureElement.isBiometricAvailable() && SecureElement.isBiometricKeyLoaded()
+            KeyStoreManagement.isBiometricAvailable() && KeyStoreManagement.isBiometricKeyLoaded()
         )
     }
 
@@ -125,12 +125,12 @@ fun SetupBiometricUnlock(navController: NavController) {
                 RoundedButton(text = stringResource(R.string.common_button_enable)) {
                     val plainTextBytes = Tests.PSEUDO_SECRET.toByteArray(Charsets.UTF_8)
 
-                    val encrypted = SecureElement.encryptBiometric(plainTextBytes) ?: run {
+                    val encrypted = KeyStoreManagement.encryptBiometric(plainTextBytes) ?: run {
                         Logger.e(TAG, "failed to encrypt with biometric key")
                         return@RoundedButton
                     }
 
-                    SecureElement.decryptBiometric(
+                    KeyStoreManagement.decryptBiometric(
                         title = biometricUnlockText,
                         negative = cancelText,
                         data = encrypted,
@@ -158,8 +158,8 @@ fun SetupBiometricUnlock(navController: NavController) {
             RoundedButtonClean(text = stringResource(R.string.common_button_continue_without)) {
                 val plainTextBytes = Tests.PSEUDO_SECRET.toByteArray(Charsets.UTF_8)
 
-                val encrypted = SecureElement.encryptRegular(plainTextBytes)
-                val decrypted = encrypted?.let { SecureElement.decryptRegular(it) }
+                val encrypted = KeyStoreManagement.encryptRegular(plainTextBytes)
+                val decrypted = encrypted?.let { KeyStoreManagement.decryptRegular(it) }
 
                 if (decrypted != null && decrypted.contentEquals(plainTextBytes)) {
                     Logger.i(TAG, "regular key test success")

@@ -42,7 +42,7 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.gui.elements.LeftButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
-import app.ninesevennine.twofactorauthenticator.utils.Passphrase
+import app.ninesevennine.twofactorauthenticator.utils.Pass
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -56,12 +56,12 @@ fun Export(navController: NavController) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    var passphrase by remember { mutableStateOf("") }
-    var confirmPassphrase by remember { mutableStateOf("") }
+    var pass by remember { mutableStateOf("") }
+    var confirmPass by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var pendingExportData by remember { mutableStateOf<String?>(null) }
 
-    val isPassphraseValid = Passphrase.isValid(passphrase)
+    val isPassValid = Pass.isValid(pass)
 
     val createDocumentLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/octet-stream")
@@ -124,10 +124,10 @@ fun Export(navController: NavController) {
             Spacer(modifier = Modifier.height(12.dp))
 
             ConfidentialTextBox(
-                title = stringResource(R.string.common_passphrase),
-                value = passphrase,
-                onValueChange = { if (!isLoading) passphrase = it },
-                error = !isPassphraseValid
+                title = stringResource(R.string.common_pass),
+                value = pass,
+                onValueChange = { if (!isLoading) pass = it },
+                error = !isPassValid
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -136,9 +136,9 @@ fun Export(navController: NavController) {
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                AnimatedVisibility(!Passphrase.hasSufficientLength(passphrase)) {
+                AnimatedVisibility(!Pass.hasSufficientLength(pass)) {
                     Text(
-                        text = stringResource(R.string.common_passphrase_8_chars),
+                        text = stringResource(R.string.common_pass_8_chars),
                         modifier = Modifier.fillMaxWidth(),
                         color = Theme.colors.error,
                         fontSize = 14.sp,
@@ -146,9 +146,9 @@ fun Export(navController: NavController) {
                         fontWeight = FontWeight.W700
                     )
                 }
-                AnimatedVisibility(!Passphrase.hasNumber(passphrase)) {
+                AnimatedVisibility(!Pass.hasNumber(pass)) {
                     Text(
-                        text = stringResource(R.string.common_passphrase_1_num),
+                        text = stringResource(R.string.common_pass_1_num),
                         modifier = Modifier.fillMaxWidth(),
                         color = Theme.colors.error,
                         fontSize = 14.sp,
@@ -156,9 +156,9 @@ fun Export(navController: NavController) {
                         fontWeight = FontWeight.W700
                     )
                 }
-                AnimatedVisibility(!Passphrase.hasSpecialCharacter(passphrase)) {
+                AnimatedVisibility(!Pass.hasSpecialCharacter(pass)) {
                     Text(
-                        text = stringResource(R.string.common_passphrase_1_special),
+                        text = stringResource(R.string.common_pass_1_special),
                         modifier = Modifier.fillMaxWidth(),
                         color = Theme.colors.error,
                         fontSize = 14.sp,
@@ -166,9 +166,9 @@ fun Export(navController: NavController) {
                         fontWeight = FontWeight.W700
                     )
                 }
-                AnimatedVisibility(!Passphrase.hasNoLeadingOrTrailingWhitespace(passphrase)) {
+                AnimatedVisibility(!Pass.hasNoLeadingOrTrailingWhitespace(pass)) {
                     Text(
-                        text = stringResource(R.string.common_passphrase_no_w_or_t),
+                        text = stringResource(R.string.common_pass_no_w_or_t),
                         modifier = Modifier.fillMaxWidth(),
                         color = Theme.colors.error,
                         fontSize = 14.sp,
@@ -180,13 +180,13 @@ fun Export(navController: NavController) {
 
             AnimatedVisibility(
                 modifier = Modifier.padding(top = 6.dp),
-                visible = isPassphraseValid
+                visible = isPassValid
             ) {
                 ConfidentialTextBox(
-                    title = stringResource(R.string.common_confirm_passphrase),
-                    value = confirmPassphrase,
-                    onValueChange = { if (!isLoading) confirmPassphrase = it },
-                    error = passphrase != confirmPassphrase
+                    title = stringResource(R.string.common_confirm_pass),
+                    value = confirmPass,
+                    onValueChange = { if (!isLoading) confirmPass = it },
+                    error = pass != confirmPass
                 )
             }
 
@@ -194,7 +194,7 @@ fun Export(navController: NavController) {
 
             AnimatedVisibility(
                 modifier = Modifier.padding(top = 6.dp),
-                visible = isPassphraseValid && passphrase == confirmPassphrase
+                visible = isPassValid && pass == confirmPass
             ) {
                 RoundedButton(
                     text = if (isLoading) spinnerText() else stringResource(R.string.common_button_continue)
@@ -204,7 +204,7 @@ fun Export(navController: NavController) {
                     isLoading = true
 
                     scope.launch(Dispatchers.IO) {
-                        val data = RustInterface().exportAccounts(passphrase)
+                        val data = RustInterface().exportAccounts(pass)
 
                         withContext(Dispatchers.Main) {
                             pendingExportData = data

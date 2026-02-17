@@ -59,7 +59,7 @@ fun ImportAegis(navController: NavController) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    var passphrase by remember { mutableStateOf("") }
+    var pass by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var importData by remember { mutableStateOf("") }
     var importFilename by remember { mutableStateOf("") }
@@ -94,7 +94,7 @@ fun ImportAegis(navController: NavController) {
         // intercept the system back button when loading.
     }
 
-    val isPassphraseValid = passphrase.isNotBlank()
+    val isPassValid = pass.isNotBlank()
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -131,10 +131,10 @@ fun ImportAegis(navController: NavController) {
             Spacer(modifier = Modifier.height(12.dp))
 
             ConfidentialTextBox(
-                title = stringResource(R.string.common_passphrase),
-                value = passphrase,
-                onValueChange = { if (!isLoading) passphrase = it },
-                error = !isPassphraseValid
+                title = stringResource(R.string.common_pass),
+                value = pass,
+                onValueChange = { if (!isLoading) pass = it },
+                error = !isPassValid
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -144,7 +144,7 @@ fun ImportAegis(navController: NavController) {
             ) {
                 AnimatedVisibility(importError) {
                     Text(
-                        text = stringResource(R.string.common_incorrect_passphrase_or_invalid_file),
+                        text = stringResource(R.string.common_incorrect_pass_or_invalid_file),
                         modifier = Modifier.fillMaxWidth(),
                         color = Theme.colors.error,
                         fontSize = 14.sp,
@@ -158,7 +158,7 @@ fun ImportAegis(navController: NavController) {
 
             AnimatedVisibility(
                 modifier = Modifier.padding(top = 6.dp),
-                visible = passphrase.isNotBlank() && importData.isNotEmpty()
+                visible = pass.isNotBlank() && importData.isNotEmpty()
             ) {
                 RoundedButton(
                     text = if (isLoading) spinnerText() else stringResource(R.string.common_import)
@@ -169,7 +169,7 @@ fun ImportAegis(navController: NavController) {
                     importError = false
 
                     scope.launch(Dispatchers.IO) {
-                        val result = RustInterface().importAccountsAegis(passphrase, importData)
+                        val result = RustInterface().importAccountsAegis(pass, importData)
 
                         if (result) {
                             AccountManagement.saveAccountsUsingSeed(context)

@@ -1,6 +1,6 @@
 package app.ninesevennine.twofactorauthenticator.utils
 
-object Passphrase {
+object Pass {
     fun hasSufficientLength(value: String): Boolean {
         return value.length >= 8
     }

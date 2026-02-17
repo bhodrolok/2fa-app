@@ -39,7 +39,7 @@ import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.RustInterface
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
-import app.ninesevennine.twofactorauthenticator.features.SecureElement
+import app.ninesevennine.twofactorauthenticator.features.KeyStoreManagement
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
@@ -83,18 +83,18 @@ fun Greeting(navController: NavController) {
 
     LaunchedEffect(Unit) {
         if (Config.isUsingBiometrics) {
-            if (!SecureElement.loadBiometricKey()) {
+            if (!KeyStoreManagement.loadBiometricKey()) {
                 unableToLoadDecryptionKeys = true
                 return@LaunchedEffect
             }
         } else {
-            if (!SecureElement.loadRegularKey()) {
+            if (!KeyStoreManagement.loadRegularKey()) {
                 unableToLoadDecryptionKeys = true
                 return@LaunchedEffect
             }
         }
 
-        SecureElement.loadSecret(
+        KeyStoreManagement.loadSecret(
             title = biometricUnlockText,
             negative = cancelText,
             onSuccess = { secret ->

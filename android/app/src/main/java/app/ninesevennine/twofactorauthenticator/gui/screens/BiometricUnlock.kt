@@ -38,7 +38,7 @@ import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.RustInterface
 import app.ninesevennine.twofactorauthenticator.features.Config
-import app.ninesevennine.twofactorauthenticator.features.SecureElement
+import app.ninesevennine.twofactorauthenticator.features.KeyStoreManagement
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.LeftButtonHeader
@@ -119,7 +119,7 @@ fun BiometricUnlock(navController: NavController) {
                 style = TextStyle(fontSize = 14.sp, fontFamily = InterVariable)
             )
 
-            if (!SecureElement.isBiometricAvailable()) {
+            if (!KeyStoreManagement.isBiometricAvailable()) {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
@@ -133,7 +133,7 @@ fun BiometricUnlock(navController: NavController) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            if (SecureElement.isBiometricAvailable()) {
+            if (KeyStoreManagement.isBiometricAvailable()) {
                 if (isUsingBiometrics) {
                     RoundedButton(
                         if (isLoading) spinnerText() else stringResource(R.string.common_button_disable)
@@ -143,10 +143,13 @@ fun BiometricUnlock(navController: NavController) {
                         isLoading = true
 
                         scope.launch(Dispatchers.IO) {
-                            SecureElement.deleteRegularKey()
+                            KeyStoreManagement.deleteRegularKey()
 
-                            SecureElement.generateRegularKey()
-                            if (!SecureElement.loadRegularKey()) {
+                            if (!KeyStoreManagement.generateRegularKey(strongBoxBacked = true)) {
+                                KeyStoreManagement.generateRegularKey(strongBoxBacked = false)
+                            }
+
+                            if (!KeyStoreManagement.loadRegularKey()) {
                                 isLoading = false
                                 return@launch
                             }
@@ -154,14 +157,14 @@ fun BiometricUnlock(navController: NavController) {
                             withContext(Dispatchers.Main) {
                                 val plainTextBytes = Tests.PSEUDO_SECRET.toByteArray(Charsets.UTF_8)
 
-                                val encrypted = SecureElement.encryptRegular(plainTextBytes)
-                                val decrypted = encrypted?.let { SecureElement.decryptRegular(it) }
+                                val encrypted = KeyStoreManagement.encryptRegular(plainTextBytes)
+                                val decrypted = encrypted?.let { KeyStoreManagement.decryptRegular(it) }
 
                                 if (decrypted != null && decrypted.contentEquals(plainTextBytes)) {
                                     Logger.i(TAG, "regular key test success")
 
                                     Config.isUsingBiometrics = false
-                                    SecureElement.saveSecret(RustInterface().getSecret())
+                                    KeyStoreManagement.saveSecret(RustInterface().getSecret())
                                     Config.save(context)
 
                                     navController.popBackStack()
@@ -181,16 +184,20 @@ fun BiometricUnlock(navController: NavController) {
                         isLoading = true
 
                         scope.launch(Dispatchers.IO) {
-                            SecureElement.deleteBiometricKey()
+                            KeyStoreManagement.deleteBiometricKey()
 
-                            if (!SecureElement.generateBiometricKey() || !SecureElement.loadBiometricKey()) {
+                            if (!KeyStoreManagement.generateBiometricKey(strongBoxBacked = true)) {
+                                KeyStoreManagement.generateBiometricKey(strongBoxBacked = false)
+                            }
+
+                            if (!KeyStoreManagement.loadBiometricKey()) {
                                 isLoading = false
                                 return@launch
                             }
 
                             val plainTextBytes = Tests.PSEUDO_SECRET.toByteArray(Charsets.UTF_8)
 
-                            val encrypted = SecureElement.encryptBiometric(plainTextBytes) ?: run {
+                            val encrypted = KeyStoreManagement.encryptBiometric(plainTextBytes) ?: run {
                                 Logger.e(TAG, "failed to encrypt with biometric key")
 
                                 isLoading = false
@@ -198,7 +205,7 @@ fun BiometricUnlock(navController: NavController) {
                             }
 
                             withContext(Dispatchers.Main) {
-                                SecureElement.decryptBiometric(
+                                KeyStoreManagement.decryptBiometric(
                                     title = biometricUnlockText,
                                     negative = cancelText,
                                     data = encrypted,
@@ -207,7 +214,7 @@ fun BiometricUnlock(navController: NavController) {
                                             Logger.i(TAG, "biometric test success")
 
                                             Config.isUsingBiometrics = true
-                                            SecureElement.saveSecret(RustInterface().getSecret())
+                                            KeyStoreManagement.saveSecret(RustInterface().getSecret())
                                             Config.save(context)
 
                                             navController.popBackStack()
