@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -76,6 +77,7 @@ fun OtpTileNormal(
     account: AccountTruncated,
     updateCount: Int = 0,
     onCounterChange: (Long) -> Unit = {},
+    onPalettePressed: () -> Unit = {},
     isEditing: Boolean = false
 ) {
     val context = LocalContext.current
@@ -351,33 +353,61 @@ fun OtpTileNormal(
                         )
                     }
 
-                    Spacer(Modifier.widthIn(8.dp))
+                    if (isEditing) {
+                        if (Theme.themeOption != ThemeOption.PITCH_BLACK) {
+                            Spacer(Modifier.widthIn(8.dp))
 
-                    Box(
-                        Modifier
-                            .graphicsLayer(scaleX = editScale, scaleY = editScale)
-                            .size(32.dp)
-                            .clickable(
-                                interactionSource = editInteractionSource,
-                                indication = null,
-                                onClick = {
-                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                    view.playSoundEffect(SoundEffectConstants.CLICK)
+                            Box(
+                                Modifier
+                                    .graphicsLayer(scaleX = editScale, scaleY = editScale)
+                                    .size(32.dp)
+                                    .clickable(
+                                        interactionSource = editInteractionSource,
+                                        indication = null,
+                                        onClick = {
+                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                            view.playSoundEffect(SoundEffectConstants.CLICK)
 
-                                    if (!isEditing) {
+                                            onPalettePressed()
+                                        }
+                                    ),
+                                Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Palette,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(32.dp),
+                                    tint = if (isUsingPitchBlack) Theme.colors.primary else colors.medium
+                                )
+                            }
+                        }
+                    } else {
+                        Spacer(Modifier.widthIn(8.dp))
+
+                        Box(
+                            Modifier
+                                .graphicsLayer(scaleX = editScale, scaleY = editScale)
+                                .size(32.dp)
+                                .clickable(
+                                    interactionSource = editInteractionSource,
+                                    indication = null,
+                                    onClick = {
+                                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                        view.playSoundEffect(SoundEffectConstants.CLICK)
+
                                         RustInterface().copyAccountIntoEditAccount(account.id)
                                         navController.navigate(EditRoute)
                                     }
-                                }
-                            ),
-                        Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = null,
-                            modifier = Modifier.size(29.dp),
-                            tint = if (isUsingPitchBlack) Theme.colors.primary else colors.medium
-                        )
+                                ),
+                            Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = null,
+                                modifier = Modifier.size(29.dp),
+                                tint = if (isUsingPitchBlack) Theme.colors.primary else colors.medium
+                            )
+                        }
                     }
                 }
             }

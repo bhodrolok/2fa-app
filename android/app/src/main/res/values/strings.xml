@@ -13,6 +13,7 @@
     <string name="common_button_enable">Enable</string>
     <string name="common_cancel">Cancel</string>
     <string name="common_confirm_pass">Confirm Passphrase/Password</string>
+    <string name="common_copy">Copy</string>
     <string name="common_download_app_log">Download App Log</string>
     <string name="common_export">Export</string>
     <string name="common_hide">Hide</string>
@@ -24,6 +25,7 @@
     <string name="common_pass_1_special">1 special character (e.g., $, !, \@, %, &amp;) or space</string>
     <string name="common_pass_8_chars">8 characters</string>
     <string name="common_pass_no_w_or_t">No leading or trailing whitespace</string>
+    <string name="common_paste">Paste</string>
     <string name="common_recover_accounts">Recover Accounts</string>
     <string name="common_show">Show</string>
     <string name="common_use_system_default">Use System Default</string>
@@ -70,6 +72,8 @@
     <string name="settings_behavior_tap_to_reveal_codes">Tap to reveal codes</string>
     <string name="settings_security">Security</string>
     <string name="settings_security_biometric_unlock">Biometric unlock</string>
+    <string name="settings_security_block_intents_primary">Block intents</string>
+    <string name="settings_security_block_intents_secondary">Ignores actions triggered by other apps</string>
     <string name="settings_security_block_screenshots_and_recordings">Block screenshots and recordings</string>
     <string name="settings_security_screen_security">Screen security</string>
     <string name="settings_support">Support</string>

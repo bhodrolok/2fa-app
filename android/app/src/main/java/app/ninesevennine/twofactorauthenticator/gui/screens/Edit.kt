@@ -1,6 +1,9 @@
 package app.ninesevennine.twofactorauthenticator.gui.screens
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +31,7 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -45,6 +49,7 @@ import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.Tints
+import app.ninesevennine.twofactorauthenticator.gui.elements.EditColorPicker
 import app.ninesevennine.twofactorauthenticator.gui.elements.EditHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.EditSectionConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.gui.elements.EditSectionDropdownSingleChoice
@@ -82,7 +87,7 @@ fun Edit(navController: NavController) {
     var counter by remember { mutableStateOf(account.counter.toString()) }
     var period by remember { mutableStateOf(account.period.toString()) }
     var digits by remember { mutableStateOf(account.digits.toString()) }
-    val color by remember { mutableIntStateOf(account.color) }
+    var color by remember { mutableStateOf(Color(account.color)) }
 
     var secretError by remember { mutableStateOf(secretBase32NoPad.isEmpty()) }
     var counterError by remember { mutableStateOf(account.counter < 0) }
@@ -91,6 +96,8 @@ fun Edit(navController: NavController) {
 
     var updateCount by remember { mutableIntStateOf(0) }
     var deleteButtonTapsCount by remember { mutableIntStateOf(0) }
+
+    var showColorPicker by remember { mutableStateOf(false) }
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val bottomInset = WindowInsets.statusBars.asPaddingValues().calculateBottomPadding()
@@ -112,7 +119,7 @@ fun Edit(navController: NavController) {
                     Modifier
                         .graphicsLayer(
                             colorFilter = ColorFilter.tint(
-                                Color(color),
+                                color,
                                 BlendMode.Multiply
                             )
                         )
@@ -146,11 +153,14 @@ fun Edit(navController: NavController) {
                         counter.toLongOrNull()?.coerceAtLeast(0) ?: 0,
                         period.toLongOrNull()?.coerceAtLeast(10) ?: 10,
                         digits.toIntOrNull()?.coerceIn(4, 10) ?: 6,
-                        color
+                        color.toArgb()
                     ),
                     updateCount,
                     {
                         counter = it.toString()
+                    },
+                    {
+                        showColorPicker = !showColorPicker
                     },
                     true
                 )
@@ -363,6 +373,23 @@ fun Edit(navController: NavController) {
                         navController.popBackStack(MainRoute, false)
                     }
                 }
+            }
+        )
+    }
+
+    AnimatedVisibility(
+        visible = showColorPicker,
+        enter = slideInVertically(initialOffsetY = { it }),
+        exit = slideOutVertically(targetOffsetY = { it }),
+    ) {
+        EditColorPicker(
+            initialColor = color,
+            onColorChange = {
+                RustInterface().setEditAccountColor(it.toArgb())
+                color = it
+            },
+            onCancel = {
+                showColorPicker = false
             }
         )
     }

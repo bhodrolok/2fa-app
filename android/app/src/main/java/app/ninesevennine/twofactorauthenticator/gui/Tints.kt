@@ -18,9 +18,9 @@ object Tints {
     )
 
     val dark = ColorFilters(
-        background = Color(0xFF4E4E4E),
-        light = Color(0xFF2E2E2E),
-        medium = Color(0xFF6E6E6E),
-        dark = Color(0xFFCCCCCC)
+        background = Color(0xFF5A5A5A),
+        light = Color(0xFF3C3C3C),
+        medium = Color(0xFF808080),
+        dark = Color(0xFFE0E0E0)
     )
 }

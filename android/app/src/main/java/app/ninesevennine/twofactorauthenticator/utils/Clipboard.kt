@@ -21,4 +21,9 @@ object Clipboard {
 
         clipboard.setPrimaryClip(clip)
     }
+
+    fun paste(context: Context): String? {
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        return clipboard.primaryClip?.getItemAt(0)?.text?.toString()
+    }
 }

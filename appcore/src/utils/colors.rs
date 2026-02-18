@@ -1,1 +1,1 @@
-pub const GRAY: u32 = 0xFFCACACA;
+pub const WHITE: u32 = 0xFFFFFFFF;

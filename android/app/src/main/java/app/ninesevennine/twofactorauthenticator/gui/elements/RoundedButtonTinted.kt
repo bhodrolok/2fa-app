@@ -40,10 +40,10 @@ fun RoundedButtonTinted(
     text: String,
     onClick: () -> Unit = {}
 ) {
+    val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
     val view = LocalView.current
 
-    val context = LocalContext.current
     val colors = if (Theme.currentOption(context) == ThemeOption.LIGHT) Tints.light else Tints.dark
     val isUsingPitchBlack by remember { mutableStateOf(Theme.themeOption == ThemeOption.PITCH_BLACK) }
 

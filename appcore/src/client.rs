@@ -84,7 +84,7 @@ impl Client {
             digits: 6,
             counter: 0,
             period: 30,
-            color: utils::colors::GRAY,
+            color: utils::colors::WHITE,
         });
     }
 

@@ -29,7 +29,8 @@ Key features:
     - Receive shared images (files or gallery) to add accounts
 
 - Security:
-    - Biometric unlock (optional)
+    - Biometric unlock
+    - Block intents
     - Full use of the device Secure Element
 
 - Account management:
@@ -47,7 +48,6 @@ Android:
 - Android 14 (SDK 34) or later (versions are always 2 years behind the latest stable update)
 - Google Pixel 6a or better
 - ARM64 (arm64-v8a) CPU
-- StrongBox / Secure Element support
 
 ## Verifying Releases
 All releases are signed with the followig certificate fingerprints:
@@ -55,7 +55,7 @@ All releases are signed with the followig certificate fingerprints:
 - Android (SHA-256): `e5b28ea1e051c232dea94c27c0592e2c002d17c5ca81788b51306d608afe52c5`
     - `app.ninesevennine.twofactorauthenticator` (Standard)
     - `app.ninesevennine.twofactorauthenticator.accrescent` (Accrescent)
-    - `app.ninesevennine.twofactorauthenticator.play` (Play Store) might be signed by Google
+    - `app.ninesevennine.twofactorauthenticator.play` (Play Store) signed by Google
 
 ## Support
 

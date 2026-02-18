@@ -425,7 +425,7 @@ impl Client {
                         None
                     }
                 })
-                .unwrap_or(utils::colors::GRAY);
+                .unwrap_or(utils::colors::WHITE);
 
             let account = Account {
                 id,
@@ -544,7 +544,7 @@ impl Client {
                 digits,
                 counter,
                 period,
-                color: utils::colors::GRAY,
+                color: utils::colors::WHITE,
             };
 
             new_accounts.push(account);

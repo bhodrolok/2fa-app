@@ -438,7 +438,7 @@ impl Client {
                 digits,
                 counter,
                 period,
-                color: utils::colors::GRAY,
+                color: utils::colors::WHITE,
             };
 
             new_accounts.push(account);

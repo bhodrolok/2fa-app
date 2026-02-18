@@ -18,6 +18,7 @@ object Config {
     var isUsingFocusSearch by mutableStateOf(false)
     var isUsingBiometrics by mutableStateOf(false)
     var isUsingScreenSecurity by mutableStateOf(true)
+    var isUsingBlockIntents by mutableStateOf(false)
     var isUsingAutomaticInternalBackups by mutableStateOf(false)
 
     fun load(context: Context) {
@@ -33,6 +34,7 @@ object Config {
 
         Locale.set(context, locale)
         Theme.set(context, theme)
+
         hasCompletedSetup = prefs.getBoolean("has_completed_setup", false)
         isUsingMinimalisticTiles = prefs.getBoolean("is_using_minimalistic_tiles", false)
         isUsingSearchOnTop = prefs.getBoolean("is_using_search_on_top", true)
@@ -41,6 +43,7 @@ object Config {
         isUsingFocusSearch = prefs.getBoolean("is_using_focus_search", false)
         isUsingBiometrics = prefs.getBoolean("is_using_biometrics", false)
         isUsingScreenSecurity = prefs.getBoolean("is_using_screen_security", true)
+        isUsingBlockIntents = prefs.getBoolean("is_using_block_intents", false)
         isUsingAutomaticInternalBackups = prefs.getBoolean("is_using_automatic_internal_backups", false)
     }
 
@@ -58,6 +61,7 @@ object Config {
             putBoolean("is_using_focus_search", isUsingFocusSearch)
             putBoolean("is_using_biometrics", isUsingBiometrics)
             putBoolean("is_using_screen_security", isUsingScreenSecurity)
+            putBoolean("is_using_block_intents", isUsingBlockIntents)
             putBoolean("is_using_automatic_internal_backups", isUsingAutomaticInternalBackups)
             apply()
         }

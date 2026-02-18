@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Contrast
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Download
@@ -212,6 +213,17 @@ fun Settings(navController: NavController) {
                             setScreenSecure(activity, Config.isUsingScreenSecurity)
                         }
 
+                        Config.save(context)
+                    }
+
+                    SectionButton(
+                        imageVector = Icons.Default.Block,
+                        tint = Theme.colors.primary,
+                        primaryText = stringResource(R.string.settings_security_block_intents_primary),
+                        secondaryText = stringResource(R.string.settings_security_block_intents_secondary),
+                        enabled = Config.isUsingBlockIntents
+                    ) {
+                        Config.isUsingBlockIntents = !Config.isUsingBlockIntents
                         Config.save(context)
                     }
                 }

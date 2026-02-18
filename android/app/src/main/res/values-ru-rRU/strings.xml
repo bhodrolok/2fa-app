@@ -13,6 +13,7 @@
     <string name="common_button_enable">Включить</string>
     <string name="common_cancel">Отменить</string>
     <string name="common_confirm_pass">Подтвердите парольную фразу/пароль</string>
+    <string name="common_copy">Скопировать</string>
     <string name="common_download_app_log">Скачать Журнал Приложения</string>
     <string name="common_export">Экспорт</string>
     <string name="common_hide">Скрыть</string>
@@ -24,6 +25,7 @@
     <string name="common_pass_1_special">1 специальный символ (например $, !, \@, %, &amp;) или пробел</string>
     <string name="common_pass_8_chars">8 символов</string>
     <string name="common_pass_no_w_or_t">Без пробелов в начале или в конце</string>
+    <string name="common_paste">Вставить</string>
     <string name="common_recover_accounts">Восстановить Аккаунты</string>
     <string name="common_show">Показать</string>
     <string name="common_use_system_default">Использовать Системные Настройки</string>
@@ -70,6 +72,8 @@
     <string name="settings_behavior_tap_to_reveal_codes">Показать коды при нажатии</string>
     <string name="settings_security">Безопасность</string>
     <string name="settings_security_biometric_unlock">Биометрическая разблокировка</string>
+    <string name="settings_security_block_intents_primary">Блокировать интенты</string>
+    <string name="settings_security_block_intents_secondary">Игнорирует действия, запускаемые другими приложениями</string>
     <string name="settings_security_block_screenshots_and_recordings">Блокировать скриншоты и записи</string>
     <string name="settings_security_screen_security">Безопасность экрана</string>
     <string name="settings_support">Поддержка</string>

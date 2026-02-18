@@ -134,10 +134,13 @@ class Main : FragmentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+
         handleIntents(intent)
     }
 
     private fun handleIntents(intent: Intent) {
+        if (Config.isUsingBlockIntents) return
+
         val action = intent.action
         val data = intent.data
 
