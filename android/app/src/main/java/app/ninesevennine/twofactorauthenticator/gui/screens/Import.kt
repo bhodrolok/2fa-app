@@ -47,6 +47,7 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.LeftButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
 import app.ninesevennine.twofactorauthenticator.utils.Document
+import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -54,6 +55,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 object ImportRoute
+
+private const val TAG = "Import"
 
 @Composable
 fun Import(navController: NavController) {
@@ -74,6 +77,7 @@ fun Import(navController: NavController) {
                 importFilename = Document.getName(context, uri) ?: "???"
 
                 if (!importFilename.endsWith(".2fa", ignoreCase = true)) {
+                    Logger.i(TAG, "file does not end with extension .2fa")
                     navController.popBackStack()
                     return@rememberLauncherForActivityResult
                 }
@@ -175,6 +179,8 @@ fun Import(navController: NavController) {
                     importError = false
 
                     scope.launch(Dispatchers.IO) {
+                        Logger.i(TAG, "importing accounts")
+
                         val result = RustInterface().importAccounts(pass, importData)
 
                         if (result) {
@@ -188,6 +194,7 @@ fun Import(navController: NavController) {
                                 navController.popBackStack(MainRoute, false)
                             }
                         } else {
+                            Logger.i(TAG, "failed importing accounts")
                             importError = true
                             isLoading = false
                         }

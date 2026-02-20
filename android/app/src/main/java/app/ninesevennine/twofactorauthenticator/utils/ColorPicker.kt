@@ -2,6 +2,7 @@ package app.ninesevennine.twofactorauthenticator.utils
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.graphics.toColorInt
 
 object ColorPicker {
     val hueGradient = listOf(
@@ -30,15 +31,11 @@ object ColorPicker {
     fun toHex(color: Color): String =
         "#%06X".format(color.toArgb() and 0xFFFFFF)
 
-    fun fromHex(hex: String): Color {
-        val clean = hex.trimStart('#')
-        val padded = when (clean.length) {
-            6 -> "FF$clean"
-            8 -> clean
-            else -> return Color.White
+    fun fromHex(hex: String): Color?  {
+        return try {
+            Color(hex.toColorInt())
+        } catch (_: Exception) {
+            null
         }
-        return runCatching {
-            Color(padded.toLong(16).toInt())
-        }.getOrDefault(Color.White)
     }
 }

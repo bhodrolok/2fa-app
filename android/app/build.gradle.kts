@@ -12,8 +12,8 @@ android {
         applicationId = "app.ninesevennine.twofactorauthenticator"
         minSdk = 34
         targetSdk = 36
-        versionCode = 30
-        versionName = "Beta 21"
+        versionCode = 31
+        versionName = "Beta 22"
 
         ndk {
             abiFilters.addAll(listOf("arm64-v8a"))

@@ -134,33 +134,66 @@ fun EditColorPicker(
             Spacer(Modifier.height(4.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min)
+                    .background(Theme.colors.surface, pickerShape)
+                    .border(1.dp, Theme.colors.border, pickerShape)
+                    .padding(6.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 // Saturation / Value square
+                val svInset = 6.dp
                 Canvas(
                     modifier = Modifier
                         .weight(1f)
                         .aspectRatio(1f)
-                        .clip(pickerShape)
                         .pointerInput(Unit) {
+                            val insetPx = svInset.toPx()
+                            val innerW = size.width - 2 * insetPx
+                            val innerH = size.height - 2 * insetPx
                             detectTapGestures { offset ->
-                                saturation = (offset.x / size.width).coerceIn(0f, 1f)
-                                value = (1f - offset.y / size.height).coerceIn(0f, 1f)
+                                saturation = ((offset.x - insetPx) / innerW).coerceIn(0f, 1f)
+                                value = (1f - (offset.y - insetPx) / innerH).coerceIn(0f, 1f)
                             }
                         }
                         .pointerInput(Unit) {
+                            val insetPx = svInset.toPx()
+                            val innerW = size.width - 2 * insetPx
+                            val innerH = size.height - 2 * insetPx
                             detectDragGestures { change, _ ->
-                                saturation = (change.position.x / size.width).coerceIn(0f, 1f)
-                                value = (1f - change.position.y / size.height).coerceIn(0f, 1f)
+                                saturation = ((change.position.x - insetPx) / innerW).coerceIn(0f, 1f)
+                                value = (1f - (change.position.y - insetPx) / innerH).coerceIn(0f, 1f)
                             }
                         },
                 ) {
-                    drawRect(brush = Brush.horizontalGradient(listOf(Color.White, pureHue)))
-                    drawRect(brush = Brush.verticalGradient(listOf(Color.Transparent, Color.Black)))
+                    val insetPx = svInset.toPx()
+                    val innerSize = Size(size.width - 2 * insetPx, size.height - 2 * insetPx)
+                    val rectCorner = CornerRadius(8.dp.toPx())
 
-                    val cx = saturation * size.width
-                    val cy = (1f - value) * size.height
+                    drawRoundRect(
+                        brush = Brush.horizontalGradient(
+                            listOf(Color.White, pureHue),
+                            startX = insetPx,
+                            endX = insetPx + innerSize.width,
+                        ),
+                        topLeft = Offset(insetPx, insetPx),
+                        size = innerSize,
+                        cornerRadius = rectCorner,
+                    )
+                    drawRoundRect(
+                        brush = Brush.verticalGradient(
+                            listOf(Color.Transparent, Color.Black),
+                            startY = insetPx,
+                            endY = insetPx + innerSize.height,
+                        ),
+                        topLeft = Offset(insetPx, insetPx),
+                        size = innerSize,
+                        cornerRadius = rectCorner,
+                    )
+
+                    val cx = insetPx + saturation * innerSize.width
+                    val cy = insetPx + (1f - value) * innerSize.height
                     val r = 6.dp.toPx()
 
                     drawCircle(Color.Black.copy(alpha = 0.25f), r + 2.dp.toPx(), Offset(cx, cy))
@@ -169,46 +202,61 @@ fun EditColorPicker(
                 }
 
                 // Vertical hue slider
+                val hueInset = 6.dp
                 Canvas(
                     modifier = Modifier
                         .width(44.dp)
                         .fillMaxHeight()
-                        .clip(pickerShape)
+                        .padding(end = 6.dp)
                         .pointerInput(Unit) {
+                            val insetPx = hueInset.toPx()
+                            val innerH = size.height - 2 * insetPx
                             detectTapGestures { offset ->
-                                hue = ((offset.y / size.height) * 360f).coerceIn(0f, 360f)
+                                hue = (((offset.y - insetPx) / innerH) * 360f).coerceIn(0f, 360f)
                             }
                         }
                         .pointerInput(Unit) {
+                            val insetPx = hueInset.toPx()
+                            val innerH = size.height - 2 * insetPx
                             detectDragGestures { change, _ ->
-                                hue = ((change.position.y / size.height) * 360f).coerceIn(0f, 360f)
+                                hue = (((change.position.y - insetPx) / innerH) * 360f).coerceIn(0f, 360f)
                             }
                         },
                 ) {
-                    drawRect(brush = Brush.verticalGradient(ColorPicker.hueGradient))
+                    val insetPx = hueInset.toPx()
+                    val innerSize = Size(size.width, size.height - 2 * insetPx)
+                    val rectCorner = CornerRadius(4.dp.toPx())
 
-                    val cy = (hue / 360f) * size.height
+                    drawRoundRect(
+                        brush = Brush.verticalGradient(
+                            ColorPicker.hueGradient,
+                            startY = insetPx,
+                            endY = insetPx + innerSize.height,
+                        ),
+                        topLeft = Offset(0f, insetPx),
+                        size = innerSize,
+                        cornerRadius = rectCorner,
+                    )
+
+                    val cy = insetPx + (hue / 360f) * innerSize.height
                     val hw = 6.dp.toPx()
-                    val corner = CornerRadius(4.dp.toPx())
+                    val strokeWidth = 2.dp.toPx()
 
-                    drawRoundRect(
+                    drawRect(
                         color = Color.Black.copy(alpha = 0.25f),
-                        topLeft = Offset(2.dp.toPx(), cy - hw - 2.dp.toPx()),
-                        size = Size(size.width - 4.dp.toPx(), (hw + 2.dp.toPx()) * 2),
-                        cornerRadius = corner,
+                        topLeft = Offset(0f, cy - hw - strokeWidth),
+                        size = Size(size.width, (hw + strokeWidth) * 2),
                     )
-                    drawRoundRect(
+                    drawRect(
                         color = Color.White,
-                        topLeft = Offset(4.dp.toPx(), cy - hw),
-                        size = Size(size.width - 8.dp.toPx(), hw * 2),
-                        cornerRadius = corner,
-                        style = Stroke(2.dp.toPx()),
+                        topLeft = Offset(0f, cy - hw),
+                        size = Size(size.width, hw * 2),
+                        style = Stroke(strokeWidth),
                     )
-                    drawRoundRect(
+                    drawRect(
                         color = ColorPicker.fromHsv(hue, 1f, 1f),
-                        topLeft = Offset(6.dp.toPx(), cy - hw + 2.dp.toPx()),
-                        size = Size(size.width - 12.dp.toPx(), (hw - 2.dp.toPx()) * 2),
-                        cornerRadius = corner,
+                        topLeft = Offset(strokeWidth, cy - hw + strokeWidth),
+                        size = Size(size.width - strokeWidth * 2, (hw - strokeWidth) * 2),
                     )
                 }
             }
@@ -266,7 +314,7 @@ fun EditColorPicker(
                                 view.playSoundEffect(SoundEffectConstants.CLICK)
 
                                 val text = Clipboard.paste(context) ?: return@clickable
-                                ColorPicker.fromHex(text).let { parsed ->
+                                ColorPicker.fromHex(text)?.let { parsed ->
                                     val hsv = ColorPicker.toHsv(parsed.copy(alpha = 1f))
                                     hue = hsv[0]
                                     saturation = hsv[1]

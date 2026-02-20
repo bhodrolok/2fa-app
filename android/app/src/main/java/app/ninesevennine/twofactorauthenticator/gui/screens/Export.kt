@@ -36,12 +36,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.RustInterface
+import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.gui.elements.LeftButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
+import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.Pass
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,6 +52,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 object ExportRoute
+
+private const val TAG = "Export"
 
 @Composable
 fun Export(navController: NavController) {
@@ -204,6 +208,8 @@ fun Export(navController: NavController) {
                     isLoading = true
 
                     scope.launch(Dispatchers.IO) {
+                        Logger.i(TAG, "exporting accounts")
+
                         val data = RustInterface().exportAccounts(pass)
 
                         withContext(Dispatchers.Main) {

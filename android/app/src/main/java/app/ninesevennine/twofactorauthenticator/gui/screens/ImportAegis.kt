@@ -46,6 +46,7 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.LeftButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
 import app.ninesevennine.twofactorauthenticator.utils.Document
+import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -53,6 +54,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 object ImportAegisRoute
+
+private const val TAG = "ImportAegis"
 
 @Composable
 fun ImportAegis(navController: NavController) {
@@ -169,6 +172,7 @@ fun ImportAegis(navController: NavController) {
                     importError = false
 
                     scope.launch(Dispatchers.IO) {
+                        Logger.i(TAG, "importing accounts from aegis")
                         val result = RustInterface().importAccountsAegis(pass, importData)
 
                         if (result) {
@@ -182,6 +186,7 @@ fun ImportAegis(navController: NavController) {
                                 navController.popBackStack(MainRoute, false)
                             }
                         } else {
+                            Logger.i(TAG, "failed importing accounts from aegis")
                             importError = true
                             isLoading = false
                         }

@@ -41,6 +41,7 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.gui.elements.LeftButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
+import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.Pass
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -49,6 +50,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 object ExportAegisRoute
+
+private const val TAG = "ExportAegis"
 
 @Composable
 fun ExportAegis(navController: NavController) {
@@ -203,6 +206,8 @@ fun ExportAegis(navController: NavController) {
                     isLoading = true
 
                     scope.launch(Dispatchers.IO) {
+                        Logger.i(TAG, "exporting accounts to aegis")
+
                         val data = RustInterface().exportAccountsAegis(pass)
 
                         withContext(Dispatchers.Main) {
