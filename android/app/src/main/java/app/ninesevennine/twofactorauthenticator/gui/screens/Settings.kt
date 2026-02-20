@@ -60,6 +60,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 object SettingsRoute
 
+private const val TAG = "Settings"
+
 @Composable
 fun Settings(navController: NavController) {
     val context = LocalContext.current
@@ -140,6 +142,9 @@ fun Settings(navController: NavController) {
                         enabled = Config.isUsingMinimalisticTiles
                     ) {
                         Config.isUsingMinimalisticTiles = !Config.isUsingMinimalisticTiles
+
+                        Logger.i(TAG, "minimalistic tiles set to ${Config.isUsingMinimalisticTiles}")
+
                         Config.save(context)
                     }
 
@@ -150,6 +155,9 @@ fun Settings(navController: NavController) {
                         enabled = Config.isUsingSearchOnTop
                     ) {
                         Config.isUsingSearchOnTop = !Config.isUsingSearchOnTop
+
+                        Logger.i(TAG, "search on top set to ${Config.isUsingSearchOnTop}")
+
                         Config.save(context)
                     }
                 }
@@ -164,6 +172,9 @@ fun Settings(navController: NavController) {
                         enabled = Config.isUsingTapToRevealCodes
                     ) {
                         Config.isUsingTapToRevealCodes = !Config.isUsingTapToRevealCodes
+
+                        Logger.i(TAG, "tap to reveal codes set to ${Config.isUsingTapToRevealCodes}")
+
                         Config.save(context)
                     }
 
@@ -174,6 +185,9 @@ fun Settings(navController: NavController) {
                         enabled = Config.isUsingDoubleTapToCopyCodes
                     ) {
                         Config.isUsingDoubleTapToCopyCodes = !Config.isUsingDoubleTapToCopyCodes
+
+                        Logger.i(TAG, "double tap to copy codes set to ${Config.isUsingDoubleTapToCopyCodes}")
+
                         Config.save(context)
                     }
 
@@ -184,6 +198,9 @@ fun Settings(navController: NavController) {
                         enabled = Config.isUsingFocusSearch
                     ) {
                         Config.isUsingFocusSearch = !Config.isUsingFocusSearch
+
+                        Logger.i(TAG, "focus search set to ${Config.isUsingFocusSearch}")
+
                         Config.save(context)
                     }
                 }
@@ -209,6 +226,8 @@ fun Settings(navController: NavController) {
                     ) {
                         Config.isUsingScreenSecurity = !Config.isUsingScreenSecurity
 
+                        Logger.i(TAG, "screen security set to ${Config.isUsingScreenSecurity}")
+
                         (context as? Activity)?.let { activity ->
                             setScreenSecure(activity, Config.isUsingScreenSecurity)
                         }
@@ -224,6 +243,9 @@ fun Settings(navController: NavController) {
                         enabled = Config.isUsingBlockIntents
                     ) {
                         Config.isUsingBlockIntents = !Config.isUsingBlockIntents
+
+                        Logger.i(TAG, "block intents set to $!Config.isUsingBlockIntents}")
+
                         Config.save(context)
                     }
                 }
@@ -301,7 +323,7 @@ fun Settings(navController: NavController) {
 
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     RoundedButton(stringResource(R.string.common_download_app_log)) {
-                        Logger.i("Settings", "downloading app log")
+                        Logger.i(TAG, "downloading app log")
                         internalAppLogLauncher.launch("app.log")
                     }
                 }

@@ -36,13 +36,15 @@ import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.RustInterface
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
-import app.ninesevennine.twofactorauthenticator.features.KeyStoreManagement
+import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
+import app.ninesevennine.twofactorauthenticator.features.KeyStoreRSA
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.gui.elements.LeftButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
+import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.Pass
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,6 +53,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 object AutomaticInternalBackupsRoute
+
+private const val TAG = "AutomaticInternalBackups"
 
 @Composable
 fun AutomaticInternalBackups(navController: NavController) {
@@ -69,6 +73,9 @@ fun AutomaticInternalBackups(navController: NavController) {
     BackHandler(enabled = isLoading) {
         // intercept the system back button when loading.
     }
+
+    val biometricUnlockText = stringResource(R.string.common_biometric_unlock)
+    val cancelText = stringResource(R.string.common_cancel)
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -118,9 +125,12 @@ fun AutomaticInternalBackups(navController: NavController) {
 
             if (isUsingAutomaticInternalBackups) {
                 RoundedButton(text = stringResource(R.string.common_button_disable)) {
-                    navController.popBackStack()
                     Config.isUsingAutomaticInternalBackups = false
+
+                    Logger.i(TAG, "automatic internal backups set to ${Config.isUsingAutomaticInternalBackups}")
+
                     Config.save(context)
+                    navController.popBackStack()
                 }
             } else {
                 ConfidentialTextBox(
@@ -203,17 +213,56 @@ fun AutomaticInternalBackups(navController: NavController) {
 
                         isLoading = true
 
-                        scope.launch(Dispatchers.IO) {
-                            RustInterface().setAutomaticInternalBackupsPass(pass)
+                        if (Config.internalIsUsingKeyStoreAES) {
+                            scope.launch(Dispatchers.IO) {
+                                val secret = RustInterface().getSecret()
 
-                            KeyStoreManagement.saveSecret(RustInterface().getSecret())
-                            AccountManagement.saveAccountsUsingAutomaticInternalBackups(context)
+                                RustInterface().setAutomaticInternalBackupsPass(pass)
 
-                            Config.isUsingAutomaticInternalBackups = true
-                            Config.save(context)
+                                withContext(Dispatchers.Main) {
+                                    KeyStoreAES.saveSecret(
+                                        title = biometricUnlockText,
+                                        negative = cancelText,
+                                        secret = RustInterface().getSecret(),
+                                        onSuccess = {
+                                            AccountManagement.saveAccountsUsingAutomaticInternalBackups(context)
 
-                            withContext(Dispatchers.Main) {
-                                navController.popBackStack()
+                                            Config.isUsingAutomaticInternalBackups = true
+
+                                            Logger.i(TAG, "automatic internal backups set to ${Config.isUsingAutomaticInternalBackups}")
+
+                                            Config.save(context)
+
+                                            navController.popBackStack()
+                                        },
+                                        onError = {
+                                            RustInterface().setSecret(secret)
+                                            isLoading = false
+                                        },
+                                        onCancel = {
+                                            RustInterface().setSecret(secret)
+                                            Logger.i(TAG, "biometric prompt canceled")
+                                            isLoading = false
+                                        }
+                                    )
+                                }
+                            }
+                        } else {
+                            scope.launch(Dispatchers.IO) {
+                                RustInterface().setAutomaticInternalBackupsPass(pass)
+
+                                KeyStoreRSA.saveSecret(RustInterface().getSecret())
+                                AccountManagement.saveAccountsUsingAutomaticInternalBackups(context)
+
+                                Config.isUsingAutomaticInternalBackups = true
+
+                                Logger.i(TAG, "automatic internal backups set to ${Config.isUsingAutomaticInternalBackups}")
+
+                                Config.save(context)
+
+                                withContext(Dispatchers.Main) {
+                                    navController.popBackStack()
+                                }
                             }
                         }
                     }

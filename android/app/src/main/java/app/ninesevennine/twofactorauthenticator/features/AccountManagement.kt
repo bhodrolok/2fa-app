@@ -4,19 +4,39 @@ import android.content.Context
 import app.ninesevennine.twofactorauthenticator.RustInterface
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 object AccountManagement {
     private const val TAG = "AccountManagement"
     private const val ACCOUNTS_USING_SEED_FILE = "accounts_using_seed.2fa"
     private const val ACCOUNTS_USING_AUTOMATIC_INTERNAL_BACKUPS = "accounts_using_automatic_internal_backups.2fa"
 
+    private fun forceWrite(file: File, data: String) {
+        val fos = FileOutputStream(file)
+        fos.use { fos ->
+            fos.write(data.toByteArray(Charsets.UTF_8))
+            fos.flush()
+            fos.fd.sync()
+        }
+    }
+
+    private fun forceRead(file: File): String {
+        val fis = FileInputStream(file)
+        fis.use { fis ->
+            return fis.readBytes().toString(Charsets.UTF_8)
+        }
+    }
+
     fun saveAccountsUsingSeed(context: Context) {
         return try {
             val rust = RustInterface()
             val accountsData = rust.exportAccountsUsingSeed()
 
-            val file = File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_SEED_FILE)
-            file.writeText(accountsData)
+            forceWrite(
+                File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_SEED_FILE),
+                accountsData
+            )
         } catch (e: Exception) {
             Logger.e(TAG, "failed to saveAccountsUsingSeed", e)
         }
@@ -27,7 +47,7 @@ object AccountManagement {
             val file = File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_SEED_FILE)
             if (!file.exists()) return true
 
-            val accountsData = file.readText()
+            val accountsData = forceRead(file)
 
             RustInterface().importAccountsUsingSeed(accountsData)
         } catch (e: Exception) {
@@ -59,8 +79,10 @@ object AccountManagement {
             val rust = RustInterface()
             val accountsData = rust.exportAccountsUsingAutomaticInternalBackups()
 
-            val file = File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_AUTOMATIC_INTERNAL_BACKUPS)
-            file.writeText(accountsData)
+            forceWrite(
+                File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_AUTOMATIC_INTERNAL_BACKUPS),
+                accountsData
+            )
         } catch (e: Exception) {
             Logger.e(TAG, "failed to saveAccountsUsingAutomaticInternalBackups", e)
         }
@@ -88,7 +110,7 @@ object AccountManagement {
 
             if (!file.exists()) return null
 
-            file.readText()
+            forceRead(file)
         } catch (e: Exception) {
             Logger.e(TAG, "failed to getAccountsUsingAutomaticInternalBackups", e)
             null

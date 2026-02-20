@@ -115,7 +115,7 @@ fun Main(navController: NavController) {
     var query by remember { mutableStateOf("") }
 
     val accounts = remember(query) {
-        mutableStateListOf(*RustInterface().getAccountsTruncatedFiltered(query.trim()))
+        mutableStateListOf(*RustInterface().getAccountsTruncatedFiltered(query))
     }
 
     val configuration = LocalConfiguration.current
@@ -275,7 +275,9 @@ fun Main(navController: NavController) {
     if (Config.isUsingSearchOnTop) {
         TopBar(
             onSearch = {
-                query = it.trim()
+                if (query != it) {
+                    query = it
+                }
             },
             onSettings = {
                 navController.navigate(SettingsRoute)
@@ -291,7 +293,9 @@ fun Main(navController: NavController) {
     } else {
         BottomBar(
             onSearch = {
-                query = it.trim()
+                if (query != it) {
+                    query = it
+                }
             },
             onSettings = {
                 navController.navigate(SettingsRoute)
@@ -375,7 +379,7 @@ private fun BottomBar(
                 value = query,
                 onValueChange = {
                     query = it
-                    onSearch(it)
+                    onSearch(it.trim())
                 },
                 modifier = Modifier
                     .height(52.dp)
@@ -586,7 +590,7 @@ private fun TopBar(
                 value = query,
                 onValueChange = {
                     query = it
-                    onSearch(it)
+                    onSearch(it.trim())
                 },
                 modifier = Modifier
                     .height(52.dp)

@@ -34,30 +34,27 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Config
-import app.ninesevennine.twofactorauthenticator.features.KeyStoreManagement
+import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
 import app.ninesevennine.twofactorauthenticator.utils.Logger
-import app.ninesevennine.twofactorauthenticator.utils.Tests
 import kotlinx.serialization.Serializable
 
-private const val TAG = "SetupBiometricUnlock"
 
 @Serializable
 object SetupBiometricUnlockRoute
+
+private const val TAG = "SetupBiometricUnlock"
 
 @Composable
 fun SetupBiometricUnlock(navController: NavController) {
     val isFullBiometricAvailable by remember {
         mutableStateOf(
-            KeyStoreManagement.isBiometricAvailable() && KeyStoreManagement.isBiometricKeyLoaded()
+            KeyStoreAES.isBiometricAvailable() && KeyStoreAES.isBiometricKeyLoaded()
         )
     }
-
-    val biometricUnlockText = stringResource(R.string.common_biometric_unlock)
-    val cancelText = stringResource(R.string.common_cancel)
 
     Box(
         modifier = Modifier
@@ -123,52 +120,22 @@ fun SetupBiometricUnlock(navController: NavController) {
 
             if (isFullBiometricAvailable) {
                 RoundedButton(text = stringResource(R.string.common_button_enable)) {
-                    val plainTextBytes = Tests.PSEUDO_SECRET.toByteArray(Charsets.UTF_8)
+                    Config.isUsingBiometrics = true
 
-                    val encrypted = KeyStoreManagement.encryptBiometric(plainTextBytes) ?: run {
-                        Logger.e(TAG, "failed to encrypt with biometric key")
-                        return@RoundedButton
-                    }
+                    Logger.i(TAG, "biometrics set to ${Config.isUsingBiometrics}")
 
-                    KeyStoreManagement.decryptBiometric(
-                        title = biometricUnlockText,
-                        negative = cancelText,
-                        data = encrypted,
-                        onSuccess = { decryptedBytes ->
-                            if (decryptedBytes.contentEquals(plainTextBytes)) {
-                                Logger.i(TAG, "biometric test success")
-                                Config.isUsingBiometrics = true
-                                navController.navigate(SetupAutomaticInternalBackupsRoute)
-                            } else {
-                                Logger.e(TAG, "biometric test failed")
-                            }
-                        },
-                        onError = {
-                            Logger.e(TAG, "failed to decrypt with biometric key")
-                        },
-                        onCancel = {
-                            Logger.i(TAG, "biometric unlock canceled")
-                        }
-                    )
+                    navController.navigate(SetupAutomaticInternalBackupsRoute)
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
             RoundedButtonClean(text = stringResource(R.string.common_button_continue_without)) {
-                val plainTextBytes = Tests.PSEUDO_SECRET.toByteArray(Charsets.UTF_8)
+                Config.isUsingBiometrics = false
 
-                val encrypted = KeyStoreManagement.encryptRegular(plainTextBytes)
-                val decrypted = encrypted?.let { KeyStoreManagement.decryptRegular(it) }
+                Logger.i(TAG, "biometrics set to ${Config.isUsingBiometrics}")
 
-                if (decrypted != null && decrypted.contentEquals(plainTextBytes)) {
-                    Logger.i(TAG, "regular key test success")
-
-                    Config.isUsingBiometrics = false
-                    navController.navigate(SetupAutomaticInternalBackupsRoute)
-                } else {
-                    Logger.e(TAG, "regular key test failed")
-                }
+                navController.navigate(SetupAutomaticInternalBackupsRoute)
             }
         }
     }

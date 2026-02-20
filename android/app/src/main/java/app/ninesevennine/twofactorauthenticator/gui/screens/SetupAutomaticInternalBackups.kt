@@ -45,14 +45,13 @@ import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.RustInterface
 import app.ninesevennine.twofactorauthenticator.features.Config
-import app.ninesevennine.twofactorauthenticator.features.KeyStoreManagement
 import app.ninesevennine.twofactorauthenticator.features.Theme
-import app.ninesevennine.twofactorauthenticator.features.start2faAndroidMigration
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
+import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.Pass
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -61,6 +60,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 object SetupAutomaticInternalBackupsRoute
+
+private const val TAG = "SetupAutomaticInternalBackups"
 
 @Composable
 fun SetupAutomaticInternalBackups(navController: NavController) {
@@ -228,14 +229,13 @@ fun SetupAutomaticInternalBackups(navController: NavController) {
                             RustInterface().setAutomaticInternalBackupsPass(pass)
 
                             Config.isUsingAutomaticInternalBackups = true
-                            Config.hasCompletedSetup = true
-                            KeyStoreManagement.saveSecret(RustInterface().getSecret())
+
+                            Logger.i(TAG, "automatic internal backups set to ${Config.isUsingAutomaticInternalBackups}")
+
                             Config.save(context)
 
-                            start2faAndroidMigration(context)
-
                             withContext(Dispatchers.Main) {
-                                navController.navigate(MainRoute) {
+                                navController.navigate(GreetingRoute) {
                                     popUpTo(0) { inclusive = true }
                                 }
                             }
@@ -246,13 +246,12 @@ fun SetupAutomaticInternalBackups(navController: NavController) {
                         if (isLoading) return@RoundedButtonClean
 
                         Config.isUsingAutomaticInternalBackups = false
-                        Config.hasCompletedSetup = true
-                        KeyStoreManagement.saveSecret(RustInterface().getSecret())
+
+                        Logger.i(TAG, "automatic internal backups set to ${Config.isUsingAutomaticInternalBackups}")
+
                         Config.save(context)
 
-                        start2faAndroidMigration(context)
-
-                        navController.navigate(MainRoute) {
+                        navController.navigate(GreetingRoute) {
                             popUpTo(0) { inclusive = true }
                         }
                     }

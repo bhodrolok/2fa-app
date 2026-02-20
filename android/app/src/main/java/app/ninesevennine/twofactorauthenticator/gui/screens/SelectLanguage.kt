@@ -41,10 +41,13 @@ import app.ninesevennine.twofactorauthenticator.features.LocaleOption
 import app.ninesevennine.twofactorauthenticator.gui.elements.LeftButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedRadioButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedRefreshButton
+import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.serialization.Serializable
 
 @Serializable
 object SelectLanguageRoute
+
+private const val TAG = "SelectLanguage"
 
 @Composable
 fun SelectLanguage(navController: NavController) {
@@ -79,6 +82,8 @@ fun SelectLanguage(navController: NavController) {
                     text = LocaleOption.ENGLISH.displayName,
                     enabled = Locale.currentEffectiveLocale(context) == LocaleOption.ENGLISH
                 ) {
+                    Logger.i(TAG, "language set to english")
+
                     Locale.set(context, LocaleOption.ENGLISH)
                     Config.save(context)
                 }
@@ -90,6 +95,8 @@ fun SelectLanguage(navController: NavController) {
                     text = LocaleOption.SPANISH.displayName,
                     enabled = Locale.currentEffectiveLocale(context) == LocaleOption.SPANISH
                 ) {
+                    Logger.i(TAG, "language set to spanish")
+
                     Locale.set(context, LocaleOption.SPANISH)
                     Config.save(context)
                 }
@@ -101,6 +108,8 @@ fun SelectLanguage(navController: NavController) {
                     text = LocaleOption.RUSSIAN.displayName,
                     enabled = Locale.currentEffectiveLocale(context) == LocaleOption.RUSSIAN
                 ) {
+                    Logger.i(TAG, "language set to russian")
+
                     Locale.set(context, LocaleOption.RUSSIAN)
                     Config.save(context)
                 }
@@ -124,6 +133,8 @@ fun SelectLanguage(navController: NavController) {
                     )
                 ) {
                     RoundedRefreshButton(stringResource(R.string.common_use_system_default)) {
+                        Logger.i(TAG, "language set to system")
+
                         Locale.set(context, LocaleOption.SYSTEM)
                         Config.save(context)
                     }

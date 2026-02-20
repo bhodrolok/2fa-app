@@ -1,5 +1,8 @@
 package app.ninesevennine.twofactorauthenticator.gui.screens
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,12 +37,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
+import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
-import app.ninesevennine.twofactorauthenticator.features.KeyStoreManagement
+import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
+import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -47,10 +54,30 @@ import kotlinx.serialization.Serializable
 @Serializable
 object SetupGetStartedRoute
 
+private const val TAG = "SetupGetStarted"
+
 @Composable
 fun SetupGetStarted(navController: NavController) {
+    val context = LocalContext.current
+
     var isLoading by remember { mutableStateOf(false) }
+    var hasError by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+
+    val internalAppLogLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("text/plain"),
+    ) { uri: Uri? ->
+        if (uri != null) {
+            try {
+                val logContent = Logger.getFullLog()
+                context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                    outputStream.write(logContent.toByteArray())
+                }
+            } catch (e: Exception) {
+                Logger.e(TAG, "error saving log file ${e.message}")
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -109,25 +136,26 @@ fun SetupGetStarted(navController: NavController) {
                 isLoading = true
 
                 scope.launch(Dispatchers.IO) {
+                    AccountManagement.deleteAccountsUsingSeed(context)
+
+                    Config.internalIsUsingKeyStoreAES = true
                     Config.hasCompletedSetup = false
 
-                    KeyStoreManagement.deleteRegularKey()
-                    KeyStoreManagement.deleteBiometricKey()
+                    Config.save(context)
 
-                    if (!KeyStoreManagement.generateRegularKey(strongBoxBacked = true)) {
-                        KeyStoreManagement.generateRegularKey(strongBoxBacked = false)
-                    }
+                    KeyStoreAES.deleteKey(isBiometricKey = false)
+                    KeyStoreAES.deleteKey(isBiometricKey = true)
 
-                    if (!KeyStoreManagement.loadRegularKey()) {
+                    KeyStoreAES.generateKey(isBiometricKey = false)
+                    if (!KeyStoreAES.loadKey(isBiometricKey = false)) {
+                        hasError = true
                         return@launch
                     }
 
-                    if (KeyStoreManagement.isBiometricAvailable()) {
-                        if (!KeyStoreManagement.generateBiometricKey(strongBoxBacked = true)) {
-                            KeyStoreManagement.generateBiometricKey(strongBoxBacked = false)
-                        }
-
-                        if (!KeyStoreManagement.loadBiometricKey()) {
+                    if (KeyStoreAES.isBiometricAvailable()) {
+                        KeyStoreAES.generateKey(isBiometricKey = true)
+                        if (!KeyStoreAES.loadKey(isBiometricKey = true)) {
+                            hasError = true
                             return@launch
                         }
                     }
@@ -137,6 +165,16 @@ fun SetupGetStarted(navController: NavController) {
                     }
                 }
             }
+
+            if (hasError) {
+                Spacer(modifier = Modifier.height(12.dp))
+
+                RoundedButtonClean(stringResource(R.string.common_download_app_log)) {
+                    Logger.i(TAG, "downloading app log")
+                    internalAppLogLauncher.launch("app.log")
+                }
+            }
+
         }
     }
 }

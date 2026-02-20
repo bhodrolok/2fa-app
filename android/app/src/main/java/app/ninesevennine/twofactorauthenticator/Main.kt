@@ -16,7 +16,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import app.ninesevennine.twofactorauthenticator.features.Config
-import app.ninesevennine.twofactorauthenticator.features.KeyStoreManagement
+import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
+import app.ninesevennine.twofactorauthenticator.features.KeyStoreRSA
 import app.ninesevennine.twofactorauthenticator.features.Signals
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
@@ -76,7 +77,8 @@ class Main : FragmentActivity() {
         val sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         ShimmerEffect.set(sensorManager)
 
-        KeyStoreManagement.setActivity(this)
+        KeyStoreAES.setActivity(this)
+        KeyStoreRSA.setActivity(this)
 
         handleIntents(intent)
 

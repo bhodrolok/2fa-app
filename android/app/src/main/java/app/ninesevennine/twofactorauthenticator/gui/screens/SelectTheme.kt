@@ -45,10 +45,13 @@ import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect
 import app.ninesevennine.twofactorauthenticator.gui.elements.LeftButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedRadioButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedRefreshButton
+import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.serialization.Serializable
 
 @Serializable
 object SelectThemeRoute
+
+private const val TAG = "SelectTheme"
 
 @Composable
 fun SelectTheme(navController: NavController) {
@@ -84,6 +87,8 @@ fun SelectTheme(navController: NavController) {
                     text = stringResource(R.string.theme_light),
                     enabled = Theme.currentOption(context) == ThemeOption.LIGHT
                 ) {
+                    Logger.i(TAG, "theme set to light")
+
                     Theme.set(context, ThemeOption.LIGHT)
                     Config.save(context)
                 }
@@ -96,6 +101,8 @@ fun SelectTheme(navController: NavController) {
                     text = stringResource(R.string.theme_dark),
                     enabled = Theme.currentOption(context) == ThemeOption.DARK
                 ) {
+                    Logger.i(TAG, "theme set to dark")
+
                     Theme.set(context, ThemeOption.DARK)
                     Config.save(context)
                 }
@@ -108,6 +115,8 @@ fun SelectTheme(navController: NavController) {
                     text = stringResource(R.string.theme_pitch_black),
                     enabled = Theme.currentOption(context) == ThemeOption.PITCH_BLACK
                 ) {
+                    Logger.i(TAG, "theme set to pitch black")
+
                     Theme.set(context, ThemeOption.PITCH_BLACK)
                     ShimmerEffect.register()
                     Config.save(context)
@@ -132,6 +141,8 @@ fun SelectTheme(navController: NavController) {
                     )
                 ) {
                     RoundedRefreshButton(stringResource(R.string.common_use_system_default)) {
+                        Logger.i(TAG, "theme set to system")
+
                         Theme.set(context, ThemeOption.SYSTEM)
                         Config.save(context)
                     }

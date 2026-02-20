@@ -73,7 +73,7 @@
     <string name="settings_security">Security</string>
     <string name="settings_security_biometric_unlock">Biometric unlock</string>
     <string name="settings_security_block_intents_primary">Block intents</string>
-    <string name="settings_security_block_intents_secondary">Ignores actions triggered by other apps</string>
+    <string name="settings_security_block_intents_secondary">Ignore actions invoked by external apps</string>
     <string name="settings_security_block_screenshots_and_recordings">Block screenshots and recordings</string>
     <string name="settings_security_screen_security">Screen security</string>
     <string name="settings_support">Support</string>

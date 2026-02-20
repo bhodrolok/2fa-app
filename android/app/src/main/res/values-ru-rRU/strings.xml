@@ -73,7 +73,7 @@
     <string name="settings_security">Безопасность</string>
     <string name="settings_security_biometric_unlock">Биометрическая разблокировка</string>
     <string name="settings_security_block_intents_primary">Блокировать интенты</string>
-    <string name="settings_security_block_intents_secondary">Игнорирует действия, запускаемые другими приложениями</string>
+    <string name="settings_security_block_intents_secondary">Игнорировать действия, вызванные внешними приложениями</string>
     <string name="settings_security_block_screenshots_and_recordings">Блокировать скриншоты и записи</string>
     <string name="settings_security_screen_security">Безопасность экрана</string>
     <string name="settings_support">Поддержка</string>

@@ -73,7 +73,7 @@
     <string name="settings_security">Seguridad</string>
     <string name="settings_security_biometric_unlock">Desbloqueo biométrico</string>
     <string name="settings_security_block_intents_primary">Bloquear intents</string>
-    <string name="settings_security_block_intents_secondary">Ignora acciones activadas por otras aplicaciones</string>
+    <string name="settings_security_block_intents_secondary">Ignorar acciones invocadas por aplicaciones externas</string>
     <string name="settings_security_block_screenshots_and_recordings">Bloquear capturas de pantalla y grabaciones</string>
     <string name="settings_security_screen_security">Pantalla protegida</string>
     <string name="settings_support">Soporte</string>

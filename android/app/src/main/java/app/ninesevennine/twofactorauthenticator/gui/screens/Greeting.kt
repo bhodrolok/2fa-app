@@ -39,8 +39,10 @@ import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.RustInterface
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
-import app.ninesevennine.twofactorauthenticator.features.KeyStoreManagement
+import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
+import app.ninesevennine.twofactorauthenticator.features.KeyStoreRSA
 import app.ninesevennine.twofactorauthenticator.features.Theme
+import app.ninesevennine.twofactorauthenticator.features.start2faAndroidMigration
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
@@ -52,6 +54,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 object GreetingRoute
+
+private const val TAG = "Greeting"
 
 @Composable
 fun Greeting(navController: NavController) {
@@ -82,44 +86,116 @@ fun Greeting(navController: NavController) {
     val cancelText = stringResource(R.string.common_cancel)
 
     LaunchedEffect(Unit) {
-        if (Config.isUsingBiometrics) {
-            if (!KeyStoreManagement.loadBiometricKey()) {
-                unableToLoadDecryptionKeys = true
-                return@LaunchedEffect
-            }
-        } else {
-            if (!KeyStoreManagement.loadRegularKey()) {
-                unableToLoadDecryptionKeys = true
-                return@LaunchedEffect
-            }
-        }
-
-        KeyStoreManagement.loadSecret(
-            title = biometricUnlockText,
-            negative = cancelText,
-            onSuccess = { secret ->
-                scope.launch(Dispatchers.IO) {
-                    RustInterface().setSecret(secret)
-
-                    if (!AccountManagement.loadAccountsUsingSeed(context)) {
-                        hasError = true
-                        return@launch
+        if (Config.hasCompletedSetup) {
+            if (Config.internalIsUsingKeyStoreAES) {
+                if (Config.isUsingBiometrics) {
+                    if (!KeyStoreAES.loadKey(true)) {
+                        unableToLoadDecryptionKeys = true
+                        return@LaunchedEffect
                     }
-
-                    withContext(Dispatchers.Main) {
-                        navController.navigate(MainRoute) {
-                            popUpTo(0) { inclusive = true }
-                        }
+                } else {
+                    if (!KeyStoreAES.loadKey(false)) {
+                        unableToLoadDecryptionKeys = true
+                        return@LaunchedEffect
                     }
                 }
-            },
-            onError = {
-                hasError = true
-            },
-            onCancel = {
-                promptCanceled = true
+
+                KeyStoreAES.loadSecret(
+                    title = biometricUnlockText,
+                    negative = cancelText,
+                    onSuccess = { secret ->
+                        scope.launch(Dispatchers.IO) {
+                            RustInterface().setSecret(secret)
+
+                            if (!AccountManagement.loadAccountsUsingSeed(context)) {
+                                hasError = true
+                                return@launch
+                            }
+
+                            withContext(Dispatchers.Main) {
+                                navController.navigate(MainRoute) {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            }
+                        }
+                    },
+                    onError = {
+                        unableToLoadDecryptionKeys = true
+                    },
+                    onCancel = {
+                        Logger.i(TAG, "biometric prompt canceled")
+                        promptCanceled = true
+                    }
+                )
+            } else {
+                if (Config.isUsingBiometrics) {
+                    if (!KeyStoreRSA.loadBiometricKey()) {
+                        unableToLoadDecryptionKeys = true
+                        return@LaunchedEffect
+                    }
+                } else {
+                    if (!KeyStoreRSA.loadRegularKey()) {
+                        unableToLoadDecryptionKeys = true
+                        return@LaunchedEffect
+                    }
+                }
+
+                KeyStoreRSA.loadSecret(
+                    title = biometricUnlockText,
+                    negative = cancelText,
+                    onSuccess = { secret ->
+                        scope.launch(Dispatchers.IO) {
+                            RustInterface().setSecret(secret)
+
+                            if (!AccountManagement.loadAccountsUsingSeed(context)) {
+                                hasError = true
+                                return@launch
+                            }
+
+                            withContext(Dispatchers.Main) {
+                                navController.navigate(MainRoute) {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            }
+                        }
+                    },
+                    onError = {
+                        hasError = true
+                    },
+                    onCancel = {
+                        Logger.i(TAG, "biometric prompt canceled")
+                        promptCanceled = true
+                    }
+                )
             }
-        )
+        } else {
+            KeyStoreAES.saveSecret(
+                title = biometricUnlockText,
+                negative = cancelText,
+                secret = RustInterface().getSecret(),
+                onSuccess = {
+                    scope.launch(Dispatchers.IO) {
+                        Config.hasCompletedSetup = true
+                        Config.save(context)
+
+                        start2faAndroidMigration(context)
+
+                        withContext(Dispatchers.Main) {
+                            navController.navigate(MainRoute) {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        }
+                    }
+                },
+                onError = {
+                    hasError = true
+                },
+                onCancel = {
+                    Logger.i(TAG, "biometric prompt canceled")
+                    promptCanceled = true
+                }
+            )
+        }
     }
 
     Box(
@@ -232,11 +308,6 @@ fun Greeting(navController: NavController) {
                         return@RoundedButton
                     }
 
-                    AccountManagement.deleteAccountsUsingSeed(context)
-
-                    Config.hasCompletedSetup = false
-                    Config.save(context)
-
                     navController.navigate(SetupGetStartedRoute) {
                         popUpTo(0) { inclusive = true }
                     }
@@ -245,7 +316,7 @@ fun Greeting(navController: NavController) {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 RoundedButtonClean(stringResource(R.string.common_download_app_log)) {
-                    Logger.i("Greeting", "downloading app log")
+                    Logger.i(TAG, "downloading app log")
                     internalAppLogLauncher.launch("app.log")
                 }
             }

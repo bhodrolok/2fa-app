@@ -16,8 +16,8 @@ import javax.crypto.Cipher
 import javax.crypto.spec.OAEPParameterSpec
 import javax.crypto.spec.PSource
 
-object KeyStoreManagement {
-    private const val TAG = "KeyStoreManagement"
+object KeyStoreRSA {
+    private const val TAG = "KeyStoreRSA"
     private const val ANDROID_KEYSTORE = "AndroidKeyStore"
     private const val RSA_TRANSFORMATION = "RSA/ECB/OAEPPadding"
 
@@ -66,7 +66,7 @@ object KeyStoreManagement {
         alias: String,
         keySize: Int,
         isBiometricKey: Boolean,
-        strongBoxBacked: Boolean
+        isStrongBoxBacked: Boolean
     ) {
         val keyPairGenerator = KeyPairGenerator.getInstance(
             KeyProperties.KEY_ALGORITHM_RSA,
@@ -88,7 +88,8 @@ object KeyStoreManagement {
 
             // invalidates key if biometrics change.
             .setInvalidatedByBiometricEnrollment(isBiometricKey)
-            .setIsStrongBoxBacked(strongBoxBacked)
+
+            .setIsStrongBoxBacked(isStrongBoxBacked)
             .apply {
                 if (isBiometricKey) {
                     setUserAuthenticationParameters(
@@ -103,8 +104,8 @@ object KeyStoreManagement {
         keyPairGenerator.generateKeyPair()
     }
 
-    fun generateRegularKey(strongBoxBacked: Boolean): Boolean{
-        val issuer = if (strongBoxBacked) "secure element" else "trusted execution environment"
+    fun generateRegularKey(isStrongBoxBacked: Boolean): Boolean{
+        val issuer = if (isStrongBoxBacked) "secure element" else "trusted execution environment"
 
         for (keySize in supportedRsaKeySizes) {
             runCatching {
@@ -112,7 +113,7 @@ object KeyStoreManagement {
                     alias = REGULAR_KEY_ALIAS,
                     keySize = keySize,
                     isBiometricKey = false,
-                    strongBoxBacked
+                    isStrongBoxBacked
                 )
             }.onSuccess {
                 Logger.i(TAG, "$issuer generated a $keySize bit rsa key pair ($REGULAR_KEY_ALIAS)")
@@ -124,8 +125,8 @@ object KeyStoreManagement {
         return false
     }
 
-    fun generateBiometricKey(strongBoxBacked: Boolean): Boolean {
-        val issuer = if (strongBoxBacked) "secure element" else "trusted execution environment"
+    fun generateBiometricKey(isStrongBoxBacked: Boolean): Boolean {
+        val issuer = if (isStrongBoxBacked) "secure element" else "trusted execution environment"
 
         for (keySize in supportedRsaKeySizes) {
             runCatching {
@@ -133,7 +134,7 @@ object KeyStoreManagement {
                     alias = BIOMETRIC_KEY_ALIAS,
                     keySize = keySize,
                     isBiometricKey = true,
-                    strongBoxBacked
+                    isStrongBoxBacked
                 )
             }.onSuccess {
                 Logger.i(TAG, "$issuer generated a $keySize bit rsa key pair ($BIOMETRIC_KEY_ALIAS)")
