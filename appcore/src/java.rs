@@ -91,6 +91,20 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_isSecretInitialized(
+    _env: JNIEnv,
+    _class: JClass,
+) -> jboolean {
+    let client = CLIENT.lock().unwrap();
+
+    if client.get_secret().iter().any(|&b| b != 0) {
+        1
+    } else {
+        0
+    }
+}
+
+#[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setEditAccountEmpty(
     _env: JNIEnv,
     _class: JClass,

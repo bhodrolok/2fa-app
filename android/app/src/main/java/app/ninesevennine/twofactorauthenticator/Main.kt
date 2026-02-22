@@ -1,5 +1,6 @@
 package app.ninesevennine.twofactorauthenticator
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.hardware.SensorManager
 import android.os.Bundle
@@ -9,9 +10,11 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -85,6 +88,15 @@ class Main : FragmentActivity() {
         setContent {
             val navController = rememberNavController()
 
+            LaunchedEffect(Signals.processDeath) {
+                @SuppressLint("RestrictedApi")
+                if (Signals.processDeath > 0 && navController.currentBackStackEntry?.destination?.hasRoute<GreetingRoute>() != true) {
+                    navController.navigate(GreetingRoute) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            }
+
             UseIncognitoKeyboard {
                 NavHost(
                     navController = navController,
@@ -125,6 +137,10 @@ class Main : FragmentActivity() {
 
         if (Theme.themeOption == ThemeOption.PITCH_BLACK) {
             ShimmerEffect.register()
+        }
+
+        if (Config.hasCompletedSetup && !RustInterface().isSecretInitialized()) {
+            Signals.processDeath++
         }
     }
 

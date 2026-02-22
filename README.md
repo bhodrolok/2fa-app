@@ -31,7 +31,6 @@ Key features:
 - Security:
     - Biometric unlock
     - Block intents
-    - Full use of the device Secure Element
 
 - Account management:
     - Automatic internal backups
@@ -61,7 +60,7 @@ All releases are signed with the followig certificate fingerprints:
 
 If you have any problems using **2fa**, you found a bug or just have a question, do not hesitate to reach us on:
 
-- Teamspeak Group Chat `#979:chat-9.tmspk.net` (preferred)
+- Teamspeak Group Chat `#979:chat-9.tmspk.net`
 - [Discord](https://discord.gg/zxgXNzhYJu)
 - [Bluesky](https://bsky.app/profile/979.st)
 

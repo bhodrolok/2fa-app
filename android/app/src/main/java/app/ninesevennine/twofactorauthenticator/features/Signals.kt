@@ -5,5 +5,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 
 object Signals {
+    var processDeath by mutableIntStateOf(0)
     var intent by mutableIntStateOf(0)
 }

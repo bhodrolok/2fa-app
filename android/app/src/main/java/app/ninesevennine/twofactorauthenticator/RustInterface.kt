@@ -9,6 +9,7 @@ class RustInterface {
     external fun setAutomaticInternalBackupsPass(pass: String)
     external fun getSecret(): ByteArray
     external fun setSecret(secretArray: ByteArray)
+    external fun isSecretInitialized(): Boolean
 
     external fun setEditAccountEmpty()
     external fun setEditAccountNone()

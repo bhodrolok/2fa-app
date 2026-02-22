@@ -225,7 +225,7 @@ fun EditColorPicker(
                 ) {
                     val insetPx = hueInset.toPx()
                     val innerSize = Size(size.width, size.height - 2 * insetPx)
-                    val rectCorner = CornerRadius(4.dp.toPx())
+                    val rectCorner = CornerRadius(8.dp.toPx())
 
                     drawRoundRect(
                         brush = Brush.verticalGradient(
