@@ -139,7 +139,7 @@ class Main : FragmentActivity() {
             ShimmerEffect.register()
         }
 
-        if (Config.hasCompletedSetup && !RustInterface().isSecretInitialized()) {
+        if (Config.hasCompletedSetup && RustInterface().isSecretEmpty()) {
             Signals.processDeath++
         }
     }

@@ -6,7 +6,7 @@ use crate::{
 use jni::{
     JNIEnv,
     objects::{JByteArray, JClass, JIntArray, JObject, JString},
-    sys::{jboolean, jbyteArray, jint, jlong, jobject, jobjectArray, jstring},
+    sys::{JNI_FALSE, JNI_TRUE, jboolean, jbyteArray, jint, jlong, jobject, jobjectArray, jstring},
 };
 
 #[unsafe(no_mangle)]
@@ -91,16 +91,16 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_isSecretInitialized(
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_isSecretEmpty(
     _env: JNIEnv,
     _class: JClass,
 ) -> jboolean {
     let client = CLIENT.lock().unwrap();
 
-    if client.get_secret().iter().any(|&b| b != 0) {
-        1
+    if client.get_secret().iter().all(|&b| b == 0) {
+        JNI_TRUE
     } else {
-        0
+        JNI_FALSE
     }
 }
 
@@ -133,9 +133,9 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     let mut client = crate::CLIENT.lock().unwrap();
 
     if client.set_edit_account_from_otpauth(&url) {
-        1
+        JNI_TRUE
     } else {
-        0
+        JNI_FALSE
     }
 }
 
@@ -213,7 +213,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
     let secret_vec = match data_encoding::BASE32_NOPAD.decode(secret_base32_nopad.as_bytes()) {
         Ok(v) => v,
-        Err(_) => return 0,
+        Err(_) => return JNI_FALSE,
     };
 
     let mut client = CLIENT.lock().unwrap();
@@ -222,7 +222,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         account.secret = secret_vec;
     }
 
-    1
+    JNI_TRUE
 }
 
 #[unsafe(no_mangle)]
@@ -332,7 +332,11 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 ) -> jboolean {
     let client = crate::CLIENT.lock().unwrap();
 
-    if client.edit.is_some() { 1 } else { 0 }
+    if client.edit.is_some() {
+        JNI_TRUE
+    } else {
+        JNI_FALSE
+    }
 }
 
 #[unsafe(no_mangle)]
@@ -588,9 +592,9 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     let mut client = CLIENT.lock().unwrap();
 
     if client.import_accounts_using_seed(&data) {
-        1
+        JNI_TRUE
     } else {
-        0
+        JNI_FALSE
     }
 }
 
@@ -607,9 +611,9 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     let mut client = CLIENT.lock().unwrap();
 
     if client.import_accounts(&pass, &data) {
-        1
+        JNI_TRUE
     } else {
-        0
+        JNI_FALSE
     }
 }
 
@@ -624,9 +628,9 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     let mut client = CLIENT.lock().unwrap();
 
     if client.import_accounts_db_001(&data) {
-        1
+        JNI_TRUE
     } else {
-        0
+        JNI_FALSE
     }
 }
 
@@ -643,8 +647,8 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     let mut client = CLIENT.lock().unwrap();
 
     if client.import_accounts_aegis(&pass, &data) {
-        1
+        JNI_TRUE
     } else {
-        0
+        JNI_FALSE
     }
 }
