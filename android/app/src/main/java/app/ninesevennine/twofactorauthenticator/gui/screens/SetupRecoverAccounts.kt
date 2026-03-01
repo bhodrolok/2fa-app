@@ -174,6 +174,8 @@ fun SetupRecoverAccounts(navController: NavController) {
 
                         Config.isUsingAutomaticInternalBackups = true
 
+                        Logger.i(TAG, "automatic internal backups set to ${Config.isUsingAutomaticInternalBackups}")
+
                         Config.save(context)
 
                         withContext(Dispatchers.Main) {
