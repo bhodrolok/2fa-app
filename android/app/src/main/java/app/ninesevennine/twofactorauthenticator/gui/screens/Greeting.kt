@@ -35,8 +35,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.RustInterface
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
@@ -105,7 +105,7 @@ fun Greeting(navController: NavController) {
                     negative = cancelText,
                     onSuccess = { secret ->
                         scope.launch(Dispatchers.IO) {
-                            RustInterface().setSecret(secret)
+                            Entry.rustInterface.setSecret(secret)
 
                             if (!AccountManagement.loadAccountsUsingSeed(context)) {
                                 hasError = true
@@ -145,7 +145,7 @@ fun Greeting(navController: NavController) {
                     negative = cancelText,
                     onSuccess = { secret ->
                         scope.launch(Dispatchers.IO) {
-                            RustInterface().setSecret(secret)
+                            Entry.rustInterface.setSecret(secret)
 
                             if (!AccountManagement.loadAccountsUsingSeed(context)) {
                                 hasError = true
@@ -172,7 +172,7 @@ fun Greeting(navController: NavController) {
             KeyStoreAES.saveSecret(
                 title = biometricUnlockText,
                 negative = cancelText,
-                secret = RustInterface().getSecret(),
+                secret = Entry.rustInterface.getSecret(),
                 onSuccess = {
                     scope.launch(Dispatchers.IO) {
                         Config.hasCompletedSetup = true

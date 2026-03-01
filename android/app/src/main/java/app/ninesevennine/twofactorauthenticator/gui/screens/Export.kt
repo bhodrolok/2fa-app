@@ -34,9 +34,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.RustInterface
-import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
@@ -210,7 +209,7 @@ fun Export(navController: NavController) {
                     scope.launch(Dispatchers.IO) {
                         Logger.i(TAG, "exporting accounts")
 
-                        val data = RustInterface().exportAccounts(pass)
+                        val data = Entry.rustInterface.exportAccounts(pass)
 
                         withContext(Dispatchers.Main) {
                             pendingExportData = data

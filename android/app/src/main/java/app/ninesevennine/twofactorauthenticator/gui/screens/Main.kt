@@ -78,8 +78,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.RustInterface
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Signals
@@ -104,7 +104,7 @@ object MainRoute
 @Composable
 fun Main(navController: NavController) {
     LaunchedEffect(Signals.intent) {
-        if (RustInterface().isEditAccountSome()) {
+        if (Entry.rustInterface.isEditAccountSome()) {
             navController.navigate(EditRoute)
         }
     }
@@ -115,7 +115,7 @@ fun Main(navController: NavController) {
     var query by remember { mutableStateOf("") }
 
     val accounts = remember(query) {
-        mutableStateListOf(*RustInterface().getAccountsTruncatedFiltered(query))
+        mutableStateListOf(*Entry.rustInterface.getAccountsTruncatedFiltered(query))
     }
 
     val configuration = LocalConfiguration.current
@@ -130,7 +130,7 @@ fun Main(navController: NavController) {
     val reorderableLazyGridState = rememberReorderableLazyGridState(lazyGridState) { from, to ->
         if (query.isEmpty()) {
             accounts.add(to.index, accounts.removeAt(from.index))
-            RustInterface().reorderAccount(from.index, to.index)
+            Entry.rustInterface.reorderAccount(from.index, to.index)
         }
     }
 
@@ -286,7 +286,7 @@ fun Main(navController: NavController) {
                 navController.navigate(AddCodeRoute)
             },
             onAddLong = {
-                RustInterface().setEditAccountEmpty()
+                Entry.rustInterface.setEditAccountEmpty()
                 navController.navigate(EditRoute)
             }
         )
@@ -304,7 +304,7 @@ fun Main(navController: NavController) {
                 navController.navigate(AddCodeRoute)
             },
             onAddLong = {
-                RustInterface().setEditAccountEmpty()
+                Entry.rustInterface.setEditAccountEmpty()
                 navController.navigate(EditRoute)
             }
         )

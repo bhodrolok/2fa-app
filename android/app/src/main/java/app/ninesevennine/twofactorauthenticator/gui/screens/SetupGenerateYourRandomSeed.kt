@@ -42,8 +42,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.RustInterface
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
@@ -212,7 +212,7 @@ fun SetupGenerateYourRandomSeed(navController: NavController) {
                     }
 
                     scope.launch(Dispatchers.IO) {
-                        RustInterface().generateClientSeedWithEntropy(entropyArray)
+                        Entry.rustInterface.generateClientSeedWithEntropy(entropyArray)
 
                         withContext(Dispatchers.Main) {
                             navController.navigate(SetupBiometricUnlockRoute)

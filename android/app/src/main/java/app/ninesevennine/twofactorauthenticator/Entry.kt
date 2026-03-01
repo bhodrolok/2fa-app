@@ -8,6 +8,12 @@ import app.ninesevennine.twofactorauthenticator.utils.PrivateApi
 private const val TAG = "Entry"
 
 class Entry : Application() {
+    companion object {
+        lateinit var rustInterface: RustInterface
+            private set
+    }
+
+
     override fun onCreate() {
         super.onCreate()
 
@@ -20,6 +26,7 @@ class Entry : Application() {
         runCatching {
             System.loadLibrary(RustInterface.LIBRARY_NAME)
         }.onSuccess {
+            rustInterface = RustInterface()
             Logger.i(TAG, "${RustInterface.LIBRARY_NAME} loaded")
         }.onFailure { e ->
             Logger.e(TAG, "failed to load ${RustInterface.LIBRARY_NAME}", e)

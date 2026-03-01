@@ -35,8 +35,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.RustInterface
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreRSA
@@ -159,7 +159,7 @@ fun BiometricUnlock(navController: NavController) {
                                 KeyStoreAES.saveSecret(
                                     title = biometricUnlockText,
                                     negative = cancelText,
-                                    secret = RustInterface().getSecret(),
+                                    secret = Entry.rustInterface.getSecret(),
                                     onSuccess = {
                                         Logger.i(TAG, "biometrics set to ${Config.isUsingBiometrics}")
 
@@ -204,7 +204,7 @@ fun BiometricUnlock(navController: NavController) {
                                 KeyStoreAES.saveSecret(
                                     title = biometricUnlockText,
                                     negative = cancelText,
-                                    secret = RustInterface().getSecret(),
+                                    secret = Entry.rustInterface.getSecret(),
                                     onSuccess = {
                                         Logger.i(TAG, "biometrics set to ${Config.isUsingBiometrics}")
 

@@ -60,11 +60,11 @@ All releases are signed with the followig certificate fingerprints:
 
 If you have any problems using **2fa**, you found a bug or just have a question, do not hesitate to reach us on:
 
-- Teamspeak Group Chat `#979:chat-9.tmspk.net`
+- [TeamSpeak 6](https://tmspk.gg/u1MgFhv9)
 - [Discord](https://discord.gg/zxgXNzhYJu)
 - [Bluesky](https://bsky.app/profile/979.st)
 
-If you would like to support and accelerate our work, please consider donating [here](https://979.st/en/donate/).
+If you would like to support and accelerate our work, please consider donating [here](https://979.st/donate/).
 
 ## License
 

@@ -1,7 +1,7 @@
 package app.ninesevennine.twofactorauthenticator.features
 
 import android.content.Context
-import app.ninesevennine.twofactorauthenticator.RustInterface
+import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import java.io.File
 import java.io.FileInputStream
@@ -30,8 +30,7 @@ object AccountManagement {
 
     fun saveAccountsUsingSeed(context: Context) {
         return try {
-            val rust = RustInterface()
-            val accountsData = rust.exportAccountsUsingSeed()
+            val accountsData = Entry.rustInterface.exportAccountsUsingSeed()
 
             forceWrite(
                 File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_SEED_FILE),
@@ -49,7 +48,7 @@ object AccountManagement {
 
             val accountsData = forceRead(file)
 
-            RustInterface().importAccountsUsingSeed(accountsData)
+            Entry.rustInterface.importAccountsUsingSeed(accountsData)
         } catch (e: Exception) {
             Logger.e(TAG, "failed to loadAccountsUsingSeed", e)
             false
@@ -76,8 +75,7 @@ object AccountManagement {
 
     fun saveAccountsUsingAutomaticInternalBackups(context: Context) {
         return try {
-            val rust = RustInterface()
-            val accountsData = rust.exportAccountsUsingAutomaticInternalBackups()
+            val accountsData = Entry.rustInterface.exportAccountsUsingAutomaticInternalBackups()
 
             forceWrite(
                 File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_AUTOMATIC_INTERNAL_BACKUPS),
@@ -94,6 +92,7 @@ object AccountManagement {
                 context.applicationContext.noBackupFilesDir,
                 ACCOUNTS_USING_AUTOMATIC_INTERNAL_BACKUPS
             )
+
             file.exists()
         } catch (e: Exception) {
             Logger.e(TAG, "failed to check hasAccountsUsingAutomaticInternalBackups", e)

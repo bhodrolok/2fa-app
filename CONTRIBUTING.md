@@ -13,10 +13,6 @@ Before starting work, please note:
 - Commit messages should be short and descriptive. You can always add more information in the description.
 - The maintainer may request changes, please respond promptly.
 
-## Translations
-
-You can contribute to the project translations [here](https://github.com/979st/translations).
-
 ## Compiling appcore ARM64
 
 Add `appcore/.cargo/config.toml` with your Android SDK paths:

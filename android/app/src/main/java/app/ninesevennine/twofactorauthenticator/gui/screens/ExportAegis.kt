@@ -33,8 +33,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.RustInterface
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
@@ -208,7 +208,7 @@ fun ExportAegis(navController: NavController) {
                     scope.launch(Dispatchers.IO) {
                         Logger.i(TAG, "exporting accounts to aegis")
 
-                        val data = RustInterface().exportAccountsAegis(pass)
+                        val data = Entry.rustInterface.exportAccountsAegis(pass)
 
                         withContext(Dispatchers.Main) {
                             pendingExportData = data

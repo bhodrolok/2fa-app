@@ -42,8 +42,8 @@ import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.AccountTruncated
 import app.ninesevennine.twofactorauthenticator.Algorithm
 import app.ninesevennine.twofactorauthenticator.CodeType
+import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.RustInterface
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
@@ -76,7 +76,7 @@ fun Edit(navController: NavController) {
     val colors = if (Theme.currentOption(context) == ThemeOption.LIGHT) Tints.light else Tints.dark
     val isUsingPitchBlack by remember { mutableStateOf(Theme.themeOption == ThemeOption.PITCH_BLACK) }
 
-    val account = remember { RustInterface().getEditAccountWithSecretBase32NoPad()!! }
+    val account = remember { Entry.rustInterface.getEditAccountWithSecretBase32NoPad()!! }
 
     var name by remember { mutableStateOf(account.name) }
     var issuer by remember { mutableStateOf(account.issuer) }
@@ -105,7 +105,7 @@ fun Edit(navController: NavController) {
     Time.Track()
 
     BackHandler {
-        RustInterface().setEditAccountNone()
+        Entry.rustInterface.setEditAccountNone()
         navController.popBackStack(MainRoute, false)
     }
 
@@ -173,7 +173,7 @@ fun Edit(navController: NavController) {
                         stringResource(R.string.edit_account_information_name),
                         name,
                         {
-                            RustInterface().setEditAccountName(it.trim())
+                            Entry.rustInterface.setEditAccountName(it.trim())
                             name = it
                         }
                     )
@@ -181,7 +181,7 @@ fun Edit(navController: NavController) {
                         stringResource(R.string.edit_account_information_issuer),
                         issuer,
                         {
-                            RustInterface().setEditAccountIssuer(it.trim())
+                            Entry.rustInterface.setEditAccountIssuer(it.trim())
                             issuer = it
                         }
                     )
@@ -189,7 +189,7 @@ fun Edit(navController: NavController) {
                         stringResource(R.string.edit_account_information_note),
                         note,
                         {
-                            RustInterface().setEditAccountNote(it.trim())
+                            Entry.rustInterface.setEditAccountNote(it.trim())
                             note = it
                         }
                     )
@@ -205,7 +205,7 @@ fun Edit(navController: NavController) {
                             val trimmed = it.trim()
                             secretBase32NoPad = trimmed
 
-                            secretError = !RustInterface().setEditAccountSecretBase32NoPad(trimmed)
+                            secretError = !Entry.rustInterface.setEditAccountSecretBase32NoPad(trimmed)
                             if (!secretError) updateCount++
                         },
                         "Base32",
@@ -217,15 +217,15 @@ fun Edit(navController: NavController) {
                         CodeType.entries.toTypedArray(),
                         codeType,
                         {
-                            RustInterface().setEditAccountCodeType(it)
+                            Entry.rustInterface.setEditAccountCodeType(it)
                             codeType = it
 
                             if (it == CodeType.STEAM) {
                                 period = "30"
                                 digits = "5"
 
-                                RustInterface().setEditAccountPeriod(30)
-                                RustInterface().setEditAccountDigits(5)
+                                Entry.rustInterface.setEditAccountPeriod(30)
+                                Entry.rustInterface.setEditAccountDigits(5)
 
                                 periodError = false
                                 digitsError = false
@@ -242,7 +242,7 @@ fun Edit(navController: NavController) {
                             Algorithm.entries.toTypedArray(),
                             algorithm,
                             {
-                                RustInterface().setEditAccountAlgorithm(it)
+                                Entry.rustInterface.setEditAccountAlgorithm(it)
                                 algorithm = it
                                 updateCount++
                             },
@@ -259,7 +259,7 @@ fun Edit(navController: NavController) {
 
                                     counterError = !trimmed.matches(Regex("^0$|^[1-9]\\d*$"))
                                     if (!counterError) {
-                                        RustInterface().setEditAccountCounter(trimmed.toLong())
+                                        Entry.rustInterface.setEditAccountCounter(trimmed.toLong())
                                         updateCount++
                                     }
                                 },
@@ -277,7 +277,7 @@ fun Edit(navController: NavController) {
 
                                     periodError = !trimmed.matches(Regex("^[1-9]\\d+$"))
                                     if (!periodError) {
-                                        RustInterface().setEditAccountPeriod(trimmed.toLong())
+                                        Entry.rustInterface.setEditAccountPeriod(trimmed.toLong())
                                         updateCount++
                                     }
                                 },
@@ -296,7 +296,7 @@ fun Edit(navController: NavController) {
 
                                 digitsError = !trimmed.matches(Regex("^[4-9]$|^10$"))
                                 if (!digitsError) {
-                                    RustInterface().setEditAccountDigits(trimmed.toInt())
+                                    Entry.rustInterface.setEditAccountDigits(trimmed.toInt())
                                     updateCount++
                                 }
                             },
@@ -320,8 +320,8 @@ fun Edit(navController: NavController) {
                     }
 
                     scope.launch(Dispatchers.IO) {
-                        RustInterface().deleteAccount(account.id)
-                        RustInterface().setEditAccountNone()
+                        Entry.rustInterface.deleteAccount(account.id)
+                        Entry.rustInterface.setEditAccountNone()
 
                         AccountManagement.saveAccountsUsingSeed(context)
                         withContext(Dispatchers.Main) {
@@ -337,7 +337,7 @@ fun Edit(navController: NavController) {
         EditHeader(
             title = stringResource(R.string.edit),
             onCancel = {
-                RustInterface().setEditAccountNone()
+                Entry.rustInterface.setEditAccountNone()
                 navController.popBackStack(MainRoute, false)
             },
             onDone = {
@@ -360,8 +360,8 @@ fun Edit(navController: NavController) {
                 }
 
                 scope.launch(Dispatchers.IO) {
-                    RustInterface().copyEditAccountIntoAccounts()
-                    RustInterface().setEditAccountNone()
+                    Entry.rustInterface.copyEditAccountIntoAccounts()
+                    Entry.rustInterface.setEditAccountNone()
 
                     AccountManagement.saveAccountsUsingSeed(context)
 
@@ -385,7 +385,7 @@ fun Edit(navController: NavController) {
         EditColorPicker(
             initialColor = color,
             onColorChange = {
-                RustInterface().setEditAccountColor(it.toArgb())
+                Entry.rustInterface.setEditAccountColor(it.toArgb())
                 color = it
             },
             onCancel = {

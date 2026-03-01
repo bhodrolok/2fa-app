@@ -96,8 +96,9 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     _class: JClass,
 ) -> jboolean {
     let client = CLIENT.lock().unwrap();
+    let secret = client.get_secret();
 
-    if client.get_secret().iter().all(|&b| b == 0) {
+    if secret.iter().all(|&b| b == 0) {
         JNI_TRUE
     } else {
         JNI_FALSE

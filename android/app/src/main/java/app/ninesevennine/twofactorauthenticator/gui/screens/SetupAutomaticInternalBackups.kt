@@ -42,8 +42,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.RustInterface
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
@@ -226,7 +226,7 @@ fun SetupAutomaticInternalBackups(navController: NavController) {
                         isLoading = true
 
                         scope.launch(Dispatchers.IO) {
-                            RustInterface().setAutomaticInternalBackupsPass(pass)
+                            Entry.rustInterface.setAutomaticInternalBackupsPass(pass)
 
                             Config.isUsingAutomaticInternalBackups = true
 

@@ -32,8 +32,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.RustInterface
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
@@ -215,15 +215,15 @@ fun AutomaticInternalBackups(navController: NavController) {
 
                         if (Config.internalIsUsingKeyStoreAES) {
                             scope.launch(Dispatchers.IO) {
-                                val secret = RustInterface().getSecret()
+                                val secret = Entry.rustInterface.getSecret()
 
-                                RustInterface().setAutomaticInternalBackupsPass(pass)
+                                Entry.rustInterface.setAutomaticInternalBackupsPass(pass)
 
                                 withContext(Dispatchers.Main) {
                                     KeyStoreAES.saveSecret(
                                         title = biometricUnlockText,
                                         negative = cancelText,
-                                        secret = RustInterface().getSecret(),
+                                        secret = Entry.rustInterface.getSecret(),
                                         onSuccess = {
                                             AccountManagement.saveAccountsUsingAutomaticInternalBackups(context)
 
@@ -236,11 +236,11 @@ fun AutomaticInternalBackups(navController: NavController) {
                                             navController.popBackStack()
                                         },
                                         onError = {
-                                            RustInterface().setSecret(secret)
+                                            Entry.rustInterface.setSecret(secret)
                                             isLoading = false
                                         },
                                         onCancel = {
-                                            RustInterface().setSecret(secret)
+                                            Entry.rustInterface.setSecret(secret)
                                             Logger.i(TAG, "biometric prompt canceled")
                                             isLoading = false
                                         }
@@ -249,9 +249,9 @@ fun AutomaticInternalBackups(navController: NavController) {
                             }
                         } else {
                             scope.launch(Dispatchers.IO) {
-                                RustInterface().setAutomaticInternalBackupsPass(pass)
+                                Entry.rustInterface.setAutomaticInternalBackupsPass(pass)
 
-                                KeyStoreRSA.saveSecret(RustInterface().getSecret())
+                                KeyStoreRSA.saveSecret(Entry.rustInterface.getSecret())
                                 AccountManagement.saveAccountsUsingAutomaticInternalBackups(context)
 
                                 Config.isUsingAutomaticInternalBackups = true

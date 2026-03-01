@@ -1,1 +1,1 @@
-Sensitive security issues can be reported following this [guide](https://979.st/en/security/). Please use the regular issue tracker if the issue does not need to be kept private.
+Issues can be reported using the following guide [available on our website]((https://979.st/security/#report-a-bug-or-vulnerability)).

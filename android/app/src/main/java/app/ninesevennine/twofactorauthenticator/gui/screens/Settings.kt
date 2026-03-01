@@ -316,7 +316,7 @@ fun Settings(navController: NavController) {
                         primaryText = stringResource(R.string.settings_support_donate),
                         secondaryText = stringResource(R.string.settings_support_donate_message)
                     ) {
-                        val intent = Intent(Intent.ACTION_VIEW, "https://979.st/en/donate/".toUri())
+                        val intent = Intent(Intent.ACTION_VIEW, "https://979.st/donate/".toUri())
                         context.startActivity(intent)
                     }
                 }

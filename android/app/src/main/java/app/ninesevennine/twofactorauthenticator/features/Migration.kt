@@ -2,7 +2,7 @@ package app.ninesevennine.twofactorauthenticator.features
 
 import android.content.Context
 import app.ninesevennine.twofactorauthenticator.BuildConfig
-import app.ninesevennine.twofactorauthenticator.RustInterface
+import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import org.json.JSONObject
 import java.io.File
@@ -69,7 +69,7 @@ fun start2faAndroidMigration(context: Context) {
         val data = cipher.doFinal(ciphertext)
         val array = String(data, Charsets.UTF_8)
 
-        if (RustInterface().importAccountsDB001(array)) {
+        if (Entry.rustInterface.importAccountsDB001(array)) {
             Logger.i(TAG, "migration success")
 
             keyStore.deleteEntry(KEY_ALIAS)

@@ -32,8 +32,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.RustInterface
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
@@ -145,7 +145,7 @@ fun RecoverAccounts(navController: NavController) {
                             return@launch
                         }
 
-                        val result = RustInterface().importAccounts(pass, data)
+                        val result = Entry.rustInterface.importAccounts(pass, data)
 
                         if (result) {
                             AccountManagement.saveAccountsUsingSeed(context)

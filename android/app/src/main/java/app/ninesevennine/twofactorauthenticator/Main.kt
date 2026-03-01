@@ -63,9 +63,12 @@ import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGenerateYourRan
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGenerateYourRandomSeedRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStarted
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStartedRoute
+import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.ZXing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
+private const val TAG = "SetupGetStarted"
 
 class Main : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,9 +91,11 @@ class Main : FragmentActivity() {
         setContent {
             val navController = rememberNavController()
 
-            LaunchedEffect(Signals.processDeath) {
+            LaunchedEffect(Unit) {
                 @SuppressLint("RestrictedApi")
-                if (Signals.processDeath > 0 && navController.currentBackStackEntry?.destination?.hasRoute<GreetingRoute>() != true) {
+                if (Config.hasCompletedSetup && Entry.rustInterface.isSecretEmpty() && navController.currentBackStackEntry?.destination?.hasRoute<GreetingRoute>() != true) {
+                    Logger.i(TAG, "secret is empty navigating to greeting")
+
                     navController.navigate(GreetingRoute) {
                         popUpTo(0) { inclusive = true }
                     }
@@ -138,10 +143,6 @@ class Main : FragmentActivity() {
         if (Theme.themeOption == ThemeOption.PITCH_BLACK) {
             ShimmerEffect.register()
         }
-
-        if (Config.hasCompletedSetup && RustInterface().isSecretEmpty()) {
-            Signals.processDeath++
-        }
     }
 
     override fun onPause() {
@@ -166,7 +167,7 @@ class Main : FragmentActivity() {
             Intent.ACTION_VIEW -> {
                 data?.let { uri ->
                     if (uri.scheme == "otpauth") {
-                        if (RustInterface().setEditAccountFromOtpAuth(data.toString())) {
+                        if (Entry.rustInterface.setEditAccountFromOtpAuth(data.toString())) {
                             Signals.intent++
                         }
                     }
@@ -177,7 +178,7 @@ class Main : FragmentActivity() {
                     intent.getParcelableExtra(Intent.EXTRA_STREAM, android.net.Uri::class.java)?.let { uri ->
                         lifecycleScope.launch(Dispatchers.IO) {
                             val otpUrl = ZXing.decodeQRFromImage(uri, contentResolver)
-                            if (otpUrl != null && RustInterface().setEditAccountFromOtpAuth(otpUrl)) {
+                            if (otpUrl != null && Entry.rustInterface.setEditAccountFromOtpAuth(otpUrl)) {
                                 Signals.intent++
                             }
                         }

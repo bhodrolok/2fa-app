@@ -56,7 +56,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.AccountTruncated
 import app.ninesevennine.twofactorauthenticator.CodeType
-import app.ninesevennine.twofactorauthenticator.RustInterface
+import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
@@ -108,7 +108,7 @@ fun OtpTileNormal(
 
     val rawCode = remember(counter, isShowingNextCode, isCodeRevealed, updateCount) {
         if (isCodeRevealed) {
-            RustInterface().getAccountCode(account.id, counter, isShowingNextCode)
+            Entry.rustInterface.getAccountCode(account.id, counter, isShowingNextCode)
                 .ifEmpty { "?".repeat(account.digits) }
         } else {
             "•".repeat(account.digits)
@@ -164,7 +164,8 @@ fun OtpTileNormal(
                         if (codeScopeJob?.isActive == true) {
                             codeScopeJob?.cancel()
 
-                            val code = RustInterface()
+                            val code = Entry
+                                .rustInterface
                                 .getAccountCode(account.id, counter, isShowingNextCode)
                                 .ifEmpty { "?".repeat(account.digits.coerceIn(4, 10)) }
 
@@ -344,7 +345,7 @@ fun OtpTileNormal(
 
                                         counterCumulativeRotation += 360f
 
-                                        val newCounter = RustInterface().incrementAccountCounterAndGet(account.id)
+                                        val newCounter = Entry.rustInterface.incrementAccountCounterAndGet(account.id)
                                         counter = newCounter
                                         onCounterChange(newCounter)
                                     }
@@ -395,7 +396,7 @@ fun OtpTileNormal(
                                         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                         view.playSoundEffect(SoundEffectConstants.CLICK)
 
-                                        RustInterface().copyAccountIntoEditAccount(account.id)
+                                        Entry.rustInterface.copyAccountIntoEditAccount(account.id)
                                         navController.navigate(EditRoute)
                                     }
                                 ),

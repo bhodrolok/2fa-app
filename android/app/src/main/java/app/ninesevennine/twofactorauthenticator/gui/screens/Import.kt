@@ -36,8 +36,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.RustInterface
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
@@ -181,7 +181,7 @@ fun Import(navController: NavController) {
                     scope.launch(Dispatchers.IO) {
                         Logger.i(TAG, "importing accounts")
 
-                        val result = RustInterface().importAccounts(pass, importData)
+                        val result = Entry.rustInterface.importAccounts(pass, importData)
 
                         if (result) {
                             AccountManagement.saveAccountsUsingSeed(context)
