@@ -136,8 +136,14 @@ fun ImportAegis(navController: NavController) {
             ConfidentialTextBox(
                 title = stringResource(R.string.common_pass),
                 value = pass,
-                onValueChange = { if (!isLoading) pass = it },
-                error = !isPassValid
+                onValueChange = {
+                    if (!isLoading) {
+                        pass = it
+                    }
+
+                    importError = false
+                },
+                error = !isPassValid || importError
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -147,7 +153,7 @@ fun ImportAegis(navController: NavController) {
             ) {
                 AnimatedVisibility(importError) {
                     Text(
-                        text = stringResource(R.string.common_incorrect_pass_or_invalid_file),
+                        text = stringResource(R.string.common_incorrect_pass),
                         modifier = Modifier.fillMaxWidth(),
                         color = Theme.colors.error,
                         fontSize = 14.sp,

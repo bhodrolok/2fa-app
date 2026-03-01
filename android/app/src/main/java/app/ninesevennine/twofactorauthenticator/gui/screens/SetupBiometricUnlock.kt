@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
+import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
@@ -50,6 +52,8 @@ private const val TAG = "SetupBiometricUnlock"
 
 @Composable
 fun SetupBiometricUnlock(navController: NavController) {
+    val context = LocalContext.current
+
     val isFullBiometricAvailable by remember {
         mutableStateOf(
             KeyStoreAES.isBiometricAvailable() && KeyStoreAES.isBiometricKeyLoaded()
@@ -124,7 +128,11 @@ fun SetupBiometricUnlock(navController: NavController) {
 
                     Logger.i(TAG, "biometrics set to ${Config.isUsingBiometrics}")
 
-                    navController.navigate(SetupAutomaticInternalBackupsRoute)
+                    if (AccountManagement.hasAccountsUsingAutomaticInternalBackups(context)) {
+                        navController.navigate(SetupRecoverAccountsRoute)
+                    } else {
+                        navController.navigate(SetupAutomaticInternalBackupsRoute)
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -135,7 +143,11 @@ fun SetupBiometricUnlock(navController: NavController) {
 
                 Logger.i(TAG, "biometrics set to ${Config.isUsingBiometrics}")
 
-                navController.navigate(SetupAutomaticInternalBackupsRoute)
+                if (AccountManagement.hasAccountsUsingAutomaticInternalBackups(context)) {
+                    navController.navigate(SetupRecoverAccountsRoute)
+                } else {
+                    navController.navigate(SetupAutomaticInternalBackupsRoute)
+                }
             }
         }
     }

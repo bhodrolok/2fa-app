@@ -47,8 +47,6 @@ import app.ninesevennine.twofactorauthenticator.gui.screens.ImportAegisRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.ImportRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Main
 import app.ninesevennine.twofactorauthenticator.gui.screens.MainRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.RecoverAccounts
-import app.ninesevennine.twofactorauthenticator.gui.screens.RecoverAccountsRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectLanguage
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectLanguageRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectTheme
@@ -63,6 +61,8 @@ import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGenerateYourRan
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGenerateYourRandomSeedRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStarted
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStartedRoute
+import app.ninesevennine.twofactorauthenticator.gui.screens.SetupRecoverAccounts
+import app.ninesevennine.twofactorauthenticator.gui.screens.SetupRecoverAccountsRoute
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.ZXing
 import kotlinx.coroutines.Dispatchers
@@ -115,9 +115,9 @@ class Main : FragmentActivity() {
                     composable<SetupGetStartedRoute> { SetupGetStarted(navController) }
                     composable<SetupGenerateYourRandomSeedRoute> { SetupGenerateYourRandomSeed(navController) }
                     composable<SetupBiometricUnlockRoute> { SetupBiometricUnlock(navController) }
+                    composable<SetupRecoverAccountsRoute> { SetupRecoverAccounts(navController) }
                     composable<SetupAutomaticInternalBackupsRoute> { SetupAutomaticInternalBackups(navController) }
                     composable<MainRoute> { Main(navController) }
-                    composable<RecoverAccountsRoute> { RecoverAccounts(navController) }
                     composable<GreetingRoute> { Greeting(navController) }
                     composable<SettingsRoute> { Settings(navController) }
                     composable<SelectLanguageRoute> { SelectLanguage(navController) }

@@ -11,9 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SettingsBackupRestore
 import androidx.compose.material3.Icon
@@ -39,19 +42,22 @@ import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
-import app.ninesevennine.twofactorauthenticator.gui.elements.LeftButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
+import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 
 @Serializable
-object RecoverAccountsRoute
+object SetupRecoverAccountsRoute
+
+private const val TAG = "SetupRecoverAccounts"
 
 @Composable
-fun RecoverAccounts(navController: NavController) {
+fun SetupRecoverAccounts(navController: NavController) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -59,23 +65,26 @@ fun RecoverAccounts(navController: NavController) {
     var isLoading by remember { mutableStateOf(false) }
     var recoveryError by remember { mutableStateOf(true) }
 
+    val isPassValid = pass.isNotBlank()
+
     BackHandler(enabled = isLoading) {
         // intercept the system back button when loading.
     }
 
-    val isPassValid = pass.isNotBlank()
-
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.TopCenter
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding()
+            .navigationBarsPadding(),
+        contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier
                 .fillMaxHeight()
+                .verticalScroll(rememberScrollState())
                 .widthIn(max = 500.dp)
                 .fillMaxWidth()
-                .padding(16.dp)
-                .imePadding(),
+                .padding(16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -99,11 +108,27 @@ fun RecoverAccounts(navController: NavController) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
+            Text(
+                text = stringResource(R.string.main_recover_accounts_info),
+                modifier = Modifier.fillMaxWidth(),
+                color = Theme.colors.primary,
+                fontSize = 14.sp,
+                fontFamily = InterVariable
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
             ConfidentialTextBox(
                 title = stringResource(R.string.common_pass),
                 value = pass,
-                onValueChange = { if (!isLoading) pass = it },
-                error = !isPassValid
+                onValueChange = {
+                    if (!isLoading) {
+                        pass = it
+                    }
+
+                    recoveryError = false
+                },
+                error = !isPassValid || recoveryError
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -125,54 +150,59 @@ fun RecoverAccounts(navController: NavController) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            AnimatedVisibility(
-                modifier = Modifier.padding(top = 6.dp),
-                visible = pass.isNotBlank()
+            RoundedButton(
+                text = if (isLoading) spinnerText() else stringResource(R.string.common_recover_accounts)
             ) {
-                RoundedButton(
-                    text = if (isLoading) spinnerText() else stringResource(R.string.common_recover_accounts)
-                ) {
-                    if (isLoading) return@RoundedButton
+                if (isLoading) return@RoundedButton
 
-                    isLoading = true
-                    recoveryError = false
+                isLoading = true
+                recoveryError = false
 
-                    scope.launch(Dispatchers.IO) {
-                        val data = AccountManagement.getAccountsUsingAutomaticInternalBackups(context)
-                        if (data == null) {
-                            recoveryError = true
-                            isLoading = false
-                            return@launch
-                        }
+                scope.launch(Dispatchers.IO) {
+                    val data = AccountManagement.getAccountsUsingAutomaticInternalBackups(context)
+                    if (data == null) {
+                        recoveryError = true
+                        isLoading = false
+                        return@launch
+                    }
 
-                        val result = Entry.rustInterface.importAccounts(pass, data)
+                    val result = Entry.rustInterface.importAccounts(pass, data)
 
-                        if (result) {
-                            AccountManagement.saveAccountsUsingSeed(context)
+                    if (result) {
+                        AccountManagement.saveAccountsUsingSeed(context)
+                        Entry.rustInterface.setAutomaticInternalBackupsPass(pass)
 
-                            if (Config.isUsingAutomaticInternalBackups) {
-                                AccountManagement.saveAccountsUsingAutomaticInternalBackups(context)
+                        Config.isUsingAutomaticInternalBackups = true
+
+                        Config.save(context)
+
+                        withContext(Dispatchers.Main) {
+                            navController.navigate(GreetingRoute) {
+                                popUpTo(0) { inclusive = true }
                             }
-
-                            withContext(Dispatchers.Main) {
-                                navController.popBackStack(MainRoute, false)
-                            }
-                        } else {
-                            recoveryError = true
-                            isLoading = false
                         }
+                    } else {
+                        recoveryError = true
+                        isLoading = false
                     }
                 }
             }
-        }
 
-        LeftButtonHeader(
-            title = "",
-            onBack = {
-                if (isLoading) return@LeftButtonHeader
+            Spacer(modifier = Modifier.height(12.dp))
 
-                navController.popBackStack()
+            RoundedButtonClean(text = stringResource(R.string.common_button_continue_without)) {
+                if (isLoading) return@RoundedButtonClean
+
+                Config.isUsingAutomaticInternalBackups = false
+
+                Logger.i(TAG, "automatic internal backups set to ${Config.isUsingAutomaticInternalBackups}")
+
+                Config.save(context)
+
+                navController.navigate(GreetingRoute) {
+                    popUpTo(0) { inclusive = true }
+                }
             }
-        )
+        }
     }
 }

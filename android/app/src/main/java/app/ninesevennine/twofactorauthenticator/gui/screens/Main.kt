@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,7 +41,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.SettingsBackupRestore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -89,7 +87,6 @@ import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
 import app.ninesevennine.twofactorauthenticator.gui.elements.OtpTileMinimalistic
 import app.ninesevennine.twofactorauthenticator.gui.elements.OtpTileNormal
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.utils.Time
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -227,46 +224,6 @@ fun Main(navController: NavController) {
                         fontWeight = FontWeight.W500,
                         fontSize = 14.sp
                     )
-                }
-            }
-        }
-    }
-
-    if (query.isBlank() && accounts.isEmpty() && AccountManagement.hasAccountsUsingAutomaticInternalBackups(context)) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .widthIn(max = 500.dp)
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Icon(
-                    imageVector = Icons.Default.SettingsBackupRestore,
-                    contentDescription = null,
-                    modifier = Modifier.size(120.dp),
-                    tint = Theme.colors.primary
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Text(
-                    text = stringResource(R.string.main_recover_accounts_info),
-                    modifier = Modifier.fillMaxWidth(),
-                    color = Theme.colors.primary,
-                    fontSize = 14.sp,
-                    fontFamily = InterVariable
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                RoundedButton(stringResource(R.string.common_recover_accounts)) {
-                    navController.navigate(RecoverAccountsRoute)
                 }
             }
         }
