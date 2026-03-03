@@ -56,6 +56,7 @@ import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.AccountTruncated
 import app.ninesevennine.twofactorauthenticator.CodeType
 import app.ninesevennine.twofactorauthenticator.Entry
+import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
@@ -65,6 +66,7 @@ import app.ninesevennine.twofactorauthenticator.gui.Tints
 import app.ninesevennine.twofactorauthenticator.gui.screens.EditRoute
 import app.ninesevennine.twofactorauthenticator.utils.Clipboard
 import app.ninesevennine.twofactorauthenticator.utils.Time
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -80,6 +82,8 @@ fun OtpTileMinimalistic(
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
     val view = LocalView.current
+
+    val scope = rememberCoroutineScope()
 
     val colors = if (Theme.currentOption(context) == ThemeOption.LIGHT) Tints.light else Tints.dark
     val isUsingPitchBlack by remember { mutableStateOf(Theme.themeOption == ThemeOption.PITCH_BLACK) }
@@ -301,6 +305,14 @@ fun OtpTileMinimalistic(
                                     val newCounter = Entry.rustInterface.incrementAccountCounterAndGet(account.id)
                                     counter = newCounter
                                     onCounterChange(newCounter)
+
+                                    scope.launch(Dispatchers.IO) {
+                                        AccountManagement.saveAccountsUsingSeed(context)
+
+                                        if (Config.isUsingAutomaticInternalBackups) {
+                                            AccountManagement.saveAccountsUsingAutomaticInternalBackups(context)
+                                        }
+                                    }
                                 }
                             ),
                         tint = if (isUsingPitchBlack) Theme.colors.primary else colors.medium
