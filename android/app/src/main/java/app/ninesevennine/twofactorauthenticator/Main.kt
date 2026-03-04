@@ -47,6 +47,8 @@ import app.ninesevennine.twofactorauthenticator.gui.screens.ImportAegisRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.ImportRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Main
 import app.ninesevennine.twofactorauthenticator.gui.screens.MainRoute
+import app.ninesevennine.twofactorauthenticator.gui.screens.SelectIconPacks
+import app.ninesevennine.twofactorauthenticator.gui.screens.SelectIconPacksRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectLanguage
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectLanguageRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectTheme
@@ -122,6 +124,7 @@ class Main : FragmentActivity() {
                     composable<SettingsRoute> { Settings(navController) }
                     composable<SelectLanguageRoute> { SelectLanguage(navController) }
                     composable<SelectThemeRoute> { SelectTheme(navController) }
+                    composable<SelectIconPacksRoute> { SelectIconPacks(navController) }
                     composable<BiometricUnlockRoute> { BiometricUnlock(navController) }
                     composable<AutomaticInternalBackupsRoute> { AutomaticInternalBackups(navController) }
                     composable<ExportRoute> { Export(navController) }

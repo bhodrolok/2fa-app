@@ -31,7 +31,6 @@ import androidx.compose.material.icons.filled.SettingsBackupRestore
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material.icons.filled.VerticalAlignTop
-import androidx.compose.material.icons.filled.ViewAgenda
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -136,7 +135,15 @@ fun Settings(navController: NavController) {
                     }
 
                     SectionButton(
-                        imageVector = Icons.Default.ViewAgenda,
+                        painter = painterResource(R.drawable.pack),
+                        tint = Theme.colors.primary,
+                        primaryText = "Icon packs"
+                    ) {
+                        navController.navigate(SelectIconPacksRoute)
+                    }
+
+                    SectionButton(
+                        painter = painterResource(R.drawable.minimalistic_tiles),
                         tint = Theme.colors.primary,
                         primaryText = stringResource(R.string.settings_appearance_minimalistic_tiles),
                         enabled = Config.isUsingMinimalisticTiles

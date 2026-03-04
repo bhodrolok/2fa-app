@@ -10,6 +10,7 @@ object Config {
     private const val KEY_LOCALE = "locale"
     private const val KEY_THEME = "theme"
 
+    var activeIconPackId by mutableStateOf("")
     var internalIsUsingKeyStoreAES: Boolean = false
     var hasCompletedSetup: Boolean = false
     var isUsingMinimalisticTiles by mutableStateOf(false)
@@ -36,6 +37,7 @@ object Config {
         Locale.set(context, locale)
         Theme.set(context, theme)
 
+        activeIconPackId = prefs.getString("active_icon_pack_id", "") ?: ""
         internalIsUsingKeyStoreAES = prefs.getBoolean("internal_is_using_keystore_aes", false)
         hasCompletedSetup = prefs.getBoolean("has_completed_setup", false)
         isUsingMinimalisticTiles = prefs.getBoolean("is_using_minimalistic_tiles", false)
@@ -55,6 +57,7 @@ object Config {
         prefs.edit().apply {
             putString(KEY_LOCALE, Locale.localeOption.tag)
             putInt(KEY_THEME, Theme.themeOption.value)
+            putString("active_icon_pack_id", activeIconPackId)
             putBoolean("internal_is_using_keystore_aes", internalIsUsingKeyStoreAES)
             putBoolean("has_completed_setup", hasCompletedSetup)
             putBoolean("is_using_minimalistic_tiles", isUsingMinimalisticTiles)
