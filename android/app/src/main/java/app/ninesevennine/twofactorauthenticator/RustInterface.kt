@@ -1,5 +1,7 @@
 package app.ninesevennine.twofactorauthenticator
 
+import android.graphics.Bitmap
+
 class RustInterface {
     companion object {
         const val LIBRARY_NAME = "appcore"
@@ -44,6 +46,8 @@ class RustInterface {
     external fun importAccounts(pass: String, data: String): Boolean
     external fun importAccountsDB001(data: String): Boolean
     external fun importAccountsAegis(pass: String, data: String): Boolean
+
+    external fun svgToBitmap(svgData: ByteArray, width: Int, height: Int): Bitmap?
 }
 
 enum class CodeType(val displayName: String) {

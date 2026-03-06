@@ -1,6 +1,8 @@
 package app.ninesevennine.twofactorauthenticator.features
 
 import android.content.Context
+import android.graphics.Bitmap
+import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import org.json.JSONObject
 import java.io.File
@@ -32,14 +34,28 @@ object IconPacks {
                     file = entry.getString("file")
                 )
             }
-        } catch (e: Exception) {
-            Logger.e(TAG, "failed to load icons for pack $packId", e)
+        } catch (_: Exception) {
+            Logger.e(TAG, "failed to load icons for pack $packId")
         }
     }
 
-    fun get(issuer: String): String? {
+    fun get(context: Context, issuer: String): Bitmap? {
         val normalized = issuer.lowercase().trim()
-        return loadedIcons.firstOrNull { it.issuers.any { s -> s == normalized } }?.file
+        val entry = loadedIcons.firstOrNull { it.issuers.any { s -> s == normalized } }
+            ?: return null
+
+        val svgFile = File(context.noBackupFilesDir, "icons/${Config.activeIconPackId}/assets/${entry.file}")
+        if (!svgFile.exists()) return null
+
+        val sizePx = (52 * context.resources.displayMetrics.density + 0.5f).toInt()
+
+        return try {
+            val svgBytes = svgFile.readBytes()
+            Entry.rustInterface.svgToBitmap(svgBytes, sizePx, sizePx)
+        } catch (_: Exception) {
+            Logger.e(TAG, "Failed to load bitmap for $issuer")
+            null
+        }
     }
 
     fun getAvailable(context: Context): List<PackInfo> {
@@ -67,8 +83,8 @@ object IconPacks {
                         primary = json.getString("primary"),
                         secondary = json.optString("secondary", "")
                     )
-                } catch (e: Exception) {
-                    Logger.e(TAG, "failed to parse metadata.json in ${packDir.name}, deleting", e)
+                } catch (_: Exception) {
+                    Logger.e(TAG, "failed to parse metadata.json in ${packDir.name}, deleting")
                     packDir.deleteRecursively()
                     null
                 }

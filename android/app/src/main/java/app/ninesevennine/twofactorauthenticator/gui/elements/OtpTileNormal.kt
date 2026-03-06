@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -59,6 +60,7 @@ import app.ninesevennine.twofactorauthenticator.CodeType
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
+import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
@@ -229,35 +231,50 @@ fun OtpTileNormal(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        if (isUsingPitchBlack) {
-                            Box(
-                                Modifier
-                                    .size(52.dp)
-                                    .tiltShimmer(shape)
-                            )
-                        } else {
-                            Canvas(Modifier.size(52.dp)) {
-                                drawCircle(
-                                    color = colors.medium
-                                )
-                            }
+                        val iconBitmap = remember(account.issuer) {
+                            IconPacks.get(context, account.issuer)
                         }
 
-                        Text(
-                            text = if (account.issuer.isNotEmpty()) {
-                                account.issuer.first().uppercase()
-                            } else if (account.name.isNotEmpty()) {
-                                account.name.first().uppercase()
+                        if (iconBitmap != null) {
+                            Canvas(Modifier.size(52.dp)) {
+                                drawImage(
+                                    image = iconBitmap.asImageBitmap(),
+                                    colorFilter = ColorFilter.tint(
+                                        if (isUsingPitchBlack) Theme.colors.primary else colors.medium
+                                    )
+                                )
+                            }
+                        } else {
+                            if (isUsingPitchBlack) {
+                                Box(
+                                    Modifier
+                                        .size(52.dp)
+                                        .tiltShimmer(shape)
+                                )
                             } else {
-                                "?"
-                            },
-                            color = if (isUsingPitchBlack) Theme.colors.primary else colors.light,
-                            fontSize = 26.sp,
-                            fontWeight = FontWeight.W700,
-                            fontFamily = InterVariable,
-                            overflow = TextOverflow.MiddleEllipsis,
-                            maxLines = 1
-                        )
+                                Canvas(Modifier.size(52.dp)) {
+                                    drawCircle(
+                                        color = colors.medium
+                                    )
+                                }
+                            }
+
+                            Text(
+                                text = if (account.issuer.isNotEmpty()) {
+                                    account.issuer.first().uppercase()
+                                } else if (account.name.isNotEmpty()) {
+                                    account.name.first().uppercase()
+                                } else {
+                                    "?"
+                                },
+                                color = if (isUsingPitchBlack) Theme.colors.primary else colors.light,
+                                fontSize = 26.sp,
+                                fontWeight = FontWeight.W700,
+                                fontFamily = InterVariable,
+                                overflow = TextOverflow.MiddleEllipsis,
+                                maxLines = 1
+                            )
+                        }
                     }
 
                     Column(
