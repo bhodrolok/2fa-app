@@ -9,6 +9,38 @@ object IconPacks {
     private const val TAG = "IconPacks"
 
     data class PackInfo(val id: String, val primary: String, val secondary: String)
+    data class IconEntry(val issuers: List<String>, val file: String)
+
+    private var loadedIcons: List<IconEntry> = emptyList()
+
+    fun load(context: Context, packId: String) {
+        if (packId.isEmpty()) {
+            loadedIcons = emptyList()
+            return
+        }
+
+        try {
+            val metaFile = File(context.noBackupFilesDir, "icons/$packId/metadata.json")
+            val json = JSONObject(metaFile.readText())
+            val iconsArray = json.getJSONArray("icons")
+
+            loadedIcons = (0 until iconsArray.length()).map { i ->
+                val entry = iconsArray.getJSONObject(i)
+                val issuerArray = entry.getJSONArray("issuer")
+                IconEntry(
+                    issuers = (0 until issuerArray.length()).map { issuerArray.getString(it) },
+                    file = entry.getString("file")
+                )
+            }
+        } catch (e: Exception) {
+            Logger.e(TAG, "failed to load icons for pack $packId", e)
+        }
+    }
+
+    fun get(issuer: String): String? {
+        val normalized = issuer.lowercase().trim()
+        return loadedIcons.firstOrNull { it.issuers.any { s -> s == normalized } }?.file
+    }
 
     fun getAvailable(context: Context): List<PackInfo> {
         val iconsDir = File(context.noBackupFilesDir, "icons")
@@ -46,6 +78,13 @@ object IconPacks {
 
     fun delete(context: Context, id: String) {
         if (id.isEmpty()) return
+
         File(context.noBackupFilesDir, "icons/$id").deleteRecursively()
+
+        if (Config.activeIconPackId == id) {
+            loadedIcons = emptyList()
+        }
+
+        Logger.i(TAG, "deleted pack $id")
     }
 }

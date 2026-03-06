@@ -20,8 +20,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ChangeCircle
 import androidx.compose.material.icons.filled.Extension
 import androidx.compose.material.icons.filled.FormatColorReset
-import androidx.compose.material.icons.filled.Texture
-import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -123,6 +121,7 @@ fun SelectIconPacks(navController: NavController) {
                             enabled = Config.activeIconPackId == pack.id
                         ) {
                             Config.activeIconPackId = if (Config.activeIconPackId == pack.id) "" else pack.id
+                            IconPacks.load(context, Config.activeIconPackId)
                             Config.save(context)
                         }
                     }
@@ -145,27 +144,6 @@ fun SelectIconPacks(navController: NavController) {
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))
-
-                SectionGroup(
-                    title = "Style"
-                ) {
-                    SectionButton(
-                        imageVector = Icons.Default.Texture,
-                        tint = Theme.colors.primary,
-                        primaryText = "Textured",
-                        enabled = true
-                    ) {
-
-                    }
-
-                    SectionButton(
-                        imageVector = Icons.Default.WaterDrop,
-                        tint = Theme.colors.primary,
-                        primaryText = "Tinted",
-                    ) {
-
-                    }
-                }
 
                 SectionGroup(
                     title = "Other"

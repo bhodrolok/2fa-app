@@ -38,6 +38,9 @@ object Config {
         Theme.set(context, theme)
 
         activeIconPackId = prefs.getString("active_icon_pack_id", "") ?: ""
+
+        IconPacks.load(context, activeIconPackId)
+
         internalIsUsingKeyStoreAES = prefs.getBoolean("internal_is_using_keystore_aes", false)
         hasCompletedSetup = prefs.getBoolean("has_completed_setup", false)
         isUsingMinimalisticTiles = prefs.getBoolean("is_using_minimalistic_tiles", false)

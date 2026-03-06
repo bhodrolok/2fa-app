@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Contrast
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FileCopy
 import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Language
@@ -311,6 +312,7 @@ fun Settings(navController: NavController) {
                 ) {
                     SectionButton(
                         painter = painterResource(R.drawable.codeberg),
+                        tint = Theme.colors.primary,
                         primaryText = "Codeberg",
                         secondaryText = stringResource(R.string.settings_support_view_2fa_source_code),
                     ) {
@@ -319,7 +321,8 @@ fun Settings(navController: NavController) {
                     }
 
                     SectionButton(
-                        painter = painterResource(R.drawable.donate),
+                        imageVector = Icons.Default.Favorite,
+                        tint = Theme.colors.primary,
                         primaryText = stringResource(R.string.settings_support_donate),
                         secondaryText = stringResource(R.string.settings_support_donate_message)
                     ) {
