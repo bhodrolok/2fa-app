@@ -29,8 +29,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.features.Theme
@@ -110,7 +112,7 @@ fun SelectIconPacks(navController: NavController) {
                 Spacer(modifier = Modifier.height(topInset + 68.dp))
 
                 SectionGroup(
-                    title = "Available"
+                    title = stringResource(R.string.settings_icon_packs_available)
                 ) {
                     availableIconPacks.forEach { pack ->
                         SectionButton(
@@ -129,7 +131,7 @@ fun SelectIconPacks(navController: NavController) {
                     SectionButton(
                         imageVector = Icons.Default.Add,
                         tint = Theme.colors.primary,
-                        primaryText = "Add",
+                        primaryText = stringResource(R.string.settings_icon_packs_add),
                         secondaryText = ".zip"
                     ) {
                         openDocumentLauncher.launch(arrayOf("application/zip"))
@@ -137,7 +139,7 @@ fun SelectIconPacks(navController: NavController) {
                 }
 
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    RoundedButton("Delete Current") {
+                    RoundedButton(stringResource(R.string.settings_icon_packs_delete_current)) {
                         IconPacks.delete(context, Config.activeIconPackId)
                         availableIconPacks = IconPacks.getAvailable(context)
                     }
@@ -146,24 +148,26 @@ fun SelectIconPacks(navController: NavController) {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 SectionGroup(
-                    title = "Other"
+                    title = stringResource(R.string.common_other)
                 ) {
                     SectionButton(
                         imageVector = Icons.Default.ChangeCircle,
-                        primaryText = "Override colors",
-                        secondaryText = "Custom colors will be disabled",
-                        enabled = true
+                        primaryText = stringResource(R.string.settings_icon_packs_override_colors_primary),
+                        secondaryText = stringResource(R.string.settings_icon_packs_override_colors_secondary),
+                        enabled = Config.isUsingIconPacksOverrideColors
                     ) {
-
+                        Config.isUsingIconPacksOverrideColors = !Config.isUsingIconPacksOverrideColors
+                        Config.save(context)
                     }
 
                     SectionButton(
                         imageVector = Icons.Default.FormatColorReset,
-                        primaryText = "Don't suggest colors",
-                        secondaryText = "Default to white when adding an account",
-                        enabled = true
+                        primaryText = stringResource(R.string.settings_icon_packs_dont_suggest_colors_primary),
+                        secondaryText = stringResource(R.string.settings_icon_packs_dont_suggest_colors_secondary),
+                        enabled = Config.isUsingIconPacksDontSuggestColors
                     ) {
-
+                        Config.isUsingIconPacksDontSuggestColors = !Config.isUsingIconPacksDontSuggestColors
+                        Config.save(context)
                     }
                 }
 
@@ -172,7 +176,7 @@ fun SelectIconPacks(navController: NavController) {
         }
 
         LeftButtonHeader(
-            title = "Icon Packs",
+            title = stringResource(R.string.settings_icon_packs),
             onBack = {
                 navController.popBackStack()
             }

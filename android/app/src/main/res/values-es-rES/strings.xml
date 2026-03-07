@@ -20,6 +20,7 @@
     <string name="common_import">Importar</string>
     <string name="common_incorrect_pass">Contraseña o frase de contraseña incorrecta.</string>
     <string name="common_incorrect_pass_or_invalid_file">Contraseña/frase de contraseña incorrecta o archivo no válido</string>
+    <string name="common_other">Otros</string>
     <string name="common_pass">Frase de contraseña/Contraseña</string>
     <string name="common_pass_1_num">1 número</string>
     <string name="common_pass_1_special">1 carácter especial (p. ej., $, !, \@, %, &amp;) o espacio</string>
@@ -62,6 +63,7 @@
     <string name="settings_account_management_export_to_aegis">Exportar a Aegis</string>
     <string name="settings_account_management_import_from_aegis">Importar desde Aegis</string>
     <string name="settings_appearance">Apariencia</string>
+    <string name="settings_appearance_icon_packs">Packs de iconos</string>
     <string name="settings_appearance_language">Idioma</string>
     <string name="settings_appearance_minimalistic_tiles">Diseño minimalista de tarjetas</string>
     <string name="settings_appearance_search_on_top">Buscar arriba</string>
@@ -70,6 +72,14 @@
     <string name="settings_behavior_double_tap_to_copy_codes">Doble toque para copiar códigos</string>
     <string name="settings_behavior_focus_search_on_launch">Enfocar la búsqueda al iniciar</string>
     <string name="settings_behavior_tap_to_reveal_codes">Tocar para mostrar códigos</string>
+    <string name="settings_icon_packs">Packs de Iconos</string>
+    <string name="settings_icon_packs_add">Añadir</string>
+    <string name="settings_icon_packs_available">Disponible</string>
+    <string name="settings_icon_packs_delete_current">Eliminar Actual</string>
+    <string name="settings_icon_packs_dont_suggest_colors_primary">No sugerir colores</string>
+    <string name="settings_icon_packs_dont_suggest_colors_secondary">Predeterminado en blanco al añadir una cuenta</string>
+    <string name="settings_icon_packs_override_colors_primary">Sobrescribir colores</string>
+    <string name="settings_icon_packs_override_colors_secondary">Los colores personalizados serán desactivados</string>
     <string name="settings_security">Seguridad</string>
     <string name="settings_security_biometric_unlock">Desbloqueo biométrico</string>
     <string name="settings_security_block_intents_primary">Bloquear intents</string>

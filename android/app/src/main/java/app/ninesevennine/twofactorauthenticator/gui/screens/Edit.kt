@@ -46,6 +46,7 @@ import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
+import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.Tints
@@ -88,6 +89,14 @@ fun Edit(navController: NavController) {
     var period by remember { mutableStateOf(account.period.toString()) }
     var digits by remember { mutableStateOf(account.digits.toString()) }
     var color by remember { mutableStateOf(Color(account.color)) }
+
+    if (color == Color.Black) {
+        color = if (Config.isUsingIconPacksDontSuggestColors) {
+            Color.White
+        } else {
+            IconPacks.get(context, account.issuer)?.color ?: Color.White
+        }
+    }
 
     var secretError by remember { mutableStateOf(secretBase32NoPad.isEmpty()) }
     var counterError by remember { mutableStateOf(account.counter < 0) }
@@ -385,6 +394,8 @@ fun Edit(navController: NavController) {
         EditColorPicker(
             initialColor = color,
             onColorChange = {
+                if (it == Color.Black) return@EditColorPicker
+
                 Entry.rustInterface.setEditAccountColor(it.toArgb())
                 color = it
             },

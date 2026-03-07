@@ -22,6 +22,8 @@ object Config {
     var isUsingScreenSecurity by mutableStateOf(true)
     var isUsingBlockIntents by mutableStateOf(false)
     var isUsingAutomaticInternalBackups by mutableStateOf(false)
+    var isUsingIconPacksOverrideColors by mutableStateOf(false)
+    var isUsingIconPacksDontSuggestColors by mutableStateOf(false)
 
     fun load(context: Context) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -52,6 +54,8 @@ object Config {
         isUsingScreenSecurity = prefs.getBoolean("is_using_screen_security", true)
         isUsingBlockIntents = prefs.getBoolean("is_using_block_intents", false)
         isUsingAutomaticInternalBackups = prefs.getBoolean("is_using_automatic_internal_backups", false)
+        isUsingIconPacksOverrideColors = prefs.getBoolean("is_using_iconpacks_override_colors", false)
+        isUsingIconPacksDontSuggestColors = prefs.getBoolean("is_using_iconpacks_dont_suggest_colors", false)
     }
 
     fun save(context: Context) {
@@ -72,6 +76,8 @@ object Config {
             putBoolean("is_using_screen_security", isUsingScreenSecurity)
             putBoolean("is_using_block_intents", isUsingBlockIntents)
             putBoolean("is_using_automatic_internal_backups", isUsingAutomaticInternalBackups)
+            putBoolean("is_using_iconpacks_override_colors", isUsingIconPacksOverrideColors)
+            putBoolean("is_using_iconpacks_dont_suggest_colors", isUsingIconPacksDontSuggestColors)
             apply()
         }
     }

@@ -20,6 +20,7 @@
     <string name="common_import">Импорт</string>
     <string name="common_incorrect_pass">Неверная парольная фраза/пароль</string>
     <string name="common_incorrect_pass_or_invalid_file">Неверная парольная фраза/пароль или недействительный файл</string>
+    <string name="common_other">Другое</string>
     <string name="common_pass">Парольная фраза/Пароль</string>
     <string name="common_pass_1_num">1 номер</string>
     <string name="common_pass_1_special">1 специальный символ (например $, !, \@, %, &amp;) или пробел</string>
@@ -62,6 +63,7 @@
     <string name="settings_account_management_export_to_aegis">Экспорт в Aegis</string>
     <string name="settings_account_management_import_from_aegis">Импорт из Aegis</string>
     <string name="settings_appearance">Внешний Вид</string>
+    <string name="settings_appearance_icon_packs">Наборы значков</string>
     <string name="settings_appearance_language">Язык</string>
     <string name="settings_appearance_minimalistic_tiles">Минималистичные плитки</string>
     <string name="settings_appearance_search_on_top">Поиск сверху</string>
@@ -70,6 +72,14 @@
     <string name="settings_behavior_double_tap_to_copy_codes">Двойное касание копирует коды</string>
     <string name="settings_behavior_focus_search_on_launch">Фокусировать поиск при запуске</string>
     <string name="settings_behavior_tap_to_reveal_codes">Показать коды при нажатии</string>
+    <string name="settings_icon_packs">Наборы Значков</string>
+    <string name="settings_icon_packs_add">Добавить</string>
+    <string name="settings_icon_packs_available">Доступно</string>
+    <string name="settings_icon_packs_delete_current">Удалить Актуальный</string>
+    <string name="settings_icon_packs_dont_suggest_colors_primary">Не предлагать цвета</string>
+    <string name="settings_icon_packs_dont_suggest_colors_secondary">По умолчанию белый цвет при добавлении аккаунта</string>
+    <string name="settings_icon_packs_override_colors_primary">Заменить цвета</string>
+    <string name="settings_icon_packs_override_colors_secondary">Пользовательские цвета будут отключены</string>
     <string name="settings_security">Безопасность</string>
     <string name="settings_security_biometric_unlock">Биометрическая разблокировка</string>
     <string name="settings_security_block_intents_primary">Блокировать интенты</string>

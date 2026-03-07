@@ -129,6 +129,10 @@ fun OtpTileNormal(
         }
     }
 
+    val iconResult = remember(account.issuer) {
+        IconPacks.get(context, account.issuer)
+    }
+
     val codeInteractionSource = remember { MutableInteractionSource() }
     val isCodePressed by codeInteractionSource.collectIsPressedAsState()
     val codeScale by animateFloatAsState(if (isCodePressed) 0.95f else 1f)
@@ -209,7 +213,7 @@ fun OtpTileNormal(
                             if (isEditing)
                                 Modifier
                             else
-                                Modifier.graphicsLayer(colorFilter = ColorFilter.tint(Color(account.color), BlendMode.Multiply))
+                                Modifier.graphicsLayer(colorFilter = ColorFilter.tint(if (Config.isUsingIconPacksOverrideColors && iconResult != null) iconResult.color else Color(account.color), BlendMode.Multiply))
                         )
                         .background(colors.light)
                         .border(1.dp, colors.medium, shape)
@@ -231,16 +235,13 @@ fun OtpTileNormal(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        val iconBitmap = remember(account.issuer) {
-                            IconPacks.get(context, account.issuer)
-                        }
-
-                        if (iconBitmap != null) {
+                        if (iconResult != null) {
                             Canvas(Modifier.size(52.dp)) {
                                 drawImage(
-                                    image = iconBitmap.asImageBitmap(),
+                                    image = iconResult.bitmap.asImageBitmap(),
                                     colorFilter = ColorFilter.tint(
-                                        if (isUsingPitchBlack) Theme.colors.primary else colors.medium
+                                        if (isUsingPitchBlack) Theme.colors.primary else colors.medium,
+                                        BlendMode.Modulate
                                     )
                                 )
                             }

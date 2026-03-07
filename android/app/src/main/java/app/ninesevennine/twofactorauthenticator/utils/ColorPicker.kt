@@ -32,8 +32,10 @@ object ColorPicker {
         "#%06X".format(color.toArgb() and 0xFFFFFF)
 
     fun fromHex(hex: String): Color?  {
+        val formattedHex = if (hex.startsWith("#")) hex else "#$hex"
+
         return try {
-            Color(hex.toColorInt())
+            Color(formattedHex.toColorInt())
         } catch (_: Exception) {
             null
         }

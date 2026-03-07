@@ -138,7 +138,7 @@ fun Settings(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.pack),
                         tint = Theme.colors.primary,
-                        primaryText = "Icon packs"
+                        primaryText = stringResource(R.string.settings_appearance_icon_packs)
                     ) {
                         navController.navigate(SelectIconPacksRoute)
                     }

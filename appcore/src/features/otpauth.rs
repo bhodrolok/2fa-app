@@ -103,7 +103,7 @@ pub fn parse(url: &str) -> Option<Account> {
         digits,
         counter,
         period,
-        color: utils::colors::WHITE,
+        color: utils::colors::BLACK,
     })
 }
 

@@ -58,6 +58,7 @@ import app.ninesevennine.twofactorauthenticator.CodeType
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
+import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
@@ -122,6 +123,10 @@ fun OtpTileMinimalistic(
         } else {
             rawCode
         }
+    }
+
+    val iconResult = remember(account.issuer) {
+        IconPacks.get(context, account.issuer)
     }
 
     val codeInteractionSource = remember { MutableInteractionSource() }
@@ -199,8 +204,7 @@ fun OtpTileMinimalistic(
                 if (isUsingPitchBlack) {
                     Modifier.tiltShimmer(shape)
                 } else {
-                    Modifier
-                        .graphicsLayer(colorFilter = ColorFilter.tint(Color(account.color), BlendMode.Multiply))
+                    Modifier.graphicsLayer(colorFilter = ColorFilter.tint(if (Config.isUsingIconPacksOverrideColors && iconResult != null) iconResult.color else Color(account.color), BlendMode.Multiply))
                         .background(colors.light)
                         .border(1.dp, colors.medium, shape)
                 }
