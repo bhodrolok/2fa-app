@@ -96,6 +96,8 @@ fun Edit(navController: NavController) {
         } else {
             IconPacks.get(context, account.issuer)?.color ?: Color.White
         }
+
+        Entry.rustInterface.setEditAccountColor(color.toArgb())
     }
 
     var secretError by remember { mutableStateOf(secretBase32NoPad.isEmpty()) }
