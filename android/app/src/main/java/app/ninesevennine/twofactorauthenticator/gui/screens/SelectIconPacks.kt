@@ -152,6 +152,7 @@ fun SelectIconPacks(navController: NavController) {
                 ) {
                     SectionButton(
                         imageVector = Icons.Default.ChangeCircle,
+                        tint = Theme.colors.primary,
                         primaryText = stringResource(R.string.settings_icon_packs_override_colors_primary),
                         secondaryText = stringResource(R.string.settings_icon_packs_override_colors_secondary),
                         enabled = Config.isUsingIconPacksOverrideColors
@@ -162,6 +163,7 @@ fun SelectIconPacks(navController: NavController) {
 
                     SectionButton(
                         imageVector = Icons.Default.FormatColorReset,
+                        tint = Theme.colors.primary,
                         primaryText = stringResource(R.string.settings_icon_packs_dont_suggest_colors_primary),
                         secondaryText = stringResource(R.string.settings_icon_packs_dont_suggest_colors_secondary),
                         enabled = Config.isUsingIconPacksDontSuggestColors
