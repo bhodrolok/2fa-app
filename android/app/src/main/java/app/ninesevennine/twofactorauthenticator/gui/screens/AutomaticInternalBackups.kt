@@ -45,7 +45,6 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.LeftButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
 import app.ninesevennine.twofactorauthenticator.utils.Logger
-import app.ninesevennine.twofactorauthenticator.utils.Pass
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -60,12 +59,12 @@ private const val TAG = "AutomaticInternalBackups"
 fun AutomaticInternalBackups(navController: NavController) {
     val context = LocalContext.current
 
-    var pass by remember { mutableStateOf("") }
-    var confirmPass by remember { mutableStateOf("") }
+    var passphrase by remember { mutableStateOf("") }
+    var confirmPassphrase by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    val isPassValid = Pass.isValid(pass)
+    val isPassphraseValid = passphrase.length >= 8
 
     // copy otherwise ui change will be visible on pop back.
     var isUsingAutomaticInternalBackups by remember { mutableStateOf(Config.isUsingAutomaticInternalBackups) }
@@ -134,10 +133,10 @@ fun AutomaticInternalBackups(navController: NavController) {
                 }
             } else {
                 ConfidentialTextBox(
-                    title = stringResource(R.string.common_pass),
-                    value = pass,
-                    onValueChange = { if (!isLoading) pass = it },
-                    error = !isPassValid
+                    title = stringResource(R.string.common_passphrase),
+                    value = passphrase,
+                    onValueChange = { if (!isLoading) passphrase = it },
+                    error = !isPassphraseValid
                 )
 
                 Spacer(modifier = Modifier.height(6.dp))
@@ -146,39 +145,9 @@ fun AutomaticInternalBackups(navController: NavController) {
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    AnimatedVisibility(!Pass.hasSufficientLength(pass)) {
+                    AnimatedVisibility(!isPassphraseValid) {
                         Text(
-                            text = stringResource(R.string.common_pass_8_chars),
-                            modifier = Modifier.fillMaxWidth(),
-                            color = Theme.colors.error,
-                            fontSize = 14.sp,
-                            fontFamily = InterVariable,
-                            fontWeight = FontWeight.W700
-                        )
-                    }
-                    AnimatedVisibility(!Pass.hasNumber(pass)) {
-                        Text(
-                            text = stringResource(R.string.common_pass_1_num),
-                            modifier = Modifier.fillMaxWidth(),
-                            color = Theme.colors.error,
-                            fontSize = 14.sp,
-                            fontFamily = InterVariable,
-                            fontWeight = FontWeight.W700
-                        )
-                    }
-                    AnimatedVisibility(!Pass.hasSpecialCharacter(pass)) {
-                        Text(
-                            text = stringResource(R.string.common_pass_1_special),
-                            modifier = Modifier.fillMaxWidth(),
-                            color = Theme.colors.error,
-                            fontSize = 14.sp,
-                            fontFamily = InterVariable,
-                            fontWeight = FontWeight.W700
-                        )
-                    }
-                    AnimatedVisibility(!Pass.hasNoLeadingOrTrailingWhitespace(pass)) {
-                        Text(
-                            text = stringResource(R.string.common_pass_no_w_or_t),
+                            text = stringResource(R.string.common_passphrase_error_8_chars),
                             modifier = Modifier.fillMaxWidth(),
                             color = Theme.colors.error,
                             fontSize = 14.sp,
@@ -190,13 +159,13 @@ fun AutomaticInternalBackups(navController: NavController) {
 
                 AnimatedVisibility(
                     modifier = Modifier.padding(top = 6.dp),
-                    visible = isPassValid
+                    visible = isPassphraseValid
                 ) {
                     ConfidentialTextBox(
-                        title = stringResource(R.string.common_confirm_pass),
-                        value = confirmPass,
-                        onValueChange = { if (!isLoading) confirmPass = it },
-                        error = pass != confirmPass
+                        title = stringResource(R.string.common_confirm_passphrase),
+                        value = confirmPassphrase,
+                        onValueChange = { if (!isLoading) confirmPassphrase = it },
+                        error = passphrase != confirmPassphrase
                     )
                 }
 
@@ -204,7 +173,7 @@ fun AutomaticInternalBackups(navController: NavController) {
 
                 AnimatedVisibility(
                     modifier = Modifier.padding(top = 6.dp),
-                    visible = isPassValid && pass == confirmPass
+                    visible = isPassphraseValid && passphrase == confirmPassphrase
                 ) {
                     RoundedButton(
                         text = if (isLoading) spinnerText() else stringResource(R.string.common_button_enable)
@@ -217,7 +186,7 @@ fun AutomaticInternalBackups(navController: NavController) {
                             scope.launch(Dispatchers.IO) {
                                 val secret = Entry.rustInterface.getSecret()
 
-                                Entry.rustInterface.setAutomaticInternalBackupsPass(pass)
+                                Entry.rustInterface.setAutomaticInternalBackupsPassphrase(passphrase)
 
                                 withContext(Dispatchers.Main) {
                                     KeyStoreAES.saveSecret(
@@ -249,7 +218,7 @@ fun AutomaticInternalBackups(navController: NavController) {
                             }
                         } else {
                             scope.launch(Dispatchers.IO) {
-                                Entry.rustInterface.setAutomaticInternalBackupsPass(pass)
+                                Entry.rustInterface.setAutomaticInternalBackupsPassphrase(passphrase)
 
                                 KeyStoreRSA.saveSecret(Entry.rustInterface.getSecret())
                                 AccountManagement.saveAccountsUsingAutomaticInternalBackups(context)

@@ -61,11 +61,9 @@ fun SetupRecoverAccounts(navController: NavController) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    var pass by remember { mutableStateOf("") }
+    var passphrase by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var recoveryError by remember { mutableStateOf(true) }
-
-    val isPassValid = pass.isNotBlank()
 
     BackHandler(enabled = isLoading) {
         // intercept the system back button when loading.
@@ -119,16 +117,16 @@ fun SetupRecoverAccounts(navController: NavController) {
             Spacer(modifier = Modifier.height(12.dp))
 
             ConfidentialTextBox(
-                title = stringResource(R.string.common_pass),
-                value = pass,
+                title = stringResource(R.string.common_passphrase),
+                value = passphrase,
                 onValueChange = {
                     if (!isLoading) {
-                        pass = it
+                        passphrase = it
                     }
 
                     recoveryError = false
                 },
-                error = !isPassValid || recoveryError
+                error = passphrase.isEmpty() || recoveryError
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -138,7 +136,7 @@ fun SetupRecoverAccounts(navController: NavController) {
             ) {
                 AnimatedVisibility(recoveryError) {
                     Text(
-                        text = stringResource(R.string.common_incorrect_pass),
+                        text = stringResource(R.string.common_incorrect_passphrase),
                         modifier = Modifier.fillMaxWidth(),
                         color = Theme.colors.error,
                         fontSize = 14.sp,
@@ -166,11 +164,11 @@ fun SetupRecoverAccounts(navController: NavController) {
                         return@launch
                     }
 
-                    val result = Entry.rustInterface.importAccounts(pass, data)
+                    val result = Entry.rustInterface.importAccounts(passphrase, data)
 
                     if (result) {
                         AccountManagement.saveAccountsUsingSeed(context)
-                        Entry.rustInterface.setAutomaticInternalBackupsPass(pass)
+                        Entry.rustInterface.setAutomaticInternalBackupsPassphrase(passphrase)
 
                         Config.isUsingAutomaticInternalBackups = true
 

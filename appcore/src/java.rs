@@ -41,16 +41,16 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setAutomaticInternalBackupsPass(
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setAutomaticInternalBackupsPassphrase(
     mut unowned_env: EnvUnowned,
     _class: JClass,
-    pass: JString,
+    passphrase: JString,
 ) {
     let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let pass: String = pass.to_string();
+        let passphrase: String = passphrase.to_string();
 
         let mut client = CLIENT.lock().unwrap();
-        client.set_automatic_internal_backups_pass(&pass);
+        client.set_automatic_internal_backups_passphrase(&passphrase);
 
         Ok(())
     });
@@ -724,14 +724,14 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_exportAccounts(
     mut unowned_env: EnvUnowned,
     _class: JClass,
-    pass: JString,
+    passphrase: JString,
 ) -> jstring {
     let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
-        let pass: String = pass.to_string();
+        let passphrase: String = passphrase.to_string();
         let client = CLIENT.lock().unwrap();
 
         Ok(env
-            .new_string(client.export_accounts(&pass))
+            .new_string(client.export_accounts(&passphrase))
             .unwrap()
             .into_raw())
     });
@@ -743,13 +743,13 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_exportAccountsAegis(
     mut unowned_env: EnvUnowned,
     _class: JClass,
-    pass: JString,
+    passphrase: JString,
 ) -> jstring {
     let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
-        let pass: String = pass.to_string();
+        let passphrase: String = passphrase.to_string();
         let client = CLIENT.lock().unwrap();
         Ok(env
-            .new_string(client.export_accounts_aegis(&pass))
+            .new_string(client.export_accounts_aegis(&passphrase))
             .unwrap()
             .into_raw())
     });
@@ -781,15 +781,15 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_importAccounts(
     mut unowned_env: EnvUnowned,
     _class: JClass,
-    pass: JString,
+    passphrase: JString,
     data: JString,
 ) -> jboolean {
     let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let pass: String = pass.to_string();
+        let passphrase: String = passphrase.to_string();
         let data: String = data.to_string();
 
         let mut client = CLIENT.lock().unwrap();
-        if client.import_accounts(&pass, &data) {
+        if client.import_accounts(&passphrase, &data) {
             Ok(JNI_TRUE)
         } else {
             Ok(JNI_FALSE)
@@ -822,15 +822,15 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_importAccountsAegis(
     mut unowned_env: EnvUnowned,
     _class: JClass,
-    pass: JString,
+    passphrase: JString,
     data: JString,
 ) -> jboolean {
     let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let pass: String = pass.to_string();
+        let passphrase: String = passphrase.to_string();
         let data: String = data.to_string();
 
         let mut client = CLIENT.lock().unwrap();
-        if client.import_accounts_aegis(&pass, &data) {
+        if client.import_accounts_aegis(&passphrase, &data) {
             Ok(JNI_TRUE)
         } else {
             Ok(JNI_FALSE)
@@ -844,7 +844,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_svgToBitmap(
     mut unowned_env: EnvUnowned,
     _class: JClass,
-    svg_data: JByteArray,
+    data: JByteArray,
     width: jint,
     height: jint,
 ) -> jobject {
@@ -856,13 +856,13 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
             return Ok(std::ptr::null_mut());
         }
 
-        let len = match svg_data.len(env) {
+        let len = match data.len(env) {
             Ok(l) => l as usize,
             Err(_) => return Ok(std::ptr::null_mut()),
         };
 
         let mut buf_i8 = vec![0i8; len];
-        if let Err(_) = svg_data.get_region(env, 0, &mut buf_i8) {
+        if let Err(_) = data.get_region(env, 0, &mut buf_i8) {
             return Ok(std::ptr::null_mut());
         }
         let buf: Vec<u8> = buf_i8.iter().map(|&b| b as u8).collect();
