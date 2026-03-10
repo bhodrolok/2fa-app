@@ -93,8 +93,18 @@ fun Greeting(navController: NavController) {
                         unableToLoadDecryptionKeys = true
                         return@LaunchedEffect
                     }
+
+                    if (KeyStoreAES.isKeyInvalidated(true)) {
+                        unableToLoadDecryptionKeys = true
+                        return@LaunchedEffect
+                    }
                 } else {
                     if (!KeyStoreAES.loadKey(false)) {
+                        unableToLoadDecryptionKeys = true
+                        return@LaunchedEffect
+                    }
+
+                    if (KeyStoreAES.isKeyInvalidated(false)) {
                         unableToLoadDecryptionKeys = true
                         return@LaunchedEffect
                     }
@@ -133,8 +143,18 @@ fun Greeting(navController: NavController) {
                         unableToLoadDecryptionKeys = true
                         return@LaunchedEffect
                     }
+
+                    if (KeyStoreRSA.isKeyInvalidated(true)) {
+                        unableToLoadDecryptionKeys = true
+                        return@LaunchedEffect
+                    }
                 } else {
                     if (!KeyStoreRSA.loadRegularKey()) {
+                        unableToLoadDecryptionKeys = true
+                        return@LaunchedEffect
+                    }
+
+                    if (KeyStoreRSA.isKeyInvalidated(false)) {
                         unableToLoadDecryptionKeys = true
                         return@LaunchedEffect
                     }

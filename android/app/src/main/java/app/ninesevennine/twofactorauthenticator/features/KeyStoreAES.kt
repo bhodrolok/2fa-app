@@ -129,6 +129,23 @@ object KeyStoreAES {
         }
     }
 
+    fun isKeyInvalidated(isBiometricKey: Boolean): Boolean {
+        val alias = if (isBiometricKey) BIOMETRIC_KEY_ALIAS else REGULAR_KEY_ALIAS
+
+        return try {
+            val key = if (isBiometricKey) biometricKey else regularKey
+            if (key == null) return true
+
+            val cipher = Cipher.getInstance(AES_TRANSFORMATION)
+            cipher.init(Cipher.ENCRYPT_MODE, key)
+
+            false
+        } catch (e: Exception) {
+            Logger.e(TAG, "$alias key is invalidated", e)
+            true
+        }
+    }
+
     fun loadKey(isBiometricKey: Boolean): Boolean {
         val alias = if (isBiometricKey) BIOMETRIC_KEY_ALIAS else REGULAR_KEY_ALIAS
 

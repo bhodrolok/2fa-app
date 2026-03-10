@@ -170,6 +170,23 @@ object KeyStoreRSA {
         }
     }
 
+    fun isKeyInvalidated(isBiometricKey: Boolean): Boolean {
+        val alias = if (isBiometricKey) BIOMETRIC_KEY_ALIAS else REGULAR_KEY_ALIAS
+
+        return try {
+            val key = if (isBiometricKey) biometricPrivateKey else regularPrivateKey
+            if (key == null) return true
+
+            val cipher = Cipher.getInstance(RSA_TRANSFORMATION)
+            cipher.init(Cipher.DECRYPT_MODE, key, RSA_PARAMS)
+
+            false
+        } catch (e: Exception) {
+            Logger.e(TAG, "$alias key is invalidated", e)
+            true
+        }
+    }
+
     fun loadRegularKey(): Boolean {
         return runCatching {
             val entry = keyStore.getEntry(REGULAR_KEY_ALIAS, null) as KeyStore.PrivateKeyEntry
