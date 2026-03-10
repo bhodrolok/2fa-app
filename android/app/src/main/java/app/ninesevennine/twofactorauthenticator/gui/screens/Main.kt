@@ -106,6 +106,12 @@ fun Main(navController: NavController) {
         }
     }
 
+    LaunchedEffect(Unit) {
+        if (!Config.internalIsUsingKeyStoreAES && !Config.hasSeenKeyStoreMessage) {
+            navController.navigate(TempScreenRoute)
+        }
+    }
+
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 

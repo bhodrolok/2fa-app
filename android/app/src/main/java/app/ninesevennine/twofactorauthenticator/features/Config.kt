@@ -12,6 +12,7 @@ object Config {
 
     var activeIconPackId by mutableStateOf("")
     var internalIsUsingKeyStoreAES: Boolean = false
+    var hasSeenKeyStoreMessage: Boolean = false
     var hasCompletedSetup: Boolean = false
     var isUsingMinimalisticTiles by mutableStateOf(false)
     var isUsingSearchOnTop by mutableStateOf(true)
