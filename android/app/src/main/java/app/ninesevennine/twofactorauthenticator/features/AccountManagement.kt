@@ -56,21 +56,15 @@ object AccountManagement {
     }
 
     fun deleteAccountsUsingSeed(context: Context): Boolean {
-        return try {
-            val file = File(
-                context.applicationContext.noBackupFilesDir,
-                ACCOUNTS_USING_SEED_FILE
-            )
+        return runCatching {
+            val file = File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_SEED_FILE)
 
-            if (file.exists()) {
-                file.delete()
-            } else {
-                true
-            }
-        } catch (e: Exception) {
-            Logger.e(TAG, "failed to deleteAccountsUsingSeed", e)
-            false
-        }
+            if (file.exists()) file.delete() else true
+        }.onSuccess {
+            Logger.i(TAG, "$ACCOUNTS_USING_SEED_FILE deleted or already absent")
+        }.onFailure { e ->
+            Logger.e(TAG, "failed to delete $ACCOUNTS_USING_SEED_FILE", e)
+        }.getOrDefault(false)
     }
 
     fun saveAccountsUsingAutomaticInternalBackups(context: Context) {

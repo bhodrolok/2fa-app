@@ -93,39 +93,40 @@ object KeyStoreAES {
         val alias = if (isBiometricKey) BIOMETRIC_KEY_ALIAS else REGULAR_KEY_ALIAS
 
         val issuers = listOf(
-            true  to "secure element",
+            true to "secure element",
             false to "trusted execution environment"
         )
 
-        for ((isStrongBoxBacked, issuer) in issuers) {
-            for (keySize in supportedAesKeySizes) {
-                try {
+        val success = issuers.firstNotNullOfOrNull { (isStrongBoxBacked, issuer) ->
+            supportedAesKeySizes.firstNotNullOfOrNull { keySize ->
+                runCatching {
                     generateAesKey(alias, keySize, isBiometricKey, isStrongBoxBacked)
-                    Logger.i(TAG, "$issuer generated a $keySize bit aes key ($alias)")
-
-                    return true
-                } catch (_: Exception) {
-                    Logger.i(TAG, "$issuer cannot generate a $keySize bit aes key ($alias)")
-                }
+                }.onSuccess {
+                    Logger.i(TAG, "$issuer generated a $keySize bit $alias aes key")
+                }.onFailure {
+                    Logger.i(TAG, "$issuer cannot generate a $keySize bit $alias aes key")
+                }.getOrNull()
             }
         }
 
-        return false
+        return success != null
     }
 
     fun deleteKey(isBiometricKey: Boolean) {
         val alias = if (isBiometricKey) BIOMETRIC_KEY_ALIAS else REGULAR_KEY_ALIAS
 
-        if (keyStore.containsAlias(alias)) {
-            keyStore.deleteEntry(alias)
+        runCatching {
+            if (keyStore.containsAlias(alias)) {
+                keyStore.deleteEntry(alias)
 
-            if (isBiometricKey) {
-                biometricKey = null
+                if (isBiometricKey) biometricKey = null else regularKey = null
+
+                Logger.i(TAG, "successfully deleted $alias key")
             } else {
-                regularKey = null
+                Logger.i(TAG, "$alias key not found; nothing to delete")
             }
-
-            Logger.i(TAG, "deleted $alias key")
+        }.onFailure { e ->
+            Logger.e(TAG, "failed to delete $alias key", e)
         }
     }
 
@@ -149,21 +150,15 @@ object KeyStoreAES {
     fun loadKey(isBiometricKey: Boolean): Boolean {
         val alias = if (isBiometricKey) BIOMETRIC_KEY_ALIAS else REGULAR_KEY_ALIAS
 
-        try {
+        return runCatching {
             val entry = keyStore.getEntry(alias, null) as KeyStore.SecretKeyEntry
 
-            if (isBiometricKey) {
-                biometricKey = entry.secretKey
-            } else {
-                regularKey = entry.secretKey
-            }
+            if (isBiometricKey) biometricKey = entry.secretKey else regularKey = entry.secretKey
 
-            return true
-        } catch (e: Exception) {
-            Logger.e(TAG, "$alias key is invalid or unusable", e)
-        }
-
-        return false
+            true
+        }.onFailure { e ->
+            Logger.e(TAG, "failed to load $alias key", e)
+        }.getOrDefault(false)
     }
 
     fun saveSecret(
