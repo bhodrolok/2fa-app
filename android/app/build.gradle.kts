@@ -13,7 +13,7 @@ android {
         minSdk = 34
         targetSdk = 36
 
-        // mayor
+        // major
         // minor (000)
         // type (0 alpha, 1 beta, 2 release candidate, 3 release)
         // patch (000)
