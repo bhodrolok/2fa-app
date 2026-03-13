@@ -55,12 +55,12 @@ import app.ninesevennine.twofactorauthenticator.gui.screens.SelectTheme
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectThemeRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Settings
 import app.ninesevennine.twofactorauthenticator.gui.screens.SettingsRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupAutomaticInternalBackups
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupAutomaticInternalBackupsRoute
+import app.ninesevennine.twofactorauthenticator.gui.screens.SetupAutomaticBackups
+import app.ninesevennine.twofactorauthenticator.gui.screens.SetupAutomaticBackupsRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupBiometricUnlock
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupBiometricUnlockRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGenerateYourRandomSeed
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGenerateYourRandomSeedRoute
+import app.ninesevennine.twofactorauthenticator.gui.screens.SetupInitializeEncryptionKeys
+import app.ninesevennine.twofactorauthenticator.gui.screens.SetupInitializeEncryptionKeysRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStarted
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStartedRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupRecoverAccounts
@@ -117,10 +117,10 @@ class Main : FragmentActivity() {
                     popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) }
                 ) {
                     composable<SetupGetStartedRoute> { SetupGetStarted(navController) }
-                    composable<SetupGenerateYourRandomSeedRoute> { SetupGenerateYourRandomSeed(navController) }
+                    composable<SetupInitializeEncryptionKeysRoute> { SetupInitializeEncryptionKeys(navController) }
                     composable<SetupBiometricUnlockRoute> { SetupBiometricUnlock(navController) }
                     composable<SetupRecoverAccountsRoute> { SetupRecoverAccounts(navController) }
-                    composable<SetupAutomaticInternalBackupsRoute> { SetupAutomaticInternalBackups(navController) }
+                    composable<SetupAutomaticBackupsRoute> { SetupAutomaticBackups(navController) }
                     composable<MainRoute> { Main(navController) }
                     composable<GreetingRoute> { Greeting(navController) }
                     composable<SettingsRoute> { Settings(navController) }

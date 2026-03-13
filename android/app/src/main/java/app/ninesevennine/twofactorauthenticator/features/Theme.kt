@@ -22,6 +22,10 @@ data class ThemeColors(
     val primary: Color = Color(0),
     val secondary: Color = Color(0),
     val border: Color = Color(0),
+    val veryWeak: Color = Color(0),
+    val weak: Color = Color(0),
+    val good: Color = Color(0),
+    val strong: Color = Color(0),
     val info: Color = Color(0),
     val warning: Color = Color(0),
     val error: Color = Color(0),
@@ -40,22 +44,30 @@ object Theme {
         background = Color(0xFFFCFCFC),
         surface = Color(0xFFFFFFFF),
         primary = Color(0xFF282828),
-        secondary = Color(0xFF4A4A4A),
+        secondary = Color(0xFF313131),
         border = Color(0xFFBFBFBF),
-        info = Color(0xFF0288D1),
+        veryWeak = Color(0xFFD32F2F),
+        weak = Color(0xFFFBC02D),
+        good = Color(0xFF388E3C),
+        strong = Color(0xFF1976D2),
+        info = Color(0xFF1976D2),
         warning = Color(0xFFED6C02),
-        error = Color(0xFFD32F2F)
+        error = Color(0xFFB71C1C)
     )
 
     private val dark = ThemeColors(
         background = Color(0xFF060606),
-        surface = Color(0xFF0B0B0B),
+        surface = Color(0xFF121212),
         primary = Color(0xFFDEDEDA),
-        secondary = Color(0xFF817E77),
-        border = Color(0xFF121110),
-        info = Color(0xFF03A9F4),
+        secondary = Color(0xFFD1D1CD),
+        border = Color(0xFF1E1D1C),
+        veryWeak = Color(0xFFFF5252),
+        weak = Color(0xFFFFD740),
+        good = Color(0xFF66BB6A),
+        strong = Color(0xFF42A5F5),
+        info = Color(0xFF42A5F5),
         warning = Color(0xFFFFA000),
-        error = Color(0xFFE53935)
+        error = Color(0xFFCF6679)
     )
 
     private val pitchBlack = ThemeColors(
@@ -64,6 +76,10 @@ object Theme {
         primary = Color.White,
         secondary = Color.White,
         border = Color.White,
+        veryWeak = Color(0xFFFF5252),
+        weak = Color(0xFFFFD740),
+        good = Color(0xFF66BB6A),
+        strong = Color(0xFF42A5F5),
         info = Color.Cyan,
         warning = Color.Yellow,
         error = Color.Red

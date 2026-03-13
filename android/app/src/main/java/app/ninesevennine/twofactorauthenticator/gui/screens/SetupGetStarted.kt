@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -62,21 +63,19 @@ fun SetupGetStarted(navController: NavController) {
     val scope = rememberCoroutineScope()
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    val bottomInset = WindowInsets.statusBars.asPaddingValues().calculateBottomPadding()
+    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().coerceAtLeast(16.dp)
 
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.TopCenter
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
+            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column(
-                modifier = Modifier.widthIn(max = 500.dp).fillMaxWidth(),
+                modifier = Modifier.widthIn(max = 512.dp).fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(topInset + 16.dp))
@@ -107,7 +106,7 @@ fun SetupGetStarted(navController: NavController) {
                     title = "Press “Get Started“ to begin setup"
                 ) {
                     SectionButtonNew(
-                        painter = painterResource(R.drawable.random_seed),
+                        painter = painterResource(R.drawable.random_alphabet),
                         tint = Theme.colors.primary,
                         primaryText = "1. Initialize encryption keys"
                     ) {
@@ -167,12 +166,12 @@ fun SetupGetStarted(navController: NavController) {
                         }
 
                         withContext(Dispatchers.Main) {
-                            navController.navigate(SetupGenerateYourRandomSeedRoute)
+                            navController.navigate(SetupInitializeEncryptionKeysRoute)
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(bottomInset + 48.dp))
+                Spacer(modifier = Modifier.height(bottomInset + 64.dp))
             }
         }
     }

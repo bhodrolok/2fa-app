@@ -38,7 +38,7 @@ fun SectionGroupNew(
     ) {
         Text(
             text = title,
-            modifier = Modifier.padding(horizontal = 8.dp),
+            modifier = Modifier.padding(horizontal = 12.dp),
             color = Theme.colors.primary,
             fontSize = 14.sp,
             fontWeight = FontWeight.W700,

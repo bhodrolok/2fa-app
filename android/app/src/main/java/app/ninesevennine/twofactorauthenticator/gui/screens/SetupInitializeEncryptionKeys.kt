@@ -9,7 +9,6 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,12 +28,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -43,43 +40,36 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.Entry
-import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
-import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonNew
+import app.ninesevennine.twofactorauthenticator.gui.elements.StrengthIndicator
+import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 
 @Serializable
-object SetupGenerateYourRandomSeedRoute
+object SetupInitializeEncryptionKeysRoute
+
+private const val TAG = "SetupInitializeEncryptionKeys"
 
 @Composable
-fun SetupGenerateYourRandomSeed(navController: NavController) {
-    val targetEntropy = 500
+fun SetupInitializeEncryptionKeys(navController: NavController) {
     val haptic = LocalHapticFeedback.current
     val view = LocalView.current
 
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
+    val targetEntropy = 500
     val entropyPoints = remember { mutableStateListOf<Pair<Int, Int>>() }
 
-    val entropyColor = when {
-        entropyPoints.size <= 300 -> Color.Red
-        entropyPoints.size >= targetEntropy -> Color.Green
-        else -> {
-            val fraction = (entropyPoints.size - 300).toFloat() / (targetEntropy - 300)
-            Color(red = 1f - fraction, green = fraction, blue = 0f)
-        }
-    }
-
     val alphabet = "* .-,+/"
-    var pseudoSeed by remember { mutableStateOf("·".repeat(500)) }
+    var pseudoSeed by remember { mutableStateOf("·".repeat(400)) }
 
     BackHandler(enabled = isLoading) {
         // intercept the system back button when loading.
@@ -96,7 +86,7 @@ fun SetupGenerateYourRandomSeed(navController: NavController) {
                     view.playSoundEffect(SoundEffectConstants.CLICK)
 
                     pseudoSeed = buildString {
-                        repeat(500) { append(alphabet.random()) }
+                        repeat(400) { append(alphabet.random()) }
                     }
 
                     change.consume()
@@ -108,49 +98,39 @@ fun SetupGenerateYourRandomSeed(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxHeight()
-                .widthIn(max = 500.dp)
-                .fillMaxWidth()
-                .padding(16.dp),
+                .widthIn(max = 512.dp)
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp).fillMaxWidth()
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.setup_generate_your_random_seed_pseudo),
-                        color = Theme.colors.primary,
-                        fontSize = 14.sp,
-                        fontFamily = InterVariable,
-                        fontWeight = FontWeight.W700
-                    )
-
-                    Text(
-                        text = "${entropyPoints.size} / $targetEntropy",
-                        color = entropyColor,
-                        fontSize = 14.sp,
-                        fontFamily = InterVariable,
-                        fontWeight = FontWeight.W700
-                    )
-                }
+                Text(
+                    text = "Visualizer",
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+                    color = Theme.colors.primary,
+                    fontSize = 14.sp,
+                    fontFamily = InterVariable,
+                    fontWeight = FontWeight.W700
+                )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Box(
                     modifier = Modifier
-                        .height(152.dp)
+                        .height(128.dp)
                         .fillMaxWidth()
-                        .background(Theme.colors.surface)
+                        .background(Theme.colors.surface, RoundedCornerShape(8.dp))
                         .then(
-                            if(Theme.themeOption == ThemeOption.PITCH_BLACK) {
-                                Modifier.tiltShimmer(shape = RoundedCornerShape(16.dp))
+                            if (Theme.themeOption == ThemeOption.PITCH_BLACK) {
+                                Modifier.tiltShimmer(shape = RoundedCornerShape(8.dp))
                             } else {
-                                Modifier.border(1.dp, Theme.colors.border, RoundedCornerShape(16.dp))
+                                Modifier.border(
+                                    1.dp,
+                                    Theme.colors.border,
+                                    RoundedCornerShape(8.dp)
+                                )
                             }
                         ),
                     contentAlignment = Alignment.Center
@@ -161,45 +141,50 @@ fun SetupGenerateYourRandomSeed(navController: NavController) {
                         color = Theme.colors.primary,
                         fontSize = 14.sp,
                         fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.W500,
+                        fontWeight = FontWeight.W700,
                         textAlign = TextAlign.Center,
                         lineHeight = 18.sp,
                         overflow = TextOverflow.Clip,
                         softWrap = true,
-                        maxLines = 8
+                        maxLines = 6
+                    )
+                }
+
+                AnimatedVisibility(entropyPoints.isNotEmpty()) {
+                    StrengthIndicator(
+                        modifier = Modifier.padding(start = 4.dp, top = 12.dp, end = 4.dp, bottom = 4.dp),
+                        strength = entropyPoints.size.toFloat() / targetEntropy
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
-
             Text(
-                text = stringResource(R.string.setup_generate_your_random_seed_title),
-                modifier = Modifier.fillMaxWidth(),
+                text = "Initialize Encryption Keys",
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 color = Theme.colors.primary,
-                fontSize = 20.sp,
+                fontSize = 18.sp,
                 fontFamily = InterVariable,
                 fontWeight = FontWeight.W700
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = stringResource(R.string.setup_generate_your_random_seed_info),
-                modifier = Modifier.fillMaxWidth(),
-                color = Theme.colors.primary,
+                text = "Move your finger randomly across the screen. The longer you move it, the stronger the resulting encryption keys become. This visualizer simply illustrates the entropy generation process. It does not reveal sensitive data and cannot be used to derive your keys.",
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                color = Theme.colors.secondary,
                 fontSize = 14.sp,
                 fontFamily = InterVariable,
-                fontWeight = FontWeight.W500
+                fontWeight = FontWeight.Normal,
+                textAlign = TextAlign.Justify
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
-
             AnimatedVisibility(entropyPoints.size >= targetEntropy) {
-                RoundedButton(
-                    text = if (isLoading) spinnerText() else stringResource(R.string.common_button_continue)
+                RoundedButtonNew(
+                    modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                    text = "Continue"
                 ) {
-                    if (isLoading) return@RoundedButton
+                    if (isLoading) return@RoundedButtonNew
 
                     isLoading = true
 
@@ -212,7 +197,11 @@ fun SetupGenerateYourRandomSeed(navController: NavController) {
                     }
 
                     scope.launch(Dispatchers.IO) {
+                        Logger.i(TAG, "continue pressed")
+
                         Entry.rustInterface.generateClientSeedWithEntropy(entropyArray)
+
+                        Logger.i(TAG, "generated client seed using entropy buffer of size ${entropyArray.size / 2}")
 
                         withContext(Dispatchers.Main) {
                             navController.navigate(SetupBiometricUnlockRoute)
