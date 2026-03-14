@@ -28,9 +28,9 @@ fun StrengthIndicator(
     val s = strength.coerceIn(0f, 1f)
 
     val color = when {
-        s <= 0.30f -> lerp(Theme.colors.veryWeak, Theme.colors.weak, s / 0.30f)
-        s <= 0.60f -> lerp(Theme.colors.weak, Theme.colors.good, (s - 0.30f) / 0.30f)
-        s <= 0.90f -> lerp(Theme.colors.good, Theme.colors.strong, (s - 0.60f) / 0.30f)
+        s <= 0.25f -> lerp(Theme.colors.veryWeak, Theme.colors.weak, s / 0.25f)
+        s <= 0.50f -> lerp(Theme.colors.weak, Theme.colors.good, (s - 0.25f) / 0.25f)
+        s <= 0.75f -> lerp(Theme.colors.good, Theme.colors.strong, (s - 0.50f) / 0.25f)
         else -> Theme.colors.strong
     }
 
@@ -39,7 +39,7 @@ fun StrengthIndicator(
     val label = when {
         s <= 0.25f -> "Very weak"
         s <= 0.50f -> "Weak"
-        s <= 0.90f -> "Good"
+        s <= 0.75f -> "Good"
         else -> "Strong"
     }
 

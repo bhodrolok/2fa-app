@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -37,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
+import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
@@ -61,14 +64,16 @@ fun SetupAutomaticBackups(navController: NavController) {
     val context = LocalContext.current
 
     var passphrase by remember { mutableStateOf("") }
+    var passphraseStrength by remember { mutableFloatStateOf(0f) }
     var confirmPassphrase by remember { mutableStateOf("") }
+    var recoveryError by remember { mutableStateOf(true) }
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().coerceAtLeast(16.dp)
 
-    val isPassphraseValid = passphrase.length >= 8
+    val isPassphraseValid = passphraseStrength > 0.5f
 
     BackHandler(enabled = isLoading) {
         // intercept the system back button when loading.
@@ -79,7 +84,7 @@ fun SetupAutomaticBackups(navController: NavController) {
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).imePadding(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -131,51 +136,139 @@ fun SetupAutomaticBackups(navController: NavController) {
                     textAlign = TextAlign.Justify
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                if (AccountManagement.hasAccountsUsingAutomaticInternalBackups(context)) {
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                ConfidentialTextBoxNew(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    title = "Passphrase",
-                    value = passphrase,
-                    onValueChange = { if (!isLoading) passphrase = it }
-                )
-
-                StrengthIndicator(
-                    modifier = Modifier.padding(start = 20.dp, top = 12.dp, end = 20.dp),
-                    strength = 0.25f
-                )
-
-                AnimatedVisibility(isPassphraseValid) {
-                    ConfidentialTextBoxNew(
-                        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                        title = "Confirm Passphrase",
-                        value = confirmPassphrase,
-                        onValueChange = { if (!isLoading) confirmPassphrase = it },
-                        error = passphrase != confirmPassphrase
+                    Text(
+                        text = "A backup was found in the app's internal storage. Enter your passphrase below to recover your accounts.",
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        color = Theme.colors.info,
+                        fontSize = 14.sp,
+                        fontFamily = InterVariable,
+                        textAlign = TextAlign.Justify
                     )
-                }
 
-                AnimatedVisibility(isPassphraseValid && passphrase == confirmPassphrase) {
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    ConfidentialTextBoxNew(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        title = "Passphrase",
+                        value = passphrase,
+                        onValueChange = {
+                            if (!isLoading) {
+                                passphrase = it
+                            }
+
+                            recoveryError = false
+                        },
+                        error = passphrase.isEmpty() || recoveryError
+                    )
+
+                    AnimatedVisibility(recoveryError) {
+                        Text(
+                            text = "Incorrect passphrase",
+                            modifier = Modifier.fillMaxWidth().padding(start = 20.dp, top = 8.dp, end = 20.dp),
+                            color = Theme.colors.error,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Normal,
+                            fontFamily = InterVariable
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     RoundedButtonNew(
-                        modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                        text = if (isLoading) spinnerText() else "Enable"
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        text = if (isLoading) spinnerText() else "Recover"
                     ) {
                         if (isLoading) return@RoundedButtonNew
 
                         isLoading = true
+                        recoveryError = false
 
                         scope.launch(Dispatchers.IO) {
-                            Entry.rustInterface.setAutomaticInternalBackupsPassphrase(passphrase)
+                            val data = AccountManagement.getAccountsUsingAutomaticInternalBackups(context)
+                            if (data == null) {
+                                recoveryError = true
+                                isLoading = false
+                                return@launch
+                            }
 
-                            Config.isUsingAutomaticInternalBackups = true
+                            val result = Entry.rustInterface.importAccounts(passphrase, data)
 
-                            Logger.i(TAG, "automatic internal backups set to true")
+                            if (result) {
+                                AccountManagement.saveAccountsUsingSeed(context)
+                                Entry.rustInterface.setAutomaticInternalBackupsPassphrase(passphrase)
 
-                            Config.save(context)
+                                Config.isUsingAutomaticInternalBackups = true
 
-                            withContext(Dispatchers.Main) {
-                                navController.navigate(GreetingRoute) {
-                                    popUpTo(0) { inclusive = true }
+                                Logger.i(TAG, "automatic backups set to true")
+
+                                Config.save(context)
+
+                                withContext(Dispatchers.Main) {
+                                    navController.navigate(GreetingRoute) {
+                                        popUpTo(0) { inclusive = true }
+                                    }
+                                }
+                            } else {
+                                recoveryError = true
+                                isLoading = false
+                            }
+                        }
+                    }
+                } else {
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    ConfidentialTextBoxNew(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        title = "Passphrase",
+                        value = passphrase,
+                        onValueChange = {
+                            if (!isLoading) {
+                                passphrase = it
+                                passphraseStrength = Entry.rustInterface.estimatePassphraseStrength(it)
+                            }
+                        }
+                    )
+
+                    StrengthIndicator(
+                        modifier = Modifier.padding(start = 20.dp, top = 12.dp, end = 20.dp),
+                        strength = passphraseStrength
+                    )
+
+                    AnimatedVisibility(isPassphraseValid) {
+                        ConfidentialTextBoxNew(
+                            modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp),
+                            title = "Confirm Passphrase",
+                            value = confirmPassphrase,
+                            onValueChange = { if (!isLoading) confirmPassphrase = it },
+                            error = passphrase != confirmPassphrase
+                        )
+                    }
+
+                    AnimatedVisibility(isPassphraseValid && passphrase == confirmPassphrase) {
+                        RoundedButtonNew(
+                            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                            text = if (isLoading) spinnerText() else "Enable"
+                        ) {
+                            if (isLoading) return@RoundedButtonNew
+
+                            isLoading = true
+
+                            scope.launch(Dispatchers.IO) {
+                                Entry.rustInterface.setAutomaticInternalBackupsPassphrase(passphrase)
+
+                                Config.isUsingAutomaticInternalBackups = true
+
+                                Logger.i(TAG, "automatic backups set to true")
+
+                                Config.save(context)
+
+                                withContext(Dispatchers.Main) {
+                                    navController.navigate(GreetingRoute) {
+                                        popUpTo(0) { inclusive = true }
+                                    }
                                 }
                             }
                         }

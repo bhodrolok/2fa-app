@@ -199,7 +199,7 @@ fun SetupInitializeEncryptionKeys(navController: NavController) {
                     scope.launch(Dispatchers.IO) {
                         Logger.i(TAG, "continue pressed")
 
-                        Entry.rustInterface.generateClientSeedWithEntropy(entropyArray)
+                        Entry.rustInterface.generateClientSecretWithEntropy(entropyArray)
 
                         Logger.i(TAG, "generated client seed using entropy buffer of size ${entropyArray.size / 2}")
 

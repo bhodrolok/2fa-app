@@ -7,7 +7,7 @@ class RustInterface {
         const val LIBRARY_NAME = "appcore"
     }
 
-    external fun generateClientSeedWithEntropy(entropyArray: IntArray)
+    external fun generateClientSecretWithEntropy(entropyArray: IntArray)
     external fun setAutomaticInternalBackupsPassphrase(passphrase: String)
     external fun getSecret(): ByteArray
     external fun setSecret(secretArray: ByteArray)
@@ -48,6 +48,8 @@ class RustInterface {
     external fun importAccountsAegis(passphrase: String, data: String): Boolean
 
     external fun svgToBitmap(data: ByteArray, width: Int, height: Int): Bitmap?
+
+    external fun estimatePassphraseStrength(passphrase: String): Float
 }
 
 enum class CodeType(val displayName: String) {

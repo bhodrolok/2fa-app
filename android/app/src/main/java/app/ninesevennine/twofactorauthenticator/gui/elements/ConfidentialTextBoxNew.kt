@@ -18,9 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -38,6 +35,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -48,6 +46,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
@@ -90,7 +89,6 @@ fun ConfidentialTextBoxNew(
 
             Row(
                 modifier = Modifier
-                    .padding(top = 1.dp)
                     .graphicsLayer(scaleX = scale, scaleY = scale)
                     .clip(RoundedCornerShape(6.dp))
                     .clickable(
@@ -107,10 +105,10 @@ fun ConfidentialTextBoxNew(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = if (visible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                    painter = if (visible) painterResource(R.drawable.mi_visibility_off) else painterResource(R.drawable.mi_visibility),
                     contentDescription = null,
                     tint = Theme.colors.primary,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.padding(top = 1.dp).size(16.dp)
                 )
                 Text(
                     text = if (visible) "Hide" else "Show",

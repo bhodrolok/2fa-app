@@ -59,12 +59,10 @@ import app.ninesevennine.twofactorauthenticator.gui.screens.SetupAutomaticBackup
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupAutomaticBackupsRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupBiometricUnlock
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupBiometricUnlockRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupInitializeEncryptionKeys
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupInitializeEncryptionKeysRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStarted
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStartedRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupRecoverAccounts
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupRecoverAccountsRoute
+import app.ninesevennine.twofactorauthenticator.gui.screens.SetupInitializeEncryptionKeys
+import app.ninesevennine.twofactorauthenticator.gui.screens.SetupInitializeEncryptionKeysRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.TempScreen
 import app.ninesevennine.twofactorauthenticator.gui.screens.TempScreenRoute
 import app.ninesevennine.twofactorauthenticator.utils.Logger
@@ -119,7 +117,6 @@ class Main : FragmentActivity() {
                     composable<SetupGetStartedRoute> { SetupGetStarted(navController) }
                     composable<SetupInitializeEncryptionKeysRoute> { SetupInitializeEncryptionKeys(navController) }
                     composable<SetupBiometricUnlockRoute> { SetupBiometricUnlock(navController) }
-                    composable<SetupRecoverAccountsRoute> { SetupRecoverAccounts(navController) }
                     composable<SetupAutomaticBackupsRoute> { SetupAutomaticBackups(navController) }
                     composable<MainRoute> { Main(navController) }
                     composable<GreetingRoute> { Greeting(navController) }

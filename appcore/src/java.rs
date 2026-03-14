@@ -1,6 +1,9 @@
 use crate::{
     CLIENT,
-    client::SECRET_SIZE,
+    client::{
+        AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_HASH_SIZE,
+        AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_SALT_SIZE, SECRET_SIZE,
+    },
     features::codegen::{Algorithm, CodeType},
 };
 use jni::{
@@ -10,7 +13,7 @@ use jni::{
 };
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_generateClientSeedWithEntropy(
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_generateClientSecretWithEntropy(
     mut unowned_env: EnvUnowned,
     _class: JClass,
     entropy_array: JIntArray,
@@ -24,15 +27,40 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
         let entropy_bytes: Vec<u8> = entropy_vec.iter().flat_map(|v| v.to_le_bytes()).collect();
 
-        let mut hasher = Sha3_512::new();
-        hasher.update(&entropy_bytes);
+        let mut random1 = [0u8; 64];
+        let mut random2 = [0u8; 64];
+        let mut random3 = [0u8; 64];
+        getrandom::fill(&mut random1).unwrap();
+        getrandom::fill(&mut random2).unwrap();
+        getrandom::fill(&mut random3).unwrap();
 
-        let mut system_random = [0u8; 64];
-        getrandom::fill(&mut system_random).unwrap();
-        hasher.update(&system_random);
+        let mut hasher1 = Sha3_512::new();
+        hasher1.update(&entropy_bytes);
+        hasher1.update(&random1);
+
+        let mut hasher2 = Sha3_512::new();
+        hasher2.update(&entropy_bytes);
+        hasher2.update(&random2);
+
+        let mut hasher3 = Sha3_512::new();
+        hasher3.update(&random3);
+        hasher3.update(&entropy_bytes);
 
         let mut client = CLIENT.lock().unwrap();
-        client.seed = hasher.finalize().into();
+
+        client.seed = hasher1.finalize().into();
+
+        client
+            .automatic_internal_backups_passphrase_hash
+            .copy_from_slice(
+                &hasher2.finalize()[..AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_HASH_SIZE],
+            );
+
+        client
+            .automatic_internal_backups_passphrase_salt
+            .copy_from_slice(
+                &hasher3.finalize()[..AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_SALT_SIZE],
+            );
 
         Ok(())
     });
@@ -984,6 +1012,30 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         }
 
         Ok(bitmap.into_raw())
+    });
+
+    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_estimatePassphraseStrength(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+    passphrase: JString,
+) -> f32 {
+    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
+        let passphrase: String = passphrase.to_string();
+        let estimate = zxcvbn::zxcvbn(&passphrase, &[]);
+
+        let guesses = estimate.guesses() as f64;
+        let log_guesses = guesses.max(1.0).log10();
+
+        let min_log = 3.0;
+        let max_log = 20.0;
+
+        let strength = ((log_guesses - min_log) / (max_log - min_log)).clamp(0.0, 1.0) as f32;
+
+        Ok(strength)
     });
 
     outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()

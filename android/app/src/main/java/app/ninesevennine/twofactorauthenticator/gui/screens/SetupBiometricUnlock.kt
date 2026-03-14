@@ -1,5 +1,7 @@
 package app.ninesevennine.twofactorauthenticator.gui.screens
 
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +31,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Config
@@ -109,11 +113,33 @@ fun SetupBiometricUnlock(navController: NavController) {
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         text = "Enable"
                     ) {
-                        Config.isUsingBiometrics = true
+                        val currentActivity = navController.context as? FragmentActivity ?: return@RoundedButtonNew
 
-                        Logger.i(TAG, "biometrics set to true")
+                        val executor = ContextCompat.getMainExecutor(currentActivity)
 
-                        navController.navigate(SetupAutomaticBackupsRoute)
+                        val callback = object : BiometricPrompt.AuthenticationCallback() {
+                            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                                Config.isUsingBiometrics = true
+                                Logger.i(TAG, "biometrics set to true")
+                                navController.navigate(SetupAutomaticBackupsRoute)
+                            }
+
+                            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                                Logger.i(TAG, "biometric confirmation cancelled or errored: $errString")
+                            }
+
+                            override fun onAuthenticationFailed() {
+                                Logger.i(TAG, "biometric confirmation failed")
+                            }
+                        }
+
+                        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+                            .setTitle("Confirm Biometrics")
+                            .setNegativeButtonText("Cancel")
+                            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+                            .build()
+
+                        BiometricPrompt(currentActivity, executor, callback).authenticate(promptInfo)
                     }
                 } else {
                     Spacer(modifier = Modifier.height(12.dp))
