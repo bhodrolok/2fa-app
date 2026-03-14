@@ -1027,13 +1027,11 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let passphrase: String = passphrase.to_string();
         let estimate = zxcvbn::zxcvbn(&passphrase, &[]);
 
-        let guesses = estimate.guesses() as f64;
-        let log_guesses = guesses.max(1.0).log10();
-
         let min_log = 3.0;
         let max_log = 20.0;
 
-        let strength = ((log_guesses - min_log) / (max_log - min_log)).clamp(0.0, 1.0) as f32;
+        let strength =
+            ((estimate.guesses_log10() - min_log) / (max_log - min_log)).clamp(0.0, 1.0) as f32;
 
         Ok(strength)
     });
