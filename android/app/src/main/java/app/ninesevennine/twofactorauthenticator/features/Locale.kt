@@ -60,18 +60,18 @@ object Locale {
         return LocaleOption.fromLanguage(effectiveLocale.language)
     }
 
-    fun currentDisplayName(context: Context): String {
-        return when (val option = currentEffectiveLocale(context)) {
-            LocaleOption.SYSTEM -> {
-                val localeManager = getLocaleManager(context)
-                val locale = if (!localeManager.applicationLocales.isEmpty) {
-                    localeManager.applicationLocales[0]
-                } else {
-                    JavaLocale.getDefault()
-                }
-                locale.getDisplayLanguage(locale)
-            }
-            else -> option.displayName
+    fun currentDisplayName(): String {
+        if (_localeOption != LocaleOption.SYSTEM) {
+            return _localeOption.displayName
+        }
+
+        val systemLocale = JavaLocale.getDefault()
+        val matched = LocaleOption.fromLanguage(systemLocale.language)
+
+        return if (matched != LocaleOption.SYSTEM) {
+            matched.displayName
+        } else {
+            LocaleOption.ENGLISH.displayName
         }
     }
 }

@@ -1,7 +1,6 @@
 package app.ninesevennine.twofactorauthenticator.gui.screens
 
 import android.content.Intent
-import android.util.Log
 import android.view.SoundEffectConstants
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,9 +21,6 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.UploadFile
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -43,7 +39,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -155,7 +151,7 @@ fun AddCode(navController: NavController) {
             Box(
                 modifier = Modifier
                     .graphicsLayer(scaleX = cancelScale, scaleY = cancelScale)
-                    .size(52.dp)
+                    .size(48.dp)
                     .clip(shape)
                     .background(color = Color(0x99000000))
                     .then(
@@ -172,25 +168,23 @@ fun AddCode(navController: NavController) {
                             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                             view.playSoundEffect(SoundEffectConstants.CLICK)
 
-                            Log.w("AddCode", "navController.popBackStack()")
-
                             navController.popBackStack()
                         }
                     ),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.Close,
+                    painter = painterResource(R.drawable.mi_close),
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(26.dp)
                 )
             }
 
             Box(
                 modifier = Modifier
                     .graphicsLayer(scaleX = enterScale, scaleY = enterScale)
-                    .height(52.dp)
+                    .height(48.dp)
                     .clip(shape)
                     .background(color = Color(0x99000000))
                     .then(
@@ -215,9 +209,9 @@ fun AddCode(navController: NavController) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = stringResource(R.string.add_code_enter_manually),
+                    text = "Enter manually",
                     color = Color.White,
-                    fontSize = 15.sp,
+                    fontSize = 14.sp,
                     fontFamily = InterVariable,
                     fontWeight = FontWeight.W700
                 )
@@ -226,7 +220,7 @@ fun AddCode(navController: NavController) {
             Box(
                 modifier = Modifier
                     .graphicsLayer(scaleX = imageScale, scaleY = imageScale)
-                    .size(52.dp)
+                    .size(48.dp)
                     .clip(shape)
                     .background(color = Color(0x99000000))
                     .then(
@@ -249,10 +243,10 @@ fun AddCode(navController: NavController) {
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.UploadFile,
+                    painter = painterResource(R.drawable.mi_upload_file),
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(26.dp)
                 )
             }
         }

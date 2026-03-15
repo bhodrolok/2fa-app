@@ -9,11 +9,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowInsetsControllerCompat
 
-enum class ThemeOption(val value: Int, val displayName: String) {
-    SYSTEM(0, "Use System Default"),
-    LIGHT(1, "Light"),
-    DARK(2, "Dark"),
-    PITCH_BLACK(3, "Pitch Black");
+enum class ThemeOption(val value: Int) {
+    SYSTEM(0),
+    LIGHT(1),
+    DARK(2),
+    PITCH_BLACK(3);
 }
 
 data class ThemeColors(

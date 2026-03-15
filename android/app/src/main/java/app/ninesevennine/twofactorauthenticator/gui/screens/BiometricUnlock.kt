@@ -5,16 +5,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.text.BasicText
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Fingerprint
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,12 +29,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -39,11 +39,10 @@ import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
-import app.ninesevennine.twofactorauthenticator.features.KeyStoreRSA
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.elements.LeftButtonHeader
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonNew
+import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.coroutines.Dispatchers
@@ -63,6 +62,9 @@ fun BiometricUnlock(navController: NavController) {
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
+    val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().coerceAtLeast(16.dp)
+
     // copy otherwise ui change will be visible on pop back.
     var isUsingBiometrics by remember { mutableStateOf(Config.isUsingBiometrics) }
 
@@ -70,8 +72,8 @@ fun BiometricUnlock(navController: NavController) {
         // intercept the system back button when loading.
     }
 
-    val biometricUnlockText = stringResource(R.string.common_biometric_unlock)
-    val cancelText = stringResource(R.string.common_cancel)
+    val biometricUnlockText = "Confirm Biometrics"
+    val cancelText = "Cancel"
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -79,162 +81,160 @@ fun BiometricUnlock(navController: NavController) {
     ) {
         Column(
             modifier = Modifier
-                .fillMaxHeight()
-                .widthIn(max = 500.dp)
-                .fillMaxWidth()
-                .padding(16.dp),
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()).imePadding(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(
-                imageVector = Icons.Default.Fingerprint,
-                contentDescription = null,
-                modifier = Modifier.size(152.dp),
-                tint = Theme.colors.primary
-            )
+            Column(
+                modifier = Modifier.widthIn(max = 512.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(topInset + 80.dp))
 
-            Spacer(modifier = Modifier.height(24.dp))
+                Icon(
+                    painter = painterResource(R.drawable.mi_fingerprint),
+                    contentDescription = null,
+                    modifier = Modifier.size(96.dp),
+                    tint = Theme.colors.primary
+                )
 
-            Text(
-                text = stringResource(R.string.common_biometric_unlock),
-                modifier = Modifier.fillMaxWidth(),
-                color = Theme.colors.primary,
-                fontSize = 20.sp,
-                fontFamily = InterVariable,
-                fontWeight = FontWeight.W700
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            BasicText(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(color = Theme.colors.warning)) {
-                        append(stringResource(R.string.common_biometric_unlock_info_part_1) + " ")
-                    }
-                    withStyle(style = SpanStyle(color = Theme.colors.primary)) {
-                        append(stringResource(R.string.common_biometric_unlock_info_part_2))
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                style = TextStyle(fontSize = 14.sp, fontFamily = InterVariable)
-            )
-
-            if (!KeyStoreRSA.isBiometricAvailable()) {
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
                 Text(
-                    text = stringResource(R.string.common_biometric_unlock_error),
-                    modifier = Modifier.fillMaxWidth(),
-                    color = Theme.colors.info,
-                    fontSize = 14.sp,
-                    fontFamily = InterVariable
+                    text = "Biometric Unlock",
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    color = Theme.colors.primary,
+                    fontSize = 18.sp,
+                    fontFamily = InterVariable,
+                    fontWeight = FontWeight.W700
                 )
-            }
 
-            Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
-            if (KeyStoreAES.isBiometricAvailable()) {
-                if (isUsingBiometrics) {
-                    RoundedButton(
-                        if (isLoading) spinnerText() else stringResource(R.string.common_button_disable)
-                    ) {
-                        if (isLoading) return@RoundedButton
+                Text(
+                    text = "Using biometric unlock may invalidate your decryption keys if your lock screen or private spaces change, your device updates, or if the app hasn't been opened in a while. You can always recover your accounts by having automatic backups enabled.",
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    color = Theme.colors.secondary,
+                    fontSize = 14.sp,
+                    fontFamily = InterVariable,
+                    fontWeight = FontWeight.Normal,
+                    textAlign = TextAlign.Justify
+                )
 
-                        isLoading = true
+                if (KeyStoreAES.isBiometricAvailable()) {
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                        scope.launch(Dispatchers.IO) {
-                            val isBiometricKey = false
+                    if (isUsingBiometrics) {
+                        RoundedButtonNew(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                            text = if (isLoading) spinnerText() else "Disable"
+                        ) {
+                            if (isLoading) return@RoundedButtonNew
 
-                            KeyStoreAES.deleteKey(isBiometricKey)
+                            isLoading = true
 
-                            KeyStoreAES.generateKey(isBiometricKey)
-                            if (!KeyStoreAES.loadKey(isBiometricKey)) {
-                                isLoading = false
-                                return@launch
+                            scope.launch(Dispatchers.IO) {
+                                val isBiometricKey = false
+
+                                KeyStoreAES.deleteKey(isBiometricKey)
+
+                                KeyStoreAES.generateKey(isBiometricKey)
+                                if (!KeyStoreAES.loadKey(isBiometricKey)) {
+                                    isLoading = false
+                                    return@launch
+                                }
+
+                                withContext(Dispatchers.Main) {
+                                    Config.isUsingBiometrics = isBiometricKey
+
+                                    KeyStoreAES.saveSecret(
+                                        title = biometricUnlockText,
+                                        negative = cancelText,
+                                        secret = Entry.rustInterface.getSecret(),
+                                        onSuccess = {
+                                            Logger.i(TAG, "biometrics set to false")
+
+                                            Config.save(context)
+
+                                            navController.popBackStack()
+                                        },
+                                        onError = {
+                                            isLoading = false
+                                        },
+                                        onCancel = {
+                                            Logger.i(TAG, "biometric prompt canceled")
+                                            isLoading = false
+                                        }
+                                    )
+                                }
                             }
+                        }
+                    } else {
+                        RoundedButtonNew(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                            text = if (isLoading) spinnerText() else "Enable"
+                        ) {
+                            if (isLoading) return@RoundedButtonNew
 
-                            withContext(Dispatchers.Main) {
-                                Config.isUsingBiometrics = isBiometricKey
+                            isLoading = true
 
-                                KeyStoreAES.saveSecret(
-                                    title = biometricUnlockText,
-                                    negative = cancelText,
-                                    secret = Entry.rustInterface.getSecret(),
-                                    onSuccess = {
-                                        Logger.i(TAG, "biometrics set to ${Config.isUsingBiometrics}")
+                            scope.launch(Dispatchers.IO) {
+                                val isBiometricKey = true
 
-                                        Config.internalIsUsingKeyStoreAES = true
-                                        Config.save(context)
+                                KeyStoreAES.deleteKey(isBiometricKey)
 
-                                        navController.popBackStack()
-                                    },
-                                    onError = {
-                                        isLoading = false
-                                    },
-                                    onCancel = {
-                                        Logger.i(TAG, "biometric prompt canceled")
-                                        isLoading = false
-                                    }
-                                )
+                                KeyStoreAES.generateKey(isBiometricKey)
+                                if (!KeyStoreAES.loadKey(isBiometricKey)) {
+                                    isLoading = false
+                                    return@launch
+                                }
+
+                                withContext(Dispatchers.Main) {
+                                    Config.isUsingBiometrics = isBiometricKey
+
+                                    KeyStoreAES.saveSecret(
+                                        title = biometricUnlockText,
+                                        negative = cancelText,
+                                        secret = Entry.rustInterface.getSecret(),
+                                        onSuccess = {
+                                            Logger.i(TAG, "biometrics set to true")
+
+                                            Config.save(context)
+
+                                            navController.popBackStack()
+                                        },
+                                        onError = {
+                                            isLoading = false
+                                        },
+                                        onCancel = {
+                                            Logger.i(TAG, "biometric prompt canceled")
+                                            isLoading = false
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
                 } else {
-                    RoundedButton(
-                        if (isLoading) spinnerText() else stringResource(R.string.common_button_enable)
-                    ) {
-                        if (isLoading) return@RoundedButton
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                        isLoading = true
-
-                        scope.launch(Dispatchers.IO) {
-                            val isBiometricKey = true
-
-                            KeyStoreAES.deleteKey(isBiometricKey)
-
-                            KeyStoreAES.generateKey(isBiometricKey)
-                            if (!KeyStoreAES.loadKey(isBiometricKey)) {
-                                isLoading = false
-                                return@launch
-                            }
-
-                            withContext(Dispatchers.Main) {
-                                Config.isUsingBiometrics = isBiometricKey
-
-                                KeyStoreAES.saveSecret(
-                                    title = biometricUnlockText,
-                                    negative = cancelText,
-                                    secret = Entry.rustInterface.getSecret(),
-                                    onSuccess = {
-                                        Logger.i(TAG, "biometrics set to ${Config.isUsingBiometrics}")
-
-                                        Config.internalIsUsingKeyStoreAES = true
-                                        Config.save(context)
-
-                                        navController.popBackStack()
-                                    },
-                                    onError = {
-                                        isLoading = false
-                                    },
-                                    onCancel = {
-                                        Logger.i(TAG, "biometric prompt canceled")
-                                        isLoading = false
-                                    }
-                                )
-                            }
-                        }
-                    }
+                    Text(
+                        text = "Biometric unlock may not be supported on this device. Make sure you have biometrics set up in your device settings.",
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        color = Theme.colors.info,
+                        fontSize = 14.sp,
+                        fontFamily = InterVariable,
+                        textAlign = TextAlign.Justify
+                    )
                 }
+
+                Spacer(modifier = Modifier.height(bottomInset + 80.dp))
             }
         }
 
-        LeftButtonHeader(
-            title = "",
-            onBack = {
-                if (isLoading) return@LeftButtonHeader
-
-                navController.popBackStack()
-            }
-        )
+        StartButtonHeader("") {
+            navController.popBackStack()
+        }
     }
 }

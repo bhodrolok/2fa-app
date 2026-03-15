@@ -153,7 +153,7 @@ fun SectionButtonNew(
                 contentDescription = null,
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
-                    .size(24.dp)
+                    .size(26.dp)
                     .graphicsLayer(
                         scaleX = checkmarkScale, scaleY = checkmarkScale
                     ),

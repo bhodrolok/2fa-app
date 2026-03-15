@@ -20,7 +20,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
-import app.ninesevennine.twofactorauthenticator.features.KeyStoreRSA
 import app.ninesevennine.twofactorauthenticator.features.Signals
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
@@ -29,8 +28,8 @@ import app.ninesevennine.twofactorauthenticator.features.setScreenSecure
 import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect
 import app.ninesevennine.twofactorauthenticator.gui.screens.AddCode
 import app.ninesevennine.twofactorauthenticator.gui.screens.AddCodeRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.AutomaticInternalBackups
-import app.ninesevennine.twofactorauthenticator.gui.screens.AutomaticInternalBackupsRoute
+import app.ninesevennine.twofactorauthenticator.gui.screens.AutomaticBackups
+import app.ninesevennine.twofactorauthenticator.gui.screens.AutomaticBackupsRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.BiometricUnlock
 import app.ninesevennine.twofactorauthenticator.gui.screens.BiometricUnlockRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Edit
@@ -86,7 +85,6 @@ class Main : FragmentActivity() {
         ShimmerEffect.set(sensorManager)
 
         KeyStoreAES.setActivity(this)
-        KeyStoreRSA.setActivity(this)
 
         handleIntents(intent)
 
@@ -125,7 +123,7 @@ class Main : FragmentActivity() {
                     composable<SelectThemeRoute> { SelectTheme(navController) }
                     composable<SelectIconPacksRoute> { SelectIconPacks(navController) }
                     composable<BiometricUnlockRoute> { BiometricUnlock(navController) }
-                    composable<AutomaticInternalBackupsRoute> { AutomaticInternalBackups(navController) }
+                    composable<AutomaticBackupsRoute> { AutomaticBackups(navController) }
                     composable<ExportRoute> { Export(navController) }
                     composable<ImportRoute> { Import(navController) }
                     composable<ExportAegisRoute> { ExportAegis(navController) }

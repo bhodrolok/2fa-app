@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
@@ -31,16 +32,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Locale
 import app.ninesevennine.twofactorauthenticator.features.LocaleOption
-import app.ninesevennine.twofactorauthenticator.gui.elements.LeftButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedRadioButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedRefreshButton
+import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.serialization.Serializable
 
@@ -54,7 +54,7 @@ fun SelectLanguage(navController: NavController) {
     val context = LocalContext.current
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    val bottomInset = WindowInsets.statusBars.asPaddingValues().calculateBottomPadding()
+    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().coerceAtLeast(16.dp)
 
     var showRefreshButton by remember { mutableStateOf(false) }
 
@@ -73,9 +73,9 @@ fun SelectLanguage(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column(
-                modifier = Modifier.widthIn(max = 500.dp).padding(horizontal = 16.dp)
+                modifier = Modifier.widthIn(max = 512.dp).padding(horizontal = 16.dp)
             ) {
-                Spacer(modifier = Modifier.height(topInset + 86.dp))
+                Spacer(modifier = Modifier.height(topInset + 80.dp))
 
                 RoundedRadioButton(
                     painter = painterResource(R.drawable.flag_europe),
@@ -132,7 +132,9 @@ fun SelectLanguage(navController: NavController) {
                         animationSpec = tween(durationMillis = 300)
                     )
                 ) {
-                    RoundedRefreshButton(stringResource(R.string.common_use_system_default)) {
+                    RoundedRefreshButton(
+                        text = "Use System Default"
+                    ) {
                         Logger.i(TAG, "language set to system")
 
                         Locale.set(context, LocaleOption.SYSTEM)
@@ -140,15 +142,12 @@ fun SelectLanguage(navController: NavController) {
                     }
                 }
 
-                Spacer(modifier = Modifier.height(bottomInset + 192.dp))
+                Spacer(modifier = Modifier.height(bottomInset + 64.dp))
             }
         }
 
-        LeftButtonHeader(
-            title = stringResource(R.string.select_language),
-            onBack = {
-                navController.popBackStack()
-            }
-        )
+        StartButtonHeader("Language") {
+            navController.popBackStack()
+        }
     }
 }

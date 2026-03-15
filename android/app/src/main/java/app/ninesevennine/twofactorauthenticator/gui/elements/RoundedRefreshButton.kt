@@ -33,7 +33,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.ninesevennine.twofactorauthenticator.features.Theme
@@ -41,6 +40,7 @@ import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 
 @Composable
 fun RoundedRefreshButton(
+    modifier: Modifier = Modifier,
     text: String,
     spinDegrees: Float = 360f,
     spinDurationMs: Int = 600,
@@ -53,7 +53,7 @@ fun RoundedRefreshButton(
     val isPressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(if (isPressed) 0.95f else 1f)
 
-    val shape = RoundedCornerShape(26.dp)
+    val shape = RoundedCornerShape(24.dp)
 
     var cumulativeRotation by remember { mutableFloatStateOf(0f) }
     val iconRotation by animateFloatAsState(
@@ -66,10 +66,10 @@ fun RoundedRefreshButton(
     }
 
     Row(
-        modifier = Modifier
+        modifier = modifier
             .graphicsLayer(scaleX = scale, scaleY = scale)
             .fillMaxWidth()
-            .height(52.dp)
+            .height(48.dp)
             .clip(shape)
             .clickable(
                 interactionSource = interactionSource,
@@ -83,7 +83,7 @@ fun RoundedRefreshButton(
                     onClick()
                 }
             )
-            .padding(horizontal = 10.dp),
+            .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -93,7 +93,7 @@ fun RoundedRefreshButton(
             tint = Theme.colors.primary
         )
 
-        Spacer(Modifier.width(6.dp))
+        Spacer(Modifier.width(4.dp))
 
         Text(
             text = text,
@@ -101,8 +101,7 @@ fun RoundedRefreshButton(
             color = Theme.colors.primary,
             fontSize = 14.sp,
             fontWeight = FontWeight.W700,
-            fontFamily = InterVariable,
-            textAlign = TextAlign.Start
+            fontFamily = InterVariable
         )
     }
 }

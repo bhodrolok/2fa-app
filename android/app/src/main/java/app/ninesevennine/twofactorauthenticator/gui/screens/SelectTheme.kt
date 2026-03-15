@@ -16,15 +16,12 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Contrast
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,7 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
@@ -42,9 +39,9 @@ import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect
-import app.ninesevennine.twofactorauthenticator.gui.elements.LeftButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedRadioButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedRefreshButton
+import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.serialization.Serializable
 
@@ -58,7 +55,7 @@ fun SelectTheme(navController: NavController) {
     val context = LocalContext.current
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    val bottomInset = WindowInsets.statusBars.asPaddingValues().calculateBottomPadding()
+    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().coerceAtLeast(16.dp)
 
     var showRefreshButton by remember { mutableStateOf(false) }
 
@@ -77,14 +74,14 @@ fun SelectTheme(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column(
-                modifier = Modifier.widthIn(max = 500.dp).padding(horizontal = 16.dp)
+                modifier = Modifier.widthIn(max = 512.dp).padding(horizontal = 16.dp)
             ) {
-                Spacer(modifier = Modifier.height(topInset + 86.dp))
+                Spacer(modifier = Modifier.height(topInset + 80.dp))
 
                 RoundedRadioButton(
-                    imageVector = Icons.Default.LightMode,
+                    painter = painterResource(R.drawable.mi_light_mode),
                     tint = Theme.colors.primary,
-                    text = stringResource(R.string.theme_light),
+                    text = "Light",
                     enabled = Theme.currentOption(context) == ThemeOption.LIGHT
                 ) {
                     Logger.i(TAG, "theme set to light")
@@ -96,9 +93,9 @@ fun SelectTheme(navController: NavController) {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 RoundedRadioButton(
-                    imageVector = Icons.Default.DarkMode,
+                    painter = painterResource(R.drawable.mi_dark_mode),
                     tint = Theme.colors.primary,
-                    text = stringResource(R.string.theme_dark),
+                    text = "Dark",
                     enabled = Theme.currentOption(context) == ThemeOption.DARK
                 ) {
                     Logger.i(TAG, "theme set to dark")
@@ -110,9 +107,9 @@ fun SelectTheme(navController: NavController) {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 RoundedRadioButton(
-                    imageVector = Icons.Default.Contrast,
+                    painter = painterResource(R.drawable.mi_contrast),
                     tint = Theme.colors.primary,
-                    text = stringResource(R.string.theme_pitch_black),
+                    text = "Pitch Black",
                     enabled = Theme.currentOption(context) == ThemeOption.PITCH_BLACK
                 ) {
                     Logger.i(TAG, "theme set to pitch black")
@@ -140,7 +137,9 @@ fun SelectTheme(navController: NavController) {
                         animationSpec = tween(durationMillis = 300)
                     )
                 ) {
-                    RoundedRefreshButton(stringResource(R.string.common_use_system_default)) {
+                    RoundedRefreshButton(
+                        text = "Use System Default"
+                    ) {
                         Logger.i(TAG, "theme set to system")
 
                         Theme.set(context, ThemeOption.SYSTEM)
@@ -148,15 +147,12 @@ fun SelectTheme(navController: NavController) {
                     }
                 }
 
-                Spacer(modifier = Modifier.height(bottomInset + 192.dp))
+                Spacer(modifier = Modifier.height(bottomInset + 64.dp))
             }
         }
 
-        LeftButtonHeader(
-            title = stringResource(R.string.select_theme),
-            onBack = {
-                navController.popBackStack()
-            }
-        )
+        StartButtonHeader("Theme") {
+            navController.popBackStack()
+        }
     }
 }

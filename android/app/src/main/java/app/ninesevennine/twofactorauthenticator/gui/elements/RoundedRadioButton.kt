@@ -39,7 +39,6 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.ninesevennine.twofactorauthenticator.R
@@ -50,6 +49,7 @@ import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
 
 @Composable
 fun RoundedRadioButton(
+    modifier: Modifier = Modifier,
     painter: Painter? = null,
     imageVector: ImageVector? = null,
     tint: Color = Color.Unspecified,
@@ -64,7 +64,7 @@ fun RoundedRadioButton(
     val isPressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(if (isPressed) 0.95f else 1f)
 
-    val shape = RoundedCornerShape(26.dp)
+    val shape = RoundedCornerShape(24.dp)
 
     val checkmarkScale by animateFloatAsState(
         targetValue = if (enabled) 1f else 0f,
@@ -75,14 +75,14 @@ fun RoundedRadioButton(
     )
 
     Box(
-        modifier = Modifier.graphicsLayer(scaleX = scale, scaleY = scale),
+        modifier = modifier.graphicsLayer(scaleX = scale, scaleY = scale),
         contentAlignment = Alignment.Center
     ) {
         if (enabled) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp)
+                    .height(48.dp)
                     .background(Theme.colors.surface, shape)
                     .then(
                         if(Theme.themeOption == ThemeOption.PITCH_BLACK) {
@@ -97,7 +97,7 @@ fun RoundedRadioButton(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(52.dp)
+                .height(48.dp)
                 .clip(shape)
                 .clickable(
                     interactionSource = interactionSource,
@@ -109,7 +109,7 @@ fun RoundedRadioButton(
                         onClick()
                     }
                 )
-                .padding(horizontal = 10.dp),
+                .padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -144,7 +144,7 @@ fun RoundedRadioButton(
                 }
             }
 
-            Spacer(Modifier.width(6.dp))
+            Spacer(Modifier.width(4.dp))
 
             Text(
                 text = text,
@@ -152,8 +152,7 @@ fun RoundedRadioButton(
                 color = Theme.colors.primary,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.W700,
-                fontFamily = InterVariable,
-                textAlign = TextAlign.Start
+                fontFamily = InterVariable
             )
 
             if (enabled || checkmarkScale > 0.01f) {
@@ -161,7 +160,7 @@ fun RoundedRadioButton(
                     imageVector = Icons.Default.Check,
                     contentDescription = null,
                     modifier = Modifier
-                        .padding(horizontal = 6.dp)
+                        .padding(horizontal = 4.dp)
                         .size(26.dp)
                         .graphicsLayer(
                             scaleX = checkmarkScale, scaleY = checkmarkScale
