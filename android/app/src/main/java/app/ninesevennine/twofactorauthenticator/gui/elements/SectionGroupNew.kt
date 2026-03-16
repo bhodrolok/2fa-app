@@ -25,7 +25,7 @@ import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
 
 @Composable
 fun SectionGroupNew(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     title: String,
     content: @Composable () -> Unit
 ) {

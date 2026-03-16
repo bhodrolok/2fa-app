@@ -11,8 +11,6 @@ object Config {
     private const val KEY_THEME = "theme"
 
     var activeIconPackId by mutableStateOf("")
-    var internalIsUsingKeyStoreAES: Boolean = false
-    var hasSeenKeyStoreMessage: Boolean = false
     var hasCompletedSetup: Boolean = false
     var isUsingMinimalisticTiles by mutableStateOf(false)
     var isUsingSearchOnTop by mutableStateOf(true)
@@ -20,7 +18,8 @@ object Config {
     var isUsingDoubleTapToCopyCodes by mutableStateOf(false)
     var isUsingFocusSearch by mutableStateOf(false)
     var isUsingBiometrics by mutableStateOf(false)
-    var isUsingScreenSecurity by mutableStateOf(true)
+    var isUsingScreenSecurity by mutableStateOf(false)
+    var isUsingSecureClipboard by mutableStateOf(false)
     var isUsingBlockIntents by mutableStateOf(false)
     var isUsingAutomaticInternalBackups by mutableStateOf(false)
     var isUsingIconPacksOverrideColors by mutableStateOf(false)
@@ -44,7 +43,6 @@ object Config {
 
         IconPacks.load(context, activeIconPackId)
 
-        internalIsUsingKeyStoreAES = prefs.getBoolean("internal_is_using_keystore_aes", false)
         hasCompletedSetup = prefs.getBoolean("has_completed_setup", false)
         isUsingMinimalisticTiles = prefs.getBoolean("is_using_minimalistic_tiles", false)
         isUsingSearchOnTop = prefs.getBoolean("is_using_search_on_top", true)
@@ -52,10 +50,10 @@ object Config {
         isUsingDoubleTapToCopyCodes = prefs.getBoolean("is_using_double_tap_to_copy_codes", false)
         isUsingFocusSearch = prefs.getBoolean("is_using_focus_search", false)
         isUsingBiometrics = prefs.getBoolean("is_using_biometrics", false)
-        isUsingScreenSecurity = prefs.getBoolean("is_using_screen_security", true)
+        isUsingScreenSecurity = prefs.getBoolean("is_using_screen_security", false)
+        isUsingSecureClipboard = prefs.getBoolean("is_using_secure_clipboard", false)
         isUsingBlockIntents = prefs.getBoolean("is_using_block_intents", false)
         isUsingAutomaticInternalBackups = prefs.getBoolean("is_using_automatic_internal_backups", false)
-        isUsingIconPacksOverrideColors = prefs.getBoolean("is_using_iconpacks_override_colors", false)
         isUsingIconPacksDontSuggestColors = prefs.getBoolean("is_using_iconpacks_dont_suggest_colors", false)
     }
 
@@ -66,7 +64,6 @@ object Config {
             putString(KEY_LOCALE, Locale.localeOption.tag)
             putInt(KEY_THEME, Theme.themeOption.value)
             putString("active_icon_pack_id", activeIconPackId)
-            putBoolean("internal_is_using_keystore_aes", internalIsUsingKeyStoreAES)
             putBoolean("has_completed_setup", hasCompletedSetup)
             putBoolean("is_using_minimalistic_tiles", isUsingMinimalisticTiles)
             putBoolean("is_using_search_on_top", isUsingSearchOnTop)
@@ -75,9 +72,9 @@ object Config {
             putBoolean("is_using_focus_search", isUsingFocusSearch)
             putBoolean("is_using_biometrics", isUsingBiometrics)
             putBoolean("is_using_screen_security", isUsingScreenSecurity)
+            putBoolean("is_using_secure_clipboard", isUsingSecureClipboard)
             putBoolean("is_using_block_intents", isUsingBlockIntents)
             putBoolean("is_using_automatic_internal_backups", isUsingAutomaticInternalBackups)
-            putBoolean("is_using_iconpacks_override_colors", isUsingIconPacksOverrideColors)
             putBoolean("is_using_iconpacks_dont_suggest_colors", isUsingIconPacksDontSuggestColors)
             apply()
         }

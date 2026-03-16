@@ -62,8 +62,6 @@ import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStarted
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStartedRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupInitializeEncryptionKeys
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupInitializeEncryptionKeysRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.TempScreen
-import app.ninesevennine.twofactorauthenticator.gui.screens.TempScreenRoute
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.ZXing
 import kotlinx.coroutines.Dispatchers
@@ -130,7 +128,6 @@ class Main : FragmentActivity() {
                     composable<ImportAegisRoute> { ImportAegis(navController) }
                     composable<EditRoute> { Edit(navController) }
                     composable<AddCodeRoute> { AddCode(navController) }
-                    composable<TempScreenRoute> { TempScreen(navController) }
                 }
             }
         }

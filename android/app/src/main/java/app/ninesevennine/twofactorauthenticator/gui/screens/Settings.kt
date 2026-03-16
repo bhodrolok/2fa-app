@@ -240,6 +240,20 @@ fun Settings(navController: NavController) {
                     }
 
                     SectionButtonNew(
+                        painter = painterResource(R.drawable.mi_visibility_lock),
+                        tint = Theme.colors.primary,
+                        primaryText = "Secure Clipboard",
+                        secondaryText = "Hide copied codes from previews",
+                        enabled = Config.isUsingSecureClipboard
+                    ) {
+                        Config.isUsingSecureClipboard = !Config.isUsingSecureClipboard
+
+                        Logger.i(TAG, "secure clipboard set to ${!Config.isUsingSecureClipboard}")
+
+                        Config.save(context)
+                    }
+
+                    SectionButtonNew(
                         painter = painterResource(R.drawable.mi_block),
                         tint = Theme.colors.primary,
                         primaryText = "Block Intents",
@@ -248,7 +262,7 @@ fun Settings(navController: NavController) {
                     ) {
                         Config.isUsingBlockIntents = !Config.isUsingBlockIntents
 
-                        Logger.i(TAG, "block intents set to $!Config.isUsingBlockIntents}")
+                        Logger.i(TAG, "block intents set to ${!Config.isUsingBlockIntents}")
 
                         Config.save(context)
                     }

@@ -97,7 +97,7 @@ fun SetupBiometricUnlock(navController: NavController) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Using biometric unlock may invalidate your decryption keys if your lock screen or private spaces change, your device updates, or if the app hasn't been opened in a while. You can always recover your accounts by having automatic backups enabled.",
+                    text = "Using biometric unlock may invalidate your decryption keys if your lock screen or private spaces change, your device updates, or if the app hasn't been opened in a while. You can always recover your accounts by enabling automatic backups.",
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.secondary,
                     fontSize = 14.sp,

@@ -199,7 +199,7 @@ fun AutomaticBackups(navController: NavController) {
 
                                 withContext(Dispatchers.Main) {
                                     KeyStoreAES.saveSecret(
-                                        title = "Confirm Automatic Backup",
+                                        title = "Confirm Biometrics",
                                         negative = "Cancel",
                                         secret = Entry.rustInterface.getSecret(),
                                         onSuccess = {

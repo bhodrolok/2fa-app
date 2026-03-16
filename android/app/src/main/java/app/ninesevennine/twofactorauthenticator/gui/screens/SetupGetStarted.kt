@@ -145,7 +145,6 @@ fun SetupGetStarted(navController: NavController) {
 
                         AccountManagement.deleteAccountsUsingSeed(context)
 
-                        Config.internalIsUsingKeyStoreAES = true
                         Config.hasCompletedSetup = false
 
                         Config.save(context)
