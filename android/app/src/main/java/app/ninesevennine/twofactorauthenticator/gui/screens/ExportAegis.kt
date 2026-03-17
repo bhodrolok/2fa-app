@@ -44,8 +44,8 @@ import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBoxNew
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonNew
+import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
@@ -151,7 +151,7 @@ fun ExportAegis(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                ConfidentialTextBoxNew(
+                ConfidentialTextBox(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     title = "Passphrase",
                     value = passphrase,
@@ -169,7 +169,7 @@ fun ExportAegis(navController: NavController) {
                 )
 
                 AnimatedVisibility(isPassphraseValid) {
-                    ConfidentialTextBoxNew(
+                    ConfidentialTextBox(
                         modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp),
                         title = "Confirm Passphrase",
                         value = confirmPassphrase,
@@ -179,11 +179,11 @@ fun ExportAegis(navController: NavController) {
                 }
 
                 AnimatedVisibility(isPassphraseValid && passphrase == confirmPassphrase) {
-                    RoundedButtonNew(
+                    RoundedButton(
                         modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 16.dp, end = 16.dp),
                         text = if (isLoading) spinnerText() else stringResource(R.string.common_button_continue)
                     ) {
-                        if (isLoading) return@RoundedButtonNew
+                        if (isLoading) return@RoundedButton
 
                         isLoading = true
 

@@ -4,15 +4,16 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
@@ -27,15 +28,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -47,17 +44,14 @@ import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
-import app.ninesevennine.twofactorauthenticator.features.Theme
-import app.ninesevennine.twofactorauthenticator.features.ThemeOption
-import app.ninesevennine.twofactorauthenticator.gui.Tints
 import app.ninesevennine.twofactorauthenticator.gui.elements.EditColorPicker
 import app.ninesevennine.twofactorauthenticator.gui.elements.EditHeader
-import app.ninesevennine.twofactorauthenticator.gui.elements.EditSectionConfidentialTextBox
-import app.ninesevennine.twofactorauthenticator.gui.elements.EditSectionDropdownSingleChoice
-import app.ninesevennine.twofactorauthenticator.gui.elements.EditSectionGroup
-import app.ninesevennine.twofactorauthenticator.gui.elements.EditSectionTextBox
 import app.ninesevennine.twofactorauthenticator.gui.elements.OtpTileNormal
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonTinted
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
+import app.ninesevennine.twofactorauthenticator.gui.elements.SectionConfidentialTextBox
+import app.ninesevennine.twofactorauthenticator.gui.elements.SectionDropdownSingleChoice
+import app.ninesevennine.twofactorauthenticator.gui.elements.SectionGroup
+import app.ninesevennine.twofactorauthenticator.gui.elements.SectionTextBox
 import app.ninesevennine.twofactorauthenticator.utils.Time
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -73,9 +67,6 @@ fun Edit(navController: NavController) {
     val haptic = LocalHapticFeedback.current
 
     val scope = rememberCoroutineScope()
-
-    val colors = if (Theme.currentOption(context) == ThemeOption.LIGHT) Tints.light else Tints.dark
-    val isUsingPitchBlack by remember { mutableStateOf(Theme.themeOption == ThemeOption.PITCH_BLACK) }
 
     val account = remember { Entry.rustInterface.getEditAccountWithSecretBase32NoPad()!! }
 
@@ -111,7 +102,7 @@ fun Edit(navController: NavController) {
     var showColorPicker by remember { mutableStateOf(false) }
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    val bottomInset = WindowInsets.statusBars.asPaddingValues().calculateBottomPadding()
+    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().coerceAtLeast(16.dp)
 
     Time.Track()
 
@@ -121,113 +112,108 @@ fun Edit(navController: NavController) {
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .then(
-                if (isUsingPitchBlack) {
-                    Modifier
-                } else {
-                    Modifier
-                        .graphicsLayer(
-                            colorFilter = ColorFilter.tint(
-                                color,
-                                BlendMode.Multiply
-                            )
-                        )
-                        .background(colors.background)
-                }
-            )
-            .imePadding(),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.TopCenter
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(rememberScrollState()).imePadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier
-                    .widthIn(max = 500.dp)
-                    .padding(horizontal = 16.dp)
-            ) {
-                Spacer(modifier = Modifier.height(topInset + 86.dp))
+            Column(modifier = Modifier.widthIn(max = 512.dp)) {
+                Spacer(modifier = Modifier.height(topInset + 80.dp))
 
                 // using OtpTileMinimalistic looks terrible, just don't.
-                OtpTileNormal(
-                    navController,
-                    AccountTruncated(
-                        account.id,
-                        name,
-                        issuer,
-                        codeType,
-                        counter.toLongOrNull()?.coerceAtLeast(0) ?: 0,
-                        period.toLongOrNull()?.coerceAtLeast(10) ?: 10,
-                        digits.toIntOrNull()?.coerceIn(4, 10) ?: 6,
-                        color.toArgb()
-                    ),
-                    updateCount,
-                    {
-                        counter = it.toString()
-                    },
-                    {
-                        showColorPicker = !showColorPicker
-                    },
-                    true
-                )
+                Box(
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                ) {
+                    OtpTileNormal(
+                        navController,
+                        AccountTruncated(
+                            account.id,
+                            name,
+                            issuer,
+                            codeType,
+                            counter.toLongOrNull()?.coerceAtLeast(0) ?: 0,
+                            period.toLongOrNull()?.coerceAtLeast(10) ?: 10,
+                            digits.toIntOrNull()?.coerceIn(4, 10) ?: 6,
+                            color.toArgb()
+                        ),
+                        updateCount,
+                        {
+                            counter = it.toString()
+                        },
+                        {
+                            showColorPicker = !showColorPicker
+                        },
+                        true
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                EditSectionGroup(stringResource(R.string.edit_account_information)) {
-                    Spacer(Modifier.height(10.dp))
-                    EditSectionTextBox(
-                        stringResource(R.string.edit_account_information_name),
-                        name,
-                        {
+                SectionGroup(
+                    modifier = Modifier.padding(16.dp),
+                    title = "Account Information"
+                ) {
+                    Spacer(Modifier.height(8.dp))
+
+                    SectionTextBox(
+                        title = "Name",
+                        value = name,
+                        onValueChange = {
                             Entry.rustInterface.setEditAccountName(it.trim())
                             name = it
                         }
                     )
-                    EditSectionTextBox(
-                        stringResource(R.string.edit_account_information_issuer),
-                        issuer,
-                        {
+
+                    SectionTextBox(
+                        title = "Issuer",
+                        value = issuer,
+                        onValueChange = {
                             Entry.rustInterface.setEditAccountIssuer(it.trim())
                             issuer = it
                         }
                     )
-                    EditSectionTextBox(
-                        stringResource(R.string.edit_account_information_note),
-                        note,
-                        {
+
+                    SectionTextBox(
+                        title = stringResource(R.string.edit_account_information_note),
+                        value = note,
+                        onValueChange = {
                             Entry.rustInterface.setEditAccountNote(it.trim())
                             note = it
                         }
                     )
+
                     Spacer(Modifier.height(10.dp))
                 }
 
-                EditSectionGroup(stringResource(R.string.edit_advanced_settings)) {
-                    Spacer(Modifier.height(10.dp))
-                    EditSectionConfidentialTextBox(
-                        stringResource(R.string.edit_advanced_settings_secret),
-                        secretBase32NoPad,
-                        {
+                SectionGroup(
+                    modifier = Modifier.padding(16.dp),
+                    title = "Advanced Settings"
+                ) {
+                    Spacer(Modifier.height(8.dp))
+
+                    SectionConfidentialTextBox(
+                        title = "Secret",
+                        value = secretBase32NoPad,
+                        onValueChange = {
                             val trimmed = it.trim()
                             secretBase32NoPad = trimmed
 
                             secretError = !Entry.rustInterface.setEditAccountSecretBase32NoPad(trimmed)
                             if (!secretError) updateCount++
                         },
-                        "Base32",
-                        false,
-                        secretError
+                        placeholder = "Base32",
+                        error = secretError
                     )
-                    EditSectionDropdownSingleChoice(
-                        stringResource(R.string.edit_advanced_settings_type),
-                        CodeType.entries.toTypedArray(),
-                        codeType,
-                        {
+
+                    SectionDropdownSingleChoice(
+                        title = "Type",
+                        options = CodeType.entries.toTypedArray(),
+                        selectedOption = codeType,
+                        onOptionSelected = {
                             Entry.rustInterface.setEditAccountCodeType(it)
                             codeType = it
 
@@ -244,27 +230,27 @@ fun Edit(navController: NavController) {
 
                             updateCount++
                         },
-                        { it.displayName },
-                        account.color
+                        label = { it.displayName }
                     )
+
                     if (codeType != CodeType.STEAM) {
-                        EditSectionDropdownSingleChoice(
-                            stringResource(R.string.edit_advanced_settings_algorithm),
-                            Algorithm.entries.toTypedArray(),
-                            algorithm,
-                            {
+                        SectionDropdownSingleChoice(
+                            title = "Algorithm",
+                            options = Algorithm.entries.toTypedArray(),
+                            selectedOption = algorithm,
+                            onOptionSelected = {
                                 Entry.rustInterface.setEditAccountAlgorithm(it)
                                 algorithm = it
                                 updateCount++
                             },
-                            { it.displayName },
-                            account.color
+                            label = { it.displayName }
                         )
+
                         if (codeType == CodeType.HOTP) {
-                            EditSectionTextBox(
-                                stringResource(R.string.edit_advanced_settings_counter),
-                                counter,
-                                {
+                            SectionTextBox(
+                                title = "Counter",
+                                value = counter,
+                                onValueChange = {
                                     val trimmed = it.trim()
                                     counter = trimmed
 
@@ -274,15 +260,15 @@ fun Edit(navController: NavController) {
                                         updateCount++
                                     }
                                 },
-                                "0+",
-                                true,
+                                placeholder = "0+",
+                                numberField = true,
                                 counterError
                             )
                         } else {
-                            EditSectionTextBox(
-                                stringResource(R.string.edit_advanced_settings_period),
-                                period,
-                                {
+                            SectionTextBox(
+                                title = "Period",
+                                value = period,
+                                onValueChange = {
                                     val trimmed = it.trim()
                                     period = trimmed
 
@@ -292,16 +278,16 @@ fun Edit(navController: NavController) {
                                         updateCount++
                                     }
                                 },
-                                "10+",
-                                true,
+                                placeholder = "10+",
+                                numberField = true,
                                 periodError
                             )
                         }
 
-                        EditSectionTextBox(
-                            stringResource(R.string.edit_advanced_settings_digits),
-                            digits,
-                            {
+                        SectionTextBox(
+                            title = "Digits",
+                            value = digits,
+                            onValueChange = {
                                 val trimmed = it.trim()
                                 digits = trimmed
 
@@ -311,23 +297,26 @@ fun Edit(navController: NavController) {
                                     updateCount++
                                 }
                             },
-                            "4-10",
-                            true,
+                            placeholder = "4-10",
+                            numberField = true,
                             digitsError
                         )
                     }
+
                     Spacer(Modifier.height(10.dp))
                 }
 
-                RoundedButtonTinted(
-                    if (deleteButtonTapsCount > 0)
-                        pluralStringResource(R.plurals.edit_delete_account_variable, 6 - deleteButtonTapsCount, 6 - deleteButtonTapsCount)
-                    else
-                        stringResource(R.string.edit_delete_account)
+                RoundedButton(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal  = 16.dp),
+                    text = if (deleteButtonTapsCount > 0) {
+                        "Tap ${6 - deleteButtonTapsCount} more times to delete account"
+                    } else {
+                        "Delete Account"
+                    }
                 ) {
                     if (deleteButtonTapsCount < 5) {
                         deleteButtonTapsCount++
-                        return@RoundedButtonTinted
+                        return@RoundedButton
                     }
 
                     scope.launch(Dispatchers.IO) {
@@ -341,12 +330,12 @@ fun Edit(navController: NavController) {
                     }
                 }
 
-                Spacer(modifier = Modifier.height(bottomInset + 192.dp))
+                Spacer(modifier = Modifier.height(bottomInset + 80.dp))
             }
         }
 
         EditHeader(
-            title = stringResource(R.string.edit),
+            title = "Edit",
             onCancel = {
                 Entry.rustInterface.setEditAccountNone()
                 navController.popBackStack(MainRoute, false)

@@ -29,13 +29,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
@@ -45,7 +43,6 @@ import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
-import app.ninesevennine.twofactorauthenticator.gui.Tints
 
 @Composable
 fun EditHeader(
@@ -53,11 +50,9 @@ fun EditHeader(
     onCancel: () -> Unit,
     onDone: () -> Unit
 ) {
-    val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
     val view = LocalView.current
 
-    val colors = if (Theme.currentOption(context) == ThemeOption.LIGHT) Tints.light else Tints.dark
     val isUsingPitchBlack by remember { mutableStateOf(Theme.themeOption == ThemeOption.PITCH_BLACK) }
 
     val cancelInteractionSource = remember { MutableInteractionSource() }
@@ -68,7 +63,7 @@ fun EditHeader(
     val isDonePressed by doneInteractionSource.collectIsPressedAsState()
     val doneScale by animateFloatAsState(if (isDonePressed) 0.95f else 1f)
 
-    val shape = RoundedCornerShape(26.dp)
+    val shape = RoundedCornerShape(24.dp)
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
 
@@ -78,7 +73,7 @@ fun EditHeader(
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        if (isUsingPitchBlack) Theme.colors.background else colors.background,
+                        Theme.colors.background,
                         Color.Transparent
                     )
                 )
@@ -95,21 +90,19 @@ fun EditHeader(
         Box(
             modifier = Modifier
                 .graphicsLayer(scaleX = cancelScale, scaleY = cancelScale)
-                .size(52.dp)
-                .shadow(elevation = 6.dp, shape = shape, clip = false)
-                .clip(shape)
+                .size(48.dp)
+                .shadow(elevation = 8.dp, shape = shape, clip = true)
+                .background(Theme.colors.surface, shape)
                 .then(
                     if (isUsingPitchBlack) {
-                        Modifier.background(Theme.colors.surface, shape).tiltShimmer(shape)
+                        Modifier.tiltShimmer(shape)
                     } else {
-                        Modifier.background(colors.light, shape).border(1.dp, colors.medium, shape)
+                        Modifier.border(1.dp, Theme.colors.border, shape)
                     }
                 )
                 .clickable(
                     interactionSource = cancelInteractionSource,
-                    indication = ripple(
-                        color = if (isUsingPitchBlack) Theme.colors.primary else colors.dark
-                    ),
+                    indication = ripple(color = Theme.colors.primary),
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         view.playSoundEffect(SoundEffectConstants.CLICK)
@@ -122,15 +115,15 @@ fun EditHeader(
             Icon(
                 imageVector = Icons.Default.Close,
                 contentDescription = null,
-                tint = if (isUsingPitchBlack) Theme.colors.primary else colors.medium,
-                modifier = Modifier.size(28.dp)
+                tint = Theme.colors.primary,
+                modifier = Modifier.size(26.dp)
             )
         }
 
         Text(
             text = title,
-            color = if (isUsingPitchBlack) Theme.colors.primary else colors.dark,
-            fontSize = 15.sp,
+            color = Theme.colors.primary,
+            fontSize = 14.sp,
             fontFamily = InterVariable,
             fontWeight = FontWeight.W700
         )
@@ -138,21 +131,19 @@ fun EditHeader(
         Box(
             modifier = Modifier
                 .graphicsLayer(scaleX = doneScale, scaleY = doneScale)
-                .size(52.dp)
-                .shadow(elevation = 6.dp, shape = shape, clip = false)
-                .clip(shape)
+                .size(48.dp)
+                .shadow(elevation = 8.dp, shape = shape, clip = true)
+                .background(Theme.colors.surface, shape)
                 .then(
                     if (isUsingPitchBlack) {
-                        Modifier.background(Theme.colors.surface, shape).tiltShimmer(shape)
+                        Modifier.tiltShimmer(shape)
                     } else {
-                        Modifier.background(colors.light, shape).border(1.dp, colors.medium, shape)
+                        Modifier.border(1.dp, Theme.colors.border, shape)
                     }
                 )
                 .clickable(
                     interactionSource = doneInteractionSource,
-                    indication = ripple(
-                        color = if (isUsingPitchBlack) Theme.colors.primary else colors.dark
-                    ),
+                    indication = ripple(color = Theme.colors.primary),
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         view.playSoundEffect(SoundEffectConstants.CLICK)
@@ -165,8 +156,8 @@ fun EditHeader(
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = null,
-                tint = if (isUsingPitchBlack) Theme.colors.primary else colors.medium,
-                modifier = Modifier.size(28.dp)
+                tint = Theme.colors.primary,
+                modifier = Modifier.size(26.dp)
             )
         }
     }

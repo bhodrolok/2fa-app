@@ -1,8 +1,12 @@
 package app.ninesevennine.twofactorauthenticator.gui.elements
 
+import android.view.SoundEffectConstants
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,12 +18,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,9 +28,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -37,6 +43,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.ninesevennine.twofactorauthenticator.R
@@ -44,66 +51,69 @@ import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
-import app.ninesevennine.twofactorauthenticator.gui.Tints
 
 @Composable
-fun EditSectionConfidentialTextBox(
+fun SectionConfidentialTextBox(
     title: String,
     value: String = "",
-    onValueChange: (String) -> Unit,
+    onValueChange: (String) -> Unit = {},
     placeholder: String = "",
-    numberField: Boolean = false,
     error: Boolean = false
 ) {
-    val context = LocalContext.current
-    val colors = if (Theme.currentOption(context) == ThemeOption.LIGHT) Tints.light else Tints.dark
-    val isUsingPitchBlack by remember { mutableStateOf(Theme.themeOption == ThemeOption.PITCH_BLACK) }
+    val haptic = LocalHapticFeedback.current
+    val view = LocalView.current
+
+    val isUsingPitchBlack = remember { Theme.themeOption == ThemeOption.PITCH_BLACK }
 
     val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(if (isPressed) 0.85f else 1f)
 
     var visible by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-    ) {
+    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
         Row(
-            modifier = Modifier.padding(start = 4.dp, bottom = 6.dp, end = 4.dp),
+            modifier = Modifier.padding(start = 4.dp, bottom = 4.dp, end = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = title,
                 modifier = Modifier.weight(1f),
-                color = if (isUsingPitchBlack) Theme.colors.primary else colors.dark,
+                color = Theme.colors.primary,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.W700,
-                fontFamily = InterVariable
+                fontFamily = InterVariable,
+                overflow = TextOverflow.MiddleEllipsis,
+                maxLines = 1
             )
 
             Row(
-                modifier = Modifier.clickable(
-                    interactionSource = interactionSource,
-                    indication = null,
-                    onClick = { visible = !visible }
-                ),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier
+                    .graphicsLayer(scaleX = scale, scaleY = scale)
+                    .clip(RoundedCornerShape(6.dp))
+                    .clickable(
+                        interactionSource = interactionSource,
+                        indication = ripple(color = Theme.colors.primary),
+                        onClick = {
+                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            view.playSoundEffect(SoundEffectConstants.CLICK)
+                            visible = !visible
+                        }
+                    )
+                    .padding(horizontal = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = if (visible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                    painter = if (visible) painterResource(R.drawable.mi_visibility_off) else painterResource(R.drawable.mi_visibility),
                     contentDescription = null,
-                    tint = if (isUsingPitchBlack) Theme.colors.primary else colors.dark,
-                    modifier = Modifier.size(16.dp)
+                    tint = Theme.colors.primary,
+                    modifier = Modifier.padding(top = 1.dp).size(14.dp)
                 )
-
                 Text(
-                    text = if (visible)
-                        stringResource(R.string.common_hide)
-                    else
-                        stringResource(R.string.common_show),
-                    color = if (isUsingPitchBlack) Theme.colors.primary else colors.dark,
-                    fontSize = 13.sp,
+                    text = if (visible) "Hide" else "Show",
+                    color = Theme.colors.primary,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.W700,
                     fontFamily = InterVariable
                 )
@@ -119,62 +129,46 @@ fun EditSectionConfidentialTextBox(
                 fontSize = 13.sp,
                 fontWeight = FontWeight.W700,
                 fontFamily = InterVariable,
-                color = if (isUsingPitchBlack) Theme.colors.primary else colors.dark
+                color = Theme.colors.primary
             ),
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
                 autoCorrectEnabled = false,
-                keyboardType = if (numberField) KeyboardType.NumberPassword else KeyboardType.Password,
+                keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             ),
             decorationBox = { innerTextField ->
-                val shape = RoundedCornerShape(12.dp)
+                val shape = RoundedCornerShape(8.dp)
 
-                Row(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(44.dp)
+                        .height(38.dp)
+                        .background(color = Theme.colors.background, shape = shape)
                         .then(
                             if (isUsingPitchBlack) {
-                                Modifier
-                                    .background(Theme.colors.background, shape)
-                                    .tiltShimmer(shape = shape, color = if (error) Theme.colors.error else Theme.colors.primary)
+                                Modifier.tiltShimmer(shape, color = if (error) Theme.colors.error else Color.White)
                             } else {
-                                Modifier.background(colors.medium, shape)
+                                Modifier.border(1.dp, if (error) Theme.colors.error else Theme.colors.border, shape)
                             }
                         )
-                        .padding(horizontal = 14.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(horizontal = 12.dp),
+                    contentAlignment = Alignment.CenterStart
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(end = if (error) 6.dp else 0.dp),
-                        contentAlignment = Alignment.CenterStart
-                    ) {
-                        if (value.isEmpty()) {
-                            Text(
-                                text = placeholder,
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.W700,
-                                fontFamily = InterVariable,
-                                color = if (isUsingPitchBlack) Theme.colors.primary.copy(alpha = 0.5f) else colors.light
-                            )
-                        }
-                        innerTextField()
-                    }
-
-                    if (error) {
-                        Icon(
-                            imageVector = Icons.Default.Error,
-                            contentDescription = null,
-                            tint = if (isUsingPitchBlack) Theme.colors.error else colors.light,
-                            modifier = Modifier.size(20.dp)
+                    if (value.isEmpty()) {
+                        Text(
+                            text = placeholder,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.W700,
+                            fontFamily = InterVariable,
+                            color = Theme.colors.primary.copy(alpha = 0.5f)
                         )
                     }
+
+                    innerTextField()
                 }
             },
-            cursorBrush = SolidColor(if (isUsingPitchBlack) Theme.colors.primary else colors.dark),
+            cursorBrush = SolidColor(Theme.colors.primary),
             modifier = Modifier.fillMaxWidth()
         )
     }

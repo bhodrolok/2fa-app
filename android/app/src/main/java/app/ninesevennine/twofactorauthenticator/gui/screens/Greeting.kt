@@ -46,8 +46,8 @@ import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonCleanNew
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonNew
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -281,7 +281,7 @@ fun Greeting(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    RoundedButtonNew(
+                    RoundedButton(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         text = if (wipeButtonTapsCount > 0) {
                             "Tap ${6 - wipeButtonTapsCount} more times to confirm"
@@ -291,7 +291,7 @@ fun Greeting(navController: NavController) {
                     ) {
                         if (wipeButtonTapsCount < 5) {
                             wipeButtonTapsCount++
-                            return@RoundedButtonNew
+                            return@RoundedButton
                         }
 
                         navController.navigate(SetupGetStartedRoute) {
@@ -309,13 +309,13 @@ fun Greeting(navController: NavController) {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomCenter
             ) {
-                RoundedButtonCleanNew(
+                RoundedButtonClean(
                     modifier = Modifier.widthIn(max = 512.dp).fillMaxWidth().padding(bottomInset),
                     text = BuildConfig.VERSION_NAME
                 ) {
                     if (versionNameTapsCount < 5) {
                         versionNameTapsCount++
-                        return@RoundedButtonCleanNew
+                        return@RoundedButtonClean
                     }
 
                     Logger.i(TAG, "downloading app log")

@@ -41,7 +41,7 @@ import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonNew
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
 import app.ninesevennine.twofactorauthenticator.utils.Logger
@@ -126,11 +126,11 @@ fun BiometricUnlock(navController: NavController) {
                     Spacer(modifier = Modifier.height(16.dp))
 
                     if (isUsingBiometrics) {
-                        RoundedButtonNew(
+                        RoundedButton(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                             text = if (isLoading) spinnerText() else "Disable"
                         ) {
-                            if (isLoading) return@RoundedButtonNew
+                            if (isLoading) return@RoundedButton
 
                             isLoading = true
 
@@ -171,11 +171,11 @@ fun BiometricUnlock(navController: NavController) {
                             }
                         }
                     } else {
-                        RoundedButtonNew(
+                        RoundedButton(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                             text = if (isLoading) spinnerText() else "Enable"
                         ) {
-                            if (isLoading) return@RoundedButtonNew
+                            if (isLoading) return@RoundedButton
 
                             isLoading = true
 

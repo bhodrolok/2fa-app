@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,6 +30,7 @@ import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 
 @Composable
 fun RoundedButtonClean(
+    modifier: Modifier,
     text: String,
     onClick: () -> Unit = {}
 ) {
@@ -41,12 +41,11 @@ fun RoundedButtonClean(
     val isPressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(if (isPressed) 0.95f else 1f)
 
-    val shape = RoundedCornerShape(26.dp)
+    val shape = RoundedCornerShape(24.dp)
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(52.dp)
+        modifier = modifier
+            .height(48.dp)
             .graphicsLayer(scaleX = scale, scaleY = scale)
             .clip(shape)
             .clickable(

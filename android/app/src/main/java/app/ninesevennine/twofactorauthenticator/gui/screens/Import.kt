@@ -46,8 +46,8 @@ import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBoxNew
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonNew
+import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
 import app.ninesevennine.twofactorauthenticator.utils.Document
@@ -154,7 +154,7 @@ fun Import(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                ConfidentialTextBoxNew(
+                ConfidentialTextBox(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     title = "Passphrase",
                     value = passphrase,
@@ -181,11 +181,11 @@ fun Import(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                RoundedButtonNew(
+                RoundedButton(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     text = if (isLoading) spinnerText() else "Import"
                 ) {
-                    if (isLoading || importData.isEmpty()) return@RoundedButtonNew
+                    if (isLoading || importData.isEmpty()) return@RoundedButton
 
                     isLoading = true
                     importError = false

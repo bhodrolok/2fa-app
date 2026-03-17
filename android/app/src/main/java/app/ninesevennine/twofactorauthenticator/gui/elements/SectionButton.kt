@@ -8,11 +8,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -69,7 +71,7 @@ fun SectionButton(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp)
+            .heightIn(min = 52.dp)
             .clickable(
                 interactionSource = interactionSource,
                 indication = ripple(color = Theme.colors.primary),
@@ -80,12 +82,12 @@ fun SectionButton(
                     onClick()
                 },
             )
-            .padding(horizontal = 12.dp),
+            .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         val iconModifier = Modifier
-            .size(37.dp)
+            .size(36.dp)
             .graphicsLayer(
                 scaleX = scale,
                 scaleY = scale
@@ -120,9 +122,7 @@ fun SectionButton(
             }
         }
 
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
+        Column(modifier = Modifier.padding(top = 2.dp, bottom = 4.dp).weight(1f)) {
             Text(
                 text = primaryText,
                 color = Theme.colors.primary,
@@ -139,26 +139,31 @@ fun SectionButton(
                     text = it,
                     color = Theme.colors.secondary,
                     fontSize = 13.sp,
-                    fontWeight = FontWeight.W500,
+                    fontWeight = FontWeight.Normal,
                     fontFamily = InterVariable,
                     overflow = TextOverflow.MiddleEllipsis,
-                    maxLines = 1
+                    maxLines = 2
                 )
             }
         }
 
-        if (enabled || checkmarkScale > 0.01f) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(horizontal = 6.dp)
-                    .size(26.dp)
-                    .graphicsLayer(
-                        scaleX = checkmarkScale, scaleY = checkmarkScale
-                    ),
-                tint = Theme.colors.primary
-            )
+        // spring messes up the lines this fixes it.
+        Box(
+            modifier = Modifier.padding(end = 8.dp),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            if (enabled || checkmarkScale > 0.01f) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(26.dp)
+                        .graphicsLayer(
+                            scaleX = checkmarkScale, scaleY = checkmarkScale
+                        ),
+                    tint = Theme.colors.primary
+                )
+            }
         }
     }
 }

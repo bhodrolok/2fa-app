@@ -8,7 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,6 +35,7 @@ import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
 
 @Composable
 fun RoundedButton(
+    modifier: Modifier,
     text: String,
     onClick: () -> Unit = {}
 ) {
@@ -48,13 +48,12 @@ fun RoundedButton(
     val isPressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(if (isPressed) 0.95f else 1f)
 
-    val shape = RoundedCornerShape(26.dp)
+    val shape = RoundedCornerShape(24.dp)
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .graphicsLayer(scaleX = scale, scaleY = scale)
-            .fillMaxWidth()
-            .height(52.dp)
+            .height(48.dp)
             .clip(shape)
             .background(Theme.colors.surface)
             .then(

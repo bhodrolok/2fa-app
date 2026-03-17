@@ -153,7 +153,7 @@ fun OtpTileMinimalistic(
     val isEditPressed by editInteractionSource.collectIsPressedAsState()
     val editScale by animateFloatAsState(if (isEditPressed) 0.85f else 1f)
 
-    val shape = RoundedCornerShape(20.dp)
+    val shape = RoundedCornerShape(16.dp)
 
     Box(
         Modifier
@@ -175,7 +175,7 @@ fun OtpTileMinimalistic(
                                 .getAccountCode(account.id, counter, isShowingNextCode)
                                 .ifEmpty { "?".repeat(account.digits.coerceIn(4, 10)) }
 
-                            Clipboard.copy(context, "authenticator-contents", code, true)
+                            Clipboard.copy(context, "OTP", code, Config.isUsingSecureClipboard)
                         } else {
                             codeScopeJob = codeScope.launch {
                                 try {
@@ -190,7 +190,7 @@ fun OtpTileMinimalistic(
                         }
                     } else {
                         if (isCodeRevealed) {
-                            Clipboard.copy(context, "authenticator-contents", rawCode, true)
+                            Clipboard.copy(context, "OTP", rawCode, Config.isUsingSecureClipboard)
                         }
 
                         if (Config.isUsingTapToRevealCodes) {

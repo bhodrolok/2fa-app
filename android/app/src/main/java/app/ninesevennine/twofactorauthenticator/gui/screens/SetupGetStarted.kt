@@ -41,9 +41,9 @@ import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonNew
-import app.ninesevennine.twofactorauthenticator.gui.elements.SectionButtonNew
-import app.ninesevennine.twofactorauthenticator.gui.elements.SectionGroupNew
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
+import app.ninesevennine.twofactorauthenticator.gui.elements.SectionButton
+import app.ninesevennine.twofactorauthenticator.gui.elements.SectionGroup
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -101,11 +101,11 @@ fun SetupGetStarted(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                SectionGroupNew(
+                SectionGroup(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     title = "Press “Get Started“ to begin setup"
                 ) {
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.random_alphabet),
                         tint = Theme.colors.primary,
                         primaryText = "1. Initialize encryption keys"
@@ -113,7 +113,7 @@ fun SetupGetStarted(navController: NavController) {
 
                     }
 
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_fingerprint),
                         tint = Theme.colors.primary,
                         primaryText = "2. Enable biometric unlock"
@@ -121,7 +121,7 @@ fun SetupGetStarted(navController: NavController) {
 
                     }
 
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_settings_backup_restore),
                         tint = Theme.colors.primary,
                         primaryText = "3. Turn on automatic backups"
@@ -132,11 +132,11 @@ fun SetupGetStarted(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                RoundedButtonNew(
+                RoundedButton(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     text = "Get Started"
                 ) {
-                    if (isLoading) return@RoundedButtonNew
+                    if (isLoading) return@RoundedButton
 
                     isLoading = true
 

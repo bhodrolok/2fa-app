@@ -41,9 +41,9 @@ import app.ninesevennine.twofactorauthenticator.features.Locale
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.features.setScreenSecure
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonCleanNew
-import app.ninesevennine.twofactorauthenticator.gui.elements.SectionButtonNew
-import app.ninesevennine.twofactorauthenticator.gui.elements.SectionGroupNew
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
+import app.ninesevennine.twofactorauthenticator.gui.elements.SectionButton
+import app.ninesevennine.twofactorauthenticator.gui.elements.SectionGroup
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.serialization.Serializable
@@ -95,11 +95,11 @@ fun Settings(navController: NavController) {
             ) {
                 Spacer(modifier = Modifier.height(topInset + 64.dp))
 
-                SectionGroupNew(
+                SectionGroup(
                     modifier = Modifier.padding(16.dp),
                     title = "Appearance"
                 ) {
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_language),
                         tint = Theme.colors.primary,
                         primaryText = "Language",
@@ -108,7 +108,7 @@ fun Settings(navController: NavController) {
                         navController.navigate(SelectLanguageRoute)
                     }
 
-                    SectionButtonNew(
+                    SectionButton(
                         painter = if (Theme.themeOption == ThemeOption.PITCH_BLACK) {
                             painterResource(R.drawable.mi_contrast)
                         } else {
@@ -129,7 +129,7 @@ fun Settings(navController: NavController) {
                         navController.navigate(SelectThemeRoute)
                     }
 
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_package),
                         tint = Theme.colors.primary,
                         primaryText = "Icon Packs"
@@ -137,7 +137,7 @@ fun Settings(navController: NavController) {
                         navController.navigate(SelectIconPacksRoute)
                     }
 
-                    SectionButtonNew(
+                    SectionButton(
                         imageVector = Icons.Default.Stars,
                         tint = Theme.colors.primary,
                         primaryText = "Minimalistic Tiles",
@@ -150,7 +150,7 @@ fun Settings(navController: NavController) {
                         Config.save(context)
                     }
 
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_vertical_align_top),
                         tint = Theme.colors.primary,
                         primaryText = "Search on Top",
@@ -164,11 +164,11 @@ fun Settings(navController: NavController) {
                     }
                 }
 
-                SectionGroupNew(
+                SectionGroup(
                     modifier = Modifier.padding(16.dp),
                     title = "Behavior"
                 ) {
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_touch_app),
                         tint = Theme.colors.primary,
                         primaryText = "Tap to Reveal Codes",
@@ -181,7 +181,7 @@ fun Settings(navController: NavController) {
                         Config.save(context)
                     }
 
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_file_copy),
                         tint = Theme.colors.primary,
                         primaryText = "Double Tap to Copy Codes",
@@ -194,7 +194,7 @@ fun Settings(navController: NavController) {
                         Config.save(context)
                     }
 
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_frame_inspect),
                         tint = Theme.colors.primary,
                         primaryText = "Focus Search on Launch",
@@ -208,11 +208,11 @@ fun Settings(navController: NavController) {
                     }
                 }
 
-                SectionGroupNew(
+                SectionGroup(
                     modifier = Modifier.padding(16.dp),
                     title = "Security"
                 ) {
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_fingerprint),
                         tint = Theme.colors.primary,
                         primaryText = "Biometric Unlock",
@@ -221,8 +221,8 @@ fun Settings(navController: NavController) {
                         navController.navigate(BiometricUnlockRoute)
                     }
 
-                    SectionButtonNew(
-                        painter = painterResource(R.drawable.mi_mobile_lock),
+                    SectionButton(
+                        painter = painterResource(R.drawable.mi_mobile_lock_portrait),
                         tint = Theme.colors.primary,
                         primaryText = "Screen Security",
                         secondaryText = "Block screenshots and recordings",
@@ -239,11 +239,11 @@ fun Settings(navController: NavController) {
                         Config.save(context)
                     }
 
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_visibility_lock),
                         tint = Theme.colors.primary,
                         primaryText = "Secure Clipboard",
-                        secondaryText = "Hide copied codes from previews",
+                        secondaryText = "Hide copied codes from suggestions and previews",
                         enabled = Config.isUsingSecureClipboard
                     ) {
                         Config.isUsingSecureClipboard = !Config.isUsingSecureClipboard
@@ -253,7 +253,7 @@ fun Settings(navController: NavController) {
                         Config.save(context)
                     }
 
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_block),
                         tint = Theme.colors.primary,
                         primaryText = "Block Intents",
@@ -268,11 +268,11 @@ fun Settings(navController: NavController) {
                     }
                 }
 
-                SectionGroupNew(
+                SectionGroup(
                     modifier = Modifier.padding(16.dp),
                     title = "Account Management"
                 ) {
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_settings_backup_restore),
                         tint = Theme.colors.primary,
                         primaryText = "Automatic Backups",
@@ -281,7 +281,7 @@ fun Settings(navController: NavController) {
                         navController.navigate(AutomaticBackupsRoute)
                     }
 
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_upload),
                         tint = Theme.colors.primary,
                         primaryText = "Export",
@@ -290,7 +290,7 @@ fun Settings(navController: NavController) {
                         navController.navigate(ExportRoute)
                     }
 
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_download),
                         tint = Theme.colors.primary,
                         primaryText = "Import",
@@ -299,7 +299,7 @@ fun Settings(navController: NavController) {
                         navController.navigate(ImportRoute)
                     }
 
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.aegis),
                         tint = Theme.colors.primary,
                         primaryText = "Export to Aegis",
@@ -308,7 +308,7 @@ fun Settings(navController: NavController) {
                         navController.navigate(ExportAegisRoute)
                     }
 
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.aegis),
                         tint = Theme.colors.primary,
                         primaryText = "Import from Aegis",
@@ -318,11 +318,11 @@ fun Settings(navController: NavController) {
                     }
                 }
 
-                SectionGroupNew(
+                SectionGroup(
                     modifier = Modifier.padding(16.dp),
                     title = "Support"
                 ) {
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.codeberg),
                         primaryText = "Codeberg",
                         secondaryText = "View 2fa's source code",
@@ -331,7 +331,7 @@ fun Settings(navController: NavController) {
                         context.startActivity(intent)
                     }
 
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_favorite),
                         tint = Theme.colors.veryWeak,
                         primaryText = "Donate",
@@ -342,13 +342,13 @@ fun Settings(navController: NavController) {
                     }
                 }
 
-                RoundedButtonCleanNew(
+                RoundedButtonClean(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     text = BuildConfig.VERSION_NAME
                 ) {
                     if (versionNameTapsCount < 5) {
                         versionNameTapsCount++
-                        return@RoundedButtonCleanNew
+                        return@RoundedButtonClean
                     }
 
                     Logger.i(TAG, "downloading app log")

@@ -25,15 +25,16 @@ import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
 
 @Composable
 fun SectionGroup(
+    modifier: Modifier = Modifier,
     title: String,
     content: @Composable () -> Unit
 ) {
     val isUsingPitchBlack by remember { mutableStateOf(Theme.themeOption == ThemeOption.PITCH_BLACK) }
 
-    val shape = RoundedCornerShape(26.dp)
+    val shape = RoundedCornerShape(24.dp)
 
     Column(
-        modifier = Modifier.fillMaxWidth().padding(16.dp)
+        modifier = modifier.fillMaxWidth()
     ) {
         Text(
             text = title,

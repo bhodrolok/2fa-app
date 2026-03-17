@@ -44,8 +44,8 @@ import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBoxNew
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonNew
+import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
@@ -144,7 +144,7 @@ fun AutomaticBackups(navController: NavController) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 if (isUsingAutomaticBackups) {
-                    RoundedButtonNew(
+                    RoundedButton(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         text = "Disable"
                     ) {
@@ -156,7 +156,7 @@ fun AutomaticBackups(navController: NavController) {
                         navController.popBackStack()
                     }
                 } else {
-                    ConfidentialTextBoxNew(
+                    ConfidentialTextBox(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         title = "Passphrase",
                         value = passphrase,
@@ -174,7 +174,7 @@ fun AutomaticBackups(navController: NavController) {
                     )
 
                     AnimatedVisibility(isPassphraseValid) {
-                        ConfidentialTextBoxNew(
+                        ConfidentialTextBox(
                             modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp),
                             title = "Confirm Passphrase",
                             value = confirmPassphrase,
@@ -184,11 +184,11 @@ fun AutomaticBackups(navController: NavController) {
                     }
 
                     AnimatedVisibility(isPassphraseValid && passphrase == confirmPassphrase) {
-                        RoundedButtonNew(
+                        RoundedButton(
                             modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 16.dp, end = 16.dp),
                             text = if (isLoading) spinnerText() else "Enable"
                         ) {
-                            if (isLoading) return@RoundedButtonNew
+                            if (isLoading) return@RoundedButton
 
                             isLoading = true
 

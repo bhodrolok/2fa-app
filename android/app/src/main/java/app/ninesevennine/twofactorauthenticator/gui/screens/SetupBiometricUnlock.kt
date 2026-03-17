@@ -39,8 +39,8 @@ import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonCleanNew
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonNew
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.serialization.Serializable
 
@@ -109,11 +109,11 @@ fun SetupBiometricUnlock(navController: NavController) {
                 if (isFullBiometricAvailable) {
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    RoundedButtonNew(
+                    RoundedButton(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         text = "Enable"
                     ) {
-                        val currentActivity = navController.context as? FragmentActivity ?: return@RoundedButtonNew
+                        val currentActivity = navController.context as? FragmentActivity ?: return@RoundedButton
 
                         val executor = ContextCompat.getMainExecutor(currentActivity)
 
@@ -162,7 +162,7 @@ fun SetupBiometricUnlock(navController: NavController) {
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
         ) {
-            RoundedButtonCleanNew(
+            RoundedButtonClean(
                 modifier = Modifier.widthIn(max = 512.dp).fillMaxWidth().padding(bottomInset),
                 text = "Continue Without"
             ) {

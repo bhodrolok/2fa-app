@@ -43,9 +43,9 @@ import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBoxNew
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonCleanNew
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonNew
+import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
 import app.ninesevennine.twofactorauthenticator.utils.Logger
@@ -150,7 +150,7 @@ fun SetupAutomaticBackups(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    ConfidentialTextBoxNew(
+                    ConfidentialTextBox(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         title = "Passphrase",
                         value = passphrase,
@@ -177,11 +177,11 @@ fun SetupAutomaticBackups(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    RoundedButtonNew(
+                    RoundedButton(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         text = if (isLoading) spinnerText() else "Recover"
                     ) {
-                        if (isLoading) return@RoundedButtonNew
+                        if (isLoading) return@RoundedButton
 
                         isLoading = true
                         recoveryError = false
@@ -220,7 +220,7 @@ fun SetupAutomaticBackups(navController: NavController) {
                 } else {
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    ConfidentialTextBoxNew(
+                    ConfidentialTextBox(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         title = "Passphrase",
                         value = passphrase,
@@ -238,7 +238,7 @@ fun SetupAutomaticBackups(navController: NavController) {
                     )
 
                     AnimatedVisibility(isPassphraseValid) {
-                        ConfidentialTextBoxNew(
+                        ConfidentialTextBox(
                             modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp),
                             title = "Confirm Passphrase",
                             value = confirmPassphrase,
@@ -248,11 +248,11 @@ fun SetupAutomaticBackups(navController: NavController) {
                     }
 
                     AnimatedVisibility(isPassphraseValid && passphrase == confirmPassphrase) {
-                        RoundedButtonNew(
+                        RoundedButton(
                             modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 16.dp, end = 16.dp),
                             text = if (isLoading) spinnerText() else "Enable"
                         ) {
-                            if (isLoading) return@RoundedButtonNew
+                            if (isLoading) return@RoundedButton
 
                             isLoading = true
 
@@ -283,11 +283,11 @@ fun SetupAutomaticBackups(navController: NavController) {
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
         ) {
-            RoundedButtonCleanNew(
+            RoundedButtonClean(
                 modifier = Modifier.widthIn(max = 512.dp).fillMaxWidth().padding(bottomInset),
                 text = "Continue Without"
             ) {
-                if (isLoading) return@RoundedButtonCleanNew
+                if (isLoading) return@RoundedButtonClean
 
                 Config.isUsingAutomaticInternalBackups = false
 

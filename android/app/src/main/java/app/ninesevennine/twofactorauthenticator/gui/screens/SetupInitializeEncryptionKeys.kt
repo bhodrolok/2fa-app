@@ -44,7 +44,7 @@ import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonNew
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.coroutines.Dispatchers
@@ -180,11 +180,11 @@ fun SetupInitializeEncryptionKeys(navController: NavController) {
             )
 
             AnimatedVisibility(entropyPoints.size >= targetEntropy) {
-                RoundedButtonNew(
+                RoundedButton(
                     modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 16.dp, end = 16.dp),
                     text = "Continue"
                 ) {
-                    if (isLoading) return@RoundedButtonNew
+                    if (isLoading) return@RoundedButton
 
                     isLoading = true
 

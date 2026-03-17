@@ -34,9 +34,9 @@ import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.elements.LeftButtonHeader
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonNew
-import app.ninesevennine.twofactorauthenticator.gui.elements.SectionButtonNew
-import app.ninesevennine.twofactorauthenticator.gui.elements.SectionGroupNew
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
+import app.ninesevennine.twofactorauthenticator.gui.elements.SectionButton
+import app.ninesevennine.twofactorauthenticator.gui.elements.SectionGroup
 import app.ninesevennine.twofactorauthenticator.utils.Document
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.Zip.unzipFromStream
@@ -108,12 +108,12 @@ fun SelectIconPacks(navController: NavController) {
             ) {
                 Spacer(modifier = Modifier.height(topInset + 64.dp))
 
-                SectionGroupNew(
+                SectionGroup(
                     modifier = Modifier.padding(16.dp),
                     title = "Available"
                 ) {
                     availableIconPacks.forEach { pack ->
-                        SectionButtonNew(
+                        SectionButton(
                             painter = painterResource(R.drawable.mi_extension),
                             tint = Theme.colors.primary,
                             primaryText = pack.primary,
@@ -126,7 +126,7 @@ fun SelectIconPacks(navController: NavController) {
                         }
                     }
 
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_add),
                         tint = Theme.colors.primary,
                         primaryText = "Add",
@@ -136,7 +136,7 @@ fun SelectIconPacks(navController: NavController) {
                     }
                 }
 
-                RoundedButtonNew(
+                RoundedButton(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     text = "Delete Active"
                 ) {
@@ -146,11 +146,11 @@ fun SelectIconPacks(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                SectionGroupNew(
+                SectionGroup(
                     modifier = Modifier.padding(16.dp),
                     title = "Other"
                 ) {
-                    SectionButtonNew(
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_format_color_reset),
                         tint = Theme.colors.primary,
                         primaryText = "Don't Suggest Colors",

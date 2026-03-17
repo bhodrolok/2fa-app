@@ -1,6 +1,7 @@
 package app.ninesevennine.twofactorauthenticator.gui.elements
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -25,34 +26,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
-import app.ninesevennine.twofactorauthenticator.gui.Tints
 
 @Composable
-fun <T : Enum<T>> EditSectionDropdownSingleChoice(
+fun <T : Enum<T>> SectionDropdownSingleChoice(
     title: String,
     options: Array<T>,
     selectedOption: T,
     onOptionSelected: (T) -> Unit,
-    label: (T) -> String,
-    color: Int
+    label: (T) -> String
 ) {
-    val context = LocalContext.current
-    val colors = if (Theme.currentOption(context) == ThemeOption.LIGHT) Tints.light else Tints.dark
-    val isUsingPitchBlack by remember { mutableStateOf(Theme.themeOption == ThemeOption.PITCH_BLACK) }
+    val isUsingPitchBlack = remember { Theme.themeOption == ThemeOption.PITCH_BLACK }
 
-    val shape = RoundedCornerShape(12.dp)
     var expanded by remember { mutableStateOf(false) }
 
     Column(
@@ -60,33 +53,42 @@ fun <T : Enum<T>> EditSectionDropdownSingleChoice(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        Text(
-            text = title,
-            modifier = Modifier.padding(start = 4.dp, bottom = 6.dp, end = 4.dp),
-            color = if (isUsingPitchBlack) Theme.colors.primary else colors.dark,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.W700,
-            fontFamily = InterVariable
-        )
+        Row(
+            modifier = Modifier.padding(start = 4.dp, bottom = 4.dp, end = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title,
+                modifier = Modifier.weight(1f),
+                color = Theme.colors.primary,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.W700,
+                fontFamily = InterVariable,
+                overflow = TextOverflow.MiddleEllipsis,
+                maxLines = 1
+            )
+        }
+
+        val shape = RoundedCornerShape(8.dp)
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(44.dp)
-                .background(
-                    color = if (isUsingPitchBlack) Theme.colors.background else colors.medium,
-                    shape = shape
-                )
+                .height(38.dp)
+                .background(color = Theme.colors.background, shape = shape)
                 .then(
-                    if (isUsingPitchBlack) Modifier.tiltShimmer(shape = shape, color = Theme.colors.primary)
-                    else Modifier
+                    if (isUsingPitchBlack) {
+                        Modifier.tiltShimmer(shape, color = Color.White)
+                    } else {
+                        Modifier.border(1.dp, Theme.colors.border, shape)
+                    }
                 )
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = { expanded = !expanded }
                 )
-                .padding(horizontal = 14.dp),
+                .padding(horizontal = 12.dp),
             contentAlignment = Alignment.CenterStart
         ) {
             Row(
@@ -96,7 +98,7 @@ fun <T : Enum<T>> EditSectionDropdownSingleChoice(
             ) {
                 Text(
                     text = label(selectedOption),
-                    color = if (isUsingPitchBlack) Theme.colors.primary else colors.dark,
+                    color = Theme.colors.primary,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.W700,
                     fontFamily = InterVariable
@@ -105,23 +107,14 @@ fun <T : Enum<T>> EditSectionDropdownSingleChoice(
                 Icon(
                     imageVector = if (expanded) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
                     contentDescription = null,
-                    tint = if (isUsingPitchBlack) Theme.colors.primary else colors.light
+                    tint = Theme.colors.primary
                 )
             }
 
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                modifier = Modifier
-                    .then(
-                        if (isUsingPitchBlack) {
-                            Modifier.background(Theme.colors.background)
-                        } else {
-                            Modifier
-                                .graphicsLayer(colorFilter = ColorFilter.tint(Color(color), BlendMode.Multiply))
-                                .background(colors.light)
-                        }
-                    )
+                modifier = Modifier.background(Theme.colors.background)
             ) {
                 Column {
                     options.forEach { option ->
@@ -132,7 +125,7 @@ fun <T : Enum<T>> EditSectionDropdownSingleChoice(
                                     fontFamily = InterVariable,
                                     fontWeight = FontWeight.W700,
                                     fontSize = 13.sp,
-                                    color = if (isUsingPitchBlack) Theme.colors.primary else colors.dark
+                                    color = Theme.colors.primary
                                 )
                             },
                             onClick = {

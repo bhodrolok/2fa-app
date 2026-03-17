@@ -157,7 +157,7 @@ fun OtpTileNormal(
     val isEditPressed by editInteractionSource.collectIsPressedAsState()
     val editScale by animateFloatAsState(if (isEditPressed) 0.85f else 1f)
 
-    val shape = RoundedCornerShape(26.dp)
+    val shape = RoundedCornerShape(24.dp)
 
     Box(
         Modifier
@@ -179,7 +179,7 @@ fun OtpTileNormal(
                                 .getAccountCode(account.id, counter, isShowingNextCode)
                                 .ifEmpty { "?".repeat(account.digits.coerceIn(4, 10)) }
 
-                            Clipboard.copy(context, "authenticator-contents", code, true)
+                            Clipboard.copy(context, "OTP", code, Config.isUsingSecureClipboard)
                         } else {
                             codeScopeJob = codeScope.launch {
                                 try {
@@ -194,7 +194,7 @@ fun OtpTileNormal(
                         }
                     } else {
                         if (isCodeRevealed) {
-                            Clipboard.copy(context, "authenticator-contents", rawCode, true)
+                            Clipboard.copy(context, "OTP", rawCode, Config.isUsingSecureClipboard)
                         }
 
                         if (Config.isUsingTapToRevealCodes) {
@@ -209,12 +209,7 @@ fun OtpTileNormal(
                     Modifier.tiltShimmer(shape)
                 } else {
                     Modifier
-                        .then(
-                            if (isEditing)
-                                Modifier
-                            else
-                                Modifier.graphicsLayer(colorFilter = ColorFilter.tint(if (Config.isUsingIconPacksOverrideColors && iconResult != null) iconResult.color else Color(account.color), BlendMode.Multiply))
-                        )
+                        .graphicsLayer(colorFilter = ColorFilter.tint(if (Config.isUsingIconPacksOverrideColors && iconResult != null) iconResult.color else Color(account.color), BlendMode.Multiply))
                         .background(colors.light)
                         .border(1.dp, colors.medium, shape)
                 }

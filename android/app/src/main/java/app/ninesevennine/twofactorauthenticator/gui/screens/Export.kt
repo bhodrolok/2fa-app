@@ -43,8 +43,8 @@ import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBoxNew
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonNew
+import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
@@ -53,6 +53,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import kotlin.time.Clock
 
 @Serializable
 object ExportRoute
@@ -150,7 +151,7 @@ fun Export(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                ConfidentialTextBoxNew(
+                ConfidentialTextBox(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     title = "Passphrase",
                     value = passphrase,
@@ -168,7 +169,7 @@ fun Export(navController: NavController) {
                 )
 
                 AnimatedVisibility(isPassphraseValid) {
-                    ConfidentialTextBoxNew(
+                    ConfidentialTextBox(
                         modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp),
                         title = "Confirm Passphrase",
                         value = confirmPassphrase,
@@ -178,22 +179,27 @@ fun Export(navController: NavController) {
                 }
 
                 AnimatedVisibility(isPassphraseValid && passphrase == confirmPassphrase) {
-                    RoundedButtonNew(
+                    RoundedButton(
                         modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 16.dp, end = 16.dp),
                         text = if (isLoading) spinnerText() else "Continue"
                     ) {
-                        if (isLoading) return@RoundedButtonNew
+                        if (isLoading) return@RoundedButton
 
                         isLoading = true
 
                         scope.launch(Dispatchers.IO) {
+                            val timestamp = Clock.System.now().toString()
+                                .replace("-", "")
+                                .replace(":", "")
+                                .substringBefore(".")
+
                             Logger.i(TAG, "exporting accounts")
 
                             val data = Entry.rustInterface.exportAccounts(passphrase)
 
                             withContext(Dispatchers.Main) {
                                 pendingExportData = data
-                                createDocumentLauncher.launch("export.2fa")
+                                createDocumentLauncher.launch("export-${timestamp}Z.2fa")
                             }
                         }
                     }
