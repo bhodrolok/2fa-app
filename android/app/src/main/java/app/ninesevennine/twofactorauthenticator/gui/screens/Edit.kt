@@ -2,8 +2,13 @@ package app.ninesevennine.twofactorauthenticator.gui.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -44,14 +49,18 @@ import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
-import app.ninesevennine.twofactorauthenticator.gui.elements.EditColorPicker
 import app.ninesevennine.twofactorauthenticator.gui.elements.EditHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.OtpTileNormal
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionDropdownSingleChoice
+import app.ninesevennine.twofactorauthenticator.gui.elements.SectionDualButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionGroup
+import app.ninesevennine.twofactorauthenticator.gui.elements.SectionHueSlider
+import app.ninesevennine.twofactorauthenticator.gui.elements.SectionSaturationSlider
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionTextBox
+import app.ninesevennine.twofactorauthenticator.utils.Clipboard
+import app.ninesevennine.twofactorauthenticator.utils.ColorPicker
 import app.ninesevennine.twofactorauthenticator.utils.Time
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -152,6 +161,58 @@ fun Edit(navController: NavController) {
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
+
+                AnimatedVisibility(
+                    visible = showColorPicker,
+                    enter = expandVertically(
+                        animationSpec = tween(200),
+                        expandFrom = Alignment.Top
+                    )
+                            + scaleIn(animationSpec = tween(200), initialScale = 0.9f)
+                            + fadeIn(animationSpec = tween(200)),
+                    exit = shrinkVertically(
+                        animationSpec = tween(200),
+                        shrinkTowards = Alignment.Top
+                    )
+                            + scaleOut(animationSpec = tween(200), targetScale = 0.9f)
+                            + fadeOut(animationSpec = tween(200))
+                ) {
+                    SectionGroup(
+                        modifier = Modifier.padding(16.dp),
+                        title = "Color Picker"
+                    ) {
+                        Spacer(Modifier.height(8.dp))
+
+                        SectionHueSlider(color) { hue ->
+                            val oldHsl = ColorPicker.colorToHsl(color)
+                            color = ColorPicker.hslToColor(hue, oldHsl[1], 0.5f)
+                            Entry.rustInterface.setEditAccountColor(color.toArgb())
+                        }
+
+                        SectionSaturationSlider(color) { saturation ->
+                            val oldHsv = ColorPicker.colorToHsl(color)
+                            color = ColorPicker.hslToColor(oldHsv[0], saturation, 0.5f)
+                            Entry.rustInterface.setEditAccountColor(color.toArgb())
+                        }
+
+                        SectionDualButton(
+                            leftText = "Copy",
+                            rightText = "Paste",
+                            onLeft = {
+                                Clipboard.copy(context, "color", ColorPicker.toRgbHexString(color), false)
+                            },
+                            onRight = {
+                                val text = Clipboard.paste(context) ?: return@SectionDualButton
+                                val parsed = ColorPicker.fromHexString(text) ?: return@SectionDualButton
+                                val hsl = ColorPicker.colorToHsl(parsed)
+                                color = ColorPicker.hslToColor(hsl[0], hsl[1], 0.5f).copy(alpha = 1f)
+                                Entry.rustInterface.setEditAccountColor(color.toArgb())
+                            }
+                        )
+
+                        Spacer(Modifier.height(10.dp))
+                    }
+                }
 
                 SectionGroup(
                     modifier = Modifier.padding(16.dp),
@@ -373,25 +434,6 @@ fun Edit(navController: NavController) {
                         navController.popBackStack(MainRoute, false)
                     }
                 }
-            }
-        )
-    }
-
-    AnimatedVisibility(
-        visible = showColorPicker,
-        enter = slideInVertically(initialOffsetY = { it }),
-        exit = slideOutVertically(targetOffsetY = { it }),
-    ) {
-        EditColorPicker(
-            initialColor = color,
-            onColorChange = {
-                if (it == Color.Black) return@EditColorPicker
-
-                Entry.rustInterface.setEditAccountColor(it.toArgb())
-                color = it
-            },
-            onCancel = {
-                showColorPicker = false
             }
         )
     }

@@ -85,9 +85,9 @@ fun SectionTextBox(
                         .background(color = Theme.colors.background, shape = shape)
                         .then(
                             if (isUsingPitchBlack) {
-                                Modifier.tiltShimmer(shape, color = if (error) Theme.colors.error else Color.White)
+                                Modifier.tiltShimmer(shape, color = if (error) Theme.colors.veryWeak else Color.White)
                             } else {
-                                Modifier.border(1.dp, if (error) Theme.colors.error else Theme.colors.border, shape)
+                                Modifier.border(1.dp, if (error) Theme.colors.veryWeak else Theme.colors.border, shape)
                             }
                         )
                         .padding(horizontal = 12.dp),

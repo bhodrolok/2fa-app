@@ -2,36 +2,23 @@ package app.ninesevennine.twofactorauthenticator.utils
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.toColorInt
 
 object ColorPicker {
-    val hueGradient = listOf(
-        Color(0xFFFF0000),
-        Color(0xFFFFFF00),
-        Color(0xFF00FF00),
-        Color(0xFF00FFFF),
-        Color(0xFF0000FF),
-        Color(0xFFFF00FF),
-        Color(0xFFFF0000),
-    )
+    fun colorToHsl(color: Color): FloatArray {
+        return FloatArray(3).also { ColorUtils.colorToHSL(color.toArgb(), it) }
+    }
 
-    fun fromHsv(h: Float, s: Float, v: Float): Color =
-        Color(android.graphics.Color.HSVToColor(floatArrayOf(h, s, v)))
+    fun hslToColor(hue: Float, saturation: Float, lightness: Float): Color {
+        return Color(ColorUtils.HSLToColor(floatArrayOf(hue, saturation, lightness)))
+    }
 
-    fun toHsv(color: Color): FloatArray =
-        FloatArray(3).also {
-            android.graphics.Color.RGBToHSV(
-                (color.red * 255).toInt(),
-                (color.green * 255).toInt(),
-                (color.blue * 255).toInt(),
-                it,
-            )
-        }
+    fun toRgbHexString(color: Color): String {
+        return "#%06x".format(color.toArgb() and 0xFFFFFF)
+    }
 
-    fun toHex(color: Color): String =
-        "#%06X".format(color.toArgb() and 0xFFFFFF)
-
-    fun fromHex(hex: String): Color?  {
+    fun fromHexString(hex: String): Color?  {
         val formattedHex = if (hex.startsWith("#")) hex else "#$hex"
 
         return try {

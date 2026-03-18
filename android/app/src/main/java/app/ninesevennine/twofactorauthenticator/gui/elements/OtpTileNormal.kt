@@ -23,8 +23,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -50,6 +48,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -58,6 +57,7 @@ import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.AccountTruncated
 import app.ninesevennine.twofactorauthenticator.CodeType
 import app.ninesevennine.twofactorauthenticator.Entry
+import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
@@ -90,7 +90,7 @@ fun OtpTileNormal(
 
     val scope = rememberCoroutineScope()
 
-    val colors = if (Theme.currentOption(context) == ThemeOption.LIGHT) Tints.light else Tints.dark
+    val colors = if (Theme.currentOption(context) == ThemeOption.LIGHT) Tints.lightFromColor(Color(account.color)) else Tints.darkFromColor(Color(account.color))
     val isUsingPitchBlack by remember { mutableStateOf(Theme.themeOption == ThemeOption.PITCH_BLACK) }
 
     var isCodeRevealed by remember { mutableStateOf(!Config.isUsingTapToRevealCodes) }
@@ -209,7 +209,6 @@ fun OtpTileNormal(
                     Modifier.tiltShimmer(shape)
                 } else {
                     Modifier
-                        .graphicsLayer(colorFilter = ColorFilter.tint(if (Config.isUsingIconPacksOverrideColors && iconResult != null) iconResult.color else Color(account.color), BlendMode.Multiply))
                         .background(colors.light)
                         .border(1.dp, colors.medium, shape)
                 }
@@ -402,7 +401,7 @@ fun OtpTileNormal(
                                 Alignment.Center
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Palette,
+                                    painter = painterResource(R.drawable.mi_palette),
                                     contentDescription = null,
                                     modifier = Modifier.size(32.dp),
                                     tint = if (isUsingPitchBlack) Theme.colors.primary else colors.medium
@@ -430,7 +429,7 @@ fun OtpTileNormal(
                             Alignment.Center
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Edit,
+                                painter = painterResource(R.drawable.mi_edit),
                                 contentDescription = null,
                                 modifier = Modifier.size(29.dp),
                                 tint = if (isUsingPitchBlack) Theme.colors.primary else colors.medium

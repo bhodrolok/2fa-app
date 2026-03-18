@@ -35,7 +35,7 @@ object IconPacks {
                 IconEntry(
                     issuers = (0 until issuerArray.length()).map { issuerArray.getString(it) },
                     file = entry.optString("file", "").takeIf { it.endsWith(".svg") } ?: "",
-                    color = (entry.optString("color", "").let { ColorPicker.fromHex(it) } ?: Color.White).copy(alpha = 1f))
+                    color = (entry.optString("color", "").let { ColorPicker.fromHexString(it) } ?: Color.White).copy(alpha = 1f))
             }
         } catch (_: Exception) {
             Logger.e(TAG, "failed to load icons for pack $packId")

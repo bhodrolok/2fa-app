@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -39,15 +38,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -56,6 +54,7 @@ import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.AccountTruncated
 import app.ninesevennine.twofactorauthenticator.CodeType
 import app.ninesevennine.twofactorauthenticator.Entry
+import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
@@ -86,7 +85,7 @@ fun OtpTileMinimalistic(
 
     val scope = rememberCoroutineScope()
 
-    val colors = if (Theme.currentOption(context) == ThemeOption.LIGHT) Tints.light else Tints.dark
+    val colors = if (Theme.currentOption(context) == ThemeOption.LIGHT) Tints.lightFromColor(Color(account.color)) else Tints.darkFromColor(Color(account.color))
     val isUsingPitchBlack by remember { mutableStateOf(Theme.themeOption == ThemeOption.PITCH_BLACK) }
 
     var isCodeRevealed by remember { mutableStateOf(!Config.isUsingTapToRevealCodes) }
@@ -204,7 +203,7 @@ fun OtpTileMinimalistic(
                 if (isUsingPitchBlack) {
                     Modifier.tiltShimmer(shape)
                 } else {
-                    Modifier.graphicsLayer(colorFilter = ColorFilter.tint(if (Config.isUsingIconPacksOverrideColors && iconResult != null) iconResult.color else Color(account.color), BlendMode.Multiply))
+                    Modifier
                         .background(colors.light)
                         .border(1.dp, colors.medium, shape)
                 }
@@ -343,7 +342,7 @@ fun OtpTileMinimalistic(
                     Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Edit,
+                        painter = painterResource(R.drawable.mi_edit),
                         contentDescription = null,
                         modifier = Modifier.size(26.dp),
                         tint = if (isUsingPitchBlack) Theme.colors.primary else colors.medium
