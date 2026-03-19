@@ -145,7 +145,7 @@ fun ImportAegis(navController: NavController) {
                 Text(
                     text = "You're importing accounts from \"${importFilename}\". This will overwrite matching accounts and add any missing ones.",
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    color = Theme.colors.secondary,
+                    color = Theme.colors.primary,
                     fontSize = 14.sp,
                     fontFamily = InterVariable,
                     fontWeight = FontWeight.Normal,
@@ -172,7 +172,7 @@ fun ImportAegis(navController: NavController) {
                     Text(
                         text = "Incorrect passphrase",
                         modifier = Modifier.fillMaxWidth().padding(start = 20.dp, top = 8.dp, end = 20.dp),
-                        color = Theme.colors.error,
+                        color = Theme.colors.veryWeak,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Normal,
                         fontFamily = InterVariable
@@ -197,8 +197,8 @@ fun ImportAegis(navController: NavController) {
                         if (result) {
                             AccountManagement.saveAccountsUsingSeed(context)
 
-                            if (Config.isUsingAutomaticInternalBackups) {
-                                AccountManagement.saveAccountsUsingAutomaticInternalBackups(context)
+                            if (Config.isUsingAutomaticBackups) {
+                                AccountManagement.saveAccountsUsingAutomaticBackups(context)
                             }
 
                             withContext(Dispatchers.Main) {

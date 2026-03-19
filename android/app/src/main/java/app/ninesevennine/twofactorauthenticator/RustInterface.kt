@@ -8,7 +8,7 @@ class RustInterface {
     }
 
     external fun generateClientSecretWithEntropy(entropyArray: IntArray)
-    external fun setAutomaticInternalBackupsPassphrase(passphrase: String)
+    external fun setAutomaticBackupsPassphrase(passphrase: String)
     external fun getSecret(): ByteArray
     external fun setSecret(secretArray: ByteArray)
     external fun isSecretEmpty(): Boolean
@@ -39,12 +39,11 @@ class RustInterface {
     external fun incrementAccountCounterAndGet(id: Long): Long
 
     external fun exportAccountsUsingSeed(): String
-    external fun exportAccountsUsingAutomaticInternalBackups(): String
+    external fun exportAccountsUsingAutomaticBackups(): String
     external fun exportAccounts(passphrase: String): String
     external fun exportAccountsAegis(passphrase: String): String
-    external fun importAccountsUsingSeed(data: String): Boolean
-    external fun importAccounts(passphrase: String, data: String): Boolean
-    external fun importAccountsDB001(data: String): Boolean
+    external fun importAccountsUsingSeed(data: String): Int
+    external fun importAccounts(passphrase: String, data: String): Int
     external fun importAccountsAegis(passphrase: String, data: String): Boolean
 
     external fun svgToBitmap(data: ByteArray, width: Int, height: Int): Bitmap?

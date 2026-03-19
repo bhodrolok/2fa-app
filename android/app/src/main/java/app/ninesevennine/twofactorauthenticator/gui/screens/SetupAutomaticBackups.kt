@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,8 +45,8 @@ import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
 import app.ninesevennine.twofactorauthenticator.gui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
 import app.ninesevennine.twofactorauthenticator.utils.Logger
@@ -66,7 +67,8 @@ fun SetupAutomaticBackups(navController: NavController) {
     var passphrase by remember { mutableStateOf("") }
     var passphraseStrength by remember { mutableFloatStateOf(0f) }
     var confirmPassphrase by remember { mutableStateOf("") }
-    var recoveryError by remember { mutableStateOf(true) }
+    var recoveryError by remember { mutableStateOf(false) }
+    var recoveryErrorCode by remember { mutableIntStateOf(0) }
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
@@ -117,7 +119,7 @@ fun SetupAutomaticBackups(navController: NavController) {
                 Text(
                     text = "Whenever you add, modify, or import accounts, they are automatically exported to the app's internal storage. This location is confidential and inaccessible to other apps or system backup services.",
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    color = Theme.colors.secondary,
+                    color = Theme.colors.primary,
                     fontSize = 14.sp,
                     fontFamily = InterVariable,
                     fontWeight = FontWeight.Normal,
@@ -129,14 +131,14 @@ fun SetupAutomaticBackups(navController: NavController) {
                 Text(
                     text = "We highly recommend enabling this to ensure you can recover your accounts even if your decryption keys are ever invalidated.",
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    color = Theme.colors.secondary,
+                    color = Theme.colors.primary,
                     fontSize = 14.sp,
                     fontFamily = InterVariable,
                     fontWeight = FontWeight.Normal,
                     textAlign = TextAlign.Justify
                 )
 
-                if (AccountManagement.hasAccountsUsingAutomaticInternalBackups(context)) {
+                if (AccountManagement.hasAccountsUsingAutomaticBackups(context)) {
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
@@ -166,9 +168,15 @@ fun SetupAutomaticBackups(navController: NavController) {
 
                     AnimatedVisibility(recoveryError) {
                         Text(
-                            text = "Incorrect passphrase",
+                            text = when (recoveryErrorCode) {
+                                AccountManagement.IMPORT_ERROR_NO_ACCOUNTS -> "No accounts to import"
+                                AccountManagement.IMPORT_ERROR_INCORRECT_PASSPHRASE -> "Incorrect passphrase"
+                                AccountManagement.IMPORT_ERROR_OUTDATED_VERSION -> "Outdated version"
+                                AccountManagement.IMPORT_ERROR_INVALID_FILE -> "Invalid file"
+                                else -> "Unknown error"
+                            },
                             modifier = Modifier.fillMaxWidth().padding(start = 20.dp, top = 8.dp, end = 20.dp),
-                            color = Theme.colors.error,
+                            color = Theme.colors.veryWeak,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Normal,
                             fontFamily = InterVariable
@@ -187,20 +195,21 @@ fun SetupAutomaticBackups(navController: NavController) {
                         recoveryError = false
 
                         scope.launch(Dispatchers.IO) {
-                            val data = AccountManagement.getAccountsUsingAutomaticInternalBackups(context)
+                            val data = AccountManagement.getAccountsUsingAutomaticBackups(context)
                             if (data == null) {
-                                recoveryError = true
                                 isLoading = false
                                 return@launch
                             }
 
                             val result = Entry.rustInterface.importAccounts(passphrase, data)
 
-                            if (result) {
-                                AccountManagement.saveAccountsUsingSeed(context)
-                                Entry.rustInterface.setAutomaticInternalBackupsPassphrase(passphrase)
+                            if (result > 0) {
+                                Logger.i(TAG, "successfully recovered $result account(s)")
 
-                                Config.isUsingAutomaticInternalBackups = true
+                                AccountManagement.saveAccountsUsingSeed(context)
+                                Entry.rustInterface.setAutomaticBackupsPassphrase(passphrase)
+
+                                Config.isUsingAutomaticBackups = true
 
                                 Logger.i(TAG, "automatic backups set to true")
 
@@ -213,6 +222,7 @@ fun SetupAutomaticBackups(navController: NavController) {
                                 }
                             } else {
                                 recoveryError = true
+                                recoveryErrorCode = result
                                 isLoading = false
                             }
                         }
@@ -257,9 +267,9 @@ fun SetupAutomaticBackups(navController: NavController) {
                             isLoading = true
 
                             scope.launch(Dispatchers.IO) {
-                                Entry.rustInterface.setAutomaticInternalBackupsPassphrase(passphrase)
+                                Entry.rustInterface.setAutomaticBackupsPassphrase(passphrase)
 
-                                Config.isUsingAutomaticInternalBackups = true
+                                Config.isUsingAutomaticBackups = true
 
                                 Logger.i(TAG, "automatic backups set to true")
 
@@ -289,7 +299,7 @@ fun SetupAutomaticBackups(navController: NavController) {
             ) {
                 if (isLoading) return@RoundedButtonClean
 
-                Config.isUsingAutomaticInternalBackups = false
+                Config.isUsingAutomaticBackups = false
 
                 Logger.i(TAG, "automatic backups set to false")
 

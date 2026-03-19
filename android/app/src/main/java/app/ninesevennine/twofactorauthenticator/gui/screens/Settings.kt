@@ -276,7 +276,7 @@ fun Settings(navController: NavController) {
                         painter = painterResource(R.drawable.mi_settings_backup_restore),
                         tint = Theme.colors.primary,
                         primaryText = "Automatic Backups",
-                        enabled = Config.isUsingAutomaticInternalBackups
+                        enabled = Config.isUsingAutomaticBackups
                     ) {
                         navController.navigate(AutomaticBackupsRoute)
                     }

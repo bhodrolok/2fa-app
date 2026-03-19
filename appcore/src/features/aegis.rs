@@ -11,7 +11,6 @@ impl Client {
     pub fn export_accounts_aegis(&self, passphrase: &str) -> String {
         use aes_gcm::{Aes256Gcm, KeyInit, aead::Aead};
         use scrypt::Params as ScryptParams;
-        use sha3::Digest;
 
         let mut entries_array: Vec<serde_json::Value> = Vec::with_capacity(self.accounts.len());
 
@@ -75,16 +74,8 @@ impl Client {
         let db_tag = db_ct.split_off(db_ct.len() - 16);
         let db_ciphertext = db_ct;
 
-        let mut hasher = sha3::Sha3_512::new();
-        hasher.update(&self.seed);
-
-        let mut system_random = [0u8; 64];
-        getrandom::fill(&mut system_random).unwrap();
-        hasher.update(&system_random);
-
-        let hash = hasher.finalize();
         let mut salt = [0u8; 16];
-        salt.copy_from_slice(&hash[..16]);
+        getrandom::fill(&mut salt).unwrap();
 
         const N: u32 = 256 * 1024;
         const R: u32 = 8;

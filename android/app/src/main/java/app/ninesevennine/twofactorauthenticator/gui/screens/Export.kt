@@ -53,7 +53,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
-import kotlin.time.Clock
 
 @Serializable
 object ExportRoute
@@ -142,7 +141,7 @@ fun Export(navController: NavController) {
                 Text(
                     text = "You're creating an encrypted copy of your accounts. Save it to your local device or a cloud provider you trust.",
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    color = Theme.colors.secondary,
+                    color = Theme.colors.primary,
                     fontSize = 14.sp,
                     fontFamily = InterVariable,
                     fontWeight = FontWeight.Normal,
@@ -188,18 +187,13 @@ fun Export(navController: NavController) {
                         isLoading = true
 
                         scope.launch(Dispatchers.IO) {
-                            val timestamp = Clock.System.now().toString()
-                                .replace("-", "")
-                                .replace(":", "")
-                                .substringBefore(".")
-
                             Logger.i(TAG, "exporting accounts")
 
                             val data = Entry.rustInterface.exportAccounts(passphrase)
 
                             withContext(Dispatchers.Main) {
                                 pendingExportData = data
-                                createDocumentLauncher.launch("export-${timestamp}Z.2fa")
+                                createDocumentLauncher.launch("export.2fa")
                             }
                         }
                     }

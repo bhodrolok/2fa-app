@@ -10,6 +10,12 @@ use crate::{
 pub const XCHACHA20_KEY_SIZE: usize = 32;
 pub const XCHACHA20_NONCE_SIZE: usize = 24;
 
+pub const IMPORT_ERROR_NO_ACCOUNTS: i32 = 0;
+pub const IMPORT_ERROR_INCORRECT_PASSPHRASE: i32 = -1;
+pub const IMPORT_ERROR_OUTDATED_VERSION: i32 = -2;
+pub const IMPORT_ERROR_INVALID_FILE: i32 = -3;
+pub const IMPORT_ERROR_UNKNOWN: i32 = -4;
+
 impl Client {
     pub fn export_accounts_using_seed(&self) -> String {
         let key: [u8; XCHACHA20_KEY_SIZE] = self.seed[0..XCHACHA20_KEY_SIZE].try_into().unwrap();
@@ -27,12 +33,12 @@ impl Client {
         .to_string()
     }
 
-    pub fn export_accounts_using_automatic_internal_backups(&self) -> String {
-        let key: [u8; XCHACHA20_KEY_SIZE] = self.automatic_internal_backups_passphrase_hash
+    pub fn export_accounts_using_automatic_backups(&self) -> String {
+        let key: [u8; XCHACHA20_KEY_SIZE] = self.automatic_backups_passphrase_hash
             [0..XCHACHA20_KEY_SIZE]
             .try_into()
             .unwrap();
-        let nonce: [u8; XCHACHA20_NONCE_SIZE] = self.automatic_internal_backups_passphrase_hash
+        let nonce: [u8; XCHACHA20_NONCE_SIZE] = self.automatic_backups_passphrase_hash
             [XCHACHA20_KEY_SIZE..XCHACHA20_KEY_SIZE + XCHACHA20_NONCE_SIZE]
             .try_into()
             .unwrap();
@@ -41,26 +47,15 @@ impl Client {
 
         serde_json::json!({
             "version": 2,
-            "salt": data_encoding::BASE64.encode(&self.automatic_internal_backups_passphrase_salt),
+            "salt": data_encoding::BASE64.encode(&self.automatic_backups_passphrase_salt),
             "db": db
         })
         .to_string()
     }
 
     pub fn export_accounts(&self, passphrase: &str) -> String {
-        use sha3::Digest;
-
-        let mut hasher = sha3::Sha3_512::new();
-        hasher.update(&self.seed);
-
-        let mut system_random = [0u8; 64];
-        getrandom::fill(&mut system_random).unwrap();
-        hasher.update(&system_random);
-
-        let hash = hasher.finalize();
-
         let mut salt = [0u8; 16];
-        salt.copy_from_slice(&hash[..16]);
+        getrandom::fill(&mut salt).unwrap();
 
         // m: 256 MiB t: 4 p: 2
         let params = argon2::Params::new(256 * 1024, 4, 2, None).unwrap();
@@ -156,15 +151,15 @@ impl Client {
         data_encoding::BASE64.encode(&ciphertext)
     }
 
-    pub fn import_accounts_using_seed(&mut self, data: &str) -> bool {
+    pub fn import_accounts_using_seed(&mut self, data: &str) -> i32 {
         let obj: serde_json::Value = match serde_json::from_str(data) {
             Ok(v) => v,
-            Err(_) => return false,
+            Err(_) => return IMPORT_ERROR_INVALID_FILE,
         };
 
         let db = match obj.get("db").and_then(|v| v.as_str()) {
             Some(s) => s,
-            None => return false,
+            None => return IMPORT_ERROR_INVALID_FILE,
         };
 
         let key: [u8; XCHACHA20_KEY_SIZE] = self.seed[0..XCHACHA20_KEY_SIZE].try_into().unwrap();
@@ -176,32 +171,30 @@ impl Client {
         self.import_accounts_db_002(db, &key, &nonce)
     }
 
-    pub fn import_accounts(&mut self, passphrase: &str, data: &str) -> bool {
-        use chacha20poly1305::{KeyInit, aead::AeadMut};
-
+    pub fn import_accounts(&mut self, passphrase: &str, data: &str) -> i32 {
         let obj: serde_json::Value = match serde_json::from_str(data) {
             Ok(v) => v,
-            Err(_) => return false,
+            Err(_) => return IMPORT_ERROR_INVALID_FILE,
         };
 
         let version = match obj.get("version").and_then(|v| v.as_u64()) {
             Some(v) => v,
-            None => return false,
+            None => return IMPORT_ERROR_INVALID_FILE,
         };
 
         match version {
             2 => {
                 let db = match obj.get("db").and_then(|v| v.as_str()) {
                     Some(s) => s,
-                    None => return false,
+                    None => return IMPORT_ERROR_INVALID_FILE,
                 };
 
                 let salt = match obj.get("salt").and_then(|v| v.as_str()) {
                     Some(s) => match data_encoding::BASE64.decode(s.as_bytes()) {
                         Ok(b) => b,
-                        Err(_) => return false,
+                        Err(_) => return IMPORT_ERROR_INVALID_FILE,
                     },
-                    None => return false,
+                    None => return IMPORT_ERROR_INVALID_FILE,
                 };
 
                 // m: 256 MiB t: 4 p: 2
@@ -217,97 +210,23 @@ impl Client {
                     .hash_password_into(passphrase.as_bytes(), &salt, &mut out)
                     .is_err()
                 {
-                    return false;
+                    return IMPORT_ERROR_UNKNOWN;
                 }
 
                 let key: [u8; XCHACHA20_KEY_SIZE] = match out[..XCHACHA20_KEY_SIZE].try_into() {
                     Ok(k) => k,
-                    Err(_) => return false,
+                    Err(_) => return IMPORT_ERROR_UNKNOWN,
                 };
 
                 let nonce: [u8; XCHACHA20_NONCE_SIZE] = match out[XCHACHA20_KEY_SIZE..].try_into() {
                     Ok(n) => n,
-                    Err(_) => return false,
+                    Err(_) => return IMPORT_ERROR_UNKNOWN,
                 };
 
                 self.import_accounts_db_002(db, &key, &nonce)
             }
 
-            1 => {
-                const KEY_SIZE: usize = 32;
-                const NONCE_SIZE: usize = 12;
-
-                let ciphertext = match obj.get("data").and_then(|v| v.as_str()) {
-                    Some(s) => match data_encoding::BASE64.decode(s.as_bytes()) {
-                        Ok(b) => b,
-                        Err(_) => return false,
-                    },
-                    None => return false,
-                };
-
-                let salt = match obj.get("salt").and_then(|v| v.as_str()) {
-                    Some(s) => match data_encoding::BASE64.decode(s.as_bytes()) {
-                        Ok(b) => b,
-                        Err(_) => return false,
-                    },
-                    None => return false,
-                };
-
-                let argon = match obj.get("argon2id").and_then(|v| v.as_object()) {
-                    Some(o) => o,
-                    None => return false,
-                };
-
-                let m = match argon.get("m").and_then(|v| v.as_u64()) {
-                    Some(v) => v,
-                    None => return false,
-                };
-
-                let t = match argon.get("t").and_then(|v| v.as_u64()) {
-                    Some(v) => v,
-                    None => return false,
-                };
-
-                let p = match argon.get("p").and_then(|v| v.as_u64()) {
-                    Some(v) => v,
-                    None => return false,
-                };
-
-                let params = argon2::Params::new(m as u32, t as u32, p as u32, None).unwrap();
-                let argon2 = argon2::Argon2::new(
-                    argon2::Algorithm::Argon2id,
-                    argon2::Version::V0x13,
-                    params,
-                );
-
-                let mut out = [0u8; KEY_SIZE + NONCE_SIZE];
-                if argon2
-                    .hash_password_into(format!("979{}", passphrase).as_bytes(), &salt, &mut out)
-                    .is_err()
-                {
-                    return false;
-                }
-
-                let key = &out[..KEY_SIZE];
-                let nonce = &out[KEY_SIZE..];
-
-                let mut cipher = chacha20poly1305::ChaCha20Poly1305::new(key.into());
-                let nonce = chacha20poly1305::Nonce::from_slice(nonce);
-
-                let plaintext = match cipher.decrypt(nonce, ciphertext.as_ref()) {
-                    Ok(pt) => pt,
-                    Err(_) => return false,
-                };
-
-                let plaintext = match String::from_utf8(plaintext) {
-                    Ok(s) => s,
-                    Err(_) => return false,
-                };
-
-                self.import_accounts_db_001(&plaintext)
-            }
-
-            _ => false,
+            _ => IMPORT_ERROR_OUTDATED_VERSION,
         }
     }
 
@@ -316,12 +235,12 @@ impl Client {
         db: &str,
         key: &[u8; XCHACHA20_KEY_SIZE],
         nonce: &[u8; XCHACHA20_NONCE_SIZE],
-    ) -> bool {
+    ) -> i32 {
         use chacha20poly1305::{KeyInit, aead::AeadMut};
 
         let ciphertext = match data_encoding::BASE64.decode(db.as_bytes()) {
             Ok(ct) => ct,
-            Err(_) => return false,
+            Err(_) => return IMPORT_ERROR_INVALID_FILE,
         };
 
         let mut cipher = chacha20poly1305::XChaCha20Poly1305::new(key.into());
@@ -329,17 +248,17 @@ impl Client {
 
         let plaintext_bytes = match cipher.decrypt(nonce, ciphertext.as_ref()) {
             Ok(pt) => pt,
-            Err(_) => return false,
+            Err(_) => return IMPORT_ERROR_INCORRECT_PASSPHRASE,
         };
 
         let json_array: serde_json::Value = match serde_json::from_slice(&plaintext_bytes) {
             Ok(val) => val,
-            Err(_) => return false,
+            Err(_) => return IMPORT_ERROR_INCORRECT_PASSPHRASE,
         };
 
         let json_array = match json_array.as_array() {
             Some(arr) => arr,
-            None => return false,
+            None => return IMPORT_ERROR_INCORRECT_PASSPHRASE,
         };
 
         let mut new_accounts: Vec<Account> = Vec::with_capacity(json_array.len());
@@ -444,110 +363,10 @@ impl Client {
             new_accounts.push(account);
         }
 
-        for imported in new_accounts {
-            if let Some(existing) = self.accounts.iter_mut().find(|a| a.id == imported.id) {
-                *existing = imported;
-            } else {
-                self.accounts.push(imported);
-            }
-        }
+        let imported_count = new_accounts.len() as i32;
 
-        true
-    }
-
-    pub fn import_accounts_db_001(&mut self, db: &str) -> bool {
-        let json_array: serde_json::Value = match serde_json::from_slice(&db.as_bytes()) {
-            Ok(val) => val,
-            Err(_) => return false,
-        };
-
-        let json_array = match json_array.as_array() {
-            Some(arr) => arr,
-            None => return false,
-        };
-
-        let mut new_accounts: Vec<Account> = Vec::with_capacity(json_array.len());
-
-        for item in json_array {
-            let obj = match item.as_object() {
-                Some(o) => o,
-                None => continue,
-            };
-
-            let id = match obj.get("uuid").and_then(|v| v.as_str()) {
-                Some(uuid) => match utils::convert::uuid_to_id(uuid) {
-                    Some(id) => id,
-                    None => continue,
-                },
-                None => continue,
-            };
-
-            let name = obj
-                .get("name")
-                .and_then(|v| v.as_str())
-                .unwrap_or("")
-                .to_string();
-
-            let issuer = obj
-                .get("issuer")
-                .and_then(|v| v.as_str())
-                .unwrap_or("")
-                .to_string();
-
-            let note = obj
-                .get("note")
-                .and_then(|v| v.as_str())
-                .unwrap_or("")
-                .to_string();
-
-            let secret = match obj.get("secret").and_then(|v| v.as_str()) {
-                Some(s) => match data_encoding::BASE64.decode(s.as_bytes()) {
-                    Ok(b) => b,
-                    Err(_) => continue,
-                },
-                None => continue,
-            };
-
-            let code_type = match obj.get("otpType").and_then(|v| v.as_str()) {
-                Some("HOTP") => CodeType::HOTP,
-                Some("TOTP") => CodeType::TOTP,
-                _ => continue,
-            };
-
-            let algorithm = match obj.get("otpHashFunction").and_then(|v| v.as_str()) {
-                Some("SHA-1") => Algorithm::SHA1,
-                Some("SHA-256") => Algorithm::SHA256,
-                Some("SHA-512") => Algorithm::SHA512,
-                _ => Algorithm::SHA1,
-            };
-
-            let digits = obj.get("digits").and_then(|v| v.as_u64()).unwrap_or(6) as u32;
-            if digits < 4 || digits > 10 {
-                continue;
-            }
-
-            let counter = obj.get("counter").and_then(|v| v.as_u64()).unwrap_or(0);
-
-            let period = obj.get("period").and_then(|v| v.as_u64()).unwrap_or(30);
-            if period < 10 {
-                continue;
-            }
-
-            let account = Account {
-                id,
-                name,
-                issuer,
-                note,
-                secret,
-                code_type,
-                algorithm,
-                digits,
-                counter,
-                period,
-                color: utils::colors::WHITE,
-            };
-
-            new_accounts.push(account);
+        if imported_count == 0 {
+            return IMPORT_ERROR_NO_ACCOUNTS;
         }
 
         for imported in new_accounts {
@@ -558,6 +377,6 @@ impl Client {
             }
         }
 
-        true
+        imported_count
     }
 }

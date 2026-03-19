@@ -91,7 +91,7 @@ fun Greeting(navController: NavController) {
     val biometricUnlockText = "Biometric Unlock"
     val cancelText = "Cancel"
 
-    val internalBackupExists = AccountManagement.hasAccountsUsingAutomaticInternalBackups(context)
+    val internalBackupExists = AccountManagement.hasAccountsUsingAutomaticBackups(context)
 
     LaunchedEffect(Unit) {
         if (Config.hasCompletedSetup) {
@@ -211,7 +211,7 @@ fun Greeting(navController: NavController) {
                     Text(
                         text = "Your accounts cannot be loaded because the decryption keys are no longer usable.",
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        color = Theme.colors.secondary,
+                        color = Theme.colors.primary,
                         fontSize = 14.sp,
                         fontFamily = InterVariable,
                         fontWeight = FontWeight.Normal,
@@ -241,7 +241,7 @@ fun Greeting(navController: NavController) {
                     Text(
                         text = "We couldn't decrypt your accounts because the credentials provided were incorrect. Please restart the app and try again.",
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        color = Theme.colors.secondary,
+                        color = Theme.colors.primary,
                         fontSize = 14.sp,
                         fontFamily = InterVariable,
                         fontWeight = FontWeight.Normal,

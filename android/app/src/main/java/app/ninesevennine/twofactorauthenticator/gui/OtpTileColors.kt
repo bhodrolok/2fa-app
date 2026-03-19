@@ -2,81 +2,62 @@ package app.ninesevennine.twofactorauthenticator.gui
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.colorspace.ColorSpaces
-import app.ninesevennine.twofactorauthenticator.utils.ColorPicker
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-data class ColorTints(
+data class TileColors(
     val light: Color = Color(0),
     val medium: Color = Color(0),
     val dark: Color = Color(0),
 )
 
-object Tints {
-    val light = ColorTints(
-        light = Color(0xFFF2F2F2),
-        medium = Color(0xFFBDBDBD),
-        dark = Color(0xFF4A4A4A)
-    )
-
-    val dark = ColorTints(
-        light = Color(0xFF3C3C3C),
-        medium = Color(0xFF808080),
-        dark = Color(0xFFE0E0E0)
-    )
-
-    fun lightFromColor(color: Color): ColorTints {
+object OtpTileColors {
+    fun lightFromColor(color: Color): TileColors {
         val oklab = color.convert(ColorSpaces.Oklab)
-        val L = oklab.component1()
+        val l = oklab.component1()
         val a = oklab.component2()
         val b = oklab.component3()
 
         val chroma = sqrt(a * a + b * b)
         val hue = atan2(b, a)
 
-        // Background — light but visibly colored
         val lightL = 0.95f
         val lightC = chroma * 0.35f
 
-        // Code area — the brand color at its natural lightness
-        val medL = L.coerceIn(0.40f, 0.65f)
+        val medL = l.coerceIn(0.40f, 0.65f)
         val medC = chroma
 
-        // Text/icons — dark tint of the color
         val darkL = 0.38f
         val darkC = chroma * 0.30f
 
-        return ColorTints(
+        return TileColors(
             light  = oklchToSrgb(lightL, lightC, hue),
             medium = oklchToSrgb(medL, medC, hue),
             dark   = oklchToSrgb(darkL, darkC, hue),
         )
     }
 
-    fun darkFromColor(color: Color): ColorTints {
+    fun darkFromColor(color: Color): TileColors {
         val oklab = color.convert(ColorSpaces.Oklab)
-        val L = oklab.component1()
+        val l = oklab.component1()
         val a = oklab.component2()
         val b = oklab.component3()
 
         val chroma = sqrt(a * a + b * b)
         val hue = atan2(b, a)
 
-        // Background — dark and visibly colored
         val lightL = 0.25f
         val lightC = chroma * 0.35f
 
-        // Code area — brand color pushed dark
-        val medL = L.coerceIn(0.35f, 0.55f)
+        val medL = l.coerceIn(0.35f, 0.55f)
         val medC = chroma
 
-        // Text/icons — light tint of the color
         val darkL = 0.88f
         val darkC = chroma * 0.50f
 
-        return ColorTints(
+        return TileColors(
             light  = oklchToSrgb(lightL, lightC, hue),
             medium = oklchToSrgb(medL, medC, hue),
             dark   = oklchToSrgb(darkL, darkC, hue),

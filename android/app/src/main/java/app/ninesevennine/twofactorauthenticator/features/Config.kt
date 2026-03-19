@@ -21,8 +21,7 @@ object Config {
     var isUsingScreenSecurity by mutableStateOf(false)
     var isUsingSecureClipboard by mutableStateOf(false)
     var isUsingBlockIntents by mutableStateOf(false)
-    var isUsingAutomaticInternalBackups by mutableStateOf(false)
-    var isUsingIconPacksOverrideColors by mutableStateOf(false)
+    var isUsingAutomaticBackups by mutableStateOf(false)
     var isUsingIconPacksDontSuggestColors by mutableStateOf(false)
 
     fun load(context: Context) {
@@ -53,7 +52,7 @@ object Config {
         isUsingScreenSecurity = prefs.getBoolean("is_using_screen_security", false)
         isUsingSecureClipboard = prefs.getBoolean("is_using_secure_clipboard", false)
         isUsingBlockIntents = prefs.getBoolean("is_using_block_intents", false)
-        isUsingAutomaticInternalBackups = prefs.getBoolean("is_using_automatic_internal_backups", false)
+        isUsingAutomaticBackups = prefs.getBoolean("is_using_automatic_internal_backups", false)
         isUsingIconPacksDontSuggestColors = prefs.getBoolean("is_using_iconpacks_dont_suggest_colors", false)
     }
 
@@ -74,7 +73,7 @@ object Config {
             putBoolean("is_using_screen_security", isUsingScreenSecurity)
             putBoolean("is_using_secure_clipboard", isUsingSecureClipboard)
             putBoolean("is_using_block_intents", isUsingBlockIntents)
-            putBoolean("is_using_automatic_internal_backups", isUsingAutomaticInternalBackups)
+            putBoolean("is_using_automatic_internal_backups", isUsingAutomaticBackups)
             putBoolean("is_using_iconpacks_dont_suggest_colors", isUsingIconPacksDontSuggestColors)
             apply()
         }

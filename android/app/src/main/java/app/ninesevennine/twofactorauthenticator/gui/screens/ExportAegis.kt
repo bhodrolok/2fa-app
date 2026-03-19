@@ -142,7 +142,7 @@ fun ExportAegis(navController: NavController) {
                 Text(
                     text = "You're creating an Aegis compatible encrypted copy of your accounts. This format may not contain all data and should not be used to import accounts back into this app.",
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    color = Theme.colors.secondary,
+                    color = Theme.colors.primary,
                     fontSize = 14.sp,
                     fontFamily = InterVariable,
                     fontWeight = FontWeight.Normal,

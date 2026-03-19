@@ -426,8 +426,8 @@ fun Edit(navController: NavController) {
 
                     AccountManagement.saveAccountsUsingSeed(context)
 
-                    if (Config.isUsingAutomaticInternalBackups) {
-                        AccountManagement.saveAccountsUsingAutomaticInternalBackups(context)
+                    if (Config.isUsingAutomaticBackups) {
+                        AccountManagement.saveAccountsUsingAutomaticBackups(context)
                     }
 
                     withContext(Dispatchers.Main) {

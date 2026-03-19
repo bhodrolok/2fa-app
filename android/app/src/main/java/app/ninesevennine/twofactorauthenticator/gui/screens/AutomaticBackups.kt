@@ -76,7 +76,7 @@ fun AutomaticBackups(navController: NavController) {
     val isPassphraseValid = passphraseStrength > 0.5f
 
     // copy otherwise ui change will be visible on pop back.
-    var isUsingAutomaticBackups by remember { mutableStateOf(Config.isUsingAutomaticInternalBackups) }
+    var isUsingAutomaticBackups by remember { mutableStateOf(Config.isUsingAutomaticBackups) }
 
     BackHandler(enabled = isLoading) {
         // intercept the system back button when loading.
@@ -122,7 +122,7 @@ fun AutomaticBackups(navController: NavController) {
                 Text(
                     text = "Whenever you add, modify, or import accounts, they are automatically exported to the app's internal storage. This location is confidential and inaccessible to other apps or system backup services.",
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    color = Theme.colors.secondary,
+                    color = Theme.colors.primary,
                     fontSize = 14.sp,
                     fontFamily = InterVariable,
                     fontWeight = FontWeight.Normal,
@@ -134,7 +134,7 @@ fun AutomaticBackups(navController: NavController) {
                 Text(
                     text = "We highly recommend enabling this to ensure you can recover your accounts even if your decryption keys are ever invalidated.",
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    color = Theme.colors.secondary,
+                    color = Theme.colors.primary,
                     fontSize = 14.sp,
                     fontFamily = InterVariable,
                     fontWeight = FontWeight.Normal,
@@ -148,7 +148,7 @@ fun AutomaticBackups(navController: NavController) {
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         text = "Disable"
                     ) {
-                        Config.isUsingAutomaticInternalBackups = false
+                        Config.isUsingAutomaticBackups = false
 
                         Logger.i(TAG, "automatic backups set to false")
 
@@ -195,7 +195,7 @@ fun AutomaticBackups(navController: NavController) {
                             scope.launch(Dispatchers.IO) {
                                 val secret = Entry.rustInterface.getSecret()
 
-                                Entry.rustInterface.setAutomaticInternalBackupsPassphrase(passphrase)
+                                Entry.rustInterface.setAutomaticBackupsPassphrase(passphrase)
 
                                 withContext(Dispatchers.Main) {
                                     KeyStoreAES.saveSecret(
@@ -203,9 +203,9 @@ fun AutomaticBackups(navController: NavController) {
                                         negative = "Cancel",
                                         secret = Entry.rustInterface.getSecret(),
                                         onSuccess = {
-                                            AccountManagement.saveAccountsUsingAutomaticInternalBackups(context)
+                                            AccountManagement.saveAccountsUsingAutomaticBackups(context)
 
-                                            Config.isUsingAutomaticInternalBackups = true
+                                            Config.isUsingAutomaticBackups = true
 
                                             Logger.i(TAG, "automatic backups set to true")
 

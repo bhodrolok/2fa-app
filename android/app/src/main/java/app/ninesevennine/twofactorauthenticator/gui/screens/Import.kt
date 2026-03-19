@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -71,7 +72,8 @@ fun Import(navController: NavController) {
     var isLoading by remember { mutableStateOf(false) }
     var importData by remember { mutableStateOf("") }
     var importFilename by remember { mutableStateOf("") }
-    var importError by remember { mutableStateOf(true) }
+    var importError by remember { mutableStateOf(false) }
+    var importErrorCode by remember { mutableIntStateOf(0) }
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().coerceAtLeast(16.dp)
@@ -145,7 +147,7 @@ fun Import(navController: NavController) {
                 Text(
                     text = "You're importing accounts from \"${importFilename}\". This will overwrite matching accounts and add any missing ones.",
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    color = Theme.colors.secondary,
+                    color = Theme.colors.primary,
                     fontSize = 14.sp,
                     fontFamily = InterVariable,
                     fontWeight = FontWeight.Normal,
@@ -170,9 +172,15 @@ fun Import(navController: NavController) {
 
                 AnimatedVisibility(importError) {
                     Text(
-                        text = "Incorrect passphrase",
+                        text = when (importErrorCode) {
+                            AccountManagement.IMPORT_ERROR_NO_ACCOUNTS -> "No accounts to import"
+                            AccountManagement.IMPORT_ERROR_INCORRECT_PASSPHRASE -> "Incorrect passphrase"
+                            AccountManagement.IMPORT_ERROR_OUTDATED_VERSION -> "Outdated version"
+                            AccountManagement.IMPORT_ERROR_INVALID_FILE -> "Invalid file"
+                            else -> "Unknown error"
+                        },
                         modifier = Modifier.fillMaxWidth().padding(start = 20.dp, top = 8.dp, end = 20.dp),
-                        color = Theme.colors.error,
+                        color = Theme.colors.veryWeak,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Normal,
                         fontFamily = InterVariable
@@ -195,11 +203,13 @@ fun Import(navController: NavController) {
 
                         val result = Entry.rustInterface.importAccounts(passphrase, importData)
 
-                        if (result) {
+                        if (result > 0) {
+                            Logger.i(TAG, "successfully imported $result account(s)")
+
                             AccountManagement.saveAccountsUsingSeed(context)
 
-                            if (Config.isUsingAutomaticInternalBackups) {
-                                AccountManagement.saveAccountsUsingAutomaticInternalBackups(context)
+                            if (Config.isUsingAutomaticBackups) {
+                                AccountManagement.saveAccountsUsingAutomaticBackups(context)
                             }
 
                             withContext(Dispatchers.Main) {
@@ -208,6 +218,7 @@ fun Import(navController: NavController) {
                         } else {
                             Logger.i(TAG, "failed importing accounts")
                             importError = true
+                            importErrorCode = result
                             isLoading = false
                         }
                     }

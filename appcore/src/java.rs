@@ -1,8 +1,7 @@
 use crate::{
     CLIENT,
     client::{
-        AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_HASH_SIZE,
-        AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_SALT_SIZE, SECRET_SIZE,
+        AUTOMATIC_BACKUPS_PASSPHRASE_HASH_SIZE, AUTOMATIC_BACKUPS_PASSPHRASE_SALT_SIZE, SECRET_SIZE,
     },
     features::codegen::{Algorithm, CodeType},
 };
@@ -51,16 +50,12 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         client.seed = hasher1.finalize().into();
 
         client
-            .automatic_internal_backups_passphrase_hash
-            .copy_from_slice(
-                &hasher2.finalize()[..AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_HASH_SIZE],
-            );
+            .automatic_backups_passphrase_hash
+            .copy_from_slice(&hasher2.finalize()[..AUTOMATIC_BACKUPS_PASSPHRASE_HASH_SIZE]);
 
         client
-            .automatic_internal_backups_passphrase_salt
-            .copy_from_slice(
-                &hasher3.finalize()[..AUTOMATIC_INTERNAL_BACKUPS_PASSPHRASE_SALT_SIZE],
-            );
+            .automatic_backups_passphrase_salt
+            .copy_from_slice(&hasher3.finalize()[..AUTOMATIC_BACKUPS_PASSPHRASE_SALT_SIZE]);
 
         Ok(())
     });
@@ -69,7 +64,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setAutomaticInternalBackupsPassphrase(
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setAutomaticBackupsPassphrase(
     mut unowned_env: EnvUnowned,
     _class: JClass,
     passphrase: JString,
@@ -78,7 +73,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let passphrase: String = passphrase.to_string();
 
         let mut client = CLIENT.lock().unwrap();
-        client.set_automatic_internal_backups_passphrase(&passphrase);
+        client.set_automatic_backups_passphrase(&passphrase);
 
         Ok(())
     });
@@ -732,7 +727,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_exportAccountsUsingAutomaticInternalBackups(
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_exportAccountsUsingAutomaticBackups(
     mut unowned_env: EnvUnowned,
     _class: JClass,
 ) -> jstring {
@@ -740,7 +735,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let client = CLIENT.lock().unwrap();
 
         Ok(env
-            .new_string(client.export_accounts_using_automatic_internal_backups())
+            .new_string(client.export_accounts_using_automatic_backups())
             .unwrap()
             .into_raw())
     });
@@ -790,16 +785,12 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     mut unowned_env: EnvUnowned,
     _class: JClass,
     data: JString,
-) -> jboolean {
+) -> jint {
     let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
         let data: String = data.to_string();
         let mut client = CLIENT.lock().unwrap();
 
-        if client.import_accounts_using_seed(&data) {
-            Ok(JNI_TRUE)
-        } else {
-            Ok(JNI_FALSE)
-        }
+        Ok(client.import_accounts_using_seed(&data))
     });
 
     outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
@@ -811,36 +802,14 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     _class: JClass,
     passphrase: JString,
     data: JString,
-) -> jboolean {
+) -> jint {
     let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
         let passphrase: String = passphrase.to_string();
         let data: String = data.to_string();
 
         let mut client = CLIENT.lock().unwrap();
-        if client.import_accounts(&passphrase, &data) {
-            Ok(JNI_TRUE)
-        } else {
-            Ok(JNI_FALSE)
-        }
-    });
 
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_importAccountsDB001(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    data: JString,
-) -> jboolean {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let data: String = data.to_string();
-        let mut client = CLIENT.lock().unwrap();
-        if client.import_accounts_db_001(&data) {
-            Ok(JNI_TRUE)
-        } else {
-            Ok(JNI_FALSE)
-        }
+        Ok(client.import_accounts(&passphrase, &data))
     });
 
     outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()

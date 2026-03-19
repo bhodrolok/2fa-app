@@ -57,12 +57,11 @@ import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
-import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
+import app.ninesevennine.twofactorauthenticator.gui.OtpTileColors
 import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
-import app.ninesevennine.twofactorauthenticator.gui.Tints
 import app.ninesevennine.twofactorauthenticator.gui.screens.EditRoute
 import app.ninesevennine.twofactorauthenticator.utils.Clipboard
 import app.ninesevennine.twofactorauthenticator.utils.Time
@@ -85,7 +84,7 @@ fun OtpTileMinimalistic(
 
     val scope = rememberCoroutineScope()
 
-    val colors = if (Theme.currentOption(context) == ThemeOption.LIGHT) Tints.lightFromColor(Color(account.color)) else Tints.darkFromColor(Color(account.color))
+    val colors = if (Theme.currentOption(context) == ThemeOption.LIGHT) OtpTileColors.lightFromColor(Color(account.color)) else OtpTileColors.darkFromColor(Color(account.color))
     val isUsingPitchBlack by remember { mutableStateOf(Theme.themeOption == ThemeOption.PITCH_BLACK) }
 
     var isCodeRevealed by remember { mutableStateOf(!Config.isUsingTapToRevealCodes) }
@@ -122,10 +121,6 @@ fun OtpTileMinimalistic(
         } else {
             rawCode
         }
-    }
-
-    val iconResult = remember(account.issuer) {
-        IconPacks.get(context, account.issuer)
     }
 
     val codeInteractionSource = remember { MutableInteractionSource() }
@@ -312,8 +307,8 @@ fun OtpTileMinimalistic(
                                     scope.launch(Dispatchers.IO) {
                                         AccountManagement.saveAccountsUsingSeed(context)
 
-                                        if (Config.isUsingAutomaticInternalBackups) {
-                                            AccountManagement.saveAccountsUsingAutomaticInternalBackups(context)
+                                        if (Config.isUsingAutomaticBackups) {
+                                            AccountManagement.saveAccountsUsingAutomaticBackups(context)
                                         }
                                     }
                                 }

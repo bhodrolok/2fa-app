@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -70,6 +71,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -222,6 +224,41 @@ fun Main(navController: NavController) {
                         fontSize = 14.sp
                     )
                 }
+            }
+        }
+    }
+
+    if (query.isEmpty() && accounts.isEmpty()) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .widthIn(max = 512.dp)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.desert),
+                    contentDescription = null,
+                    modifier = Modifier.size(96.dp),
+                    tint = Theme.colors.primary
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = "Tap the add icon in the bottom corner to add an account. You can also import accounts from other authenticator apps in Settings.",
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    color = Theme.colors.primary,
+                    fontSize = 14.sp,
+                    fontFamily = InterVariable,
+                    fontWeight = FontWeight.Normal,
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }

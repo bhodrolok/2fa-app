@@ -172,7 +172,7 @@ fun SetupInitializeEncryptionKeys(navController: NavController) {
             Text(
                 text = "Move your finger randomly across the screen. The longer you move it, the stronger the resulting encryption keys become. This visualizer simply illustrates the entropy generation process. It does not reveal sensitive data and cannot be used to derive your keys.",
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                color = Theme.colors.secondary,
+                color = Theme.colors.primary,
                 fontSize = 14.sp,
                 fontFamily = InterVariable,
                 fontWeight = FontWeight.Normal,
