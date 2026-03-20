@@ -61,7 +61,6 @@ import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.OtpTileColors
-import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
 import app.ninesevennine.twofactorauthenticator.gui.screens.EditRoute
 import app.ninesevennine.twofactorauthenticator.utils.Clipboard
 import app.ninesevennine.twofactorauthenticator.utils.Time
@@ -84,8 +83,11 @@ fun OtpTileMinimalistic(
 
     val scope = rememberCoroutineScope()
 
-    val colors = if (Theme.currentOption(context) == ThemeOption.LIGHT) OtpTileColors.lightFromColor(Color(account.color)) else OtpTileColors.darkFromColor(Color(account.color))
-    val isUsingPitchBlack by remember { mutableStateOf(Theme.themeOption == ThemeOption.PITCH_BLACK) }
+    val colors = when (Theme.currentOption(context)) {
+        ThemeOption.LIGHT -> OtpTileColors.lightFromColor(Color(account.color))
+        ThemeOption.DARK -> OtpTileColors.darkFromColor(Color(account.color))
+        else -> OtpTileColors.pitchBlack
+    }
 
     var isCodeRevealed by remember { mutableStateOf(!Config.isUsingTapToRevealCodes) }
 
@@ -194,15 +196,8 @@ fun OtpTileMinimalistic(
                 }
             )
             .clip(shape)
-            .then(
-                if (isUsingPitchBlack) {
-                    Modifier.tiltShimmer(shape)
-                } else {
-                    Modifier
-                        .background(colors.light)
-                        .border(1.dp, colors.medium, shape)
-                }
-            ),
+            .background(colors.background)
+            .border(1.dp, colors.border, shape),
         Alignment.Center
     ) {
         Column(
@@ -218,7 +213,7 @@ fun OtpTileMinimalistic(
                 ) {
                     Text(
                         text = account.issuer.ifEmpty { account.name },
-                        color = if (isUsingPitchBlack) Theme.colors.primary else colors.dark,
+                        color = colors.text,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.W700,
                         fontFamily = InterVariable,
@@ -229,7 +224,7 @@ fun OtpTileMinimalistic(
                     if (account.name.isNotEmpty() && account.issuer.isNotEmpty()) {
                         Text(
                             text = account.name,
-                            color = if (isUsingPitchBlack) Theme.colors.secondary else colors.dark,
+                            color = colors.text,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.W500,
                             fontFamily = InterVariable,
@@ -259,13 +254,13 @@ fun OtpTileMinimalistic(
                     ) {
                         Canvas(Modifier.size(24.dp)) {
                             drawCircle(
-                                color = if (isUsingPitchBlack) Theme.colors.primary else colors.medium,
+                                color = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface,
                                 style = Stroke(width = 2.75f)
                             )
 
                             val sweepAngle = -(remainingSeconds.toFloat() / account.period.toFloat()) * 360f
                             drawArc(
-                                color = if (isUsingPitchBlack) Theme.colors.primary else colors.medium,
+                                color = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface,
                                 startAngle = -90f,
                                 sweepAngle = sweepAngle,
                                 useCenter = true
@@ -277,7 +272,7 @@ fun OtpTileMinimalistic(
 
                             Text(
                                 text = "+1",
-                                color = if (isUsingPitchBlack) Theme.colors.primary else colors.medium,
+                                color = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface,
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.W900,
                                 fontFamily = InterVariable
@@ -313,7 +308,7 @@ fun OtpTileMinimalistic(
                                     }
                                 }
                             ),
-                        tint = if (isUsingPitchBlack) Theme.colors.primary else colors.medium
+                        tint = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface
                     )
                 }
 
@@ -340,7 +335,7 @@ fun OtpTileMinimalistic(
                         painter = painterResource(R.drawable.mi_edit),
                         contentDescription = null,
                         modifier = Modifier.size(26.dp),
-                        tint = if (isUsingPitchBlack) Theme.colors.primary else colors.medium
+                        tint = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface
                     )
                 }
             }
@@ -355,7 +350,7 @@ fun OtpTileMinimalistic(
                 Text(
                     text = displayedCode,
                     modifier = Modifier.graphicsLayer(scaleX = codeScale, scaleY = codeScale),
-                    color = if (isUsingPitchBlack) Theme.colors.primary else colors.medium,
+                    color = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface,
                     fontSize = 27.sp,
                     fontWeight = FontWeight.W700,
                     fontFamily = InterVariable,

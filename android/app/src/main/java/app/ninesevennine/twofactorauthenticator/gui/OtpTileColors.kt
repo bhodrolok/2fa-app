@@ -8,9 +8,10 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 data class TileColors(
-    val light: Color = Color(0),
-    val medium: Color = Color(0),
-    val dark: Color = Color(0),
+    val background: Color = Color(0),
+    val surface: Color = Color(0),
+    val text: Color = Color(0),
+    val border: Color = Color(0),
 )
 
 object OtpTileColors {
@@ -23,19 +24,23 @@ object OtpTileColors {
         val chroma = sqrt(a * a + b * b)
         val hue = atan2(b, a)
 
-        val lightL = 0.95f
-        val lightC = chroma * 0.35f
+        val backgroundL = 0.97f
+        val backgroundC = chroma * 0.30f
 
-        val medL = l.coerceIn(0.40f, 0.65f)
-        val medC = chroma
+        val surfaceL = l.coerceIn(0.40f, 0.65f)
+        val surfaceC = chroma
 
-        val darkL = 0.38f
-        val darkC = chroma * 0.30f
+        val textL = 0.38f
+        val textC = chroma * 0.30f
+
+        val borderL = 0.88f
+        val borderC = chroma * 0.45f
 
         return TileColors(
-            light  = oklchToSrgb(lightL, lightC, hue),
-            medium = oklchToSrgb(medL, medC, hue),
-            dark   = oklchToSrgb(darkL, darkC, hue),
+            background = oklchToSrgb(backgroundL, backgroundC, hue),
+            surface = oklchToSrgb(surfaceL, surfaceC, hue),
+            text = oklchToSrgb(textL, textC, hue),
+            border = oklchToSrgb(borderL, borderC, hue),
         )
     }
 
@@ -48,21 +53,32 @@ object OtpTileColors {
         val chroma = sqrt(a * a + b * b)
         val hue = atan2(b, a)
 
-        val lightL = 0.25f
-        val lightC = chroma * 0.35f
+        val backgroundL = 0.20f
+        val backgroundC = chroma * 0.30f
 
-        val medL = l.coerceIn(0.35f, 0.55f)
-        val medC = chroma
+        val surfaceL = l.coerceIn(0.35f, 0.55f)
+        val surfaceC = chroma
 
-        val darkL = 0.88f
-        val darkC = chroma * 0.50f
+        val textL = 0.88f
+        val textC = chroma * 0.50f
+
+        val borderL = 0.35f
+        val borderC = chroma * 0.50f
 
         return TileColors(
-            light  = oklchToSrgb(lightL, lightC, hue),
-            medium = oklchToSrgb(medL, medC, hue),
-            dark   = oklchToSrgb(darkL, darkC, hue),
+            background = oklchToSrgb(backgroundL, backgroundC, hue),
+            surface = oklchToSrgb(surfaceL, surfaceC, hue),
+            text = oklchToSrgb(textL, textC, hue),
+            border = oklchToSrgb(borderL, borderC, hue),
         )
     }
+
+    val pitchBlack = TileColors(
+        background = Color(0xFF000000),
+        surface = Color(0xFF0A0A0A),
+        text = Color(0xFFE6E6E2),
+        border = Color(0xFF161514),
+    )
 
     private fun oklchToSrgb(L: Float, C: Float, hue: Float): Color {
         var c = C

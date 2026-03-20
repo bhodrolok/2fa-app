@@ -65,16 +65,16 @@ object Theme {
     )
 
     private val pitchBlack = ThemeColors(
-        background = Color.Black,
-        surface = Color.Black,
-        primary = Color.White,
-        secondary = Color.White,
-        border = Color.White,
+        background = Color(0xFF000000),
+        surface = Color(0xFF0A0A0A),
+        primary = Color(0xFFE4E4E0),
+        secondary = Color(0xFF8A8A86),
+        border = Color(0xFF1A1918),
         veryWeak = Color(0xFFFF5252),
         weak = Color(0xFFFFD740),
         good = Color(0xFF66BB6A),
         strong = Color(0xFF42A5F5),
-        info = Color.Cyan,
+        info = Color(0xFF42A5F5)
     )
 
     private fun isSystemDark(context: Context): Boolean {

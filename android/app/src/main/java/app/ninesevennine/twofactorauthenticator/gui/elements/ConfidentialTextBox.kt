@@ -29,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -48,9 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
-import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
 
 @Composable
 fun ConfidentialTextBox(
@@ -62,8 +59,6 @@ fun ConfidentialTextBox(
 ) {
     val haptic = LocalHapticFeedback.current
     val view = LocalView.current
-
-    val isUsingPitchBlack = remember { Theme.themeOption == ThemeOption.PITCH_BLACK }
 
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -145,13 +140,7 @@ fun ConfidentialTextBox(
                         .fillMaxWidth()
                         .height(40.dp)
                         .background(color = Theme.colors.background, shape = shape)
-                        .then(
-                            if (isUsingPitchBlack) {
-                                Modifier.tiltShimmer(shape, color = if (error) Theme.colors.veryWeak else Color.White)
-                            } else {
-                                Modifier.border(1.dp, if (error) Theme.colors.veryWeak else Theme.colors.border, shape)
-                            }
-                        )
+                        .border(1.dp, if (error) Theme.colors.veryWeak else Theme.colors.border, shape)
                         .padding(horizontal = 12.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {

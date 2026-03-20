@@ -24,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -32,9 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
-import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
 
 @Composable
 fun <T : Enum<T>> SectionDropdownSingleChoice(
@@ -44,8 +41,6 @@ fun <T : Enum<T>> SectionDropdownSingleChoice(
     onOptionSelected: (T) -> Unit,
     label: (T) -> String
 ) {
-    val isUsingPitchBlack = remember { Theme.themeOption == ThemeOption.PITCH_BLACK }
-
     var expanded by remember { mutableStateOf(false) }
 
     Column(
@@ -76,13 +71,7 @@ fun <T : Enum<T>> SectionDropdownSingleChoice(
                 .fillMaxWidth()
                 .height(38.dp)
                 .background(color = Theme.colors.background, shape = shape)
-                .then(
-                    if (isUsingPitchBlack) {
-                        Modifier.tiltShimmer(shape, color = Color.White)
-                    } else {
-                        Modifier.border(1.dp, Theme.colors.border, shape)
-                    }
-                )
+                .border(1.dp, Theme.colors.border, shape)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,

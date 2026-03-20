@@ -324,6 +324,7 @@ fun Settings(navController: NavController) {
                 ) {
                     SectionButton(
                         painter = painterResource(R.drawable.codeberg),
+                        tint = if (Theme.themeOption == ThemeOption.PITCH_BLACK) Theme.colors.primary else Theme.colors.strong,
                         primaryText = "Codeberg",
                         secondaryText = "View 2fa's source code",
                     ) {
@@ -333,7 +334,7 @@ fun Settings(navController: NavController) {
 
                     SectionButton(
                         painter = painterResource(R.drawable.mi_favorite),
-                        tint = Theme.colors.veryWeak,
+                        tint = if (Theme.themeOption == ThemeOption.PITCH_BLACK) Theme.colors.primary else Theme.colors.veryWeak,
                         primaryText = "Donate",
                         secondaryText = "979 needs your support to continue"
                     ) {

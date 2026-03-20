@@ -9,6 +9,11 @@ import app.ninesevennine.twofactorauthenticator.utils.Logger
 import org.json.JSONObject
 import java.io.File
 
+enum class IconPacksStyle(val value: Int) {
+    TEXTURED(0),
+    TINTED(1);
+}
+
 object IconPacks {
     private const val TAG = "IconPacks"
 
@@ -34,7 +39,10 @@ object IconPacks {
                 val issuerArray = entry.getJSONArray("issuer")
                 IconEntry(
                     issuers = (0 until issuerArray.length()).map { issuerArray.getString(it) },
-                    file = entry.optString("file", "").takeIf { it.endsWith(".svg") } ?: "",
+                    file = when (Config.UsingIconPacksStyle) {
+                        IconPacksStyle.TEXTURED.value -> entry.optString("textured", "")
+                        else -> entry.optString("tinted", "")
+                    }.takeIf { it.endsWith(".svg") } ?: "",
                     color = (entry.optString("color", "").let { ColorPicker.fromHexString(it) } ?: Color.White).copy(alpha = 1f))
             }
         } catch (_: Exception) {

@@ -61,10 +61,10 @@ import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
+import app.ninesevennine.twofactorauthenticator.features.IconPacksStyle
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
 import app.ninesevennine.twofactorauthenticator.gui.OtpTileColors
 import app.ninesevennine.twofactorauthenticator.gui.screens.EditRoute
 import app.ninesevennine.twofactorauthenticator.utils.Clipboard
@@ -90,8 +90,11 @@ fun OtpTileNormal(
 
     val scope = rememberCoroutineScope()
 
-    val colors = if (Theme.currentOption(context) == ThemeOption.LIGHT) OtpTileColors.lightFromColor(Color(account.color)) else OtpTileColors.darkFromColor(Color(account.color))
-    val isUsingPitchBlack by remember { mutableStateOf(Theme.themeOption == ThemeOption.PITCH_BLACK) }
+    val colors = when (Theme.currentOption(context)) {
+        ThemeOption.LIGHT -> OtpTileColors.lightFromColor(Color(account.color))
+        ThemeOption.DARK -> OtpTileColors.darkFromColor(Color(account.color))
+        else -> OtpTileColors.pitchBlack
+    }
 
     var isCodeRevealed by remember { mutableStateOf(!Config.isUsingTapToRevealCodes) }
 
@@ -204,15 +207,8 @@ fun OtpTileNormal(
                 }
             )
             .clip(shape)
-            .then(
-                if (isUsingPitchBlack) {
-                    Modifier.tiltShimmer(shape)
-                } else {
-                    Modifier
-                        .background(colors.light)
-                        .border(1.dp, colors.medium, shape)
-                }
-            ),
+            .background(colors.background)
+            .border(1.dp, colors.border, shape),
         Alignment.Center
     ) {
         Column(
@@ -225,33 +221,37 @@ fun OtpTileNormal(
                 Alignment.Center
             ) {
                 Row(
-                    Modifier.fillMaxWidth(),
+                    Modifier.fillMaxWidth().padding(end = 6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         if (iconResult != null) {
                             Canvas(Modifier.size(52.dp)) {
-                                drawImage(
-                                    image = iconResult.bitmap.asImageBitmap(),
-                                    colorFilter = ColorFilter.tint(
-                                        if (isUsingPitchBlack) Theme.colors.primary else colors.medium,
-                                        BlendMode.Modulate
-                                    )
-                                )
+                                when (Config.UsingIconPacksStyle) {
+                                    IconPacksStyle.TEXTURED.value -> {
+                                        drawImage(
+                                            image = iconResult.bitmap.asImageBitmap()
+                                        )
+                                    }
+
+                                    IconPacksStyle.TINTED.value -> {
+                                        drawImage(
+                                            image = iconResult.bitmap.asImageBitmap(),
+                                            colorFilter = ColorFilter.tint(
+                                                if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface,
+                                                BlendMode.Modulate
+                                            )
+                                        )
+                                    }
+
+                                    else -> {}
+                                }
                             }
                         } else {
-                            if (isUsingPitchBlack) {
-                                Box(
-                                    Modifier
-                                        .size(52.dp)
-                                        .tiltShimmer(shape)
+                            Canvas(Modifier.size(52.dp)) {
+                                drawCircle(
+                                    color = colors.surface
                                 )
-                            } else {
-                                Canvas(Modifier.size(52.dp)) {
-                                    drawCircle(
-                                        color = colors.medium
-                                    )
-                                }
                             }
 
                             Text(
@@ -262,7 +262,7 @@ fun OtpTileNormal(
                                 } else {
                                     "?"
                                 },
-                                color = if (isUsingPitchBlack) Theme.colors.primary else colors.light,
+                                color = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.background,
                                 fontSize = 26.sp,
                                 fontWeight = FontWeight.W700,
                                 fontFamily = InterVariable,
@@ -281,7 +281,7 @@ fun OtpTileNormal(
                     ) {
                         Text(
                             text = account.issuer.ifEmpty { account.name },
-                            color = if (isUsingPitchBlack) Theme.colors.primary else colors.dark,
+                            color = colors.text,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.W700,
                             fontFamily = InterVariable,
@@ -292,7 +292,7 @@ fun OtpTileNormal(
                         if (account.name.isNotEmpty() && account.issuer.isNotEmpty()) {
                             Text(
                                 text = account.name,
-                                color = if (isUsingPitchBlack) Theme.colors.secondary else colors.dark,
+                                color = colors.text,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.W500,
                                 fontFamily = InterVariable,
@@ -320,13 +320,13 @@ fun OtpTileNormal(
                         ) {
                             Canvas(Modifier.size(26.dp)) {
                                 drawCircle(
-                                    color = if (isUsingPitchBlack) Theme.colors.primary else colors.medium,
+                                    color = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface,
                                     style = Stroke(width = 3f)
                                 )
 
                                 val sweepAngle = -(remainingSeconds.toFloat() / account.period.toFloat()) * 360f
                                 drawArc(
-                                    color = if (isUsingPitchBlack) Theme.colors.primary else colors.medium,
+                                    color = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface,
                                     startAngle = -90f,
                                     sweepAngle = sweepAngle,
                                     useCenter = true
@@ -338,7 +338,7 @@ fun OtpTileNormal(
 
                                 Text(
                                     text = "+1",
-                                    color = if (isUsingPitchBlack) Theme.colors.primary else colors.medium,
+                                    color = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface,
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.W900,
                                     fontFamily = InterVariable
@@ -376,7 +376,7 @@ fun OtpTileNormal(
                                         }
                                     }
                                 ),
-                            tint = if (isUsingPitchBlack) Theme.colors.primary else colors.medium
+                            tint = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface
                         )
                     }
 
@@ -404,7 +404,7 @@ fun OtpTileNormal(
                                     painter = painterResource(R.drawable.mi_palette),
                                     contentDescription = null,
                                     modifier = Modifier.size(32.dp),
-                                    tint = if (isUsingPitchBlack) Theme.colors.primary else colors.medium
+                                    tint = colors.surface
                                 )
                             }
                         }
@@ -432,7 +432,7 @@ fun OtpTileNormal(
                                 painter = painterResource(R.drawable.mi_edit),
                                 contentDescription = null,
                                 modifier = Modifier.size(29.dp),
-                                tint = if (isUsingPitchBlack) Theme.colors.primary else colors.medium
+                                tint = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface
                             )
                         }
                     }
@@ -446,19 +446,13 @@ fun OtpTileNormal(
                     .fillMaxWidth()
                     .height(68.dp)
                     .clip(RoundedCornerShape(18.dp))
-                    .then(
-                        if (isUsingPitchBlack) {
-                            Modifier.tiltShimmer(RoundedCornerShape(18.dp))
-                        } else {
-                            Modifier.background(colors.medium)
-                        }
-                    ),
+                    .background(colors.surface),
                 Alignment.Center
             ) {
                 Text(
                     text = displayedCode,
                     modifier = Modifier.graphicsLayer(scaleX = codeScale, scaleY = codeScale),
-                    color = if (isUsingPitchBlack) Theme.colors.primary else colors.light,
+                    color = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.background,
                     fontSize = 42.sp,
                     fontWeight = FontWeight.W700,
                     fontFamily = InterVariable,

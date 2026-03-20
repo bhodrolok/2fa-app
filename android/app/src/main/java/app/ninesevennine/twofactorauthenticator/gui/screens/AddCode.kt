@@ -47,10 +47,7 @@ import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.QRCodeScanner
-import app.ninesevennine.twofactorauthenticator.features.Theme
-import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
 import app.ninesevennine.twofactorauthenticator.utils.ZXing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -154,13 +151,6 @@ fun AddCode(navController: NavController) {
                     .size(48.dp)
                     .clip(shape)
                     .background(color = Color(0x99000000))
-                    .then(
-                        if (Theme.themeOption == ThemeOption.PITCH_BLACK) {
-                            Modifier.tiltShimmer(shape)
-                        } else {
-                            Modifier
-                        }
-                    )
                     .clickable(
                         interactionSource = cancelInteractionSource,
                         indication = ripple(color = Color.White),
@@ -187,13 +177,6 @@ fun AddCode(navController: NavController) {
                     .height(48.dp)
                     .clip(shape)
                     .background(color = Color(0x99000000))
-                    .then(
-                        if (Theme.themeOption == ThemeOption.PITCH_BLACK) {
-                            Modifier.tiltShimmer(shape)
-                        } else {
-                            Modifier
-                        }
-                    )
                     .clickable(
                         interactionSource = enterInteractionSource,
                         indication = ripple(color = Color.White),
@@ -223,13 +206,6 @@ fun AddCode(navController: NavController) {
                     .size(48.dp)
                     .clip(shape)
                     .background(color = Color(0x99000000))
-                    .then(
-                        if (Theme.themeOption == ThemeOption.PITCH_BLACK) {
-                            Modifier.tiltShimmer(shape)
-                        } else {
-                            Modifier
-                        }
-                    )
                     .clickable(
                         interactionSource = imageInteractionSource,
                         indication = ripple(color = Color.White),

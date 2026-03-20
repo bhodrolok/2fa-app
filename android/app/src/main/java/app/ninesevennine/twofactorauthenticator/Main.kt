@@ -2,7 +2,6 @@ package app.ninesevennine.twofactorauthenticator
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.hardware.SensorManager
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -22,10 +21,8 @@ import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Signals
 import app.ninesevennine.twofactorauthenticator.features.Theme
-import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.features.UseIncognitoKeyboard
 import app.ninesevennine.twofactorauthenticator.features.setScreenSecure
-import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect
 import app.ninesevennine.twofactorauthenticator.gui.screens.AddCode
 import app.ninesevennine.twofactorauthenticator.gui.screens.AddCodeRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.AutomaticBackups
@@ -78,9 +75,6 @@ class Main : FragmentActivity() {
         Theme.update(this)
 
         setScreenSecure(this, Config.isUsingScreenSecurity)
-
-        val sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
-        ShimmerEffect.set(sensorManager)
 
         KeyStoreAES.setActivity(this)
 
@@ -137,16 +131,6 @@ class Main : FragmentActivity() {
         super.onResume()
 
         setScreenSecure(this, Config.isUsingScreenSecurity)
-
-        if (Theme.themeOption == ThemeOption.PITCH_BLACK) {
-            ShimmerEffect.register()
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-        ShimmerEffect.unregister()
     }
 
     override fun onNewIntent(intent: Intent) {

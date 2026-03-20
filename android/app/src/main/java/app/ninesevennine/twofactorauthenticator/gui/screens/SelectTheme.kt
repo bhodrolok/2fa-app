@@ -38,7 +38,6 @@ import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
-import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedRadioButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedRefreshButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
@@ -115,7 +114,6 @@ fun SelectTheme(navController: NavController) {
                     Logger.i(TAG, "theme set to pitch black")
 
                     Theme.set(context, ThemeOption.PITCH_BLACK)
-                    ShimmerEffect.register()
                     Config.save(context)
                 }
 

@@ -2,6 +2,7 @@ package app.ninesevennine.twofactorauthenticator.features
 
 import android.content.Context
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
@@ -22,6 +23,7 @@ object Config {
     var isUsingSecureClipboard by mutableStateOf(false)
     var isUsingBlockIntents by mutableStateOf(false)
     var isUsingAutomaticBackups by mutableStateOf(false)
+    var UsingIconPacksStyle by mutableIntStateOf(IconPacksStyle.TINTED.value)
     var isUsingIconPacksDontSuggestColors by mutableStateOf(false)
 
     fun load(context: Context) {
@@ -39,9 +41,6 @@ object Config {
         Theme.set(context, theme)
 
         activeIconPackId = prefs.getString("active_icon_pack_id", "") ?: ""
-
-        IconPacks.load(context, activeIconPackId)
-
         hasCompletedSetup = prefs.getBoolean("has_completed_setup", false)
         isUsingMinimalisticTiles = prefs.getBoolean("is_using_minimalistic_tiles", false)
         isUsingSearchOnTop = prefs.getBoolean("is_using_search_on_top", true)
@@ -53,7 +52,10 @@ object Config {
         isUsingSecureClipboard = prefs.getBoolean("is_using_secure_clipboard", false)
         isUsingBlockIntents = prefs.getBoolean("is_using_block_intents", false)
         isUsingAutomaticBackups = prefs.getBoolean("is_using_automatic_internal_backups", false)
+        UsingIconPacksStyle = prefs.getInt("using_iconpacks_style", IconPacksStyle.TINTED.value)
         isUsingIconPacksDontSuggestColors = prefs.getBoolean("is_using_iconpacks_dont_suggest_colors", false)
+
+        IconPacks.load(context, activeIconPackId)
     }
 
     fun save(context: Context) {
@@ -74,6 +76,7 @@ object Config {
             putBoolean("is_using_secure_clipboard", isUsingSecureClipboard)
             putBoolean("is_using_block_intents", isUsingBlockIntents)
             putBoolean("is_using_automatic_internal_backups", isUsingAutomaticBackups)
+            putInt("using_iconpacks_style", UsingIconPacksStyle)
             putBoolean("is_using_iconpacks_dont_suggest_colors", isUsingIconPacksDontSuggestColors)
             apply()
         }

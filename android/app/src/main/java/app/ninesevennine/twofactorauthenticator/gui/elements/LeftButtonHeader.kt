@@ -40,9 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.ninesevennine.twofactorauthenticator.features.Theme
-import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
 
 @Composable
 fun LeftButtonHeader(
@@ -87,13 +85,7 @@ fun LeftButtonHeader(
                 .shadow(elevation = 6.dp, shape = shape, clip = false)
                 .clip(shape)
                 .background(color = Theme.colors.surface, shape = shape)
-                .then(
-                    if (Theme.themeOption == ThemeOption.PITCH_BLACK) {
-                        Modifier.tiltShimmer(shape)
-                    } else {
-                        Modifier.border(1.dp, Theme.colors.border, shape)
-                    }
-                )
+                .border(1.dp, Theme.colors.border, shape)
                 .clickable(
                     interactionSource = interactionSource,
                     indication = ripple(color = Theme.colors.primary),

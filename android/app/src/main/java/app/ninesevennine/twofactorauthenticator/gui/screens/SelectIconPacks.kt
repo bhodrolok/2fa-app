@@ -32,6 +32,7 @@ import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
+import app.ninesevennine.twofactorauthenticator.features.IconPacksStyle
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.elements.LeftButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
@@ -121,6 +122,13 @@ fun SelectIconPacks(navController: NavController) {
                             enabled = Config.activeIconPackId == pack.id
                         ) {
                             Config.activeIconPackId = if (Config.activeIconPackId == pack.id) "" else pack.id
+
+                            if (Config.activeIconPackId.isEmpty()) {
+                                Logger.i(TAG, "active icon pack id set to ${Config.activeIconPackId}")
+                            } else {
+                                Logger.i(TAG, "active icon pack id set to none")
+                            }
+
                             IconPacks.load(context, Config.activeIconPackId)
                             Config.save(context)
                         }
@@ -148,6 +156,37 @@ fun SelectIconPacks(navController: NavController) {
 
                 SectionGroup(
                     modifier = Modifier.padding(16.dp),
+                    title = "Style"
+                ) {
+                    SectionButton(
+                        painter = painterResource(R.drawable.mi_texture),
+                        tint = Theme.colors.primary,
+                        primaryText = "Textured",
+                        enabled = Config.UsingIconPacksStyle == IconPacksStyle.TEXTURED.value
+                    ) {
+                        Logger.i(TAG, "icon pack style set to textured")
+
+                        Config.UsingIconPacksStyle = IconPacksStyle.TEXTURED.value
+                        IconPacks.load(context, Config.activeIconPackId)
+                        Config.save(context)
+                    }
+
+                    SectionButton(
+                        painter = painterResource(R.drawable.mi_colors),
+                        tint = Theme.colors.primary,
+                        primaryText = "Tinted",
+                        enabled = Config.UsingIconPacksStyle == IconPacksStyle.TINTED.value
+                    ) {
+                        Logger.i(TAG, "icon pack style set to tinted")
+
+                        Config.UsingIconPacksStyle = IconPacksStyle.TINTED.value
+                        IconPacks.load(context, Config.activeIconPackId)
+                        Config.save(context)
+                    }
+                }
+
+                SectionGroup(
+                    modifier = Modifier.padding(16.dp),
                     title = "Other"
                 ) {
                     SectionButton(
@@ -158,6 +197,9 @@ fun SelectIconPacks(navController: NavController) {
                         enabled = Config.isUsingIconPacksDontSuggestColors
                     ) {
                         Config.isUsingIconPacksDontSuggestColors = !Config.isUsingIconPacksDontSuggestColors
+
+                        Logger.i(TAG, "dont suggest colors set to ${Config.isUsingIconPacksDontSuggestColors}")
+
                         Config.save(context)
                     }
                 }

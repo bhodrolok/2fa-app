@@ -41,9 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.features.Theme
-import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.utils.Logger
@@ -122,17 +120,7 @@ fun SetupInitializeEncryptionKeys(navController: NavController) {
                         .height(128.dp)
                         .fillMaxWidth()
                         .background(Theme.colors.surface, RoundedCornerShape(8.dp))
-                        .then(
-                            if (Theme.themeOption == ThemeOption.PITCH_BLACK) {
-                                Modifier.tiltShimmer(shape = RoundedCornerShape(8.dp))
-                            } else {
-                                Modifier.border(
-                                    1.dp,
-                                    Theme.colors.border,
-                                    RoundedCornerShape(8.dp)
-                                )
-                            }
-                        ),
+                        .border(1.dp, Theme.colors.border, RoundedCornerShape(8.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(

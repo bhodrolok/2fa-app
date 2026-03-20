@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,9 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.ninesevennine.twofactorauthenticator.features.Theme
-import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
 
 @Composable
 fun RoundedButton(
@@ -41,8 +38,6 @@ fun RoundedButton(
 ) {
     val haptic = LocalHapticFeedback.current
     val view = LocalView.current
-
-    val isUsingPitchBlack by remember { mutableStateOf(Theme.themeOption == ThemeOption.PITCH_BLACK) }
 
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -56,13 +51,7 @@ fun RoundedButton(
             .height(48.dp)
             .clip(shape)
             .background(Theme.colors.surface)
-            .then(
-                if(isUsingPitchBlack) {
-                    Modifier.tiltShimmer(shape)
-                } else {
-                    Modifier.border(1.dp, Theme.colors.border, shape)
-                }
-            )
+            .border(1.dp, Theme.colors.border, shape)
             .clickable(
                 interactionSource = interactionSource,
                 indication = ripple(color = Theme.colors.primary),

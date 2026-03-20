@@ -22,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -32,9 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.ninesevennine.twofactorauthenticator.features.Theme
-import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
 
 @Composable
 fun SectionDualButton(
@@ -45,7 +42,6 @@ fun SectionDualButton(
 ) {
     val haptic = LocalHapticFeedback.current
     val view = LocalView.current
-    val isUsingPitchBlack = remember { Theme.themeOption == ThemeOption.PITCH_BLACK }
 
     val shape = RoundedCornerShape(8.dp)
 
@@ -70,13 +66,7 @@ fun SectionDualButton(
                 .height(38.dp)
                 .clip(shape)
                 .background(color = Theme.colors.background, shape = shape)
-                .then(
-                    if (isUsingPitchBlack) {
-                        Modifier.tiltShimmer(shape, color = Color.White)
-                    } else {
-                        Modifier.border(1.dp, Theme.colors.border, shape)
-                    }
-                )
+                .border(1.dp, Theme.colors.border, shape)
                 .clickable(
                     interactionSource = leftInteractionSource,
                     indication = ripple(color = Theme.colors.primary),
@@ -107,13 +97,7 @@ fun SectionDualButton(
                 .height(38.dp)
                 .clip(shape)
                 .background(color = Theme.colors.background, shape = shape)
-                .then(
-                    if (isUsingPitchBlack) {
-                        Modifier.tiltShimmer(shape, color = Color.White)
-                    } else {
-                        Modifier.border(1.dp, Theme.colors.border, shape)
-                    }
-                )
+                .border(1.dp, Theme.colors.border, shape)
                 .clickable(
                     interactionSource = rightInteractionSource,
                     indication = ripple(color = Theme.colors.primary),

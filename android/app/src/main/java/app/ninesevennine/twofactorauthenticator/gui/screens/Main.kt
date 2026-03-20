@@ -81,9 +81,7 @@ import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Signals
 import app.ninesevennine.twofactorauthenticator.features.Theme
-import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.ShimmerEffect.tiltShimmer
 import app.ninesevennine.twofactorauthenticator.gui.elements.OtpTileMinimalistic
 import app.ninesevennine.twofactorauthenticator.gui.elements.OtpTileNormal
 import app.ninesevennine.twofactorauthenticator.utils.Time
@@ -315,8 +313,6 @@ private fun TopBar(
     val keyboardController = LocalSoftwareKeyboardController.current
     val layoutDirection = LocalLayoutDirection.current
 
-    val isUsingPitchBlack = Theme.themeOption == ThemeOption.PITCH_BLACK
-
     var query by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
 
@@ -374,13 +370,7 @@ private fun TopBar(
                     .weight(1f)
                     .clip(shape)
                     .background(color = Theme.colors.surface, shape = shape)
-                    .then(
-                        if (isUsingPitchBlack) {
-                            Modifier.tiltShimmer(shape)
-                        } else {
-                            Modifier.border(1.dp, Theme.colors.border, shape)
-                        }
-                    )
+                    .border(1.dp, Theme.colors.border, shape)
                     .focusRequester(focusRequester),
                 singleLine = true,
                 textStyle = TextStyle(
@@ -442,13 +432,7 @@ private fun TopBar(
                     .size(48.dp)
                     .clip(shape)
                     .background(color = Theme.colors.surface, shape = shape)
-                    .then(
-                        if (isUsingPitchBlack) {
-                            Modifier.tiltShimmer(shape)
-                        } else {
-                            Modifier.border(1.dp, Theme.colors.border, shape)
-                        }
-                    )
+                    .border(1.dp, Theme.colors.border, shape)
                     .clickable(
                         interactionSource = settingsInteractionSource,
                         indication = ripple(color = Theme.colors.primary),
@@ -483,13 +467,7 @@ private fun TopBar(
                     .size(58.dp)
                     .clip(addShape)
                     .background(color = Theme.colors.surface, shape = addShape)
-                    .then(
-                        if (isUsingPitchBlack) {
-                            Modifier.tiltShimmer(addShape)
-                        } else {
-                            Modifier.border(1.dp, Theme.colors.border, addShape)
-                        }
-                    )
+                    .border(1.dp, Theme.colors.border, addShape)
                     .combinedClickable(
                         interactionSource = addInteractionSource,
                         indication = null,
@@ -531,8 +509,6 @@ private fun BottomBar(
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val layoutDirection = LocalLayoutDirection.current
-
-    val isUsingPitchBlack = Theme.themeOption == ThemeOption.PITCH_BLACK
 
     var query by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
@@ -594,13 +570,7 @@ private fun BottomBar(
                     .weight(1f)
                     .clip(shape)
                     .background(color = Theme.colors.surface, shape = shape)
-                    .then(
-                        if (isUsingPitchBlack) {
-                            Modifier.tiltShimmer(shape)
-                        } else {
-                            Modifier.border(1.dp, Theme.colors.border, shape)
-                        }
-                    )
+                    .border(1.dp, Theme.colors.border, shape)
                     .focusRequester(focusRequester),
                 singleLine = true,
                 textStyle = TextStyle(
@@ -662,13 +632,7 @@ private fun BottomBar(
                     .size(48.dp)
                     .clip(shape)
                     .background(color = Theme.colors.surface, shape = shape)
-                    .then(
-                        if (isUsingPitchBlack) {
-                            Modifier.tiltShimmer(shape)
-                        } else {
-                            Modifier.border(1.dp, Theme.colors.border, shape)
-                        }
-                    )
+                    .border(1.dp, Theme.colors.border, shape)
                     .clickable(
                         interactionSource = settingsInteractionSource,
                         indication = ripple(color = Theme.colors.primary),
@@ -697,13 +661,7 @@ private fun BottomBar(
                     .size(48.dp)
                     .clip(shape)
                     .background(color = Theme.colors.surface, shape = shape)
-                    .then(
-                        if (isUsingPitchBlack) {
-                            Modifier.tiltShimmer(shape)
-                        } else {
-                            Modifier.border(1.dp, Theme.colors.border, shape)
-                        }
-                    )
+                    .border(1.dp, Theme.colors.border, shape)
                     .combinedClickable(
                         interactionSource = addInteractionSource,
                         indication = null,
