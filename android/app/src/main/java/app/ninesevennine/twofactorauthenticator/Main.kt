@@ -1,6 +1,5 @@
 package app.ninesevennine.twofactorauthenticator
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -43,6 +42,8 @@ import app.ninesevennine.twofactorauthenticator.gui.screens.ImportAegisRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.ImportRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Main
 import app.ninesevennine.twofactorauthenticator.gui.screens.MainRoute
+import app.ninesevennine.twofactorauthenticator.gui.screens.SelectOtpCardStyle
+import app.ninesevennine.twofactorauthenticator.gui.screens.SelectOtpCardStyleRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectIconPacks
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectIconPacksRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectLanguage
@@ -59,12 +60,9 @@ import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStarted
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStartedRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupInitializeEncryptionKeys
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupInitializeEncryptionKeysRoute
-import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.ZXing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
-private const val TAG = "SetupGetStarted"
 
 class Main : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,11 +81,8 @@ class Main : FragmentActivity() {
         setContent {
             val navController = rememberNavController()
 
-            LaunchedEffect(Unit) {
-                @SuppressLint("RestrictedApi")
+            LaunchedEffect(Signals.authenticate) {
                 if (Config.hasCompletedSetup && Entry.rustInterface.isSecretEmpty() && navController.currentBackStackEntry?.destination?.hasRoute<GreetingRoute>() != true) {
-                    Logger.i(TAG, "secret is empty navigating to greeting")
-
                     navController.navigate(GreetingRoute) {
                         popUpTo(0) { inclusive = true }
                     }
@@ -113,6 +108,7 @@ class Main : FragmentActivity() {
                     composable<SettingsRoute> { Settings(navController) }
                     composable<SelectLanguageRoute> { SelectLanguage(navController) }
                     composable<SelectThemeRoute> { SelectTheme(navController) }
+                    composable<SelectOtpCardStyleRoute> { SelectOtpCardStyle(navController) }
                     composable<SelectIconPacksRoute> { SelectIconPacks(navController) }
                     composable<BiometricUnlockRoute> { BiometricUnlock(navController) }
                     composable<AutomaticBackupsRoute> { AutomaticBackups(navController) }
@@ -131,6 +127,21 @@ class Main : FragmentActivity() {
         super.onResume()
 
         setScreenSecure(this, Config.isUsingScreenSecurity)
+
+        if (Entry.rustInterface.isSecretEmpty()) Signals.authenticate++
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        if (Config.hasCompletedSetup && !isChangingConfigurations && Config.isUsingMemoryLoss) {
+            if (!Signals.suppressMemoryLoss) {
+                Entry.rustInterface.clientUnload()
+            }
+        }
+
+        Signals.suppressMemoryLoss = false
     }
 
     override fun onNewIntent(intent: Intent) {

@@ -19,8 +19,6 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Stars
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -37,7 +35,9 @@ import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.BuildConfig
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Config
+import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.features.Locale
+import app.ninesevennine.twofactorauthenticator.features.Signals
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.features.setScreenSecure
@@ -130,25 +130,28 @@ fun Settings(navController: NavController) {
                     }
 
                     SectionButton(
+                        painter = painterResource(R.drawable.mi_cards_stack),
+                        tint = Theme.colors.primary,
+                        primaryText = "Card Style",
+                        secondaryText = when (Config.UsingOtpCardStyle) {
+                            OtpCardStyle.NORMAL.value -> "Normal"
+                            OtpCardStyle.COMPACT.value -> "Compact"
+                            OtpCardStyle.GRID.value -> "Grid"
+                            else -> ""
+                        }
+                    ) {
+                        navController.navigate(SelectOtpCardStyleRoute)
+                    }
+
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_package),
                         tint = Theme.colors.primary,
-                        primaryText = "Icon Packs"
+                        primaryText = "Icon Packs",
+                        secondaryText = IconPacks.getActivePrimary(context)
                     ) {
                         navController.navigate(SelectIconPacksRoute)
                     }
 
-                    SectionButton(
-                        imageVector = Icons.Default.Stars,
-                        tint = Theme.colors.primary,
-                        primaryText = "Minimalistic Tiles",
-                        enabled = Config.isUsingMinimalisticTiles
-                    ) {
-                        Config.isUsingMinimalisticTiles = !Config.isUsingMinimalisticTiles
-
-                        Logger.i(TAG, "minimalistic tiles set to ${Config.isUsingMinimalisticTiles}")
-
-                        Config.save(context)
-                    }
 
                     SectionButton(
                         painter = painterResource(R.drawable.mi_vertical_align_top),
@@ -254,6 +257,20 @@ fun Settings(navController: NavController) {
                     }
 
                     SectionButton(
+                        painter = painterResource(R.drawable.mi_cognition),
+                        tint = Theme.colors.primary,
+                        primaryText = "Memory Loss",
+                        secondaryText = "Wipe sensitive memory when exiting",
+                        enabled = Config.isUsingMemoryLoss
+                    ) {
+                        Config.isUsingMemoryLoss = !Config.isUsingMemoryLoss
+
+                        Logger.i(TAG, "memory loss set to ${!Config.isUsingMemoryLoss}")
+
+                        Config.save(context)
+                    }
+
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_block),
                         tint = Theme.colors.primary,
                         primaryText = "Block Intents",
@@ -352,6 +369,7 @@ fun Settings(navController: NavController) {
                         return@RoundedButtonClean
                     }
 
+                    Signals.suppressMemoryLoss = true
                     Logger.i(TAG, "downloading app log")
                     internalAppLogLauncher.launch("app.log")
                 }

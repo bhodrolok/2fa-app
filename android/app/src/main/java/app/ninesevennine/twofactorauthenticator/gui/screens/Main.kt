@@ -82,8 +82,8 @@ import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Signals
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.elements.OtpTileMinimalistic
-import app.ninesevennine.twofactorauthenticator.gui.elements.OtpTileNormal
+import app.ninesevennine.twofactorauthenticator.gui.elements.OtpCardMinimalistic
+import app.ninesevennine.twofactorauthenticator.gui.elements.OtpCardNormal
 import app.ninesevennine.twofactorauthenticator.utils.Time
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -114,7 +114,7 @@ fun Main(navController: NavController) {
 
     val configuration = LocalConfiguration.current
     @SuppressLint("ConfigurationScreenWidthHeight")
-    val columnCount = if (Config.isUsingMinimalisticTiles) {
+    val columnCount = if (Config.UsingOtpCardStyle == OtpCardStyle.GRID.value) {
         max(2, configuration.screenWidthDp / 264)
     } else {
         max(1, configuration.screenWidthDp / 400)
@@ -146,8 +146,8 @@ fun Main(navController: NavController) {
             end = 16.dp,
             bottom = WindowInsets.ime.asPaddingValues().calculateBottomPadding() + 192.dp
         ),
-        horizontalArrangement = Arrangement.spacedBy(if (Config.isUsingMinimalisticTiles) 8.dp else 12.dp),
-        verticalArrangement = Arrangement.spacedBy(if (Config.isUsingMinimalisticTiles) 8.dp else 12.dp)
+        horizontalArrangement = Arrangement.spacedBy(if (Config.UsingOtpCardStyle == OtpCardStyle.NORMAL.value) 12.dp else 8.dp),
+        verticalArrangement = Arrangement.spacedBy(if (Config.UsingOtpCardStyle == OtpCardStyle.NORMAL.value) 12.dp else 8.dp)
     ) {
         items(count = accounts.size, key = { index -> accounts[index].id }) { index ->
             val account = accounts[index]
@@ -158,7 +158,7 @@ fun Main(navController: NavController) {
 
                 Box(
                     modifier = Modifier
-                        .shadow(elevation, if (Config.isUsingMinimalisticTiles) RoundedCornerShape(20.dp) else RoundedCornerShape(26.dp))
+                        .shadow(elevation, if (Config.UsingOtpCardStyle == OtpCardStyle.NORMAL.value) RoundedCornerShape(24.dp) else RoundedCornerShape(16.dp))
                         .then(
                             if (query.isEmpty()) {
                                 Modifier.longPressDraggableHandle(
@@ -178,10 +178,10 @@ fun Main(navController: NavController) {
                             }
                         )
                 ) {
-                    if (Config.isUsingMinimalisticTiles) {
-                        OtpTileMinimalistic(navController, account)
+                    if (Config.UsingOtpCardStyle == OtpCardStyle.NORMAL.value) {
+                        OtpCardNormal(navController, account)
                     } else {
-                        OtpTileNormal(navController, account)
+                        OtpCardMinimalistic(navController, account)
                     }
                 }
             }

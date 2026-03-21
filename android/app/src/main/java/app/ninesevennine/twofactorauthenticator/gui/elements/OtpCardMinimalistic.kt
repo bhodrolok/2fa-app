@@ -60,8 +60,9 @@ import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.OtpTileColors
+import app.ninesevennine.twofactorauthenticator.gui.OtpCard
 import app.ninesevennine.twofactorauthenticator.gui.screens.EditRoute
+import app.ninesevennine.twofactorauthenticator.gui.screens.OtpCardStyle
 import app.ninesevennine.twofactorauthenticator.utils.Clipboard
 import app.ninesevennine.twofactorauthenticator.utils.Time
 import kotlinx.coroutines.Dispatchers
@@ -71,7 +72,7 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 
 @Composable
-fun OtpTileMinimalistic(
+fun OtpCardMinimalistic(
     navController: NavController,
     account: AccountTruncated,
     updateCount: Int = 0,
@@ -84,9 +85,9 @@ fun OtpTileMinimalistic(
     val scope = rememberCoroutineScope()
 
     val colors = when (Theme.currentOption(context)) {
-        ThemeOption.LIGHT -> OtpTileColors.lightFromColor(Color(account.color))
-        ThemeOption.DARK -> OtpTileColors.darkFromColor(Color(account.color))
-        else -> OtpTileColors.pitchBlack
+        ThemeOption.LIGHT -> OtpCard.lightFromColor(Color(account.color))
+        ThemeOption.DARK -> OtpCard.darkFromColor(Color(account.color))
+        else -> OtpCard.pitchBlack
     }
 
     var isCodeRevealed by remember { mutableStateOf(!Config.isUsingTapToRevealCodes) }
@@ -343,8 +344,8 @@ fun OtpTileMinimalistic(
             Spacer(Modifier.height(6.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth().height(58.dp),
-                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth().height(58.dp).padding(start = if (Config.UsingOtpCardStyle == OtpCardStyle.COMPACT.value) 8.dp else 0.dp),
+                horizontalArrangement = if (Config.UsingOtpCardStyle == OtpCardStyle.COMPACT.value) Arrangement.Start else Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(

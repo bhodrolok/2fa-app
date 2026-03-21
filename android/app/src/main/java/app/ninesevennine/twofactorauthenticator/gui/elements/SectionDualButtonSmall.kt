@@ -34,7 +34,7 @@ import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 
 @Composable
-fun SectionDualButton(
+fun SectionDualButtonSmall(
     leftText: String,
     rightText: String,
     onLeft: () -> Unit,

@@ -7,6 +7,7 @@ class RustInterface {
         const val LIBRARY_NAME = "appcore"
     }
 
+    external fun clientUnload()
     external fun generateClientSecretWithEntropy(entropyArray: IntArray)
     external fun setAutomaticBackupsPassphrase(passphrase: String)
     external fun getSecret(): ByteArray

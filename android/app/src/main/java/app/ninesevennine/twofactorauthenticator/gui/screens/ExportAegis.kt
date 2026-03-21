@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
+import app.ninesevennine.twofactorauthenticator.features.Signals
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
@@ -193,6 +194,7 @@ fun ExportAegis(navController: NavController) {
                             val data = Entry.rustInterface.exportAccountsAegis(passphrase)
 
                             withContext(Dispatchers.Main) {
+                                Signals.suppressMemoryLoss = true
                                 pendingExportData = data
                                 createDocumentLauncher.launch("aegis.json")
                             }

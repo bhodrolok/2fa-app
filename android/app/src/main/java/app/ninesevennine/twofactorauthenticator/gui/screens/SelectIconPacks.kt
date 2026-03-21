@@ -33,6 +33,7 @@ import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.features.IconPacksStyle
+import app.ninesevennine.twofactorauthenticator.features.Signals
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.elements.LeftButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
@@ -140,6 +141,7 @@ fun SelectIconPacks(navController: NavController) {
                         primaryText = "Add",
                         secondaryText = ".zip"
                     ) {
+                        Signals.suppressMemoryLoss = true
                         openDocumentLauncher.launch(arrayOf("application/zip"))
                     }
                 }

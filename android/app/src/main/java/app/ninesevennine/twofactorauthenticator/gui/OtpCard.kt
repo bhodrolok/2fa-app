@@ -7,15 +7,15 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-data class TileColors(
+data class OtpCardColors(
     val background: Color = Color(0),
     val surface: Color = Color(0),
     val text: Color = Color(0),
     val border: Color = Color(0),
 )
 
-object OtpTileColors {
-    fun lightFromColor(color: Color): TileColors {
+object OtpCard {
+    fun lightFromColor(color: Color): OtpCardColors {
         val oklab = color.convert(ColorSpaces.Oklab)
         val l = oklab.component1()
         val a = oklab.component2()
@@ -36,7 +36,7 @@ object OtpTileColors {
         val borderL = 0.88f
         val borderC = chroma * 0.45f
 
-        return TileColors(
+        return OtpCardColors(
             background = oklchToSrgb(backgroundL, backgroundC, hue),
             surface = oklchToSrgb(surfaceL, surfaceC, hue),
             text = oklchToSrgb(textL, textC, hue),
@@ -44,7 +44,7 @@ object OtpTileColors {
         )
     }
 
-    fun darkFromColor(color: Color): TileColors {
+    fun darkFromColor(color: Color): OtpCardColors {
         val oklab = color.convert(ColorSpaces.Oklab)
         val l = oklab.component1()
         val a = oklab.component2()
@@ -65,7 +65,7 @@ object OtpTileColors {
         val borderL = 0.35f
         val borderC = chroma * 0.50f
 
-        return TileColors(
+        return OtpCardColors(
             background = oklchToSrgb(backgroundL, backgroundC, hue),
             surface = oklchToSrgb(surfaceL, surfaceC, hue),
             text = oklchToSrgb(textL, textC, hue),
@@ -73,7 +73,7 @@ object OtpTileColors {
         )
     }
 
-    val pitchBlack = TileColors(
+    val pitchBlack = OtpCardColors(
         background = Color(0xFF000000),
         surface = Color(0xFF0A0A0A),
         text = Color(0xFFE6E6E2),

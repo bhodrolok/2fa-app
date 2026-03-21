@@ -50,11 +50,12 @@ import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.gui.elements.EditHeader
-import app.ninesevennine.twofactorauthenticator.gui.elements.OtpTileNormal
+import app.ninesevennine.twofactorauthenticator.gui.elements.OtpCardNormal
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
+import app.ninesevennine.twofactorauthenticator.gui.elements.SectionButtonSmall
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionDropdownSingleChoice
-import app.ninesevennine.twofactorauthenticator.gui.elements.SectionDualButton
+import app.ninesevennine.twofactorauthenticator.gui.elements.SectionDualButtonSmall
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionGroup
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionHueSlider
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionSaturationSlider
@@ -90,11 +91,15 @@ fun Edit(navController: NavController) {
     var digits by remember { mutableStateOf(account.digits.toString()) }
     var color by remember { mutableStateOf(Color(account.color)) }
 
+    val iconResult = remember(account.issuer) {
+        IconPacks.get(context, account.issuer)
+    }
+
     if (color == Color.Black) {
         color = if (Config.isUsingIconPacksDontSuggestColors) {
             Color.White
         } else {
-            IconPacks.get(context, account.issuer)?.color ?: Color.White
+            iconResult?.color ?: Color.White
         }
 
         Entry.rustInterface.setEditAccountColor(color.toArgb())
@@ -133,11 +138,10 @@ fun Edit(navController: NavController) {
             Column(modifier = Modifier.widthIn(max = 512.dp)) {
                 Spacer(modifier = Modifier.height(topInset + 80.dp))
 
-                // using OtpTileMinimalistic looks terrible, just don't.
                 Box(
                     modifier = Modifier.padding(horizontal = 16.dp)
                 ) {
-                    OtpTileNormal(
+                    OtpCardNormal(
                         navController,
                         AccountTruncated(
                             account.id,
@@ -179,7 +183,7 @@ fun Edit(navController: NavController) {
                 ) {
                     SectionGroup(
                         modifier = Modifier.padding(16.dp),
-                        title = "Color Picker"
+                        title = "Customize"
                     ) {
                         Spacer(Modifier.height(8.dp))
 
@@ -195,20 +199,30 @@ fun Edit(navController: NavController) {
                             Entry.rustInterface.setEditAccountColor(color.toArgb())
                         }
 
-                        SectionDualButton(
+                        SectionDualButtonSmall(
                             leftText = "Copy",
                             rightText = "Paste",
                             onLeft = {
                                 Clipboard.copy(context, "color", ColorPicker.toRgbHexString(color), false)
                             },
                             onRight = {
-                                val text = Clipboard.paste(context) ?: return@SectionDualButton
-                                val parsed = ColorPicker.fromHexString(text) ?: return@SectionDualButton
+                                val text = Clipboard.paste(context) ?: return@SectionDualButtonSmall
+                                val parsed = ColorPicker.fromHexString(text) ?: return@SectionDualButtonSmall
                                 val hsl = ColorPicker.colorToHsl(parsed)
                                 color = ColorPicker.hslToColor(hsl[0], hsl[1], 0.5f).copy(alpha = 1f)
                                 Entry.rustInterface.setEditAccountColor(color.toArgb())
                             }
                         )
+
+                        if (iconResult != null) {
+                            SectionButtonSmall(
+                                text = "Use Suggestion",
+                                onClick = {
+                                    color = iconResult.color
+                                    Entry.rustInterface.setEditAccountColor(color.toArgb())
+                                }
+                            )
+                        }
 
                         Spacer(Modifier.height(10.dp))
                     }

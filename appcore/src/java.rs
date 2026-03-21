@@ -12,6 +12,21 @@ use jni::{
 };
 
 #[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_clientUnload(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+) {
+    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
+        let mut client = CLIENT.lock().unwrap();
+        client.unload();
+
+        Ok(())
+    });
+
+    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
+}
+
+#[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_generateClientSecretWithEntropy(
     mut unowned_env: EnvUnowned,
     _class: JClass,

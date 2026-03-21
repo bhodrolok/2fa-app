@@ -44,6 +44,7 @@ import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
+import app.ninesevennine.twofactorauthenticator.features.Signals
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
@@ -96,6 +97,7 @@ fun ImportAegis(navController: NavController) {
     }
 
     LaunchedEffect(Unit) {
+        Signals.suppressMemoryLoss = true
         openDocumentLauncher.launch(arrayOf("application/json", "text/json"))
     }
 

@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import app.ninesevennine.twofactorauthenticator.gui.screens.OtpCardStyle
 
 object Config {
     private const val PREFS_NAME = "config"
@@ -13,7 +14,7 @@ object Config {
 
     var activeIconPackId by mutableStateOf("")
     var hasCompletedSetup: Boolean = false
-    var isUsingMinimalisticTiles by mutableStateOf(false)
+    var UsingOtpCardStyle by mutableIntStateOf(OtpCardStyle.NORMAL.value)
     var isUsingSearchOnTop by mutableStateOf(true)
     var isUsingTapToRevealCodes by mutableStateOf(false)
     var isUsingDoubleTapToCopyCodes by mutableStateOf(false)
@@ -21,6 +22,7 @@ object Config {
     var isUsingBiometrics by mutableStateOf(false)
     var isUsingScreenSecurity by mutableStateOf(false)
     var isUsingSecureClipboard by mutableStateOf(false)
+    var isUsingMemoryLoss by mutableStateOf(false)
     var isUsingBlockIntents by mutableStateOf(false)
     var isUsingAutomaticBackups by mutableStateOf(false)
     var UsingIconPacksStyle by mutableIntStateOf(IconPacksStyle.TINTED.value)
@@ -42,7 +44,7 @@ object Config {
 
         activeIconPackId = prefs.getString("active_icon_pack_id", "") ?: ""
         hasCompletedSetup = prefs.getBoolean("has_completed_setup", false)
-        isUsingMinimalisticTiles = prefs.getBoolean("is_using_minimalistic_tiles", false)
+        UsingOtpCardStyle = prefs.getInt("using_otp_card_style", OtpCardStyle.NORMAL.value)
         isUsingSearchOnTop = prefs.getBoolean("is_using_search_on_top", true)
         isUsingTapToRevealCodes = prefs.getBoolean("is_using_tap_to_reveal_codes", false)
         isUsingDoubleTapToCopyCodes = prefs.getBoolean("is_using_double_tap_to_copy_codes", false)
@@ -50,6 +52,7 @@ object Config {
         isUsingBiometrics = prefs.getBoolean("is_using_biometrics", false)
         isUsingScreenSecurity = prefs.getBoolean("is_using_screen_security", false)
         isUsingSecureClipboard = prefs.getBoolean("is_using_secure_clipboard", false)
+        isUsingMemoryLoss = prefs.getBoolean("is_using_memory_loss", false)
         isUsingBlockIntents = prefs.getBoolean("is_using_block_intents", false)
         isUsingAutomaticBackups = prefs.getBoolean("is_using_automatic_internal_backups", false)
         UsingIconPacksStyle = prefs.getInt("using_iconpacks_style", IconPacksStyle.TINTED.value)
@@ -66,7 +69,7 @@ object Config {
             putInt(KEY_THEME, Theme.themeOption.value)
             putString("active_icon_pack_id", activeIconPackId)
             putBoolean("has_completed_setup", hasCompletedSetup)
-            putBoolean("is_using_minimalistic_tiles", isUsingMinimalisticTiles)
+            putInt("using_otp_card_style", UsingOtpCardStyle)
             putBoolean("is_using_search_on_top", isUsingSearchOnTop)
             putBoolean("is_using_tap_to_reveal_codes", isUsingTapToRevealCodes)
             putBoolean("is_using_double_tap_to_copy_codes", isUsingDoubleTapToCopyCodes)
@@ -74,6 +77,7 @@ object Config {
             putBoolean("is_using_biometrics", isUsingBiometrics)
             putBoolean("is_using_screen_security", isUsingScreenSecurity)
             putBoolean("is_using_secure_clipboard", isUsingSecureClipboard)
+            putBoolean("is_using_memory_loss", isUsingMemoryLoss)
             putBoolean("is_using_block_intents", isUsingBlockIntents)
             putBoolean("is_using_automatic_internal_backups", isUsingAutomaticBackups)
             putInt("using_iconpacks_style", UsingIconPacksStyle)

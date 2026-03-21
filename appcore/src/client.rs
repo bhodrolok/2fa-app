@@ -1,3 +1,5 @@
+use zeroize::Zeroize;
+
 use crate::features::codegen::{Algorithm, CodeType, hotp, steam_custom};
 use crate::features::otpauth::{self, Account, AccountTruncated};
 use crate::utils;
@@ -17,6 +19,28 @@ pub struct Client {
 }
 
 impl Client {
+    pub fn unload(&mut self) {
+        self.seed.zeroize();
+        self.automatic_backups_passphrase_hash.zeroize();
+        self.automatic_backups_passphrase_salt.zeroize();
+
+        if let Some(edit) = &mut self.edit {
+            edit.secret.zeroize();
+            edit.name.zeroize();
+            edit.issuer.zeroize();
+            edit.note.zeroize();
+        }
+        self.edit = None;
+
+        for account in &mut self.accounts {
+            account.secret.zeroize();
+            account.name.zeroize();
+            account.issuer.zeroize();
+            account.note.zeroize();
+        }
+        self.accounts.clear();
+    }
+
     pub fn set_automatic_backups_passphrase(&mut self, passphrase: &str) {
         let mut salt = [0u8; AUTOMATIC_BACKUPS_PASSPHRASE_SALT_SIZE];
         getrandom::fill(&mut salt).unwrap();

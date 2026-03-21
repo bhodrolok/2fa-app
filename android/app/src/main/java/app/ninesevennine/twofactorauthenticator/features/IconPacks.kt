@@ -106,6 +106,10 @@ object IconPacks {
             ?: emptyList()
     }
 
+    fun getActivePrimary(context: Context): String? {
+        return getAvailable(context).firstOrNull { it.id == Config.activeIconPackId }?.primary
+    }
+
     fun delete(context: Context, id: String) {
         if (id.isEmpty()) return
 

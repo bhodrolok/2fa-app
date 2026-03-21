@@ -65,7 +65,7 @@ import app.ninesevennine.twofactorauthenticator.features.IconPacksStyle
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.OtpTileColors
+import app.ninesevennine.twofactorauthenticator.gui.OtpCard
 import app.ninesevennine.twofactorauthenticator.gui.screens.EditRoute
 import app.ninesevennine.twofactorauthenticator.utils.Clipboard
 import app.ninesevennine.twofactorauthenticator.utils.Time
@@ -76,7 +76,7 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 
 @Composable
-fun OtpTileNormal(
+fun OtpCardNormal(
     navController: NavController,
     account: AccountTruncated,
     updateCount: Int = 0,
@@ -91,9 +91,9 @@ fun OtpTileNormal(
     val scope = rememberCoroutineScope()
 
     val colors = when (Theme.currentOption(context)) {
-        ThemeOption.LIGHT -> OtpTileColors.lightFromColor(Color(account.color))
-        ThemeOption.DARK -> OtpTileColors.darkFromColor(Color(account.color))
-        else -> OtpTileColors.pitchBlack
+        ThemeOption.LIGHT -> OtpCard.lightFromColor(Color(account.color))
+        ThemeOption.DARK -> OtpCard.darkFromColor(Color(account.color))
+        else -> OtpCard.pitchBlack
     }
 
     var isCodeRevealed by remember { mutableStateOf(!Config.isUsingTapToRevealCodes) }

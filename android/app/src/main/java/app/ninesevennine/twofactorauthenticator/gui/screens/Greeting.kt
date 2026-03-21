@@ -44,10 +44,11 @@ import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
+import app.ninesevennine.twofactorauthenticator.features.Signals
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -318,6 +319,7 @@ fun Greeting(navController: NavController) {
                         return@RoundedButtonClean
                     }
 
+                    Signals.suppressMemoryLoss = true
                     Logger.i(TAG, "downloading app log")
                     internalAppLogLauncher.launch("app.log")
                 }
