@@ -33,6 +33,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -89,8 +91,8 @@ fun Greeting(navController: NavController) {
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().coerceAtLeast(16.dp)
 
-    val biometricUnlockText = "Biometric Unlock"
-    val cancelText = "Cancel"
+    val promptTitle = stringResource(R.string.common_title_biometric_unlock)
+    val promptNegative = stringResource(R.string.common_button_cancel)
 
     val internalBackupExists = AccountManagement.hasAccountsUsingAutomaticBackups(context)
 
@@ -119,8 +121,8 @@ fun Greeting(navController: NavController) {
             }
 
             KeyStoreAES.loadSecret(
-                title = biometricUnlockText,
-                negative = cancelText,
+                title = promptTitle,
+                negative = promptNegative,
                 onSuccess = { secret ->
                     scope.launch(Dispatchers.IO) {
                         Entry.rustInterface.setSecret(secret)
@@ -147,8 +149,8 @@ fun Greeting(navController: NavController) {
             )
         } else {
             KeyStoreAES.saveSecret(
-                title = biometricUnlockText,
-                negative = cancelText,
+                title = promptTitle,
+                negative = promptNegative,
                 secret = Entry.rustInterface.getSecret(),
                 onSuccess = {
                     scope.launch(Dispatchers.IO) {
@@ -199,7 +201,7 @@ fun Greeting(navController: NavController) {
                     Spacer(modifier = Modifier.height(32.dp))
 
                     Text(
-                        text = "Decryption Keys Invalidated",
+                        text = stringResource(R.string.screen_greeting_title_invalidated),
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         color = Theme.colors.primary,
                         fontSize = 18.sp,
@@ -210,7 +212,7 @@ fun Greeting(navController: NavController) {
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "Your accounts cannot be loaded because the decryption keys are no longer usable.",
+                        text = stringResource(R.string.screen_greeting_description_invalidated),
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         color = Theme.colors.primary,
                         fontSize = 14.sp,
@@ -229,7 +231,7 @@ fun Greeting(navController: NavController) {
                     Spacer(modifier = Modifier.height(32.dp))
 
                     Text(
-                        text = "Something went wrong",
+                        text = stringResource(R.string.screen_greeting_title_something_wrong),
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         color = Theme.colors.primary,
                         fontSize = 18.sp,
@@ -240,7 +242,7 @@ fun Greeting(navController: NavController) {
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "We couldn't decrypt your accounts because the credentials provided were incorrect. Please restart the app and try again.",
+                        text = stringResource(R.string.screen_greeting_description_something_wrong),
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         color = Theme.colors.primary,
                         fontSize = 14.sp,
@@ -262,7 +264,7 @@ fun Greeting(navController: NavController) {
 
                     if (internalBackupExists) {
                         Text(
-                            text = "A backup was found in the app's internal storage.",
+                            text = stringResource(R.string.screen_greeting_backup_found),
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                             color = Theme.colors.good,
                             fontSize = 14.sp,
@@ -271,7 +273,7 @@ fun Greeting(navController: NavController) {
                         )
                     } else {
                         Text(
-                            text = "No backup was found in the app's internal storage.",
+                            text = stringResource(R.string.screen_greeting_backup_not_found),
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                             color = Theme.colors.veryWeak,
                             fontSize = 14.sp,
@@ -285,9 +287,12 @@ fun Greeting(navController: NavController) {
                     RoundedButton(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         text = if (wipeButtonTapsCount > 0) {
-                            "Tap ${6 - wipeButtonTapsCount} more times to confirm"
+                            pluralStringResource(R.plurals.common_button_tap_n_times_to_confirm, 6 - wipeButtonTapsCount, 6 - wipeButtonTapsCount)
                         } else {
-                            if (internalBackupExists) "Wipe & Recover" else "Wipe"
+                            if (internalBackupExists)
+                                stringResource(R.string.screen_greeting_button_wipe_and_recover)
+                            else
+                                stringResource(R.string.screen_greeting_button_wipe)
                         }
                     ) {
                         if (wipeButtonTapsCount < 5) {

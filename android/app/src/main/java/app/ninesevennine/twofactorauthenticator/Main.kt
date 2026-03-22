@@ -129,7 +129,6 @@ class Main : FragmentActivity() {
         setScreenSecure(this, Config.isUsingScreenSecurity)
 
         if (Entry.rustInterface.isSecretEmpty()) Signals.authenticate++
-
     }
 
     override fun onStop() {

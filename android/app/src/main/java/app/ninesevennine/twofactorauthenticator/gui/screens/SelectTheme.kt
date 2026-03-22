@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
@@ -80,7 +81,7 @@ fun SelectTheme(navController: NavController) {
                 RoundedRadioButton(
                     painter = painterResource(R.drawable.mi_light_mode),
                     tint = Theme.colors.primary,
-                    text = "Light",
+                    text = stringResource(R.string.theme_option_light),
                     enabled = Theme.currentOption(context) == ThemeOption.LIGHT
                 ) {
                     Logger.i(TAG, "theme set to light")
@@ -94,7 +95,7 @@ fun SelectTheme(navController: NavController) {
                 RoundedRadioButton(
                     painter = painterResource(R.drawable.mi_dark_mode),
                     tint = Theme.colors.primary,
-                    text = "Dark",
+                    text = stringResource(R.string.theme_option_dark),
                     enabled = Theme.currentOption(context) == ThemeOption.DARK
                 ) {
                     Logger.i(TAG, "theme set to dark")
@@ -108,7 +109,7 @@ fun SelectTheme(navController: NavController) {
                 RoundedRadioButton(
                     painter = painterResource(R.drawable.mi_contrast),
                     tint = Theme.colors.primary,
-                    text = "Pitch Black",
+                    text = stringResource(R.string.theme_option_pitch_black),
                     enabled = Theme.currentOption(context) == ThemeOption.PITCH_BLACK
                 ) {
                     Logger.i(TAG, "theme set to pitch black")
@@ -136,7 +137,7 @@ fun SelectTheme(navController: NavController) {
                     )
                 ) {
                     RoundedRefreshButton(
-                        text = "Use System Default"
+                        text = stringResource(R.string.common_button_use_system_default)
                     ) {
                         Logger.i(TAG, "theme set to system")
 
@@ -149,7 +150,7 @@ fun SelectTheme(navController: NavController) {
             }
         }
 
-        StartButtonHeader("Theme") {
+        StartButtonHeader(stringResource(R.string.screen_settings_appearance_theme)) {
             navController.popBackStack()
         }
     }

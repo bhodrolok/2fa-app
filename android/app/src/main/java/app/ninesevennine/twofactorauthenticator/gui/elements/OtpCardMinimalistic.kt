@@ -22,8 +22,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -282,7 +280,7 @@ fun OtpCardMinimalistic(
                     }
                 } else {
                     Icon(
-                        imageVector = Icons.Default.Refresh,
+                        painter = painterResource(R.drawable.mi_refresh),
                         contentDescription = null,
                         modifier = Modifier
                             .graphicsLayer(scaleX = counterScale, scaleY = counterScale, rotationZ = counterIconRotation)

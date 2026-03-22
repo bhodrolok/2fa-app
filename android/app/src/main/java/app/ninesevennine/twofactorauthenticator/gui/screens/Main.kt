@@ -196,7 +196,7 @@ fun Main(navController: NavController) {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = pluralStringResource(R.plurals.main_showing_n_accounts, accounts.size, accounts.size),
+                        text = pluralStringResource(R.plurals.screen_main_showing_n_accounts, accounts.size, accounts.size),
                         fontFamily = InterVariable,
                         color = Theme.colors.primary,
                         fontWeight = FontWeight.W500,
@@ -215,7 +215,7 @@ fun Main(navController: NavController) {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = stringResource(R.string.main_no_matching_accounts_found),
+                        text = stringResource(R.string.screen_main_no_matching_were_found),
                         fontFamily = InterVariable,
                         color = Theme.colors.primary,
                         fontWeight = FontWeight.W500,
@@ -249,7 +249,7 @@ fun Main(navController: NavController) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Tap the add icon in the bottom corner to add an account. You can also import accounts from other authenticator apps in Settings.",
+                    text = stringResource(R.string.screen_main_greeting),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
@@ -411,7 +411,7 @@ private fun TopBar(
                         ) {
                             if (query.isEmpty()) {
                                 Text(
-                                    text = stringResource(R.string.main_search),
+                                    text = stringResource(R.string.screen_main_search),
                                     fontFamily = InterVariable,
                                     fontWeight = FontWeight.Normal,
                                     fontSize = 14.sp,
@@ -611,7 +611,7 @@ private fun BottomBar(
                         ) {
                             if (query.isEmpty()) {
                                 Text(
-                                    text = stringResource(R.string.main_search),
+                                    text = stringResource(R.string.screen_main_search),
                                     fontFamily = InterVariable,
                                     fontWeight = FontWeight.W500,
                                     fontSize = 14.sp,

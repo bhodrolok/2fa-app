@@ -37,12 +37,14 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import com.google.zxing.BinaryBitmap
@@ -82,7 +84,7 @@ object QRCodeScanner {
                 CameraPreview(onQRCodeScanned)
             } else {
                 Text(
-                    text = "Camera permission is required to scan QR codes",
+                    text = stringResource(R.string.feature_qr_code_scanner_camera_permission),
                     modifier = Modifier.padding(16.dp),
                     color = Color.White,
                     fontSize = 14.sp,
@@ -202,7 +204,7 @@ object QRCodeScanner {
             } else {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(
-                        text = "Camera Unavailable",
+                        text = stringResource(R.string.feature_qr_code_scanner_camera_unavailable),
                         color = Color.White,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.W700,

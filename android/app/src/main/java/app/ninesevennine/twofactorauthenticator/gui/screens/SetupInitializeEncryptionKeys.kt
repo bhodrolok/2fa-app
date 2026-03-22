@@ -32,6 +32,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.Entry
+import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
@@ -105,7 +107,7 @@ fun SetupInitializeEncryptionKeys(navController: NavController) {
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp).fillMaxWidth()
             ) {
                 Text(
-                    text = "Visualizer",
+                    text = stringResource(R.string.screen_initialize_encryption_keys_visualizer),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
@@ -147,7 +149,7 @@ fun SetupInitializeEncryptionKeys(navController: NavController) {
             }
 
             Text(
-                text = "Initialize Encryption Keys",
+                text = stringResource(R.string.screen_initialize_encryption_keys_title),
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 color = Theme.colors.primary,
                 fontSize = 18.sp,
@@ -158,7 +160,7 @@ fun SetupInitializeEncryptionKeys(navController: NavController) {
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Move your finger randomly across the screen. The longer you move it, the stronger the resulting encryption keys become. This visualizer simply illustrates the entropy generation process. It does not reveal sensitive data and cannot be used to derive your keys.",
+                text = stringResource(R.string.screen_initialize_encryption_keys_description),
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 color = Theme.colors.primary,
                 fontSize = 14.sp,
@@ -170,7 +172,7 @@ fun SetupInitializeEncryptionKeys(navController: NavController) {
             AnimatedVisibility(entropyPoints.size >= targetEntropy) {
                 RoundedButton(
                     modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                    text = "Continue"
+                    text = stringResource(R.string.common_button_continue)
                 ) {
                     if (isLoading) return@RoundedButton
 

@@ -29,11 +29,13 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 
@@ -66,7 +68,7 @@ fun SectionHueSlider(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Hue",
+                text = stringResource(R.string.screen_edit_section_customization_hue),
                 modifier = Modifier.weight(1f),
                 color = Theme.colors.primary,
                 fontSize = 13.sp,

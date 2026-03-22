@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -154,10 +152,10 @@ fun SectionButton(
         ) {
             if (enabled || checkmarkScale > 0.01f) {
                 Icon(
-                    imageVector = Icons.Default.Check,
+                    painter = painterResource(R.drawable.mi_check),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(26.dp)
+                        .size(28.dp)
                         .graphicsLayer(
                             scaleX = checkmarkScale, scaleY = checkmarkScale
                         ),

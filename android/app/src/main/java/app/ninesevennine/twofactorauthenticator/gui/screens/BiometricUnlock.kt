@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -102,7 +103,7 @@ fun BiometricUnlock(navController: NavController) {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Text(
-                    text = "Biometric Unlock",
+                    text = stringResource(R.string.common_title_biometric_unlock),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 18.sp,
@@ -113,7 +114,7 @@ fun BiometricUnlock(navController: NavController) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Using biometric unlock may invalidate your decryption keys if your lock screen or private spaces change, your device updates, or if the app hasn't been opened in a while. You can always recover your accounts by enabling automatic backups.",
+                    text = stringResource(R.string.common_description_biometric_unlock),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
@@ -128,7 +129,7 @@ fun BiometricUnlock(navController: NavController) {
                     if (isUsingBiometrics) {
                         RoundedButton(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                            text = if (isLoading) spinnerText() else "Disable"
+                            text = if (isLoading) spinnerText() else stringResource(R.string.common_button_disable)
                         ) {
                             if (isLoading) return@RoundedButton
 
@@ -173,7 +174,7 @@ fun BiometricUnlock(navController: NavController) {
                     } else {
                         RoundedButton(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                            text = if (isLoading) spinnerText() else "Enable"
+                            text = if (isLoading) spinnerText() else stringResource(R.string.common_button_enable)
                         ) {
                             if (isLoading) return@RoundedButton
 
@@ -220,7 +221,7 @@ fun BiometricUnlock(navController: NavController) {
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "Biometric unlock may not be supported on this device. Make sure you have biometrics set up in your device settings.",
+                        text = stringResource(R.string.common_description_biometric_unlock_unsupported),
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         color = Theme.colors.info,
                         fontSize = 14.sp,

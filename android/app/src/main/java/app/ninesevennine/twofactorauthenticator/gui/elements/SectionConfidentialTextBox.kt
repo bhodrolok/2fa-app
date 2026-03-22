@@ -35,6 +35,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -106,7 +107,7 @@ fun SectionConfidentialTextBox(
                     modifier = Modifier.padding(top = 1.dp).size(14.dp)
                 )
                 Text(
-                    text = if (visible) "Hide" else "Show",
+                    text = if (visible) stringResource(R.string.common_title_hide) else stringResource(R.string.common_title_show),
                     color = Theme.colors.primary,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.W700,

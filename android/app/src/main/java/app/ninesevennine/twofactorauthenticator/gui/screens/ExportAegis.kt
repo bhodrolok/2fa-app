@@ -130,7 +130,7 @@ fun ExportAegis(navController: NavController) {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Text(
-                    text = "Export",
+                    text = stringResource(R.string.common_title_export),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 18.sp,
@@ -141,7 +141,7 @@ fun ExportAegis(navController: NavController) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "You're creating an Aegis compatible encrypted copy of your accounts. This format may not contain all data and should not be used to import accounts back into this app.",
+                    text = stringResource(R.string.screen_export_aegis_description),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
@@ -154,7 +154,7 @@ fun ExportAegis(navController: NavController) {
 
                 ConfidentialTextBox(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    title = "Passphrase",
+                    title = stringResource(R.string.common_title_passphrase),
                     value = passphrase,
                     onValueChange = {
                         if (!isLoading) {
@@ -172,7 +172,7 @@ fun ExportAegis(navController: NavController) {
                 AnimatedVisibility(isPassphraseValid) {
                     ConfidentialTextBox(
                         modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp),
-                        title = "Confirm Passphrase",
+                        title = stringResource(R.string.common_title_confirm_passphrase),
                         value = confirmPassphrase,
                         onValueChange = { if (!isLoading) confirmPassphrase = it },
                         error = passphrase != confirmPassphrase

@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -61,6 +62,9 @@ fun SetupBiometricUnlock(navController: NavController) {
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().coerceAtLeast(16.dp)
 
+    val promptTitle = stringResource(R.string.common_title_confirm_biometrics)
+    val promptNegative = stringResource(R.string.common_button_cancel)
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -86,7 +90,7 @@ fun SetupBiometricUnlock(navController: NavController) {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Text(
-                    text = "Biometric Unlock",
+                    text = stringResource(R.string.common_title_biometric_unlock),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 18.sp,
@@ -97,7 +101,7 @@ fun SetupBiometricUnlock(navController: NavController) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Using biometric unlock may invalidate your decryption keys if your lock screen or private spaces change, your device updates, or if the app hasn't been opened in a while. You can always recover your accounts by enabling automatic backups.",
+                    text = stringResource(R.string.common_description_biometric_unlock),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
@@ -111,7 +115,7 @@ fun SetupBiometricUnlock(navController: NavController) {
 
                     RoundedButton(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        text = "Enable"
+                        text = stringResource(R.string.common_button_enable)
                     ) {
                         val currentActivity = navController.context as? FragmentActivity ?: return@RoundedButton
 
@@ -134,8 +138,8 @@ fun SetupBiometricUnlock(navController: NavController) {
                         }
 
                         val promptInfo = BiometricPrompt.PromptInfo.Builder()
-                            .setTitle("Confirm Biometrics")
-                            .setNegativeButtonText("Cancel")
+                            .setTitle(promptTitle)
+                            .setNegativeButtonText(promptNegative)
                             .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
                             .build()
 
@@ -145,7 +149,7 @@ fun SetupBiometricUnlock(navController: NavController) {
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "Biometric unlock may not be supported on this device. Make sure you have biometrics set up in your device settings.",
+                        text = stringResource(R.string.common_description_biometric_unlock_unsupported),
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         color = Theme.colors.info,
                         fontSize = 14.sp,
@@ -164,7 +168,7 @@ fun SetupBiometricUnlock(navController: NavController) {
         ) {
             RoundedButtonClean(
                 modifier = Modifier.widthIn(max = 512.dp).fillMaxWidth().padding(bottomInset),
-                text = "Continue Without"
+                text = stringResource(R.string.common_button_continue_without)
             ) {
                 Config.isUsingBiometrics = false
 

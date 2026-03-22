@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -106,7 +107,7 @@ fun SetupAutomaticBackups(navController: NavController) {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Text(
-                    text = "Automatic Backups",
+                    text = stringResource(R.string.common_title_automatic_backups),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 18.sp,
@@ -117,7 +118,7 @@ fun SetupAutomaticBackups(navController: NavController) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Whenever you add, modify, or import accounts, they are automatically exported to the app's internal storage. This location is confidential and inaccessible to other apps or system backup services.",
+                    text = stringResource(R.string.common_description_automatic_backups_part_1),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
@@ -129,7 +130,7 @@ fun SetupAutomaticBackups(navController: NavController) {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "We highly recommend enabling this to ensure you can recover your accounts even if your decryption keys are ever invalidated.",
+                    text = stringResource(R.string.common_description_automatic_backups_part_2),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
@@ -142,7 +143,7 @@ fun SetupAutomaticBackups(navController: NavController) {
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "A backup was found in the app's internal storage. Enter your passphrase below to recover your accounts.",
+                        text = stringResource(R.string.common_description_automatic_backups_found),
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         color = Theme.colors.info,
                         fontSize = 14.sp,
@@ -154,7 +155,7 @@ fun SetupAutomaticBackups(navController: NavController) {
 
                     ConfidentialTextBox(
                         modifier = Modifier.padding(horizontal = 16.dp),
-                        title = "Passphrase",
+                        title = stringResource(R.string.common_title_passphrase),
                         value = passphrase,
                         onValueChange = {
                             if (!isLoading) {
@@ -169,10 +170,10 @@ fun SetupAutomaticBackups(navController: NavController) {
                     AnimatedVisibility(recoveryError) {
                         Text(
                             text = when (recoveryErrorCode) {
-                                AccountManagement.IMPORT_ERROR_NO_ACCOUNTS -> "No accounts to import"
-                                AccountManagement.IMPORT_ERROR_INCORRECT_PASSPHRASE -> "Incorrect passphrase"
-                                AccountManagement.IMPORT_ERROR_OUTDATED_VERSION -> "Outdated version"
-                                AccountManagement.IMPORT_ERROR_INVALID_FILE -> "Invalid file"
+                                AccountManagement.IMPORT_ERROR_NO_ACCOUNTS -> stringResource(R.string.common_import_error_no_accounts)
+                                AccountManagement.IMPORT_ERROR_INCORRECT_PASSPHRASE -> stringResource(R.string.common_import_error_incorrect_passphrase)
+                                AccountManagement.IMPORT_ERROR_OUTDATED_VERSION -> stringResource(R.string.common_import_error_outdated)
+                                AccountManagement.IMPORT_ERROR_INVALID_FILE -> stringResource(R.string.common_import_error_invalid)
                                 else -> "Unknown error"
                             },
                             modifier = Modifier.fillMaxWidth().padding(start = 20.dp, top = 8.dp, end = 20.dp),
@@ -187,7 +188,7 @@ fun SetupAutomaticBackups(navController: NavController) {
 
                     RoundedButton(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        text = if (isLoading) spinnerText() else "Recover"
+                        text = if (isLoading) spinnerText() else stringResource(R.string.common_button_recover)
                     ) {
                         if (isLoading) return@RoundedButton
 
@@ -232,7 +233,7 @@ fun SetupAutomaticBackups(navController: NavController) {
 
                     ConfidentialTextBox(
                         modifier = Modifier.padding(horizontal = 16.dp),
-                        title = "Passphrase",
+                        title = stringResource(R.string.common_title_passphrase),
                         value = passphrase,
                         onValueChange = {
                             if (!isLoading) {
@@ -250,7 +251,7 @@ fun SetupAutomaticBackups(navController: NavController) {
                     AnimatedVisibility(isPassphraseValid) {
                         ConfidentialTextBox(
                             modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp),
-                            title = "Confirm Passphrase",
+                            title = stringResource(R.string.common_title_confirm_passphrase),
                             value = confirmPassphrase,
                             onValueChange = { if (!isLoading) confirmPassphrase = it },
                             error = passphrase != confirmPassphrase
@@ -260,7 +261,7 @@ fun SetupAutomaticBackups(navController: NavController) {
                     AnimatedVisibility(isPassphraseValid && passphrase == confirmPassphrase) {
                         RoundedButton(
                             modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                            text = if (isLoading) spinnerText() else "Enable"
+                            text = if (isLoading) spinnerText() else stringResource(R.string.common_button_enable)
                         ) {
                             if (isLoading) return@RoundedButton
 
@@ -295,7 +296,7 @@ fun SetupAutomaticBackups(navController: NavController) {
         ) {
             RoundedButtonClean(
                 modifier = Modifier.widthIn(max = 512.dp).fillMaxWidth().padding(bottomInset),
-                text = "Continue Without"
+                text = stringResource(R.string.common_button_continue_without)
             ) {
                 if (isLoading) return@RoundedButtonClean
 

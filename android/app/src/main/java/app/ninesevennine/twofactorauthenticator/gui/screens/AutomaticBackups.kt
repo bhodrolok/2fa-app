@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -73,6 +74,9 @@ fun AutomaticBackups(navController: NavController) {
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().coerceAtLeast(16.dp)
 
+    val promptTitle = stringResource(R.string.common_title_confirm_biometrics)
+    val promptNegative = stringResource(R.string.common_button_cancel)
+
     val isPassphraseValid = passphraseStrength > 0.5f
 
     // copy otherwise ui change will be visible on pop back.
@@ -109,7 +113,7 @@ fun AutomaticBackups(navController: NavController) {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Text(
-                    text = "Automatic Backups",
+                    text = stringResource(R.string.common_title_automatic_backups),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 18.sp,
@@ -120,7 +124,7 @@ fun AutomaticBackups(navController: NavController) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Whenever you add, modify, or import accounts, they are automatically exported to the app's internal storage. This location is confidential and inaccessible to other apps or system backup services.",
+                    text = stringResource(R.string.common_description_automatic_backups_part_1),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
@@ -132,7 +136,7 @@ fun AutomaticBackups(navController: NavController) {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "We highly recommend enabling this to ensure you can recover your accounts even if your decryption keys are ever invalidated.",
+                    text = stringResource(R.string.common_description_automatic_backups_part_2),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
@@ -146,7 +150,7 @@ fun AutomaticBackups(navController: NavController) {
                 if (isUsingAutomaticBackups) {
                     RoundedButton(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        text = "Disable"
+                        text = stringResource(R.string.common_button_disable)
                     ) {
                         Config.isUsingAutomaticBackups = false
 
@@ -158,7 +162,7 @@ fun AutomaticBackups(navController: NavController) {
                 } else {
                     ConfidentialTextBox(
                         modifier = Modifier.padding(horizontal = 16.dp),
-                        title = "Passphrase",
+                        title = stringResource(R.string.common_title_passphrase),
                         value = passphrase,
                         onValueChange = {
                             if (!isLoading) {
@@ -176,7 +180,7 @@ fun AutomaticBackups(navController: NavController) {
                     AnimatedVisibility(isPassphraseValid) {
                         ConfidentialTextBox(
                             modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp),
-                            title = "Confirm Passphrase",
+                            title = stringResource(R.string.common_title_confirm_passphrase),
                             value = confirmPassphrase,
                             onValueChange = { if (!isLoading) confirmPassphrase = it },
                             error = passphrase != confirmPassphrase
@@ -186,7 +190,7 @@ fun AutomaticBackups(navController: NavController) {
                     AnimatedVisibility(isPassphraseValid && passphrase == confirmPassphrase) {
                         RoundedButton(
                             modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                            text = if (isLoading) spinnerText() else "Enable"
+                            text = if (isLoading) spinnerText() else stringResource(R.string.common_button_enable)
                         ) {
                             if (isLoading) return@RoundedButton
 
@@ -199,8 +203,8 @@ fun AutomaticBackups(navController: NavController) {
 
                                 withContext(Dispatchers.Main) {
                                     KeyStoreAES.saveSecret(
-                                        title = "Confirm Biometrics",
-                                        negative = "Cancel",
+                                        title = promptTitle,
+                                        negative = promptNegative,
                                         secret = Entry.rustInterface.getSecret(),
                                         onSuccess = {
                                             AccountManagement.saveAccountsUsingAutomaticBackups(context)

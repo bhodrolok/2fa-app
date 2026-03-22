@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -134,7 +135,7 @@ fun ImportAegis(navController: NavController) {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Text(
-                    text = "Import",
+                    text = stringResource(R.string.common_title_import),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 18.sp,
@@ -145,7 +146,7 @@ fun ImportAegis(navController: NavController) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "You're importing accounts from \"${importFilename}\". This will overwrite matching accounts and add any missing ones.",
+                    text = stringResource(R.string.common_import_description, importFilename),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
@@ -158,7 +159,7 @@ fun ImportAegis(navController: NavController) {
 
                 ConfidentialTextBox(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    title = "Passphrase",
+                    title = stringResource(R.string.common_title_passphrase),
                     value = passphrase,
                     onValueChange = {
                         if (!isLoading) {
@@ -172,7 +173,7 @@ fun ImportAegis(navController: NavController) {
 
                 AnimatedVisibility(importError) {
                     Text(
-                        text = "Incorrect passphrase",
+                        text = stringResource(R.string.common_import_error_incorrect_passphrase),
                         modifier = Modifier.fillMaxWidth().padding(start = 20.dp, top = 8.dp, end = 20.dp),
                         color = Theme.colors.veryWeak,
                         fontSize = 13.sp,
@@ -185,7 +186,7 @@ fun ImportAegis(navController: NavController) {
 
                 RoundedButton(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    text = if (isLoading) spinnerText() else "Import"
+                    text = if (isLoading) spinnerText() else stringResource(R.string.common_title_import)
                 ) {
                     if (isLoading || importData.isEmpty()) return@RoundedButton
 

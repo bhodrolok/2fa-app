@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -136,7 +137,7 @@ fun Import(navController: NavController) {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Text(
-                    text = "Import",
+                    text = stringResource(R.string.common_title_import),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 18.sp,
@@ -147,7 +148,7 @@ fun Import(navController: NavController) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "You're importing accounts from \"${importFilename}\". This will overwrite matching accounts and add any missing ones.",
+                    text = stringResource(R.string.common_import_description, importFilename),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
@@ -160,7 +161,7 @@ fun Import(navController: NavController) {
 
                 ConfidentialTextBox(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    title = "Passphrase",
+                    title = stringResource(R.string.common_title_passphrase),
                     value = passphrase,
                     onValueChange = {
                         if (!isLoading) {
@@ -175,10 +176,10 @@ fun Import(navController: NavController) {
                 AnimatedVisibility(importError) {
                     Text(
                         text = when (importErrorCode) {
-                            AccountManagement.IMPORT_ERROR_NO_ACCOUNTS -> "No accounts to import"
-                            AccountManagement.IMPORT_ERROR_INCORRECT_PASSPHRASE -> "Incorrect passphrase"
-                            AccountManagement.IMPORT_ERROR_OUTDATED_VERSION -> "Outdated version"
-                            AccountManagement.IMPORT_ERROR_INVALID_FILE -> "Invalid file"
+                            AccountManagement.IMPORT_ERROR_NO_ACCOUNTS -> stringResource(R.string.common_import_error_no_accounts)
+                            AccountManagement.IMPORT_ERROR_INCORRECT_PASSPHRASE -> stringResource(R.string.common_import_error_incorrect_passphrase)
+                            AccountManagement.IMPORT_ERROR_OUTDATED_VERSION -> stringResource(R.string.common_import_error_outdated)
+                            AccountManagement.IMPORT_ERROR_INVALID_FILE -> stringResource(R.string.common_import_error_invalid)
                             else -> "Unknown error"
                         },
                         modifier = Modifier.fillMaxWidth().padding(start = 20.dp, top = 8.dp, end = 20.dp),
@@ -193,7 +194,7 @@ fun Import(navController: NavController) {
 
                 RoundedButton(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    text = if (isLoading) spinnerText() else "Import"
+                    text = if (isLoading) spinnerText() else stringResource(R.string.common_title_import)
                 ) {
                     if (isLoading || importData.isEmpty()) return@RoundedButton
 

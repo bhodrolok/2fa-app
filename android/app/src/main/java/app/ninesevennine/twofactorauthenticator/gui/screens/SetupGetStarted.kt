@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -92,7 +93,7 @@ fun SetupGetStarted(navController: NavController) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Welcome to 2fa!",
+                    text = stringResource(R.string.screen_setup_get_started_welcome),
                     color = Theme.colors.primary,
                     fontSize = 18.sp,
                     fontFamily = InterVariable,
@@ -103,12 +104,12 @@ fun SetupGetStarted(navController: NavController) {
 
                 SectionGroup(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    title = "Press “Get Started“ to begin setup"
+                    title = stringResource(R.string.screen_setup_get_started_section_title)
                 ) {
                     SectionButton(
                         painter = painterResource(R.drawable.random_alphabet),
                         tint = Theme.colors.primary,
-                        primaryText = "1. Initialize encryption keys"
+                        primaryText = stringResource(R.string.screen_setup_get_started_section_step_1)
                     ) {
 
                     }
@@ -116,7 +117,7 @@ fun SetupGetStarted(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_fingerprint),
                         tint = Theme.colors.primary,
-                        primaryText = "2. Enable biometric unlock"
+                        primaryText = stringResource(R.string.screen_setup_get_started_section_step_2)
                     ) {
 
                     }
@@ -124,7 +125,7 @@ fun SetupGetStarted(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_settings_backup_restore),
                         tint = Theme.colors.primary,
-                        primaryText = "3. Turn on automatic backups"
+                        primaryText = stringResource(R.string.screen_setup_get_started_section_step_3)
                     ) {
 
                     }
@@ -134,7 +135,7 @@ fun SetupGetStarted(navController: NavController) {
 
                 RoundedButton(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    text = "Get Started"
+                    text = stringResource(R.string.screen_setup_get_started_button)
                 ) {
                     if (isLoading) return@RoundedButton
 

@@ -14,9 +14,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 
@@ -37,10 +39,10 @@ fun StrengthIndicator(
     val animatedStrength by animateFloatAsState(targetValue = s)
 
     val label = when {
-        s <= 0.25f -> "Very weak"
-        s <= 0.50f -> "Weak"
-        s <= 0.75f -> "Good"
-        else -> "Strong"
+        s <= 0.25f -> stringResource(R.string.element_strength_indicator_very_weak)
+        s <= 0.50f -> stringResource(R.string.element_strength_indicator_weak)
+        s <= 0.75f -> stringResource(R.string.element_strength_indicator_good)
+        else -> stringResource(R.string.element_strength_indicator_strong)
     }
 
     Column(modifier = modifier.fillMaxWidth()) {

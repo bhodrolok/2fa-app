@@ -112,7 +112,7 @@ fun SelectIconPacks(navController: NavController) {
 
                 SectionGroup(
                     modifier = Modifier.padding(16.dp),
-                    title = "Available"
+                    title = stringResource(R.string.screen_select_icon_packs_available)
                 ) {
                     availableIconPacks.forEach { pack ->
                         SectionButton(
@@ -138,7 +138,7 @@ fun SelectIconPacks(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_add),
                         tint = Theme.colors.primary,
-                        primaryText = "Add",
+                        primaryText = stringResource(R.string.screen_select_icon_packs_add),
                         secondaryText = ".zip"
                     ) {
                         Signals.suppressMemoryLoss = true
@@ -148,7 +148,7 @@ fun SelectIconPacks(navController: NavController) {
 
                 RoundedButton(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    text = "Delete Active"
+                    text = stringResource(R.string.screen_select_icon_packs_delete_active)
                 ) {
                     IconPacks.delete(context, Config.activeIconPackId)
                     availableIconPacks = IconPacks.getAvailable(context)
@@ -158,12 +158,12 @@ fun SelectIconPacks(navController: NavController) {
 
                 SectionGroup(
                     modifier = Modifier.padding(16.dp),
-                    title = "Style"
+                    title = stringResource(R.string.screen_select_icon_packs_style)
                 ) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_texture),
                         tint = Theme.colors.primary,
-                        primaryText = "Textured",
+                        primaryText = stringResource(R.string.icon_packs_style_textured),
                         enabled = Config.UsingIconPacksStyle == IconPacksStyle.TEXTURED.value
                     ) {
                         Logger.i(TAG, "icon pack style set to textured")
@@ -176,7 +176,7 @@ fun SelectIconPacks(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_colors),
                         tint = Theme.colors.primary,
-                        primaryText = "Tinted",
+                        primaryText = stringResource(R.string.icon_packs_style_tinted),
                         enabled = Config.UsingIconPacksStyle == IconPacksStyle.TINTED.value
                     ) {
                         Logger.i(TAG, "icon pack style set to tinted")
@@ -189,13 +189,13 @@ fun SelectIconPacks(navController: NavController) {
 
                 SectionGroup(
                     modifier = Modifier.padding(16.dp),
-                    title = "Other"
+                    title = stringResource(R.string.screen_select_icon_packs_other)
                 ) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_format_color_reset),
                         tint = Theme.colors.primary,
-                        primaryText = "Don't Suggest Colors",
-                        secondaryText = "Default to white when adding an account",
+                        primaryText = stringResource(R.string.screen_select_icon_packs_other_dont_suggest_colors),
+                        secondaryText = stringResource(R.string.screen_select_icon_packs_other_dont_suggest_colors_secondary),
                         enabled = Config.isUsingIconPacksDontSuggestColors
                     ) {
                         Config.isUsingIconPacksDontSuggestColors = !Config.isUsingIconPacksDontSuggestColors
@@ -211,7 +211,7 @@ fun SelectIconPacks(navController: NavController) {
         }
 
         LeftButtonHeader(
-            title = stringResource(R.string.settings_icon_packs),
+            title = stringResource(R.string.screen_settings_appearance_icon_packs),
             onBack = {
                 navController.popBackStack()
             }

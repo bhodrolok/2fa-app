@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -129,7 +130,7 @@ fun Export(navController: NavController) {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Text(
-                    text = "Export",
+                    text = stringResource(R.string.common_title_export),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 18.sp,
@@ -140,7 +141,7 @@ fun Export(navController: NavController) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "You're creating an encrypted copy of your accounts. Save it to your local device or a cloud provider you trust.",
+                    text = stringResource(R.string.screen_export_description),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
@@ -153,7 +154,7 @@ fun Export(navController: NavController) {
 
                 ConfidentialTextBox(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    title = "Passphrase",
+                    title = stringResource(R.string.common_title_passphrase),
                     value = passphrase,
                     onValueChange = {
                         if (!isLoading) {
@@ -171,7 +172,7 @@ fun Export(navController: NavController) {
                 AnimatedVisibility(isPassphraseValid) {
                     ConfidentialTextBox(
                         modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp),
-                        title = "Confirm Passphrase",
+                        title = stringResource(R.string.common_title_confirm_passphrase),
                         value = confirmPassphrase,
                         onValueChange = { if (!isLoading) confirmPassphrase = it },
                         error = passphrase != confirmPassphrase
@@ -181,7 +182,7 @@ fun Export(navController: NavController) {
                 AnimatedVisibility(isPassphraseValid && passphrase == confirmPassphrase) {
                     RoundedButton(
                         modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                        text = if (isLoading) spinnerText() else "Continue"
+                        text = if (isLoading) spinnerText() else stringResource(R.string.common_button_continue)
                     ) {
                         if (isLoading) return@RoundedButton
 

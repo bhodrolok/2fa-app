@@ -28,11 +28,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.utils.ColorPicker
@@ -70,7 +72,7 @@ fun SectionSaturationSlider(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Saturation",
+                text = stringResource(R.string.screen_edit_section_customization_saturation),
                 modifier = Modifier.weight(1f),
                 color = Theme.colors.primary,
                 fontSize = 13.sp,

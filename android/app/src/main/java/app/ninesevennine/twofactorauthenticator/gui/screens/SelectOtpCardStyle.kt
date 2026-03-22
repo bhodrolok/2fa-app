@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
@@ -64,7 +65,7 @@ fun SelectOtpCardStyle(navController: NavController) {
                 RoundedRadioButton(
                     painter = painterResource(R.drawable.crop_16_9_with_circle),
                     tint = Theme.colors.primary,
-                    text = "Normal",
+                    text = stringResource(R.string.otp_card_style_normal),
                     enabled = Config.UsingOtpCardStyle == OtpCardStyle.NORMAL.value
                 ) {
                     Logger.i(TAG, "otp card style set to normal")
@@ -78,7 +79,7 @@ fun SelectOtpCardStyle(navController: NavController) {
                 RoundedRadioButton(
                     painter = painterResource(R.drawable.mi_crop_16_9),
                     tint = Theme.colors.primary,
-                    text = "Compact",
+                    text = stringResource(R.string.otp_card_style_compact),
                     enabled = Config.UsingOtpCardStyle == OtpCardStyle.COMPACT.value
                 ) {
                     Logger.i(TAG, "otp card style set to compact")
@@ -92,7 +93,7 @@ fun SelectOtpCardStyle(navController: NavController) {
                 RoundedRadioButton(
                     painter = painterResource(R.drawable.mi_tile_small),
                     tint = Theme.colors.primary,
-                    text = "Grid",
+                    text = stringResource(R.string.otp_card_style_grid),
                     enabled = Config.UsingOtpCardStyle == OtpCardStyle.GRID.value
                 ) {
                     Logger.i(TAG, "otp card style set to grid")
@@ -105,7 +106,7 @@ fun SelectOtpCardStyle(navController: NavController) {
             }
         }
 
-        StartButtonHeader("Card Style") {
+        StartButtonHeader(stringResource(R.string.screen_settings_appearance_card_style)) {
             navController.popBackStack()
         }
     }

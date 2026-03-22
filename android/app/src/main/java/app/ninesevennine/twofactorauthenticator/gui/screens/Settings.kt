@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
@@ -97,12 +98,12 @@ fun Settings(navController: NavController) {
 
                 SectionGroup(
                     modifier = Modifier.padding(16.dp),
-                    title = "Appearance"
+                    title = stringResource(R.string.screen_settings_appearance)
                 ) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_language),
                         tint = Theme.colors.primary,
-                        primaryText = "Language",
+                        primaryText = stringResource(R.string.screen_settings_appearance_language),
                         secondaryText = currentLanguageDisplayName
                     ) {
                         navController.navigate(SelectLanguageRoute)
@@ -118,11 +119,11 @@ fun Settings(navController: NavController) {
                             }
                         },
                         tint = Theme.colors.primary,
-                        primaryText = "Theme",
+                        primaryText = stringResource(R.string.screen_settings_appearance_theme),
                         secondaryText = when (currentThemeOption) {
-                            ThemeOption.LIGHT -> "Light"
-                            ThemeOption.DARK -> "Dark"
-                            ThemeOption.PITCH_BLACK -> "Pitch Black"
+                            ThemeOption.LIGHT -> stringResource(R.string.theme_option_light)
+                            ThemeOption.DARK -> stringResource(R.string.theme_option_dark)
+                            ThemeOption.PITCH_BLACK -> stringResource(R.string.theme_option_pitch_black)
                             else -> ""
                         }
                     ) {
@@ -132,11 +133,11 @@ fun Settings(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_cards_stack),
                         tint = Theme.colors.primary,
-                        primaryText = "Card Style",
+                        primaryText = stringResource(R.string.screen_settings_appearance_card_style),
                         secondaryText = when (Config.UsingOtpCardStyle) {
-                            OtpCardStyle.NORMAL.value -> "Normal"
-                            OtpCardStyle.COMPACT.value -> "Compact"
-                            OtpCardStyle.GRID.value -> "Grid"
+                            OtpCardStyle.NORMAL.value -> stringResource(R.string.otp_card_style_normal)
+                            OtpCardStyle.COMPACT.value -> stringResource(R.string.otp_card_style_compact)
+                            OtpCardStyle.GRID.value -> stringResource(R.string.otp_card_style_grid)
                             else -> ""
                         }
                     ) {
@@ -146,7 +147,7 @@ fun Settings(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_package),
                         tint = Theme.colors.primary,
-                        primaryText = "Icon Packs",
+                        primaryText = stringResource(R.string.screen_settings_appearance_icon_packs),
                         secondaryText = IconPacks.getActivePrimary(context)
                     ) {
                         navController.navigate(SelectIconPacksRoute)
@@ -156,7 +157,7 @@ fun Settings(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_vertical_align_top),
                         tint = Theme.colors.primary,
-                        primaryText = "Search on Top",
+                        primaryText = stringResource(R.string.screen_settings_appearance_search_on_top),
                         enabled = Config.isUsingSearchOnTop
                     ) {
                         Config.isUsingSearchOnTop = !Config.isUsingSearchOnTop
@@ -169,12 +170,12 @@ fun Settings(navController: NavController) {
 
                 SectionGroup(
                     modifier = Modifier.padding(16.dp),
-                    title = "Behavior"
+                    title = stringResource(R.string.screen_settings_behavior)
                 ) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_touch_app),
                         tint = Theme.colors.primary,
-                        primaryText = "Tap to Reveal Codes",
+                        primaryText = stringResource(R.string.screen_settings_behavior_tap_to_reveal_codes),
                         enabled = Config.isUsingTapToRevealCodes
                     ) {
                         Config.isUsingTapToRevealCodes = !Config.isUsingTapToRevealCodes
@@ -187,7 +188,7 @@ fun Settings(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_file_copy),
                         tint = Theme.colors.primary,
-                        primaryText = "Double Tap to Copy Codes",
+                        primaryText = stringResource(R.string.screen_settings_behavior_double_tap_to_copy_codes),
                         enabled = Config.isUsingDoubleTapToCopyCodes
                     ) {
                         Config.isUsingDoubleTapToCopyCodes = !Config.isUsingDoubleTapToCopyCodes
@@ -200,7 +201,7 @@ fun Settings(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_frame_inspect),
                         tint = Theme.colors.primary,
-                        primaryText = "Focus Search on Launch",
+                        primaryText = stringResource(R.string.screen_settings_behavior_focus_search_on_launch),
                         enabled = Config.isUsingFocusSearch
                     ) {
                         Config.isUsingFocusSearch = !Config.isUsingFocusSearch
@@ -213,12 +214,12 @@ fun Settings(navController: NavController) {
 
                 SectionGroup(
                     modifier = Modifier.padding(16.dp),
-                    title = "Security"
+                    title = stringResource(R.string.screen_settings_security)
                 ) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_fingerprint),
                         tint = Theme.colors.primary,
-                        primaryText = "Biometric Unlock",
+                        primaryText = stringResource(R.string.common_title_biometric_unlock),
                         enabled = Config.isUsingBiometrics
                     ) {
                         navController.navigate(BiometricUnlockRoute)
@@ -227,8 +228,8 @@ fun Settings(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_mobile_lock_portrait),
                         tint = Theme.colors.primary,
-                        primaryText = "Screen Security",
-                        secondaryText = "Block screenshots and recordings",
+                        primaryText = stringResource(R.string.screen_settings_security_screen_security),
+                        secondaryText = stringResource(R.string.screen_settings_security_screen_security_secondary),
                         enabled = Config.isUsingScreenSecurity
                     ) {
                         Config.isUsingScreenSecurity = !Config.isUsingScreenSecurity
@@ -245,8 +246,8 @@ fun Settings(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_visibility_lock),
                         tint = Theme.colors.primary,
-                        primaryText = "Secure Clipboard",
-                        secondaryText = "Hide copied codes from suggestions and previews",
+                        primaryText = stringResource(R.string.screen_settings_security_secure_clipboard),
+                        secondaryText = stringResource(R.string.screen_settings_security_secure_clipboard_secondary),
                         enabled = Config.isUsingSecureClipboard
                     ) {
                         Config.isUsingSecureClipboard = !Config.isUsingSecureClipboard
@@ -259,8 +260,8 @@ fun Settings(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_cognition),
                         tint = Theme.colors.primary,
-                        primaryText = "Memory Loss",
-                        secondaryText = "Wipe sensitive memory when exiting",
+                        primaryText = stringResource(R.string.screen_settings_security_memory_loss),
+                        secondaryText = stringResource(R.string.screen_settings_security_memory_loss_secondary),
                         enabled = Config.isUsingMemoryLoss
                     ) {
                         Config.isUsingMemoryLoss = !Config.isUsingMemoryLoss
@@ -273,8 +274,8 @@ fun Settings(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_block),
                         tint = Theme.colors.primary,
-                        primaryText = "Block Intents",
-                        secondaryText = "Ignore actions invoked by external apps",
+                        primaryText = stringResource(R.string.screen_settings_security_block_intents),
+                        secondaryText = stringResource(R.string.screen_settings_security_block_intents_secondary),
                         enabled = Config.isUsingBlockIntents
                     ) {
                         Config.isUsingBlockIntents = !Config.isUsingBlockIntents
@@ -287,12 +288,12 @@ fun Settings(navController: NavController) {
 
                 SectionGroup(
                     modifier = Modifier.padding(16.dp),
-                    title = "Account Management"
+                    title = stringResource(R.string.screen_settings_acccount_management)
                 ) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_settings_backup_restore),
                         tint = Theme.colors.primary,
-                        primaryText = "Automatic Backups",
+                        primaryText = stringResource(R.string.common_title_automatic_backups),
                         enabled = Config.isUsingAutomaticBackups
                     ) {
                         navController.navigate(AutomaticBackupsRoute)
@@ -301,7 +302,7 @@ fun Settings(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_upload),
                         tint = Theme.colors.primary,
-                        primaryText = "Export",
+                        primaryText = stringResource(R.string.common_title_export),
                         secondaryText = ".2fa"
                     ) {
                         navController.navigate(ExportRoute)
@@ -310,7 +311,7 @@ fun Settings(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_download),
                         tint = Theme.colors.primary,
-                        primaryText = "Import",
+                        primaryText = stringResource(R.string.common_title_import),
                         secondaryText = ".2fa"
                     ) {
                         navController.navigate(ImportRoute)
@@ -319,7 +320,7 @@ fun Settings(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.aegis),
                         tint = Theme.colors.primary,
-                        primaryText = "Export to Aegis",
+                        primaryText = stringResource(R.string.screen_settings_acccount_management_export_to_aegis),
                         secondaryText = ".json"
                     ) {
                         navController.navigate(ExportAegisRoute)
@@ -328,7 +329,7 @@ fun Settings(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.aegis),
                         tint = Theme.colors.primary,
-                        primaryText = "Import from Aegis",
+                        primaryText = stringResource(R.string.screen_settings_acccount_management_import_from_aegis),
                         secondaryText = ".json"
                     ) {
                         navController.navigate(ImportAegisRoute)
@@ -337,13 +338,13 @@ fun Settings(navController: NavController) {
 
                 SectionGroup(
                     modifier = Modifier.padding(16.dp),
-                    title = "Support"
+                    title = stringResource(R.string.screen_settings_support)
                 ) {
                     SectionButton(
                         painter = painterResource(R.drawable.codeberg),
                         tint = if (Theme.themeOption == ThemeOption.PITCH_BLACK) Theme.colors.primary else Theme.colors.strong,
                         primaryText = "Codeberg",
-                        secondaryText = "View 2fa's source code",
+                        secondaryText = stringResource(R.string.screen_settings_support_codeberg_secondary),
                     ) {
                         val intent = Intent(Intent.ACTION_VIEW, "https://codeberg.org/979/2fa".toUri())
                         context.startActivity(intent)
@@ -352,8 +353,8 @@ fun Settings(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_favorite),
                         tint = if (Theme.themeOption == ThemeOption.PITCH_BLACK) Theme.colors.primary else Theme.colors.veryWeak,
-                        primaryText = "Donate",
-                        secondaryText = "979 needs your support to continue"
+                        primaryText = stringResource(R.string.screen_settings_support_donate),
+                        secondaryText = stringResource(R.string.screen_settings_support_donate_secondary)
                     ) {
                         val intent = Intent(Intent.ACTION_VIEW, "https://979.st/donate/".toUri())
                         context.startActivity(intent)
@@ -378,7 +379,7 @@ fun Settings(navController: NavController) {
                 Spacer(modifier = Modifier.height(bottomInset + 64.dp))
             }
 
-        StartButtonHeader(title = "Settings") {
+        StartButtonHeader(title = stringResource(R.string.screen_settings_title)) {
             navController.popBackStack()
         }
     }
