@@ -92,8 +92,8 @@ fun Edit(navController: NavController) {
     var digits by remember { mutableStateOf(account.digits.toString()) }
     var color by remember { mutableStateOf(Color(account.color)) }
 
-    val iconResult = remember(account.issuer) {
-        IconPacks.get(context, account.issuer)
+    val iconResult = remember(issuer) {
+        IconPacks.get(context, issuer)
     }
 
     if (color == Color.Black) {

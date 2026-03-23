@@ -48,6 +48,7 @@ import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.QRCodeScanner
+import app.ninesevennine.twofactorauthenticator.features.Signals
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.utils.ZXing
 import kotlinx.coroutines.Dispatchers
@@ -214,6 +215,7 @@ fun AddCode(navController: NavController) {
                             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                             view.playSoundEffect(SoundEffectConstants.CLICK)
 
+                            Signals.suppressMemoryLoss = true
                             pickImage.launch(arrayOf("*/*"))
                         }
                     ),
