@@ -141,7 +141,7 @@ fun Main(navController: NavController) {
         columns = GridCells.Fixed(columnCount),
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(
-            top = (WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + 6.dp).let { if (Config.isUsingSearchOnTop) it + 52.dp + 6.dp else it },
+            top = (WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + 8.dp).let { if (Config.isUsingSearchOnTop) it + 48.dp + 10.dp else it },
             start = 16.dp,
             end = 16.dp,
             bottom = WindowInsets.ime.asPaddingValues().calculateBottomPadding() + 192.dp
@@ -153,7 +153,7 @@ fun Main(navController: NavController) {
             val account = accounts[index]
 
             ReorderableItem(reorderableLazyGridState, key = account.id) { isDragging ->
-                val elevation by animateDpAsState(if (isDragging) 6.dp else 0.dp)
+                val elevation by animateDpAsState(if (isDragging) 8.dp else 0.dp)
                 val haptic = LocalHapticFeedback.current
 
                 Box(
