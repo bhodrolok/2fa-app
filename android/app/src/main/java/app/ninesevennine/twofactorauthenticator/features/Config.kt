@@ -12,8 +12,10 @@ object Config {
     private const val KEY_LOCALE = "locale"
     private const val KEY_THEME = "theme"
 
-    var activeIconPackId by mutableStateOf("")
+    var hasMigratedToSecret002: Boolean = false
     var hasCompletedSetup: Boolean = false
+    var automaticBackupsSalt: String = ""
+    var activeIconPackId by mutableStateOf("")
     var UsingOtpCardStyle by mutableIntStateOf(OtpCardStyle.NORMAL.value)
     var isUsingSearchOnTop by mutableStateOf(true)
     var isUsingTapToRevealCodes by mutableStateOf(false)
@@ -42,8 +44,10 @@ object Config {
         Locale.set(context, locale)
         Theme.set(context, theme)
 
-        activeIconPackId = prefs.getString("active_icon_pack_id", "") ?: ""
+        hasMigratedToSecret002 = prefs.getBoolean("has_migrated_to_secret_002", false)
         hasCompletedSetup = prefs.getBoolean("has_completed_setup", false)
+        automaticBackupsSalt = prefs.getString("automatic_backups_salt", "") ?: ""
+        activeIconPackId = prefs.getString("active_icon_pack_id", "") ?: ""
         UsingOtpCardStyle = prefs.getInt("using_otp_card_style", OtpCardStyle.NORMAL.value)
         isUsingSearchOnTop = prefs.getBoolean("is_using_search_on_top", true)
         isUsingTapToRevealCodes = prefs.getBoolean("is_using_tap_to_reveal_codes", false)
@@ -67,8 +71,10 @@ object Config {
         prefs.edit().apply {
             putString(KEY_LOCALE, Locale.localeOption.tag)
             putInt(KEY_THEME, Theme.themeOption.value)
-            putString("active_icon_pack_id", activeIconPackId)
+            putBoolean("has_migrated_to_secret_002", hasMigratedToSecret002)
             putBoolean("has_completed_setup", hasCompletedSetup)
+            putString("automatic_backups_salt", automaticBackupsSalt)
+            putString("active_icon_pack_id", activeIconPackId)
             putInt("using_otp_card_style", UsingOtpCardStyle)
             putBoolean("is_using_search_on_top", isUsingSearchOnTop)
             putBoolean("is_using_tap_to_reveal_codes", isUsingTapToRevealCodes)

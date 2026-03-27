@@ -1,5 +1,6 @@
 package app.ninesevennine.twofactorauthenticator.gui.screens
 
+import android.util.Base64
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
@@ -197,17 +198,26 @@ fun AutomaticBackups(navController: NavController) {
                             isLoading = true
 
                             scope.launch(Dispatchers.IO) {
-                                val secret = Entry.rustInterface.getSecret()
+                                val oldSecret = if (Config.hasMigratedToSecret002) {
+                                    Entry.rustInterface.getSecret002()
+                                } else {
+                                    Entry.rustInterface.getSecret001()
+                                }
 
-                                Entry.rustInterface.setAutomaticBackupsPassphrase(passphrase)
+                                if (Config.hasMigratedToSecret002) {
+                                    val salt = Base64.decode(Config.automaticBackupsSalt, Base64.NO_WRAP)
+                                    Entry.rustInterface.setAutomaticBackupsPassphrase002(salt, passphrase)
+                                } else {
+                                    Entry.rustInterface.setAutomaticBackupsPassphrase001(passphrase)
+                                }
 
                                 withContext(Dispatchers.Main) {
                                     KeyStoreAES.saveSecret(
                                         title = promptTitle,
                                         negative = promptNegative,
-                                        secret = Entry.rustInterface.getSecret(),
+                                        secret = if (Config.hasMigratedToSecret002) Entry.rustInterface.getSecret002() else Entry.rustInterface.getSecret001(),
                                         onSuccess = {
-                                            AccountManagement.saveAccountsUsingAutomaticBackups(context)
+                                            AccountManagement.saveAccountsUsingAutomaticBackupsKey(context)
 
                                             Config.isUsingAutomaticBackups = true
 
@@ -218,11 +228,19 @@ fun AutomaticBackups(navController: NavController) {
                                             navController.popBackStack()
                                         },
                                         onError = {
-                                            Entry.rustInterface.setSecret(secret)
+                                            if (Config.hasMigratedToSecret002) {
+                                                Entry.rustInterface.setSecret002(oldSecret)
+                                            } else {
+                                                Entry.rustInterface.setSecret001(oldSecret)
+                                            }
                                             isLoading = false
                                         },
                                         onCancel = {
-                                            Entry.rustInterface.setSecret(secret)
+                                            if (Config.hasMigratedToSecret002) {
+                                                Entry.rustInterface.setSecret002(oldSecret)
+                                            } else {
+                                                Entry.rustInterface.setSecret001(oldSecret)
+                                            }
                                             Logger.i(TAG, "biometric prompt canceled")
                                             isLoading = false
                                         }

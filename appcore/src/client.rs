@@ -2,27 +2,39 @@ use zeroize::Zeroize;
 
 use crate::features::codegen::{Algorithm, CodeType, hotp, steam_custom};
 use crate::features::otpauth::{self, Account, AccountTruncated};
+use crate::management::XCHACHA20_KEY_NONCE_SIZE;
 use crate::utils;
 
-pub const SEED_SIZE: usize = 64;
-pub const AUTOMATIC_BACKUPS_PASSPHRASE_HASH_SIZE: usize = 56;
-pub const AUTOMATIC_BACKUPS_PASSPHRASE_SALT_SIZE: usize = 16;
-pub const SECRET_SIZE: usize =
-    SEED_SIZE + AUTOMATIC_BACKUPS_PASSPHRASE_HASH_SIZE + AUTOMATIC_BACKUPS_PASSPHRASE_SALT_SIZE;
+pub struct ClientSecret001 {
+    pub seed: [u8; 64],
+    pub automatic_backups_passphrase_hash: [u8; 56],
+    pub automatic_backups_passphrase_salt: [u8; 16],
+}
+
+pub const CLIENT_SECRET_001_SIZE: usize = 64 + 56 + 16;
+
+pub struct ClientSecret002 {
+    pub key: [u8; XCHACHA20_KEY_NONCE_SIZE],
+    pub automatic_backups_key: [u8; XCHACHA20_KEY_NONCE_SIZE],
+}
+
+pub const CLIENT_SECRET_002_SIZE: usize = XCHACHA20_KEY_NONCE_SIZE + XCHACHA20_KEY_NONCE_SIZE;
 
 pub struct Client {
-    pub seed: [u8; SEED_SIZE],
-    pub automatic_backups_passphrase_hash: [u8; AUTOMATIC_BACKUPS_PASSPHRASE_HASH_SIZE],
-    pub automatic_backups_passphrase_salt: [u8; AUTOMATIC_BACKUPS_PASSPHRASE_SALT_SIZE],
+    pub secret001: ClientSecret001,
+    pub secret002: ClientSecret002,
     pub edit: Option<Account>,
     pub accounts: Vec<Account>,
 }
 
 impl Client {
     pub fn unload(&mut self) {
-        self.seed.zeroize();
-        self.automatic_backups_passphrase_hash.zeroize();
-        self.automatic_backups_passphrase_salt.zeroize();
+        self.secret001.seed.zeroize();
+        self.secret001.automatic_backups_passphrase_hash.zeroize();
+        self.secret001.automatic_backups_passphrase_salt.zeroize();
+
+        self.secret002.key.zeroize();
+        self.secret002.automatic_backups_key.zeroize();
 
         if let Some(edit) = &mut self.edit {
             edit.secret.zeroize();
@@ -41,47 +53,75 @@ impl Client {
         self.accounts.clear();
     }
 
-    pub fn set_automatic_backups_passphrase(&mut self, passphrase: &str) {
-        let mut salt = [0u8; AUTOMATIC_BACKUPS_PASSPHRASE_SALT_SIZE];
-        getrandom::fill(&mut salt).unwrap();
+    pub fn set_automatic_backups001(&mut self, passphrase: &str) {
+        getrandom::fill(&mut self.secret001.automatic_backups_passphrase_salt).unwrap();
 
         // m: 256 MiB t: 4 p: 2
         let params = argon2::Params::new(256 * 1024, 4, 2, None).unwrap();
         let argon2 =
             argon2::Argon2::new(argon2::Algorithm::Argon2id, argon2::Version::V0x13, params);
 
-        let mut out = [0u8; AUTOMATIC_BACKUPS_PASSPHRASE_HASH_SIZE];
         argon2
-            .hash_password_into(passphrase.as_bytes(), &salt, &mut out)
+            .hash_password_into(
+                passphrase.as_bytes(),
+                &self.secret001.automatic_backups_passphrase_salt,
+                &mut self.secret001.automatic_backups_passphrase_hash,
+            )
             .unwrap();
-
-        self.automatic_backups_passphrase_hash = out;
-        self.automatic_backups_passphrase_salt = salt;
     }
 
-    pub fn get_secret(&self) -> [u8; SECRET_SIZE] {
-        let mut secret = [0u8; SECRET_SIZE];
+    pub fn set_automatic_backups002(&mut self, salt: &[u8], passphrase: &str) {
+        // m: 256 MiB t: 4 p: 2
+        let params = argon2::Params::new(256 * 1024, 4, 2, None).unwrap();
+        let argon2 =
+            argon2::Argon2::new(argon2::Algorithm::Argon2id, argon2::Version::V0x13, params);
 
-        secret[..SEED_SIZE].copy_from_slice(&self.seed);
+        argon2
+            .hash_password_into(
+                passphrase.as_bytes(),
+                salt,
+                &mut self.secret002.automatic_backups_key,
+            )
+            .unwrap();
+    }
 
-        secret[SEED_SIZE..SEED_SIZE + AUTOMATIC_BACKUPS_PASSPHRASE_HASH_SIZE]
-            .copy_from_slice(&self.automatic_backups_passphrase_hash);
+    pub fn get_secret001(&self) -> [u8; CLIENT_SECRET_001_SIZE] {
+        let mut secret = [0u8; CLIENT_SECRET_001_SIZE];
+        let s = &self.secret001;
 
-        secret[SEED_SIZE + AUTOMATIC_BACKUPS_PASSPHRASE_HASH_SIZE..]
-            .copy_from_slice(&self.automatic_backups_passphrase_salt);
+        secret[..64].copy_from_slice(&s.seed);
+        secret[64..64 + 56].copy_from_slice(&s.automatic_backups_passphrase_hash);
+        secret[64 + 56..].copy_from_slice(&s.automatic_backups_passphrase_salt);
 
         secret
     }
 
-    pub fn set_secret(&mut self, secret: &[u8; SECRET_SIZE]) {
-        self.seed.copy_from_slice(&secret[..SEED_SIZE]);
+    pub fn get_secret002(&self) -> [u8; CLIENT_SECRET_002_SIZE] {
+        let mut out = [0u8; CLIENT_SECRET_002_SIZE];
 
-        self.automatic_backups_passphrase_hash.copy_from_slice(
-            &secret[SEED_SIZE..SEED_SIZE + AUTOMATIC_BACKUPS_PASSPHRASE_HASH_SIZE],
-        );
+        out[..XCHACHA20_KEY_NONCE_SIZE].copy_from_slice(&self.secret002.key);
+        out[XCHACHA20_KEY_NONCE_SIZE..].copy_from_slice(&self.secret002.automatic_backups_key);
 
-        self.automatic_backups_passphrase_salt
-            .copy_from_slice(&secret[SEED_SIZE + AUTOMATIC_BACKUPS_PASSPHRASE_HASH_SIZE..]);
+        out
+    }
+
+    pub fn set_secret001(&mut self, secret: &[u8; CLIENT_SECRET_001_SIZE]) {
+        let s = &mut self.secret001;
+        s.seed.copy_from_slice(&secret[..64]);
+        s.automatic_backups_passphrase_hash
+            .copy_from_slice(&secret[64..64 + 56]);
+        s.automatic_backups_passphrase_salt
+            .copy_from_slice(&secret[64 + 56..]);
+    }
+
+    pub fn set_secret002(&mut self, secret: &[u8; CLIENT_SECRET_002_SIZE]) {
+        self.secret002
+            .key
+            .copy_from_slice(&secret[..XCHACHA20_KEY_NONCE_SIZE]);
+
+        self.secret002
+            .automatic_backups_key
+            .copy_from_slice(&secret[XCHACHA20_KEY_NONCE_SIZE..]);
     }
 
     pub fn set_edit_account_empty(&mut self) {
@@ -285,9 +325,15 @@ impl Client {
 impl Default for Client {
     fn default() -> Self {
         Self {
-            seed: [0u8; SEED_SIZE],
-            automatic_backups_passphrase_hash: [0u8; AUTOMATIC_BACKUPS_PASSPHRASE_HASH_SIZE],
-            automatic_backups_passphrase_salt: [0u8; AUTOMATIC_BACKUPS_PASSPHRASE_SALT_SIZE],
+            secret001: ClientSecret001 {
+                seed: [0u8; 64],
+                automatic_backups_passphrase_hash: [0u8; 56],
+                automatic_backups_passphrase_salt: [0u8; 16],
+            },
+            secret002: ClientSecret002 {
+                key: [0u8; XCHACHA20_KEY_NONCE_SIZE],
+                automatic_backups_key: [0u8; XCHACHA20_KEY_NONCE_SIZE],
+            },
             edit: None,
             accounts: Vec::new(),
         }

@@ -198,10 +198,10 @@ fun ImportAegis(navController: NavController) {
                         val result = Entry.rustInterface.importAccountsAegis(passphrase, importData)
 
                         if (result) {
-                            AccountManagement.saveAccountsUsingSeed(context)
+                            AccountManagement.saveAccountsUsingKey(context)
 
                             if (Config.isUsingAutomaticBackups) {
-                                AccountManagement.saveAccountsUsingAutomaticBackups(context)
+                                AccountManagement.saveAccountsUsingAutomaticBackupsKey(context)
                             }
 
                             withContext(Dispatchers.Main) {

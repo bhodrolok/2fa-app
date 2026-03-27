@@ -94,7 +94,7 @@ fun Greeting(navController: NavController) {
     val promptTitle = stringResource(R.string.common_title_biometric_unlock)
     val promptNegative = stringResource(R.string.common_button_cancel)
 
-    val internalBackupExists = AccountManagement.hasAccountsUsingAutomaticBackups(context)
+    val internalBackupExists = AccountManagement.hasAccountsUsingAutomaticBackupsKey(context)
 
     LaunchedEffect(Unit) {
         if (Config.hasCompletedSetup) {
@@ -125,9 +125,13 @@ fun Greeting(navController: NavController) {
                 negative = promptNegative,
                 onSuccess = { secret ->
                     scope.launch(Dispatchers.IO) {
-                        Entry.rustInterface.setSecret(secret)
+                        if (Config.hasMigratedToSecret002) {
+                            Entry.rustInterface.setSecret002(secret)
+                        } else {
+                            Entry.rustInterface.setSecret001(secret)
+                        }
 
-                        if (!AccountManagement.loadAccountsUsingSeed(context)) {
+                        if (!AccountManagement.loadAccountsUsingKey(context)) {
                             hasError = true
                             return@launch
                         }
@@ -151,7 +155,7 @@ fun Greeting(navController: NavController) {
             KeyStoreAES.saveSecret(
                 title = promptTitle,
                 negative = promptNegative,
-                secret = Entry.rustInterface.getSecret(),
+                secret = Entry.rustInterface.getSecret002(),
                 onSuccess = {
                     scope.launch(Dispatchers.IO) {
                         Config.hasCompletedSetup = true

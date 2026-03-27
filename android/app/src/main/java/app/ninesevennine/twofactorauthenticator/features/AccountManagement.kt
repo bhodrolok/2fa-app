@@ -1,6 +1,7 @@
 package app.ninesevennine.twofactorauthenticator.features
 
 import android.content.Context
+import android.util.Base64
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import java.io.File
@@ -9,8 +10,10 @@ import java.io.FileOutputStream
 
 object AccountManagement {
     private const val TAG = "AccountManagement"
-    private const val ACCOUNTS_USING_SEED_FILE = "accounts_using_seed.2fa"
-    private const val ACCOUNTS_USING_AUTOMATIC_BACKUPS = "accounts_using_automatic_internal_backups.2fa"
+    private const val ACCOUNTS_USING_KEY_FILE = "accounts_using_key.2fa"
+    private const val ACCOUNTS_USING_KEY_FILE_OLD = "accounts_using_seed.2fa"
+    private const val ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE = "accounts_using_automatic_backups_key.2fa"
+    private const val ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE_OLD = "accounts_using_automatic_internal_backups.2fa"
 
     const val IMPORT_ERROR_NO_ACCOUNTS = 0
     const val IMPORT_ERROR_INCORRECT_PASSPHRASE = -1
@@ -34,27 +37,42 @@ object AccountManagement {
         }
     }
 
-    fun saveAccountsUsingSeed(context: Context) {
+    fun saveAccountsUsingKey(context: Context) {
         return try {
-            val accountsData = Entry.rustInterface.exportAccountsUsingSeed()
+            val accountsData = if (Config.hasMigratedToSecret002) {
+                Entry.rustInterface.exportAccountsUsingKey002()
+            } else {
+                Entry.rustInterface.exportAccountsUsingSeed001()
+            }
 
             forceWrite(
-                File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_SEED_FILE),
+                File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_KEY_FILE),
                 accountsData
             )
         } catch (e: Exception) {
-            Logger.e(TAG, "failed to saveAccountsUsingSeed", e)
+            Logger.e(TAG, "failed to saveAccountsUsingKey", e)
         }
     }
 
-    fun loadAccountsUsingSeed(context: Context): Boolean {
+    fun loadAccountsUsingKey(context: Context): Boolean {
         return try {
-            val file = File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_SEED_FILE)
-            if (!file.exists()) return true
+            val dir = context.applicationContext.noBackupFilesDir
+            val file = File(dir, ACCOUNTS_USING_KEY_FILE)
+            val fileOld = File(dir, ACCOUNTS_USING_KEY_FILE_OLD)
 
-            val accountsData = forceRead(file)
+            val target = when {
+                file.exists() -> file
+                fileOld.exists() -> fileOld
+                else -> return true
+            }
 
-            val result = Entry.rustInterface.importAccountsUsingSeed(accountsData)
+            val accountsData = forceRead(target)
+
+            val result = if (Config.hasMigratedToSecret002) {
+                Entry.rustInterface.importAccountsUsingKey002(accountsData)
+            } else {
+                Entry.rustInterface.importAccountsUsingSeed001(accountsData)
+            }
 
             when (result) {
                 IMPORT_ERROR_NO_ACCOUNTS -> Logger.e(TAG, "no accounts to import")
@@ -67,62 +85,70 @@ object AccountManagement {
 
             result > 0
         } catch (e: Exception) {
-            Logger.e(TAG, "failed to loadAccountsUsingSeed", e)
+            Logger.e(TAG, "failed to loadAccountsUsingKey", e)
             false
         }
     }
 
-    fun deleteAccountsUsingSeed(context: Context): Boolean {
-        return runCatching {
-            val file = File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_SEED_FILE)
+    fun deleteAccountsUsingKey(context: Context) {
+        runCatching {
+            val dir = context.applicationContext.noBackupFilesDir
+            val file = File(dir, ACCOUNTS_USING_KEY_FILE)
+            val fileOld = File(dir, ACCOUNTS_USING_KEY_FILE_OLD)
 
-            if (file.exists()) file.delete() else true
+            if (file.exists()) file.delete()
+            if (fileOld.exists()) fileOld.delete()
         }.onSuccess {
-            Logger.i(TAG, "$ACCOUNTS_USING_SEED_FILE deleted or already absent")
+            Logger.i(TAG, "$ACCOUNTS_USING_KEY_FILE and $ACCOUNTS_USING_KEY_FILE_OLD deleted or already absent")
         }.onFailure { e ->
-            Logger.e(TAG, "failed to delete $ACCOUNTS_USING_SEED_FILE", e)
-        }.getOrDefault(false)
+            Logger.e(TAG, "failed to delete $ACCOUNTS_USING_KEY_FILE_OLD", e)
+        }
     }
 
-    fun saveAccountsUsingAutomaticBackups(context: Context) {
+    fun saveAccountsUsingAutomaticBackupsKey(context: Context) {
         return try {
-            val accountsData = Entry.rustInterface.exportAccountsUsingAutomaticBackups()
+            val accountsData = if (Config.hasMigratedToSecret002) {
+                val salt = Base64.decode(Config.automaticBackupsSalt, Base64.NO_WRAP)
+                Entry.rustInterface.exportAccountsUsingAutomaticBackupsKey002(salt)
+            } else {
+                Entry.rustInterface.exportAccountsUsingAutomaticBackupsKey001()
+            }
 
             forceWrite(
-                File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_AUTOMATIC_BACKUPS),
+                File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE),
                 accountsData
             )
         } catch (e: Exception) {
-            Logger.e(TAG, "failed to saveAccountsUsingAutomaticBackups", e)
+            Logger.e(TAG, "failed to saveAccountsUsingAutomaticBackupsKey", e)
         }
     }
 
-    fun hasAccountsUsingAutomaticBackups(context: Context): Boolean {
+    fun hasAccountsUsingAutomaticBackupsKey(context: Context): Boolean {
         return try {
-            val file = File(
-                context.applicationContext.noBackupFilesDir,
-                ACCOUNTS_USING_AUTOMATIC_BACKUPS
-            )
+            val dir = context.applicationContext.noBackupFilesDir
 
-            file.exists()
+            File(dir, ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE).exists() || File(dir, ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE_OLD).exists()
         } catch (e: Exception) {
-            Logger.e(TAG, "failed to check hasAccountsUsingAutomaticBackups", e)
+            Logger.e(TAG, "failed to check hasAccountsUsingAutomaticBackupsKey", e)
             false
         }
     }
 
-    fun getAccountsUsingAutomaticBackups(context: Context): String? {
+    fun getAccountsUsingAutomaticBackupsKey(context: Context): String? {
         return try {
-            val file = File(
-                context.applicationContext.noBackupFilesDir,
-                ACCOUNTS_USING_AUTOMATIC_BACKUPS
-            )
+            val dir = context.applicationContext.noBackupFilesDir
+            val file = File(dir, ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE)
+            val fileOld = File(dir, ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE_OLD)
 
-            if (!file.exists()) return null
+            val target = when {
+                file.exists() -> file
+                fileOld.exists() -> fileOld
+                else -> return null
+            }
 
-            forceRead(file)
+            forceRead(target)
         } catch (e: Exception) {
-            Logger.e(TAG, "failed to getAccountsUsingAutomaticBackups", e)
+            Logger.e(TAG, "failed to getAccountsUsingAutomaticBackupsKey", e)
             null
         }
     }

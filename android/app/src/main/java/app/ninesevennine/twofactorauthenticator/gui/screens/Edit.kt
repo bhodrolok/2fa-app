@@ -399,7 +399,7 @@ fun Edit(navController: NavController) {
                         Entry.rustInterface.deleteAccount(account.id)
                         Entry.rustInterface.setEditAccountNone()
 
-                        AccountManagement.saveAccountsUsingSeed(context)
+                        AccountManagement.saveAccountsUsingKey(context)
                         withContext(Dispatchers.Main) {
                             navController.popBackStack(MainRoute, false)
                         }
@@ -439,10 +439,10 @@ fun Edit(navController: NavController) {
                     Entry.rustInterface.copyEditAccountIntoAccounts()
                     Entry.rustInterface.setEditAccountNone()
 
-                    AccountManagement.saveAccountsUsingSeed(context)
+                    AccountManagement.saveAccountsUsingKey(context)
 
                     if (Config.isUsingAutomaticBackups) {
-                        AccountManagement.saveAccountsUsingAutomaticBackups(context)
+                        AccountManagement.saveAccountsUsingAutomaticBackupsKey(context)
                     }
 
                     withContext(Dispatchers.Main) {

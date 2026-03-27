@@ -152,7 +152,7 @@ fun BiometricUnlock(navController: NavController) {
                                     KeyStoreAES.saveSecret(
                                         title = biometricUnlockText,
                                         negative = cancelText,
-                                        secret = Entry.rustInterface.getSecret(),
+                                        secret = if (Config.hasMigratedToSecret002) Entry.rustInterface.getSecret002() else Entry.rustInterface.getSecret001(),
                                         onSuccess = {
                                             Logger.i(TAG, "biometrics set to false")
 
@@ -197,7 +197,7 @@ fun BiometricUnlock(navController: NavController) {
                                     KeyStoreAES.saveSecret(
                                         title = biometricUnlockText,
                                         negative = cancelText,
-                                        secret = Entry.rustInterface.getSecret(),
+                                        secret = if (Config.hasMigratedToSecret002) Entry.rustInterface.getSecret002() else Entry.rustInterface.getSecret001(),
                                         onSuccess = {
                                             Logger.i(TAG, "biometrics set to true")
 

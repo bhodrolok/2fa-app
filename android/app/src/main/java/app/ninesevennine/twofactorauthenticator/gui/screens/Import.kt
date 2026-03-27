@@ -209,10 +209,10 @@ fun Import(navController: NavController) {
                         if (result > 0) {
                             Logger.i(TAG, "successfully imported $result account(s)")
 
-                            AccountManagement.saveAccountsUsingSeed(context)
+                            AccountManagement.saveAccountsUsingKey(context)
 
                             if (Config.isUsingAutomaticBackups) {
-                                AccountManagement.saveAccountsUsingAutomaticBackups(context)
+                                AccountManagement.saveAccountsUsingAutomaticBackupsKey(context)
                             }
 
                             withContext(Dispatchers.Main) {

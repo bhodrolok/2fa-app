@@ -1,5 +1,6 @@
 package app.ninesevennine.twofactorauthenticator.gui.screens
 
+import android.util.Base64
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
@@ -55,6 +56,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import java.security.SecureRandom
 
 @Serializable
 object SetupAutomaticBackupsRoute
@@ -139,7 +141,7 @@ fun SetupAutomaticBackups(navController: NavController) {
                     textAlign = TextAlign.Justify
                 )
 
-                if (AccountManagement.hasAccountsUsingAutomaticBackups(context)) {
+                if (AccountManagement.hasAccountsUsingAutomaticBackupsKey(context)) {
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
@@ -196,7 +198,7 @@ fun SetupAutomaticBackups(navController: NavController) {
                         recoveryError = false
 
                         scope.launch(Dispatchers.IO) {
-                            val data = AccountManagement.getAccountsUsingAutomaticBackups(context)
+                            val data = AccountManagement.getAccountsUsingAutomaticBackupsKey(context)
                             if (data == null) {
                                 isLoading = false
                                 return@launch
@@ -207,8 +209,11 @@ fun SetupAutomaticBackups(navController: NavController) {
                             if (result > 0) {
                                 Logger.i(TAG, "successfully recovered $result account(s)")
 
-                                AccountManagement.saveAccountsUsingSeed(context)
-                                Entry.rustInterface.setAutomaticBackupsPassphrase(passphrase)
+                                AccountManagement.saveAccountsUsingKey(context)
+
+                                val salt = ByteArray(32).also { SecureRandom().nextBytes(it) }
+                                Entry.rustInterface.setAutomaticBackupsPassphrase002(salt, passphrase)
+                                Config.automaticBackupsSalt = Base64.encodeToString(salt, Base64.NO_WRAP)
 
                                 Config.isUsingAutomaticBackups = true
 
@@ -268,7 +273,9 @@ fun SetupAutomaticBackups(navController: NavController) {
                             isLoading = true
 
                             scope.launch(Dispatchers.IO) {
-                                Entry.rustInterface.setAutomaticBackupsPassphrase(passphrase)
+                                val salt = ByteArray(32).also { SecureRandom().nextBytes(it) }
+                                Entry.rustInterface.setAutomaticBackupsPassphrase002(salt, passphrase)
+                                Config.automaticBackupsSalt = Base64.encodeToString(salt, Base64.NO_WRAP)
 
                                 Config.isUsingAutomaticBackups = true
 

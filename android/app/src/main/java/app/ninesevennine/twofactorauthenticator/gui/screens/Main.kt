@@ -169,7 +169,7 @@ fun Main(navController: NavController) {
                                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
 
                                         scope.launch(Dispatchers.IO) {
-                                            AccountManagement.saveAccountsUsingSeed(context)
+                                            AccountManagement.saveAccountsUsingKey(context)
                                         }
                                     }
                                 )

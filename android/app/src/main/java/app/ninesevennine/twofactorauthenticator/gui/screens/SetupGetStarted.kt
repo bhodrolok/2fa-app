@@ -144,10 +144,10 @@ fun SetupGetStarted(navController: NavController) {
                     scope.launch(Dispatchers.IO) {
                         Logger.i(TAG, "get started pressed")
 
-                        AccountManagement.deleteAccountsUsingSeed(context)
+                        AccountManagement.deleteAccountsUsingKey(context)
 
+                        Config.hasMigratedToSecret002 = true
                         Config.hasCompletedSetup = false
-
                         Config.save(context)
 
                         KeyStoreAES.deleteKey(isBiometricKey = false)
