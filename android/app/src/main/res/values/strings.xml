@@ -96,8 +96,7 @@
     <string name="screen_settings_security">Security</string>
     <string name="screen_settings_security_block_intents">Block Intents</string>
     <string name="screen_settings_security_block_intents_secondary">Ignore actions invoked by external apps</string>
-    <string name="screen_settings_security_memory_loss">Memory Loss</string>
-    <string name="screen_settings_security_memory_loss_secondary">Wipe sensitive memory when exiting</string>
+    <string name="screen_settings_security_lock_on_exit">Lock on Exit</string>
     <string name="screen_settings_security_screen_security">Screen Security</string>
     <string name="screen_settings_security_screen_security_secondary">Block screenshots and recordings</string>
     <string name="screen_settings_security_secure_clipboard">Secure Clipboard</string>

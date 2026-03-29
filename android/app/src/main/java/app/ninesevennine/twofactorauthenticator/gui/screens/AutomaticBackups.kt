@@ -56,6 +56,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import java.security.SecureRandom
 
 @Serializable
 object AutomaticBackupsRoute
@@ -205,8 +206,9 @@ fun AutomaticBackups(navController: NavController) {
                                 }
 
                                 if (Config.hasMigratedToSecret002) {
-                                    val salt = Base64.decode(Config.automaticBackupsSalt, Base64.NO_WRAP)
+                                    val salt = ByteArray(32).also { SecureRandom().nextBytes(it) }
                                     Entry.rustInterface.setAutomaticBackupsPassphrase002(salt, passphrase)
+                                    Config.automaticBackupsSalt = Base64.encodeToString(salt, Base64.NO_WRAP)
                                 } else {
                                     Entry.rustInterface.setAutomaticBackupsPassphrase001(passphrase)
                                 }

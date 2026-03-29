@@ -96,8 +96,7 @@
     <string name="screen_settings_security">Безопасность</string>
     <string name="screen_settings_security_block_intents">Блокировать Интенты</string>
     <string name="screen_settings_security_block_intents_secondary">Игнорировать действия, вызванные внешними приложениями</string>
-    <string name="screen_settings_security_memory_loss">Потеря Памяти</string>
-    <string name="screen_settings_security_memory_loss_secondary">Стирать конфиденциальную память при выходе</string>
+    <string name="screen_settings_security_lock_on_exit">Блокировка при Выходе</string>
     <string name="screen_settings_security_screen_security">Безопасность Экрана</string>
     <string name="screen_settings_security_screen_security_secondary">Блокировать скриншоты и записи</string>
     <string name="screen_settings_security_secure_clipboard">Безопасный Буфер Обмена</string>

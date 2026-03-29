@@ -100,7 +100,7 @@ fun Import(navController: NavController) {
     }
 
     LaunchedEffect(Unit) {
-        Signals.suppressMemoryLoss = true
+        Signals.suppressLockOnExit = true
         openDocumentLauncher.launch(arrayOf("application/octet-stream", "text/*"))
     }
 

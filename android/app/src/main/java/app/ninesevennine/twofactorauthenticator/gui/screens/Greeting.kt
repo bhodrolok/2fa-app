@@ -328,7 +328,7 @@ fun Greeting(navController: NavController) {
                         return@RoundedButtonClean
                     }
 
-                    Signals.suppressMemoryLoss = true
+                    Signals.suppressLockOnExit = true
                     Logger.i(TAG, "downloading app log")
                     internalAppLogLauncher.launch("app.log")
                 }

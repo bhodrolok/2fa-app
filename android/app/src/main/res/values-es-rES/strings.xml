@@ -96,8 +96,7 @@
     <string name="screen_settings_security">Seguridad</string>
     <string name="screen_settings_security_block_intents">Bloquear Intents</string>
     <string name="screen_settings_security_block_intents_secondary">Ignorar acciones invocadas por aplicaciones externas</string>
-    <string name="screen_settings_security_memory_loss">Pérdida de Memoria</string>
-    <string name="screen_settings_security_memory_loss_secondary">Borrar memoria sensible al salir</string>
+    <string name="screen_settings_security_lock_on_exit">Bloquear al Salir</string>
     <string name="screen_settings_security_screen_security">Pantalla Protegida</string>
     <string name="screen_settings_security_screen_security_secondary">Bloquear capturas de pantalla y grabaciones</string>
     <string name="screen_settings_security_secure_clipboard">Portapapeles Seguro</string>

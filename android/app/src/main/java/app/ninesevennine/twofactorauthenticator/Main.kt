@@ -134,13 +134,13 @@ class Main : FragmentActivity() {
     override fun onStop() {
         super.onStop()
 
-        if (Config.hasCompletedSetup && !isChangingConfigurations && Config.isUsingMemoryLoss) {
-            if (!Signals.suppressMemoryLoss) {
+        if (Config.hasCompletedSetup && !isChangingConfigurations && Config.isUsingLockOnExit) {
+            if (!Signals.suppressLockOnExit) {
                 Entry.rustInterface.clientUnload()
             }
         }
 
-        Signals.suppressMemoryLoss = false
+        Signals.suppressLockOnExit = false
     }
 
     override fun onNewIntent(intent: Intent) {

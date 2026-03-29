@@ -194,7 +194,7 @@ fun ExportAegis(navController: NavController) {
                             val data = Entry.rustInterface.exportAccountsAegis(passphrase)
 
                             withContext(Dispatchers.Main) {
-                                Signals.suppressMemoryLoss = true
+                                Signals.suppressLockOnExit = true
                                 pendingExportData = data
                                 createDocumentLauncher.launch("aegis.json")
                             }

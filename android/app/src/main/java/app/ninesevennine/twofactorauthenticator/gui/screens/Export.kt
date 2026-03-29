@@ -194,7 +194,7 @@ fun Export(navController: NavController) {
                             val data = Entry.rustInterface.exportAccounts(passphrase)
 
                             withContext(Dispatchers.Main) {
-                                Signals.suppressMemoryLoss = true
+                                Signals.suppressLockOnExit = true
                                 pendingExportData = data
                                 createDocumentLauncher.launch("export.2fa")
                             }

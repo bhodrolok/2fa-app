@@ -258,15 +258,14 @@ fun Settings(navController: NavController) {
                     }
 
                     SectionButton(
-                        painter = painterResource(R.drawable.mi_cognition),
+                        painter = painterResource(R.drawable.mi_lock),
                         tint = Theme.colors.primary,
-                        primaryText = stringResource(R.string.screen_settings_security_memory_loss),
-                        secondaryText = stringResource(R.string.screen_settings_security_memory_loss_secondary),
-                        enabled = Config.isUsingMemoryLoss
+                        primaryText = stringResource(R.string.screen_settings_security_lock_on_exit),
+                        enabled = Config.isUsingLockOnExit
                     ) {
-                        Config.isUsingMemoryLoss = !Config.isUsingMemoryLoss
+                        Config.isUsingLockOnExit = !Config.isUsingLockOnExit
 
-                        Logger.i(TAG, "memory loss set to ${!Config.isUsingMemoryLoss}")
+                        Logger.i(TAG, "lock on exit set to ${!Config.isUsingLockOnExit}")
 
                         Config.save(context)
                     }
@@ -370,7 +369,7 @@ fun Settings(navController: NavController) {
                         return@RoundedButtonClean
                     }
 
-                    Signals.suppressMemoryLoss = true
+                    Signals.suppressLockOnExit = true
                     Logger.i(TAG, "downloading app log")
                     internalAppLogLauncher.launch("app.log")
                 }

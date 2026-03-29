@@ -215,7 +215,7 @@ fun AddCode(navController: NavController) {
                             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                             view.playSoundEffect(SoundEffectConstants.CLICK)
 
-                            Signals.suppressMemoryLoss = true
+                            Signals.suppressLockOnExit = true
                             pickImage.launch(arrayOf("*/*"))
                         }
                     ),

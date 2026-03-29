@@ -98,7 +98,7 @@ fun ImportAegis(navController: NavController) {
     }
 
     LaunchedEffect(Unit) {
-        Signals.suppressMemoryLoss = true
+        Signals.suppressLockOnExit = true
         openDocumentLauncher.launch(arrayOf("application/json", "text/json"))
     }
 

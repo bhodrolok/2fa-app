@@ -141,7 +141,7 @@ fun SelectIconPacks(navController: NavController) {
                         primaryText = stringResource(R.string.screen_select_icon_packs_add),
                         secondaryText = ".zip"
                     ) {
-                        Signals.suppressMemoryLoss = true
+                        Signals.suppressLockOnExit = true
                         openDocumentLauncher.launch(arrayOf("application/zip"))
                     }
                 }

@@ -47,12 +47,15 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.utils.Logger
+import com.google.zxing.BarcodeFormat
 import com.google.zxing.BinaryBitmap
+import com.google.zxing.DecodeHintType
 import com.google.zxing.MultiFormatReader
 import com.google.zxing.PlanarYUVLuminanceSource
 import com.google.zxing.ReaderException
 import com.google.zxing.common.HybridBinarizer
 import java.util.concurrent.Executors
+import kotlin.experimental.inv
 
 object QRCodeScanner {
     private const val TAG = "QRCodeScanner"
@@ -113,7 +116,7 @@ object QRCodeScanner {
             }
         }
 
-        val scanBoxFraction = 0.55f
+        val scanBoxFraction = 0.7f
 
         val imageAnalyzer = remember {
             ImageAnalysis.Builder()
@@ -220,49 +223,59 @@ object QRCodeScanner {
         private val onQRCodeScanned: (String) -> Unit
     ) : ImageAnalysis.Analyzer {
 
-        private val reader = MultiFormatReader()
-        private var imageData = ByteArray(0)
+        private val reader = MultiFormatReader().apply {
+            val hints = mapOf(
+                DecodeHintType.POSSIBLE_FORMATS to listOf(BarcodeFormat.QR_CODE),
+                DecodeHintType.TRY_HARDER to true
+            )
+            setHints(hints)
+        }
+
+        private var croppedImageData = ByteArray(0)
+        private var invertedImageData = ByteArray(0)
 
         override fun analyze(image: ImageProxy) {
-
             val plane = image.planes[0]
             val buffer = plane.buffer
+            val rowStride = plane.rowStride
 
-            buffer.rewind()
+            val boxSize = (image.width.coerceAtMost(image.height) * scanBoxFraction).toInt()
+            val left = (image.width - boxSize) / 2
+            val top = (image.height - boxSize) / 2
 
-            if (imageData.size != buffer.capacity()) {
-                imageData = ByteArray(buffer.capacity())
+            val cropArea = boxSize * boxSize
+            if (croppedImageData.size != cropArea) {
+                croppedImageData = ByteArray(cropArea)
+                invertedImageData = ByteArray(cropArea)
             }
 
-            buffer.get(imageData)
-
-            val (imgWidth, imgHeight) = if (image.imageInfo.rotationDegrees == 90 || image.imageInfo.rotationDegrees == 270) {
-                image.height to image.width
-            } else {
-                image.width to image.height
+            for (y in 0 until boxSize) {
+                buffer.position((top + y) * rowStride + left)
+                buffer.get(croppedImageData, y * boxSize, boxSize)
             }
-
-            val boxSize = imgWidth.coerceAtMost(imgHeight) * scanBoxFraction
-            val left = ((imgWidth - boxSize) / 2f).toInt()
-            val top = ((imgHeight - boxSize) / 2f).toInt()
-            val size = boxSize.toInt()
 
             val source = PlanarYUVLuminanceSource(
-                imageData,
-                imgWidth,
-                imgHeight,
-                left,
-                top,
-                size,
-                size,
-                false
+                croppedImageData, boxSize, boxSize, 0, 0, boxSize, boxSize, false
             )
 
-            val bitmap = BinaryBitmap(HybridBinarizer(source))
             try {
+                val bitmap = BinaryBitmap(HybridBinarizer(source))
                 reader.decodeWithState(bitmap).text?.let { onQRCodeScanned(it) }
             } catch (_: ReaderException) {
+                for (i in 0 until cropArea) {
+                    invertedImageData[i] = croppedImageData[i].inv()
+                }
 
+                val invertedSource = PlanarYUVLuminanceSource(
+                    invertedImageData, boxSize, boxSize, 0, 0, boxSize, boxSize, false
+                )
+
+                try {
+                    val invertedBitmap = BinaryBitmap(HybridBinarizer(invertedSource))
+                    reader.decodeWithState(invertedBitmap).text?.let { onQRCodeScanned(it) }
+                } catch (_: ReaderException) {
+
+                }
             } finally {
                 reader.reset()
                 image.close()
