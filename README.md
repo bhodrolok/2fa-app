@@ -29,7 +29,7 @@
 
 ### Security
 
-All accounts are encrypted and stored in the app's internal directory using our own proprietary format (extension `.2fa`). This format is the same whether the file is used internally or for exports. The only difference between them is where the cipher key comes from.
+All accounts are encrypted and stored in the app's internal directory using our own format (extension `.2fa`). This format is the same whether the file is used internally or for exports. The only difference between them is where the cipher key comes from.
 
 Currently they're encrypted using XChaCha20-Poly1305 with plans of switching to AEGIS-256. For exports and automatic backups, cipher keys are derived from hashing your passphrase with Argon2id using some very aggressive parameters, but we also enforce a minimum passphrase strength, and even the weakest passphrase we allow would take centuries to crack.
 
