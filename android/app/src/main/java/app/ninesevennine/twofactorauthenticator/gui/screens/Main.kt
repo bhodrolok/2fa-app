@@ -79,11 +79,11 @@ import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
-import app.ninesevennine.twofactorauthenticator.features.Signals
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.OtpCardMinimalistic
 import app.ninesevennine.twofactorauthenticator.gui.elements.OtpCardNormal
+import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.utils.Time
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -97,7 +97,7 @@ object MainRoute
 
 @Composable
 fun Main(navController: NavController) {
-    LaunchedEffect(Signals.intent) {
+    LaunchedEffect(Signals.checkEditAccountSome) {
         if (Entry.rustInterface.isEditAccountSome()) {
             navController.navigate(EditRoute)
         }
@@ -129,8 +129,15 @@ fun Main(navController: NavController) {
     }
 
     LaunchedEffect(query) {
-        if (accounts.isNotEmpty()) {
+        if (query.isNotBlank() && accounts.isNotEmpty()) {
             lazyGridState.animateScrollToItem(0)
+        }
+    }
+
+    LaunchedEffect(Signals.accountAdded) {
+        if (Signals.accountAdded && accounts.isNotEmpty()) {
+            lazyGridState.scrollToItem(accounts.lastIndex)
+            Signals.accountAdded = false
         }
     }
 

@@ -63,6 +63,7 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.SectionSaturationSl
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionTextBox
 import app.ninesevennine.twofactorauthenticator.utils.Clipboard
 import app.ninesevennine.twofactorauthenticator.utils.ColorPicker
+import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.utils.Time
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -122,6 +123,7 @@ fun Edit(navController: NavController) {
     Time.Track()
 
     BackHandler {
+        Signals.checkEditAccountSome = false
         Entry.rustInterface.setEditAccountNone()
         navController.popBackStack(MainRoute, false)
     }
@@ -413,6 +415,7 @@ fun Edit(navController: NavController) {
         EditHeader(
             title = stringResource(R.string.screen_edit_title),
             onCancel = {
+                Signals.checkEditAccountSome = false
                 Entry.rustInterface.setEditAccountNone()
                 navController.popBackStack(MainRoute, false)
             },
@@ -443,6 +446,11 @@ fun Edit(navController: NavController) {
 
                     if (Config.isUsingAutomaticBackups) {
                         AccountManagement.saveAccountsUsingAutomaticBackupsKey(context)
+                    }
+
+                    if (Signals.checkEditAccountSome) {
+                        Signals.checkEditAccountSome = false
+                        Signals.accountAdded = true
                     }
 
                     withContext(Dispatchers.Main) {

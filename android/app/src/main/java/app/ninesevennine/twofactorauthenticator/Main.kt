@@ -18,7 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
-import app.ninesevennine.twofactorauthenticator.features.Signals
+import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.UseIncognitoKeyboard
 import app.ninesevennine.twofactorauthenticator.features.setScreenSecure
@@ -160,7 +160,7 @@ class Main : FragmentActivity() {
                 data?.let { uri ->
                     if (uri.scheme == "otpauth") {
                         if (Entry.rustInterface.setEditAccountFromOtpAuth(data.toString())) {
-                            Signals.intent++
+                            Signals.checkEditAccountSome = true
                         }
                     }
                 }
@@ -171,7 +171,7 @@ class Main : FragmentActivity() {
                         lifecycleScope.launch(Dispatchers.IO) {
                             val otpUrl = ZXing.decodeQRFromImage(uri, contentResolver)
                             if (otpUrl != null && Entry.rustInterface.setEditAccountFromOtpAuth(otpUrl)) {
-                                Signals.intent++
+                                Signals.checkEditAccountSome = true
                             }
                         }
                     }

@@ -45,7 +45,7 @@ import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
-import app.ninesevennine.twofactorauthenticator.features.Signals
+import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
@@ -203,6 +203,8 @@ fun ImportAegis(navController: NavController) {
                             if (Config.isUsingAutomaticBackups) {
                                 AccountManagement.saveAccountsUsingAutomaticBackupsKey(context)
                             }
+
+                            Signals.accountAdded = true
 
                             withContext(Dispatchers.Main) {
                                 navController.popBackStack(MainRoute, false)
