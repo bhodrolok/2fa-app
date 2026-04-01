@@ -1,17 +1,19 @@
 package app.ninesevennine.twofactorauthenticator.features
 
 import android.content.Context
+import android.util.AtomicFile
 import android.util.Base64
+import android.util.Log
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 
 object AccountManagement {
     private const val TAG = "AccountManagement"
+
     private const val ACCOUNTS_USING_KEY_FILE = "accounts_using_key.2fa"
     private const val ACCOUNTS_USING_KEY_FILE_OLD = "accounts_using_seed.2fa"
+
     private const val ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE = "accounts_using_automatic_backups_key.2fa"
     private const val ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE_OLD = "accounts_using_automatic_internal_backups.2fa"
 
@@ -21,20 +23,31 @@ object AccountManagement {
     const val IMPORT_ERROR_INVALID_FILE = -3
     const val IMPORT_ERROR_UNKNOWN = -4
 
-    private fun forceWrite(file: File, data: String) {
-        val fos = FileOutputStream(file)
-        fos.use { fos ->
+    private fun atomicWrite(file: File, data: String) {
+        val atomicFile = AtomicFile(file)
+        val fos = atomicFile.startWrite()
+        try {
             fos.write(data.toByteArray(Charsets.UTF_8))
-            fos.flush()
-            fos.fd.sync()
+            atomicFile.finishWrite(fos)
+        } catch (e: Exception) {
+            atomicFile.failWrite(fos)
+            Log.e(TAG, "failed to atomicWrite ${file.name}", e)
+            Logger.e(TAG, "failed to atomicWrite ${file.name}", e)
         }
     }
 
-    private fun forceRead(file: File): String {
-        val fis = FileInputStream(file)
-        fis.use { fis ->
-            return fis.readBytes().toString(Charsets.UTF_8)
-        }
+    private fun atomicRead(file: File): String {
+        return AtomicFile(file).readFully().toString(Charsets.UTF_8)
+    }
+
+    private fun resolveFile(dir: File, name: String, nameOld: String): File? {
+        val file = File(dir, name)
+        if (file.exists()) return file
+
+        val fileOld = File(dir, nameOld)
+        if (fileOld.exists()) return fileOld
+
+        return null
     }
 
     fun saveAccountsUsingKey(context: Context) {
@@ -45,10 +58,8 @@ object AccountManagement {
                 Entry.rustInterface.exportAccountsUsingSeed001()
             }
 
-            forceWrite(
-                File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_KEY_FILE),
-                accountsData
-            )
+            val file = File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_KEY_FILE)
+            atomicWrite(file, accountsData)
         } catch (e: Exception) {
             Logger.e(TAG, "failed to saveAccountsUsingKey", e)
         }
@@ -57,16 +68,10 @@ object AccountManagement {
     fun loadAccountsUsingKey(context: Context): Boolean {
         return try {
             val dir = context.applicationContext.noBackupFilesDir
-            val file = File(dir, ACCOUNTS_USING_KEY_FILE)
-            val fileOld = File(dir, ACCOUNTS_USING_KEY_FILE_OLD)
+            val target = resolveFile(dir, ACCOUNTS_USING_KEY_FILE, ACCOUNTS_USING_KEY_FILE_OLD)
+                ?: return true
 
-            val target = when {
-                file.exists() -> file
-                fileOld.exists() -> fileOld
-                else -> return true
-            }
-
-            val accountsData = forceRead(target)
+            val accountsData = atomicRead(target)
 
             val result = if (Config.hasMigratedToSecret002) {
                 Entry.rustInterface.importAccountsUsingKey002(accountsData)
@@ -91,22 +96,16 @@ object AccountManagement {
     }
 
     fun deleteAccountsUsingKey(context: Context) {
-        runCatching {
-            val dir = context.applicationContext.noBackupFilesDir
-            val file = File(dir, ACCOUNTS_USING_KEY_FILE)
-            val fileOld = File(dir, ACCOUNTS_USING_KEY_FILE_OLD)
+        val dir = context.applicationContext.noBackupFilesDir
 
-            if (file.exists()) file.delete()
-            if (fileOld.exists()) fileOld.delete()
-        }.onSuccess {
-            Logger.i(TAG, "$ACCOUNTS_USING_KEY_FILE and $ACCOUNTS_USING_KEY_FILE_OLD deleted or already absent")
-        }.onFailure { e ->
-            Logger.e(TAG, "failed to delete $ACCOUNTS_USING_KEY_FILE_OLD", e)
-        }
+        AtomicFile(File(dir, ACCOUNTS_USING_KEY_FILE)).delete()
+        AtomicFile(File(dir, ACCOUNTS_USING_KEY_FILE_OLD)).delete()
+
+        Logger.i(TAG, "deleteAccountsUsingKey completed")
     }
 
     fun saveAccountsUsingAutomaticBackupsKey(context: Context) {
-        return try {
+        try {
             val accountsData = if (Config.hasMigratedToSecret002) {
                 val salt = Base64.decode(Config.automaticBackupsSalt, Base64.NO_WRAP)
                 Entry.rustInterface.exportAccountsUsingAutomaticBackupsKey002(salt)
@@ -114,39 +113,32 @@ object AccountManagement {
                 Entry.rustInterface.exportAccountsUsingAutomaticBackupsKey001()
             }
 
-            forceWrite(
-                File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE),
-                accountsData
-            )
+            val file = File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE)
+            atomicWrite(file, accountsData)
         } catch (e: Exception) {
             Logger.e(TAG, "failed to saveAccountsUsingAutomaticBackupsKey", e)
         }
     }
 
+
     fun hasAccountsUsingAutomaticBackupsKey(context: Context): Boolean {
         return try {
             val dir = context.applicationContext.noBackupFilesDir
-
-            File(dir, ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE).exists() || File(dir, ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE_OLD).exists()
+            resolveFile(dir, ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE, ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE_OLD) != null
         } catch (e: Exception) {
             Logger.e(TAG, "failed to check hasAccountsUsingAutomaticBackupsKey", e)
             false
         }
     }
 
+
     fun getAccountsUsingAutomaticBackupsKey(context: Context): String? {
         return try {
             val dir = context.applicationContext.noBackupFilesDir
-            val file = File(dir, ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE)
-            val fileOld = File(dir, ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE_OLD)
+            val target = resolveFile(dir, ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE, ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE_OLD)
+                ?: return null
 
-            val target = when {
-                file.exists() -> file
-                fileOld.exists() -> fileOld
-                else -> return null
-            }
-
-            forceRead(target)
+            atomicRead(target)
         } catch (e: Exception) {
             Logger.e(TAG, "failed to getAccountsUsingAutomaticBackupsKey", e)
             null

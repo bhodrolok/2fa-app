@@ -18,7 +18,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
-import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.UseIncognitoKeyboard
 import app.ninesevennine.twofactorauthenticator.features.setScreenSecure
@@ -42,12 +41,12 @@ import app.ninesevennine.twofactorauthenticator.gui.screens.ImportAegisRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.ImportRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Main
 import app.ninesevennine.twofactorauthenticator.gui.screens.MainRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SelectOtpCardStyle
-import app.ninesevennine.twofactorauthenticator.gui.screens.SelectOtpCardStyleRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectIconPacks
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectIconPacksRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectLanguage
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectLanguageRoute
+import app.ninesevennine.twofactorauthenticator.gui.screens.SelectOtpCardStyle
+import app.ninesevennine.twofactorauthenticator.gui.screens.SelectOtpCardStyleRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectTheme
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectThemeRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Settings
@@ -60,6 +59,7 @@ import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStarted
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStartedRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupInitializeEncryptionKeys
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupInitializeEncryptionKeysRoute
+import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.utils.ZXing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
