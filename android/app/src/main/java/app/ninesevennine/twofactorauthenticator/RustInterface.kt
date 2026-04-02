@@ -15,7 +15,7 @@ class RustInterface {
     external fun getSecret002(): ByteArray
     external fun setSecret001(secretArray: ByteArray)
     external fun setSecret002(secretArray: ByteArray)
-    external fun isSecretEmpty(): Boolean
+    external fun isClientSecretEmpty(): Boolean
 
     external fun setEditAccountEmpty()
     external fun setEditAccountNone()

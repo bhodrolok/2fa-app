@@ -52,6 +52,8 @@ object AccountManagement {
 
     fun saveAccountsUsingKey(context: Context) {
         return try {
+            if (Entry.rustInterface.isClientSecretEmpty()) throw Exception("secret is empty")
+
             val accountsData = if (Config.hasMigratedToSecret002) {
                 Entry.rustInterface.exportAccountsUsingKey002()
             } else {
@@ -106,6 +108,8 @@ object AccountManagement {
 
     fun saveAccountsUsingAutomaticBackupsKey(context: Context) {
         try {
+            if (Entry.rustInterface.isClientSecretEmpty()) throw Exception("secret is empty")
+
             val accountsData = if (Config.hasMigratedToSecret002) {
                 val salt = Base64.decode(Config.automaticBackupsSalt, Base64.NO_WRAP)
                 Entry.rustInterface.exportAccountsUsingAutomaticBackupsKey002(salt)
@@ -119,7 +123,6 @@ object AccountManagement {
             Logger.e(TAG, "failed to saveAccountsUsingAutomaticBackupsKey", e)
         }
     }
-
 
     fun hasAccountsUsingAutomaticBackupsKey(context: Context): Boolean {
         return try {

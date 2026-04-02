@@ -204,7 +204,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_isSecretEmpty(
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_isClientSecretEmpty(
     mut unowned_env: EnvUnowned,
     _class: JClass,
 ) -> jboolean {

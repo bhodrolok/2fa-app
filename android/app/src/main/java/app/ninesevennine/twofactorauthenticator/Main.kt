@@ -81,12 +81,15 @@ class Main : FragmentActivity() {
         setContent {
             val navController = rememberNavController()
 
-            LaunchedEffect(Signals.authenticate) {
-                if (Config.hasCompletedSetup && Entry.rustInterface.isSecretEmpty() && navController.currentBackStackEntry?.destination?.hasRoute<GreetingRoute>() != true) {
+            LaunchedEffect(Signals.requireAuthentication) {
+                if (Config.hasCompletedSetup && Entry.rustInterface.isClientSecretEmpty() && navController.currentBackStackEntry?.destination?.hasRoute<GreetingRoute>() != true) {
                     navController.navigate(GreetingRoute) {
                         popUpTo(0) { inclusive = true }
+                        anim { enter = 0; exit = 0; popEnter = 0; popExit = 0 }
                     }
                 }
+
+                Signals.requireAuthentication = false
             }
 
             UseIncognitoKeyboard {
@@ -128,7 +131,7 @@ class Main : FragmentActivity() {
 
         setScreenSecure(this, Config.isUsingScreenSecurity)
 
-        if (Entry.rustInterface.isSecretEmpty()) Signals.authenticate++
+        if (Entry.rustInterface.isClientSecretEmpty()) Signals.requireAuthentication = true
     }
 
     override fun onStop() {
@@ -137,6 +140,7 @@ class Main : FragmentActivity() {
         if (Config.hasCompletedSetup && !isChangingConfigurations && Config.isUsingLockOnExit) {
             if (!Signals.suppressLockOnExit) {
                 Entry.rustInterface.clientUnload()
+                Signals.requireAuthentication = true
             }
         }
 
