@@ -32,7 +32,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -119,8 +118,7 @@ fun BiometricUnlock(navController: NavController) {
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
                     fontFamily = InterVariable,
-                    fontWeight = FontWeight.Normal,
-                    textAlign = TextAlign.Justify
+                    fontWeight = FontWeight.Normal
                 )
 
                 if (KeyStoreAES.isBiometricAvailable()) {
@@ -225,8 +223,7 @@ fun BiometricUnlock(navController: NavController) {
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         color = Theme.colors.info,
                         fontSize = 14.sp,
-                        fontFamily = InterVariable,
-                        textAlign = TextAlign.Justify
+                        fontFamily = InterVariable
                     )
                 }
 

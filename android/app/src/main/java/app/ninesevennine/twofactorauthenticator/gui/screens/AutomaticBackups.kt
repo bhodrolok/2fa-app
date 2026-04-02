@@ -35,7 +35,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -131,8 +130,7 @@ fun AutomaticBackups(navController: NavController) {
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
                     fontFamily = InterVariable,
-                    fontWeight = FontWeight.Normal,
-                    textAlign = TextAlign.Justify
+                    fontWeight = FontWeight.Normal
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -143,8 +141,7 @@ fun AutomaticBackups(navController: NavController) {
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
                     fontFamily = InterVariable,
-                    fontWeight = FontWeight.Normal,
-                    textAlign = TextAlign.Justify
+                    fontWeight = FontWeight.Normal
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))

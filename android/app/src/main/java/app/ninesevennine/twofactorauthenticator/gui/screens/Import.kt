@@ -38,7 +38,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -46,7 +45,6 @@ import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.AccountManagement
 import app.ninesevennine.twofactorauthenticator.features.Config
-import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
@@ -55,6 +53,7 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
 import app.ninesevennine.twofactorauthenticator.utils.Document
 import app.ninesevennine.twofactorauthenticator.utils.Logger
+import app.ninesevennine.twofactorauthenticator.utils.Signals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -153,8 +152,7 @@ fun Import(navController: NavController) {
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
                     fontFamily = InterVariable,
-                    fontWeight = FontWeight.Normal,
-                    textAlign = TextAlign.Justify
+                    fontWeight = FontWeight.Normal
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))

@@ -165,8 +165,7 @@ fun SetupInitializeEncryptionKeys(navController: NavController) {
                 color = Theme.colors.primary,
                 fontSize = 14.sp,
                 fontFamily = InterVariable,
-                fontWeight = FontWeight.Normal,
-                textAlign = TextAlign.Justify
+                fontWeight = FontWeight.Normal
             )
 
             AnimatedVisibility(entropyPoints.size >= targetEntropy) {

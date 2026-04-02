@@ -29,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -40,8 +39,8 @@ import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.serialization.Serializable
 
@@ -106,8 +105,7 @@ fun SetupBiometricUnlock(navController: NavController) {
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
                     fontFamily = InterVariable,
-                    fontWeight = FontWeight.Normal,
-                    textAlign = TextAlign.Justify
+                    fontWeight = FontWeight.Normal
                 )
 
                 if (isFullBiometricAvailable) {
@@ -153,8 +151,7 @@ fun SetupBiometricUnlock(navController: NavController) {
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         color = Theme.colors.info,
                         fontSize = 14.sp,
-                        fontFamily = InterVariable,
-                        textAlign = TextAlign.Justify
+                        fontFamily = InterVariable
                     )
                 }
 
