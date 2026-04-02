@@ -98,16 +98,7 @@ object MainRoute
 @Composable
 fun Main(navController: NavController) {
     LaunchedEffect(Signals.checkEditAccountSome) {
-        if (Entry.rustInterface.isClientSecretEmpty()) {
-            navController.navigate(GreetingRoute) {
-                popUpTo(0) { inclusive = true }
-                anim { enter = 0; exit = 0; popEnter = 0; popExit = 0 }
-            }
-
-            return@LaunchedEffect
-        }
-
-        if (Entry.rustInterface.isEditAccountSome()) {
+        if (Entry.rustInterface.isEditAccountSome() && !Entry.rustInterface.isClientSecretEmpty()) {
             navController.navigate(EditRoute)
         }
     }

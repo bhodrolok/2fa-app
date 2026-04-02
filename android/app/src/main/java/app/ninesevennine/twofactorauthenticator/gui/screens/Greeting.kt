@@ -95,7 +95,11 @@ fun Greeting(navController: NavController) {
 
     val internalBackupExists = AccountManagement.hasAccountsUsingAutomaticBackupsKey(context)
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(Signals.authenticate) {
+        unableToLoadDecryptionKeys = false
+        hasError = false
+        promptCanceled = false
+
         if (Config.hasCompletedSetup) {
             if (Config.isUsingBiometrics) {
                 if (!KeyStoreAES.loadKey(true)) {
