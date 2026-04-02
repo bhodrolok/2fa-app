@@ -147,7 +147,7 @@ fun SectionButton(
 
         // spring messes up the lines this fixes it.
         Box(
-            modifier = Modifier.padding(end = 8.dp),
+            modifier = Modifier.padding(end = 8.dp).size(28.dp),
             contentAlignment = Alignment.CenterStart
         ) {
             if (enabled || checkmarkScale > 0.01f) {
