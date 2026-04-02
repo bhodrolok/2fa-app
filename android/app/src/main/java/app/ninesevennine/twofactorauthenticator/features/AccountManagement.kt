@@ -82,7 +82,7 @@ object AccountManagement {
             }
 
             when (result) {
-                IMPORT_ERROR_NO_ACCOUNTS -> Logger.e(TAG, "no accounts to import")
+                IMPORT_ERROR_NO_ACCOUNTS -> Logger.i(TAG, "no accounts to import") // not an error
                 IMPORT_ERROR_INCORRECT_PASSPHRASE -> Logger.e(TAG, "incorrect passphrase")
                 IMPORT_ERROR_OUTDATED_VERSION -> Logger.e(TAG, "outdated version")
                 IMPORT_ERROR_INVALID_FILE -> Logger.e(TAG, "invalid file")
@@ -90,7 +90,7 @@ object AccountManagement {
                 else -> if (result < 0) Logger.e(TAG, "unexpected error code $result")
             }
 
-            result > 0
+            result >= 0
         } catch (e: Exception) {
             Logger.e(TAG, "failed to loadAccountsUsingKey", e)
             false
@@ -133,7 +133,6 @@ object AccountManagement {
             false
         }
     }
-
 
     fun getAccountsUsingAutomaticBackupsKey(context: Context): String? {
         return try {
