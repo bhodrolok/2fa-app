@@ -16,7 +16,7 @@ enum class LocaleOption(val tag: String, val displayName: String) {
 
     companion object {
         fun fromLanguage(language: String): LocaleOption {
-            return entries.firstOrNull { it.tag == language } ?: SYSTEM
+            return entries.firstOrNull { it.tag == language } ?: ENGLISH
         }
     }
 }
