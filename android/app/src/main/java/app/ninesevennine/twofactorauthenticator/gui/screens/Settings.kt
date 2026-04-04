@@ -38,7 +38,6 @@ import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.features.Locale
-import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.features.setScreenSecure
@@ -47,6 +46,7 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.SectionButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionGroup
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.utils.Logger
+import app.ninesevennine.twofactorauthenticator.utils.Signals
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -202,11 +202,11 @@ fun Settings(navController: NavController) {
                         painter = painterResource(R.drawable.mi_frame_inspect),
                         tint = Theme.colors.primary,
                         primaryText = stringResource(R.string.screen_settings_behavior_focus_search_on_launch),
-                        enabled = Config.isUsingFocusSearch
+                        enabled = Config.isUsingFocusSearchOnLaunch
                     ) {
-                        Config.isUsingFocusSearch = !Config.isUsingFocusSearch
+                        Config.isUsingFocusSearchOnLaunch = !Config.isUsingFocusSearchOnLaunch
 
-                        Logger.i(TAG, "focus search set to ${Config.isUsingFocusSearch}")
+                        Logger.i(TAG, "focus search on launch set to ${Config.isUsingFocusSearchOnLaunch}")
 
                         Config.save(context)
                     }

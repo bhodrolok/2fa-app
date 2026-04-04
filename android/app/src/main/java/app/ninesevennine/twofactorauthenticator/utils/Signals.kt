@@ -10,4 +10,5 @@ object Signals {
     var checkEditAccountSome by mutableStateOf(false)
     var accountAdded by mutableStateOf(false)
     var suppressLockOnExit = false
+    var suppressFocusRequestOnLaunch = false
 }

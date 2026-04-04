@@ -323,8 +323,11 @@ private fun TopBar(
     var query by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
 
-    if (Config.isUsingFocusSearch) {
-        LaunchedEffect(Unit) { focusRequester.requestFocus() }
+    LaunchedEffect(Unit) {
+        if (Config.isUsingFocusSearchOnLaunch && !Signals.suppressFocusRequestOnLaunch) {
+            focusRequester.requestFocus()
+            Signals.suppressFocusRequestOnLaunch = true
+        }
     }
 
     val settingsInteractionSource = remember { MutableInteractionSource() }
@@ -520,8 +523,11 @@ private fun BottomBar(
     var query by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
 
-    if (Config.isUsingFocusSearch) {
-        LaunchedEffect(Unit) { focusRequester.requestFocus() }
+    LaunchedEffect(Unit) {
+        if (Config.isUsingFocusSearchOnLaunch && !Signals.suppressFocusRequestOnLaunch) {
+            focusRequester.requestFocus()
+            Signals.suppressFocusRequestOnLaunch = true
+        }
     }
 
     val settingsInteractionSource = remember { MutableInteractionSource() }
