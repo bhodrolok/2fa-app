@@ -246,15 +246,6 @@ fun Main(navController: NavController) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.desert),
-                    contentDescription = null,
-                    modifier = Modifier.size(96.dp),
-                    tint = Theme.colors.primary
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
                 Text(
                     text = stringResource(R.string.screen_main_greeting),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
