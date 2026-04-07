@@ -75,7 +75,7 @@ fun SetupAutomaticBackups(navController: NavController) {
     val scope = rememberCoroutineScope()
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().coerceAtLeast(16.dp)
+    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
 
     val isPassphraseValid = passphraseStrength > 0.5f
 
@@ -297,20 +297,25 @@ fun SetupAutomaticBackups(navController: NavController) {
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
         ) {
-            RoundedButtonClean(
-                modifier = Modifier.widthIn(max = 512.dp).fillMaxWidth().padding(bottomInset),
-                text = stringResource(R.string.common_button_continue_without)
+            Column(
+                modifier = Modifier.widthIn(max = 512.dp).fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (isLoading) return@RoundedButtonClean
+                RoundedButtonClean(
+                    modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = bottomInset),
+                    text = stringResource(R.string.common_button_continue_without)
+                ) {
+                    if (isLoading) return@RoundedButtonClean
 
-                Config.isUsingAutomaticBackups = false
+                    Config.isUsingAutomaticBackups = false
 
-                Logger.i(TAG, "automatic backups set to false")
+                    Logger.i(TAG, "automatic backups set to false")
 
-                Config.save(context)
+                    Config.save(context)
 
-                navController.navigate(GreetingRoute) {
-                    popUpTo(0) { inclusive = true }
+                    navController.navigate(GreetingRoute) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             }
         }

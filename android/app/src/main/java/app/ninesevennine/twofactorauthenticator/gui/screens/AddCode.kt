@@ -48,8 +48,8 @@ import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.QRCodeScanner
-import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
+import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.utils.ZXing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -84,7 +84,7 @@ fun AddCode(navController: NavController) {
 
     val shape = RoundedCornerShape(26.dp)
 
-    val navBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it > 16.dp) it else 16.dp }
+    val navBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
 
     val pickScope = rememberCoroutineScope()
     val pickImage = rememberLauncherForActivityResult(
@@ -147,7 +147,7 @@ fun AddCode(navController: NavController) {
         contentAlignment = Alignment.BottomCenter
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(navBarPadding),
+            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = navBarPadding),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {

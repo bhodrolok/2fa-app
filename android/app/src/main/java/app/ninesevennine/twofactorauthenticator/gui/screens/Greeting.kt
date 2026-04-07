@@ -88,7 +88,7 @@ fun Greeting(navController: NavController) {
     }
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().coerceAtLeast(16.dp)
+    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
 
     val promptTitle = stringResource(R.string.common_title_biometric_unlock)
     val promptNegative = stringResource(R.string.common_button_cancel)
@@ -318,18 +318,23 @@ fun Greeting(navController: NavController) {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomCenter
             ) {
-                RoundedButtonClean(
-                    modifier = Modifier.widthIn(max = 512.dp).fillMaxWidth().padding(bottomInset),
-                    text = BuildConfig.VERSION_NAME
+                Column(
+                    modifier = Modifier.widthIn(max = 512.dp).fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    if (versionNameTapsCount < 5) {
-                        versionNameTapsCount++
-                        return@RoundedButtonClean
-                    }
+                    RoundedButtonClean(
+                        modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = bottomInset),
+                        text = BuildConfig.VERSION_NAME
+                    ) {
+                        if (versionNameTapsCount < 5) {
+                            versionNameTapsCount++
+                            return@RoundedButtonClean
+                        }
 
-                    Signals.suppressLockOnExit = true
-                    Logger.i(TAG, "downloading app log")
-                    internalAppLogLauncher.launch("app.log")
+                        Signals.suppressLockOnExit = true
+                        Logger.i(TAG, "downloading app log")
+                        internalAppLogLauncher.launch("app.log")
+                    }
                 }
             }
         }

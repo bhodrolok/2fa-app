@@ -336,7 +336,7 @@ private fun TopBar(
     val isKeyboardOpen = keyboardPadding + 6.dp > 16.dp + 48.dp
 
     val topPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding().let { if (it > 16.dp) it + 6.dp else 16.dp }
-    val bottomPadding = if (isKeyboardOpen) keyboardPadding + 4.dp else 16.dp
+    val bottomPadding = if (isKeyboardOpen) keyboardPadding + 4.dp else WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
     val addPadding = if (isKeyboardOpen) {
         WindowInsets.displayCutout.asPaddingValues().let {
             PaddingValues(
@@ -535,7 +535,7 @@ private fun BottomBar(
     val keyboardPadding = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
     val isKeyboardOpen = keyboardPadding + 6.dp > navBarPadding + 48.dp
 
-    val bottomPadding = if (isKeyboardOpen) keyboardPadding + 4.dp else navBarPadding
+    val bottomPadding = if (isKeyboardOpen) keyboardPadding + 4.dp else WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
     val horizontalPadding = if (isKeyboardOpen) {
         WindowInsets.displayCutout.asPaddingValues().let {
             PaddingValues(
@@ -544,7 +544,7 @@ private fun BottomBar(
             )
         }
     } else {
-        PaddingValues(horizontal = navBarPadding)
+        PaddingValues(horizontal = 16.dp)
     }
 
     Box(
@@ -559,7 +559,7 @@ private fun BottomBar(
                     if(isKeyboardOpen) {
                         Modifier.padding(horizontalPadding)
                     } else {
-                        Modifier.padding(horizontal = navBarPadding)
+                        Modifier.padding(horizontal = 16.dp)
                     }
                 )
         ) {

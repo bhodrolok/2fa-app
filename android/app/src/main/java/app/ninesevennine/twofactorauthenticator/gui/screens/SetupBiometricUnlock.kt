@@ -59,7 +59,7 @@ fun SetupBiometricUnlock(navController: NavController) {
     }
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().coerceAtLeast(16.dp)
+    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
 
     val promptTitle = stringResource(R.string.common_title_confirm_biometrics)
     val promptNegative = stringResource(R.string.common_button_cancel)
@@ -163,15 +163,20 @@ fun SetupBiometricUnlock(navController: NavController) {
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
         ) {
-            RoundedButtonClean(
-                modifier = Modifier.widthIn(max = 512.dp).fillMaxWidth().padding(bottomInset),
-                text = stringResource(R.string.common_button_continue_without)
+            Column(
+                modifier = Modifier.widthIn(max = 512.dp).fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Config.isUsingBiometrics = false
+                RoundedButtonClean(
+                    modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = bottomInset),
+                    text = stringResource(R.string.common_button_continue_without)
+                ) {
+                    Config.isUsingBiometrics = false
 
-                Logger.i(TAG, "biometrics set to false")
+                    Logger.i(TAG, "biometrics set to false")
 
-                navController.navigate(SetupAutomaticBackupsRoute)
+                    navController.navigate(SetupAutomaticBackupsRoute)
+                }
             }
         }
     }

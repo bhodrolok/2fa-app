@@ -72,7 +72,7 @@ fun ExportAegis(navController: NavController) {
     var pendingExportData by remember { mutableStateOf<String?>(null) }
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().coerceAtLeast(16.dp)
+    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
 
     val isPassphraseValid = passphraseStrength > 0.5f
 

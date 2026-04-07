@@ -61,7 +61,7 @@ fun Settings(navController: NavController) {
     var versionNameTapsCount by remember { mutableIntStateOf(0) }
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().coerceAtLeast(16.dp)
+    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
 
     val currentLanguageDisplayName by remember { mutableStateOf(Locale.currentDisplayName()) }
     val currentThemeOption by remember { mutableStateOf(Theme.currentOption(context)) }

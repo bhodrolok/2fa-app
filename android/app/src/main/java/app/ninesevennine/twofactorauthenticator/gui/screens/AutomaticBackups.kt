@@ -73,7 +73,7 @@ fun AutomaticBackups(navController: NavController) {
     val scope = rememberCoroutineScope()
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().coerceAtLeast(16.dp)
+    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
 
     val promptTitle = stringResource(R.string.common_title_confirm_biometrics)
     val promptNegative = stringResource(R.string.common_button_cancel)
