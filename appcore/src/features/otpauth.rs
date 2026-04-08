@@ -32,7 +32,10 @@ pub struct AccountTruncated {
 }
 
 pub fn parse(url: &str) -> Option<Account> {
-    let url = Url::parse(&url).ok()?;
+    let url = match Url::parse(url) {
+        Ok(u) => u,
+        Err(_) => return None,
+    };
 
     if url.scheme() != "otpauth" {
         return None;
@@ -44,30 +47,32 @@ pub fn parse(url: &str) -> Option<Account> {
         _ => return None,
     };
 
-    let label = url.path().strip_prefix('/')?;
-    let label = percent_encoding::percent_decode_str(label)
-        .decode_utf8()
-        .ok()?;
-
-    let (issuer, name) = match label.split_once(':') {
-        Some((i, n)) => (i.to_string(), n.to_string()),
-        None => (label.to_string(), String::new()),
+    let raw_label = match url.path().strip_prefix('/') {
+        Some(l) => l,
+        None => return None,
     };
 
-    if issuer.to_lowercase() == "steam" {
-        code_type = CodeType::STEAM;
-    }
+    let label = match percent_encoding::percent_decode_str(raw_label).decode_utf8() {
+        Ok(l) => l,
+        Err(_) => return None,
+    };
+
+    let (label_issuer, name) = match label.split_once(':') {
+        Some((i, n)) => (i.to_string(), n.trim_start().to_string()),
+        None => (String::new(), label.to_string()),
+    };
 
     let mut secret_str = None;
     let mut algorithm = Algorithm::SHA1;
     let mut digits = 6;
     let mut counter = 0;
     let mut period = 30;
-    let mut param_issuer = None;
+    let mut issuer = label_issuer;
 
     for (key, value) in url.query_pairs() {
         match key.as_ref() {
             "secret" => secret_str = Some(value.into_owned()),
+            "issuer" => issuer = value.into_owned(),
             "algorithm" => {
                 algorithm = match value.to_uppercase().as_str() {
                     "SHA256" => Algorithm::SHA256,
@@ -75,27 +80,33 @@ pub fn parse(url: &str) -> Option<Account> {
                     _ => Algorithm::SHA1,
                 }
             }
-            "digits" => digits = value.parse().unwrap(),
-            "counter" => counter = value.parse().unwrap(),
-            "period" => period = value.parse().unwrap(),
-            "issuer" => param_issuer = Some(value.into_owned()),
+            "digits" => digits = value.parse().unwrap_or(digits),
+            "counter" => counter = value.parse().unwrap_or(counter),
+            "period" => period = value.parse().unwrap_or(period),
             _ => {}
         }
     }
 
-    if code_type == CodeType::STEAM {
-        period = 30;
+    if issuer.eq_ignore_ascii_case("steam") {
+        code_type = CodeType::STEAM;
         digits = 5;
+        period = 30;
     }
 
-    let secret = data_encoding::BASE32_NOPAD
-        .decode(secret_str?.to_uppercase().as_bytes())
-        .ok()?;
+    let secret_str = match secret_str {
+        Some(s) => s,
+        None => return None,
+    };
+
+    let secret = match data_encoding::BASE32_NOPAD.decode(secret_str.to_uppercase().as_bytes()) {
+        Ok(s) => s,
+        Err(_) => return None,
+    };
 
     Some(Account {
         id: getrandom::u64().unwrap_or(0),
         name,
-        issuer: param_issuer.unwrap_or(issuer),
+        issuer,
         note: String::new(),
         secret,
         code_type,
@@ -151,8 +162,8 @@ mod tests {
             (
                 "otpauth://hotp/MyIssuer?secret=JBSWY3DPEHPK3PXP&counter=1",
                 CodeType::HOTP,
-                "MyIssuer",
                 "",
+                "MyIssuer",
                 Algorithm::SHA1,
                 6,
                 30,
