@@ -1,7 +1,7 @@
 package app.ninesevennine.twofactorauthenticator
 
 import android.app.Application
-import app.ninesevennine.twofactorauthenticator.features.Config
+import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.PrivateApi
 

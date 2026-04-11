@@ -31,13 +31,15 @@
 
 All accounts are encrypted and stored in the app's internal directory using our own format (extension `.2fa`). This format is the same whether the file is used internally or for exports. The only difference between them is where the cipher key comes from.
 
-Currently they're encrypted using XChaCha20-Poly1305 with plans of switching to AEGIS-256. For exports and automatic backups, cipher keys are derived from hashing your passphrase with Argon2id using some very aggressive parameters, but we also enforce a minimum passphrase strength, and even the weakest passphrase we allow would take centuries to crack.
+Accounts are encrypted using AEGIS-256. For exports and automatic backups, cipher keys are derived from hashing your passphrase with Argon2id using some very aggressive parameters, but we also enforce a minimum passphrase strength, and even the weakest passphrase we allow would take centuries to crack.
 
-The cipher key that decrypts your accounts when you open the app doesn't come from a passphrase. During setup, you move your finger across the screen to generate entropy. We mix that with two independent calls to the OS cryptographic random number generator and run it all through SHA3-512 to produce two keys: one for accounts and one for your automatic backups. These two keys are stored together in what we call a **ClientSecret**. Both are generated at the same time, so the ClientSecret is never left partially filled with zeros. If you later choose to enable automatic backups with a passphrase, only the backup key gets overridden.
+The cipher key that decrypts your accounts when you open the app doesn't come from a passphrase. During setup, you move your finger across the screen to generate entropy. We hash that entropy with SHA3-512 to produce your accounts key, then hash the result again with SHA3-512 to produce your automatic backups key. These two keys are stored together in what we call a ClientSecret. Both are derived in a single operation before anything is written, so the ClientSecret is never left partially filled with zeros. If you later choose to enable automatic backups with a passphrase, only the backup key gets overridden.
+
+When the app encrypts or decrypts the internal accounts file, it doesn't use the ClientSecret keys directly. Each key is 512 bits, twice what AEGIS-256 needs, giving the system more headroom than the cipher alone. The key is run through HKDF-SHA3-512 with a fresh random salt and a version-specific label to produce the 256-bit key and nonce for that specific file. The salt is stored alongside the file so it can be re-derived on decryption. This guarantees that no two files ever share the same key and nonce pair, even when they come from the same ClientSecret.
 
 Of course the ClientSecret has to be stored somewhere. We encrypt it with AES-GCM, the most secure cipher available on the Android KeyStore, and try to generate the largest key possible on the Secure Element. If that fails, we step down in key size, and if the Secure Element isn't available at all, we repeat the process for the Trusted Execution Environment.
 
-In the KeyStore generation process, if you're using biometrics, some special flags are set that can invalidate your key. This can happen if your lock screen changes, your private spaces change, your device updates, or if the app hasn't been opened in a while. 
+In the KeyStore generation process, if you're using biometrics, some special flags are set that can invalidate your key. This can happen if your lock screen changes, your private spaces change, your device updates, or if the app hasn't been opened in a while.
 
 These conditions depend on your device's software and firmware and might not always trigger. If your key is invalidated, the ClientSecret becomes permanently inaccessible. This is why we strongly recommend enabling automatic backups. They use the same `.2fa` format, sit in the same internal directory, but are encrypted with a passphrase you choose. If your key is ever invalidated, this is how you get your accounts back. Without an automatic backup or a previously exported backup, your accounts are gone. This is by design.
 
@@ -49,7 +51,7 @@ On top of that, we added a few features to keep your data from leaking in ways y
 
 - **Lock on Exit:** When the app goes into the background, we securely erase the ClientSecret and all your account names, issuers, notes, and secrets from memory. This means you'll have to re-authenticate every time you open the app.
 
-- **Block Intents:** On Android, other apps can send data into yours, like sharing an image or a link. We use this to let you add accounts by sharing QR code images or `otpauth://` links from other apps. The image decoding and QR parsing are handled by Android and ZXing, respectively, not by us. If an exploit exists in either of those, a malicious app could craft data specifically to trigger it. Enabling this drops all incoming data from other apps entirely, closing that attack surface at the cost of not being able to share into 2fa. We eventually want to replace both the image decoding and QR parsing with our own Rust implementations.
+- **Block Intents:** On Android, other apps can send data into yours, like sharing an image or a link. We use this to let you add accounts by sharing QR code images or OTPAuth links from other apps. The image decoding and QR parsing are handled by Android and ZXing, respectively, not by us. If an exploit exists in either of those, a malicious app could craft data specifically to trigger it. Enabling this drops all incoming data from other apps entirely, closing that attack surface at the cost of not being able to share into 2fa. We eventually want to replace both the image decoding and QR parsing with our own Rust implementations.
 
 ### Verifying Releases
 
@@ -63,9 +65,9 @@ e5b28ea1e051c232dea94c27c0592e2c002d17c5ca81788b51306d608afe52c5
 
 We have a lot planned for 2026, though none of this is set in stone, and things might change along the way.
 
-- **1.0** We are here
-- **1.1** External QR scanner support
-- **1.2** FIDO2 Unlock
+- **1.0** Google Play Store release
+- **1.1** QR scanning via intents
+- **1.2** Unlock modes (Passphrase, Hardware keys)
 - **1.3** Sync and cloud backups
 - **1.4** iOS
 

@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.features.Config
+import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
@@ -150,7 +150,13 @@ fun BiometricUnlock(navController: NavController) {
                                     KeyStoreAES.saveSecret(
                                         title = biometricUnlockText,
                                         negative = cancelText,
-                                        secret = if (Config.hasMigratedToSecret002) Entry.rustInterface.getSecret002() else Entry.rustInterface.getSecret001(),
+                                        secret = if (Config.hasMigratedToSecret003) {
+                                            Entry.rustInterface.getSecret003()
+                                        } else if (Config.hasMigratedToSecret002) {
+                                            Entry.rustInterface.getSecret002()
+                                        } else {
+                                            Entry.rustInterface.getSecret001()
+                                        },
                                         onSuccess = {
                                             Logger.i(TAG, "biometrics set to false")
 
@@ -195,7 +201,13 @@ fun BiometricUnlock(navController: NavController) {
                                     KeyStoreAES.saveSecret(
                                         title = biometricUnlockText,
                                         negative = cancelText,
-                                        secret = if (Config.hasMigratedToSecret002) Entry.rustInterface.getSecret002() else Entry.rustInterface.getSecret001(),
+                                        secret = if (Config.hasMigratedToSecret003) {
+                                            Entry.rustInterface.getSecret003()
+                                        } else if (Config.hasMigratedToSecret002) {
+                                            Entry.rustInterface.getSecret002()
+                                        } else {
+                                            Entry.rustInterface.getSecret001()
+                                        },
                                         onSuccess = {
                                             Logger.i(TAG, "biometrics set to true")
 

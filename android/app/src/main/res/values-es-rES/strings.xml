@@ -14,9 +14,9 @@
     <string name="common_description_biometric_unlock_unsupported">Es posible que el desbloqueo biométrico no sea compatible con este dispositivo. Asegúrate de tener la biometría configurada en los ajustes de tu dispositivo.</string>
     <string name="common_import_description">Estás importando cuentas desde \"%s\". Esto sobrescribirá las cuentas coincidentes y agregará las que falten.</string>
     <string name="common_import_error_incorrect_passphrase">Frase de contraseña incorrecta</string>
+    <string name="common_import_error_incorrect_version">Versión incorrecta</string>
     <string name="common_import_error_invalid">Archivo no válido</string>
     <string name="common_import_error_no_accounts">No hay cuentas para importar</string>
-    <string name="common_import_error_outdated">Versión desactualizada</string>
     <string name="common_title_automatic_backups">Copias de Seguridad Automáticas</string>
     <string name="common_title_biometric_unlock">Desbloqueo Biométrico</string>
     <string name="common_title_confirm_biometrics">Confirmar Biometría</string>
@@ -67,9 +67,9 @@
     <string name="screen_greeting_description_something_wrong">No pudimos descifrar tus cuentas porque las credenciales proporcionadas son incorrectas. Por favor, reinicia la aplicación e inténtalo de nuevo.</string>
     <string name="screen_greeting_title_invalidated">Claves de Descifrado Invalidadas</string>
     <string name="screen_greeting_title_something_wrong">Algo salió mal</string>
-    <string name="screen_initialize_encryption_keys_description">Mueve tu dedo aleatoriamente por la pantalla. Cuanto más tiempo lo muevas, más fuertes serán las claves de cifrado resultantes. Este visualizador simplemente ilustra el proceso de generación de entropía. No revela datos sensibles y no puede usarse para derivar tus claves.</string>
+    <string name="screen_initialize_encryption_keys_description">Mueve el dedo por la pantalla de la forma más aleatoria posible. Cuanto más tiempo lo muevas, mejor. Esto aumenta significativamente la seguridad criptográfica de las claves de cifrado.</string>
+    <string name="screen_initialize_encryption_keys_pseudo_pool">Pseudo Pool</string>
     <string name="screen_initialize_encryption_keys_title">Inicializar Claves de Cifrado</string>
-    <string name="screen_initialize_encryption_keys_visualizer">Visualizador</string>
     <string name="screen_main_greeting">Toca el icono de agregar en la esquina inferior para añadir una cuenta. También puedes importar cuentas desde otras aplicaciones de autenticación en Ajustes.</string>
     <string name="screen_main_no_matching_were_found">No se encontraron cuentas coincidentes</string>
     <string name="screen_main_search">Buscar</string>

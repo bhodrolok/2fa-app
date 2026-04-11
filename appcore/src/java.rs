@@ -1,8 +1,7 @@
 use crate::{
     CLIENT,
-    client::{CLIENT_SECRET_001_SIZE, CLIENT_SECRET_002_SIZE},
+    client::{CLIENT_SECRET_001_SIZE, CLIENT_SECRET_002_SIZE, CLIENT_SECRET_003_LEN},
     features::codegen::{Algorithm, CodeType},
-    management::XCHACHA20_KEY_NONCE_SIZE,
 };
 use jni::{
     EnvUnowned,
@@ -37,35 +36,17 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let len = entropy_array.len(env).unwrap();
         let mut entropy_vec = vec![0i32; len];
         entropy_array.get_region(env, 0, &mut entropy_vec).unwrap();
-
         let entropy: Vec<u8> = entropy_vec.iter().flat_map(|v| v.to_le_bytes()).collect();
 
-        let mut random1 = [0u8; 32];
-        let mut random2 = [0u8; 32];
-
-        getrandom::fill(&mut random1).unwrap();
-        getrandom::fill(&mut random2).unwrap();
-
-        let mut hasher1 = Sha3_512::new();
-        let mut hasher2 = Sha3_512::new();
-
-        hasher1.update(&entropy);
-        hasher2.update(&entropy);
-
-        hasher1.update(&random1);
-        hasher2.update(&random2);
+        let first = Sha3_512::digest(&entropy);
+        let second = Sha3_512::digest(&first);
 
         let mut client = CLIENT.lock().unwrap();
-
+        client.secret003.key.copy_from_slice(&first);
         client
-            .secret002
-            .key
-            .copy_from_slice(&hasher1.finalize()[..XCHACHA20_KEY_NONCE_SIZE]);
-
-        client
-            .secret002
+            .secret003
             .automatic_backups_key
-            .copy_from_slice(&hasher2.finalize()[..XCHACHA20_KEY_NONCE_SIZE]);
+            .copy_from_slice(&second);
 
         Ok(())
     });
@@ -112,6 +93,26 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setAutomaticBackupsPassphrase003(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+    salt: JByteArray,
+    passphrase: JString,
+) {
+    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
+        let salt = env.convert_byte_array(&salt).unwrap();
+        let passphrase: String = passphrase.to_string();
+
+        let mut client = CLIENT.lock().unwrap();
+        client.set_automatic_backups003(&salt, &passphrase);
+
+        Ok(())
+    });
+
+    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
+}
+
+#[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_getSecret001(
     mut unowned_env: EnvUnowned,
     _class: JClass,
@@ -139,6 +140,26 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
         let client = CLIENT.lock().unwrap();
         let secret = client.get_secret002();
+
+        let output = env.new_byte_array(secret.len()).unwrap();
+
+        let secret_i8: Vec<i8> = secret.iter().map(|b| *b as i8).collect();
+        output.set_region(env, 0, &secret_i8).unwrap();
+
+        Ok(output.into_raw())
+    });
+
+    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_getSecret003(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+) -> jbyteArray {
+    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
+        let client = CLIENT.lock().unwrap();
+        let secret = client.get_secret003();
 
         let output = env.new_byte_array(secret.len()).unwrap();
 
@@ -204,6 +225,32 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setSecret003(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+    secret_array: JByteArray,
+) {
+    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
+        let len = secret_array.len(env).unwrap();
+        let mut secret_vec = vec![0i8; len];
+
+        secret_array.get_region(env, 0, &mut secret_vec).unwrap();
+
+        let secret_bytes: Vec<u8> = secret_vec.iter().map(|b| *b as u8).collect();
+
+        let mut secret = [0u8; CLIENT_SECRET_003_LEN];
+        secret.copy_from_slice(&secret_bytes);
+
+        let mut client = CLIENT.lock().unwrap();
+        client.set_secret003(&secret);
+
+        Ok(())
+    });
+
+    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
+}
+
+#[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_isClientSecretEmpty(
     mut unowned_env: EnvUnowned,
     _class: JClass,
@@ -212,8 +259,9 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let client = CLIENT.lock().unwrap();
         let s1 = client.get_secret001();
         let s2 = client.get_secret002();
+        let s3 = client.get_secret003();
 
-        if s1.iter().all(|b| *b == 0) && s2.iter().all(|b| *b == 0) {
+        if s1.iter().all(|b| *b == 0) && s2.iter().all(|b| *b == 0) && s3.iter().all(|b| *b == 0) {
             Ok(JNI_TRUE)
         } else {
             Ok(JNI_FALSE)
@@ -820,6 +868,22 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_exportAccountsUsingKey003(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+) -> jstring {
+    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
+        let client = CLIENT.lock().unwrap();
+        Ok(env
+            .new_string(client.export_accounts_using_key_003())
+            .unwrap()
+            .into_raw())
+    });
+
+    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
+}
+
+#[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_exportAccountsUsingAutomaticBackupsKey001(
     mut unowned_env: EnvUnowned,
     _class: JClass,
@@ -849,6 +913,26 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
         Ok(env
             .new_string(client.export_accounts_using_automatic_backups_key_002(&salt))
+            .unwrap()
+            .into_raw())
+    });
+
+    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_exportAccountsUsingAutomaticBackupsKey003(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+    salt: JByteArray,
+) -> jstring {
+    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
+        let salt = env.convert_byte_array(&salt).unwrap();
+
+        let client = CLIENT.lock().unwrap();
+
+        Ok(env
+            .new_string(client.export_accounts_using_automatic_backups_key_003(&salt))
             .unwrap()
             .into_raw())
     });
@@ -920,6 +1004,41 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let mut client = CLIENT.lock().unwrap();
 
         Ok(client.import_accounts_using_key_002(&data))
+    });
+
+    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_importAccountsUsingKey003(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+    data: JString,
+) -> jint {
+    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
+        let data: String = data.to_string();
+        let mut client = CLIENT.lock().unwrap();
+
+        Ok(client.import_accounts_using_key_003(&data))
+    });
+
+    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_importAccountsUsingAutomaticBackupsKey003(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+    passphrase: JString,
+    data: JString,
+) -> jint {
+    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
+        let passphrase: String = passphrase.to_string();
+        let data: String = data.to_string();
+
+        let mut client = CLIENT.lock().unwrap();
+
+        Ok(client.import_accounts_using_automatic_backups_key_003(&passphrase, &data))
     });
 
     outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()

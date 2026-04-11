@@ -47,8 +47,8 @@ import app.ninesevennine.twofactorauthenticator.Algorithm
 import app.ninesevennine.twofactorauthenticator.CodeType
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.features.AccountManagement
-import app.ninesevennine.twofactorauthenticator.features.Config
+import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
+import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.gui.elements.EditHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.OtpCardNormal

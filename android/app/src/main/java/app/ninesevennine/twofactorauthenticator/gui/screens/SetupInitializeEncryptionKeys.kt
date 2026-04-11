@@ -69,7 +69,7 @@ fun SetupInitializeEncryptionKeys(navController: NavController) {
     val entropyPoints = remember { mutableStateListOf<Pair<Int, Int>>() }
 
     val alphabet = "* .-,+/"
-    var pseudoSeed by remember { mutableStateOf("·".repeat(400)) }
+    var pseudoPool by remember { mutableStateOf("·".repeat(400)) }
 
     BackHandler(enabled = isLoading) {
         // intercept the system back button when loading.
@@ -85,7 +85,7 @@ fun SetupInitializeEncryptionKeys(navController: NavController) {
                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     view.playSoundEffect(SoundEffectConstants.CLICK)
 
-                    pseudoSeed = buildString {
+                    pseudoPool = buildString {
                         repeat(400) { append(alphabet.random()) }
                     }
 
@@ -107,7 +107,7 @@ fun SetupInitializeEncryptionKeys(navController: NavController) {
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp).fillMaxWidth()
             ) {
                 Text(
-                    text = stringResource(R.string.screen_initialize_encryption_keys_visualizer),
+                    text = stringResource(R.string.screen_initialize_encryption_keys_pseudo_pool),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
@@ -126,7 +126,7 @@ fun SetupInitializeEncryptionKeys(navController: NavController) {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = pseudoSeed,
+                        text = pseudoPool,
                         modifier = Modifier.padding(horizontal = 12.dp),
                         color = Theme.colors.primary,
                         fontSize = 14.sp,

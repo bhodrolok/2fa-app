@@ -42,8 +42,8 @@ import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.BuildConfig
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.features.AccountManagement
-import app.ninesevennine.twofactorauthenticator.features.Config
+import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
+import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
@@ -128,7 +128,9 @@ fun Greeting(navController: NavController) {
                 negative = promptNegative,
                 onSuccess = { secret ->
                     scope.launch(Dispatchers.IO) {
-                        if (Config.hasMigratedToSecret002) {
+                        if (Config.hasMigratedToSecret003) {
+                            Entry.rustInterface.setSecret003(secret)
+                        } else if (Config.hasMigratedToSecret002) {
                             Entry.rustInterface.setSecret002(secret)
                         } else {
                             Entry.rustInterface.setSecret001(secret)
@@ -158,7 +160,7 @@ fun Greeting(navController: NavController) {
             KeyStoreAES.saveSecret(
                 title = promptTitle,
                 negative = promptNegative,
-                secret = Entry.rustInterface.getSecret002(),
+                secret = Entry.rustInterface.getSecret003(),
                 onSuccess = {
                     scope.launch(Dispatchers.IO) {
                         Config.hasCompletedSetup = true

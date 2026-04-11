@@ -41,8 +41,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.features.AccountManagement
-import app.ninesevennine.twofactorauthenticator.features.Config
+import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
+import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
@@ -170,7 +170,7 @@ fun SetupAutomaticBackups(navController: NavController) {
                             text = when (recoveryErrorCode) {
                                 AccountManagement.IMPORT_ERROR_NO_ACCOUNTS -> stringResource(R.string.common_import_error_no_accounts)
                                 AccountManagement.IMPORT_ERROR_INCORRECT_PASSPHRASE -> stringResource(R.string.common_import_error_incorrect_passphrase)
-                                AccountManagement.IMPORT_ERROR_OUTDATED_VERSION -> stringResource(R.string.common_import_error_outdated)
+                                AccountManagement.IMPORT_ERROR_INCORRECT_VERSION -> stringResource(R.string.common_import_error_incorrect_version)
                                 AccountManagement.IMPORT_ERROR_INVALID_FILE -> stringResource(R.string.common_import_error_invalid)
                                 else -> "Unknown error"
                             },
@@ -200,16 +200,19 @@ fun SetupAutomaticBackups(navController: NavController) {
                                 return@launch
                             }
 
-                            val result = Entry.rustInterface.importAccounts(passphrase, data)
+                            var result = Entry.rustInterface.importAccountsUsingAutomaticBackupsKey003(passphrase, data)
+                            if (result == AccountManagement.IMPORT_ERROR_INCORRECT_VERSION) {
+                                result = Entry.rustInterface.importAccounts(passphrase, data)
+                            }
 
                             if (result > 0) {
                                 Logger.i(TAG, "successfully recovered $result account(s)")
 
                                 AccountManagement.saveAccountsUsingKey(context)
 
-                                val salt = ByteArray(32).also { SecureRandom().nextBytes(it) }
-                                Entry.rustInterface.setAutomaticBackupsPassphrase002(salt, passphrase)
-                                Config.automaticBackupsSalt = Base64.encodeToString(salt, Base64.NO_WRAP)
+                                val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
+                                Entry.rustInterface.setAutomaticBackupsPassphrase003(salt, passphrase)
+                                Config.automaticBackupsSalt = Base64.encodeToString(salt, Base64.DEFAULT)
 
                                 Config.isUsingAutomaticBackups = true
 
@@ -269,9 +272,9 @@ fun SetupAutomaticBackups(navController: NavController) {
                             isLoading = true
 
                             scope.launch(Dispatchers.IO) {
-                                val salt = ByteArray(32).also { SecureRandom().nextBytes(it) }
-                                Entry.rustInterface.setAutomaticBackupsPassphrase002(salt, passphrase)
-                                Config.automaticBackupsSalt = Base64.encodeToString(salt, Base64.NO_WRAP)
+                                val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
+                                Entry.rustInterface.setAutomaticBackupsPassphrase003(salt, passphrase)
+                                Config.automaticBackupsSalt = Base64.encodeToString(salt, Base64.DEFAULT)
 
                                 Config.isUsingAutomaticBackups = true
 

@@ -14,9 +14,9 @@
     <string name="common_description_biometric_unlock_unsupported">Биометрическая разблокировка может не поддерживаться на этом устройстве. Убедитесь, что биометрия настроена в настройках вашего устройства.</string>
     <string name="common_import_description">Вы импортируете аккаунты из \"%s\". Это перезапишет совпадающие аккаунты и добавит отсутствующие.</string>
     <string name="common_import_error_incorrect_passphrase">Неверная парольная фраза</string>
+    <string name="common_import_error_incorrect_version">Неверная версия</string>
     <string name="common_import_error_invalid">Недопустимый файл</string>
     <string name="common_import_error_no_accounts">Нет аккаунтов для импорта</string>
-    <string name="common_import_error_outdated">Устаревшая версия</string>
     <string name="common_title_automatic_backups">Автоматическое Резервное Копирование</string>
     <string name="common_title_biometric_unlock">Биометрическая Разблокировка</string>
     <string name="common_title_confirm_biometrics">Подтвердить Биометрию</string>
@@ -67,9 +67,9 @@
     <string name="screen_greeting_description_something_wrong">Не удалось расшифровать ваши аккаунты, так как предоставленные учётные данные неверны. Пожалуйста, перезапустите приложение и попробуйте снова.</string>
     <string name="screen_greeting_title_invalidated">Ключи Дешифрования Аннулированы</string>
     <string name="screen_greeting_title_something_wrong">Что-то пошло не так</string>
-    <string name="screen_initialize_encryption_keys_description">Перемещайте палец по экрану в случайном порядке. Чем дольше вы его перемещаете, тем надёжнее становятся создаваемые ключи шифрования. Этот визуализатор лишь иллюстрирует процесс генерации энтропии. Он не раскрывает конфиденциальные данные и не может быть использован для получения ваших ключей.</string>
+    <string name="screen_initialize_encryption_keys_description">Двигайте пальцем по экрану как можно более хаотично. Чем дольше вы двигаете, тем лучше. Это значительно повышает криптографическую стойкость ключей шифрования.</string>
+    <string name="screen_initialize_encryption_keys_pseudo_pool">Псевдо-Пул</string>
     <string name="screen_initialize_encryption_keys_title">Инициализировать Ключи Шифрования</string>
-    <string name="screen_initialize_encryption_keys_visualizer">Визуализатор</string>
     <string name="screen_main_greeting">Нажмите на значок добавления в нижнем углу, чтобы добавить аккаунт. Вы также можете импортировать аккаунты из других приложений-аутентификаторов в Настройках.</string>
     <string name="screen_main_no_matching_were_found">Совпадающие аккаунты не найдены</string>
     <string name="screen_main_search">Поиск</string>

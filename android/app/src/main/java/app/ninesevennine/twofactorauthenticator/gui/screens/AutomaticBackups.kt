@@ -40,8 +40,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.features.AccountManagement
-import app.ninesevennine.twofactorauthenticator.features.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
@@ -50,6 +48,8 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
+import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
+import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -196,14 +196,20 @@ fun AutomaticBackups(navController: NavController) {
                             isLoading = true
 
                             scope.launch(Dispatchers.IO) {
-                                val oldSecret = if (Config.hasMigratedToSecret002) {
+                                val oldSecret = if (Config.hasMigratedToSecret003) {
+                                    Entry.rustInterface.getSecret003()
+                                } else if (Config.hasMigratedToSecret002) {
                                     Entry.rustInterface.getSecret002()
                                 } else {
                                     Entry.rustInterface.getSecret001()
                                 }
 
-                                if (Config.hasMigratedToSecret002) {
-                                    val salt = ByteArray(32).also { SecureRandom().nextBytes(it) }
+                                if (Config.hasMigratedToSecret003) {
+                                    val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
+                                    Entry.rustInterface.setAutomaticBackupsPassphrase003(salt, passphrase)
+                                    Config.automaticBackupsSalt = Base64.encodeToString(salt, Base64.DEFAULT)
+                                } else if (Config.hasMigratedToSecret002) {
+                                    val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
                                     Entry.rustInterface.setAutomaticBackupsPassphrase002(salt, passphrase)
                                     Config.automaticBackupsSalt = Base64.encodeToString(salt, Base64.NO_WRAP)
                                 } else {
@@ -214,7 +220,13 @@ fun AutomaticBackups(navController: NavController) {
                                     KeyStoreAES.saveSecret(
                                         title = promptTitle,
                                         negative = promptNegative,
-                                        secret = if (Config.hasMigratedToSecret002) Entry.rustInterface.getSecret002() else Entry.rustInterface.getSecret001(),
+                                        secret = if (Config.hasMigratedToSecret003) {
+                                            Entry.rustInterface.getSecret003()
+                                        } else if (Config.hasMigratedToSecret002) {
+                                            Entry.rustInterface.getSecret002()
+                                        } else {
+                                            Entry.rustInterface.getSecret001()
+                                        },
                                         onSuccess = {
                                             AccountManagement.saveAccountsUsingAutomaticBackupsKey(context)
 
@@ -227,7 +239,9 @@ fun AutomaticBackups(navController: NavController) {
                                             navController.popBackStack()
                                         },
                                         onError = {
-                                            if (Config.hasMigratedToSecret002) {
+                                            if (Config.hasMigratedToSecret003) {
+                                                Entry.rustInterface.setSecret003(oldSecret)
+                                            } else if (Config.hasMigratedToSecret002) {
                                                 Entry.rustInterface.setSecret002(oldSecret)
                                             } else {
                                                 Entry.rustInterface.setSecret001(oldSecret)
@@ -235,7 +249,9 @@ fun AutomaticBackups(navController: NavController) {
                                             isLoading = false
                                         },
                                         onCancel = {
-                                            if (Config.hasMigratedToSecret002) {
+                                            if (Config.hasMigratedToSecret003) {
+                                                Entry.rustInterface.setSecret003(oldSecret)
+                                            } else if (Config.hasMigratedToSecret002) {
                                                 Entry.rustInterface.setSecret002(oldSecret)
                                             } else {
                                                 Entry.rustInterface.setSecret001(oldSecret)

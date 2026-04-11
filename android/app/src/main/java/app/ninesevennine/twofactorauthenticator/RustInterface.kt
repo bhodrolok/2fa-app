@@ -11,10 +11,13 @@ class RustInterface {
     external fun generateClientSecretWithEntropy(entropyArray: IntArray)
     external fun setAutomaticBackupsPassphrase001(passphrase: String)
     external fun setAutomaticBackupsPassphrase002(salt: ByteArray, passphrase: String)
+    external fun setAutomaticBackupsPassphrase003(salt: ByteArray, passphrase: String)
     external fun getSecret001(): ByteArray
     external fun getSecret002(): ByteArray
+    external fun getSecret003(): ByteArray
     external fun setSecret001(secretArray: ByteArray)
     external fun setSecret002(secretArray: ByteArray)
+    external fun setSecret003(secret: ByteArray)
     external fun isClientSecretEmpty(): Boolean
 
     external fun setEditAccountEmpty()
@@ -44,12 +47,16 @@ class RustInterface {
 
     external fun exportAccountsUsingSeed001(): String
     external fun exportAccountsUsingKey002(): String
+    external fun exportAccountsUsingKey003(): String
     external fun exportAccountsUsingAutomaticBackupsKey001(): String
     external fun exportAccountsUsingAutomaticBackupsKey002(salt: ByteArray): String
+    external fun exportAccountsUsingAutomaticBackupsKey003(salt: ByteArray): String
     external fun exportAccounts(passphrase: String): String
     external fun exportAccountsAegis(passphrase: String): String
     external fun importAccountsUsingSeed001(data: String): Int
     external fun importAccountsUsingKey002(data: String): Int
+    external fun importAccountsUsingKey003(data: String): Int
+    external fun importAccountsUsingAutomaticBackupsKey003(passphrase: String, data: String): Int
     external fun importAccounts(passphrase: String, data: String): Int
     external fun importAccountsAegis(passphrase: String, data: String): Boolean
 

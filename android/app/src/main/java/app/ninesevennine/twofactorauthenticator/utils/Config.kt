@@ -1,10 +1,16 @@
-package app.ninesevennine.twofactorauthenticator.features
+package app.ninesevennine.twofactorauthenticator.utils
 
 import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import app.ninesevennine.twofactorauthenticator.features.IconPacks
+import app.ninesevennine.twofactorauthenticator.features.IconPacksStyle
+import app.ninesevennine.twofactorauthenticator.features.Locale
+import app.ninesevennine.twofactorauthenticator.features.LocaleOption
+import app.ninesevennine.twofactorauthenticator.features.Theme
+import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.screens.OtpCardStyle
 
 object Config {
@@ -12,6 +18,8 @@ object Config {
     private const val KEY_LOCALE = "locale"
     private const val KEY_THEME = "theme"
 
+    var hasSeenVulnerabilityMessage: Boolean = false
+    var hasMigratedToSecret003: Boolean = false
     var hasMigratedToSecret002: Boolean = false
     var hasCompletedSetup: Boolean = false
     var automaticBackupsSalt: String = ""
@@ -44,6 +52,7 @@ object Config {
         Locale.set(context, locale)
         Theme.set(context, theme)
 
+        hasMigratedToSecret003 = prefs.getBoolean("has_migrated_to_secret_003", false)
         hasMigratedToSecret002 = prefs.getBoolean("has_migrated_to_secret_002", false)
         hasCompletedSetup = prefs.getBoolean("has_completed_setup", false)
         automaticBackupsSalt = prefs.getString("automatic_backups_salt", "") ?: ""
@@ -71,6 +80,7 @@ object Config {
         prefs.edit().apply {
             putString(KEY_LOCALE, Locale.localeOption.tag)
             putInt(KEY_THEME, Theme.themeOption.value)
+            putBoolean("has_migrated_to_secret_003", hasMigratedToSecret003)
             putBoolean("has_migrated_to_secret_002", hasMigratedToSecret002)
             putBoolean("has_completed_setup", hasCompletedSetup)
             putString("automatic_backups_salt", automaticBackupsSalt)

@@ -20,9 +20,20 @@ pub struct ClientSecret002 {
 
 pub const CLIENT_SECRET_002_SIZE: usize = XCHACHA20_KEY_NONCE_SIZE + XCHACHA20_KEY_NONCE_SIZE;
 
+pub const CLIENT_SECRET_003_KEY_LEN: usize = 64;
+pub const CLIENT_SECRET_003_AUTOMATIC_BACKUPS_KEY_LEN: usize = 64;
+pub const CLIENT_SECRET_003_LEN: usize =
+    CLIENT_SECRET_003_KEY_LEN + CLIENT_SECRET_003_AUTOMATIC_BACKUPS_KEY_LEN;
+
+pub struct ClientSecret003 {
+    pub key: [u8; CLIENT_SECRET_003_KEY_LEN],
+    pub automatic_backups_key: [u8; CLIENT_SECRET_003_AUTOMATIC_BACKUPS_KEY_LEN],
+}
+
 pub struct Client {
     pub secret001: ClientSecret001,
     pub secret002: ClientSecret002,
+    pub secret003: ClientSecret003,
     pub edit: Option<Account>,
     pub accounts: Vec<Account>,
 }
@@ -35,6 +46,9 @@ impl Client {
 
         self.secret002.key.zeroize();
         self.secret002.automatic_backups_key.zeroize();
+
+        self.secret003.key.zeroize();
+        self.secret003.automatic_backups_key.zeroize();
 
         if let Some(edit) = &mut self.edit {
             edit.secret.zeroize();
@@ -85,6 +99,21 @@ impl Client {
             .unwrap();
     }
 
+    pub fn set_automatic_backups003(&mut self, salt: &[u8], passphrase: &str) {
+        // m: 256 MiB t: 4 p: 2
+        let params = argon2::Params::new(256 * 1024, 4, 2, None).unwrap();
+        let argon2 =
+            argon2::Argon2::new(argon2::Algorithm::Argon2id, argon2::Version::V0x13, params);
+
+        argon2
+            .hash_password_into(
+                passphrase.as_bytes(),
+                salt,
+                &mut self.secret003.automatic_backups_key,
+            )
+            .unwrap();
+    }
+
     pub fn get_secret001(&self) -> [u8; CLIENT_SECRET_001_SIZE] {
         let mut secret = [0u8; CLIENT_SECRET_001_SIZE];
         let s = &self.secret001;
@@ -101,6 +130,15 @@ impl Client {
 
         out[..XCHACHA20_KEY_NONCE_SIZE].copy_from_slice(&self.secret002.key);
         out[XCHACHA20_KEY_NONCE_SIZE..].copy_from_slice(&self.secret002.automatic_backups_key);
+
+        out
+    }
+
+    pub fn get_secret003(&self) -> [u8; CLIENT_SECRET_003_LEN] {
+        let mut out = [0u8; CLIENT_SECRET_003_LEN];
+
+        out[..CLIENT_SECRET_003_KEY_LEN].copy_from_slice(&self.secret003.key);
+        out[CLIENT_SECRET_003_KEY_LEN..].copy_from_slice(&self.secret003.automatic_backups_key);
 
         out
     }
@@ -122,6 +160,16 @@ impl Client {
         self.secret002
             .automatic_backups_key
             .copy_from_slice(&secret[XCHACHA20_KEY_NONCE_SIZE..]);
+    }
+
+    pub fn set_secret003(&mut self, secret: &[u8; CLIENT_SECRET_003_LEN]) {
+        self.secret003
+            .key
+            .copy_from_slice(&secret[..CLIENT_SECRET_003_KEY_LEN]);
+
+        self.secret003
+            .automatic_backups_key
+            .copy_from_slice(&secret[CLIENT_SECRET_003_KEY_LEN..]);
     }
 
     pub fn set_edit_account_empty(&mut self) {
@@ -333,6 +381,10 @@ impl Default for Client {
             secret002: ClientSecret002 {
                 key: [0u8; XCHACHA20_KEY_NONCE_SIZE],
                 automatic_backups_key: [0u8; XCHACHA20_KEY_NONCE_SIZE],
+            },
+            secret003: ClientSecret003 {
+                key: [0u8; CLIENT_SECRET_003_KEY_LEN],
+                automatic_backups_key: [0u8; CLIENT_SECRET_003_AUTOMATIC_BACKUPS_KEY_LEN],
             },
             edit: None,
             accounts: Vec::new(),

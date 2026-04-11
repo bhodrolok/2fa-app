@@ -14,9 +14,9 @@
     <string name="common_description_biometric_unlock_unsupported">Biometric unlock may not be supported on this device. Make sure you have biometrics set up in your device settings.</string>
     <string name="common_import_description">You\'re importing accounts from \"%s\". This will overwrite matching accounts and add any missing ones.</string>
     <string name="common_import_error_incorrect_passphrase">Incorrect passphrase</string>
+    <string name="common_import_error_incorrect_version">Incorrect version</string>
     <string name="common_import_error_invalid">Invalid file</string>
     <string name="common_import_error_no_accounts">No accounts to import</string>
-    <string name="common_import_error_outdated">Outdated version</string>
     <string name="common_title_automatic_backups">Automatic Backups</string>
     <string name="common_title_biometric_unlock">Biometric Unlock</string>
     <string name="common_title_confirm_biometrics">Confirm Biometrics</string>
@@ -67,9 +67,9 @@
     <string name="screen_greeting_description_something_wrong">We couldn\'t decrypt your accounts because the credentials provided were incorrect. Please restart the app and try again.</string>
     <string name="screen_greeting_title_invalidated">Decryption Keys Invalidated</string>
     <string name="screen_greeting_title_something_wrong">Something went wrong</string>
-    <string name="screen_initialize_encryption_keys_description">Move your finger randomly across the screen. The longer you move it, the stronger the resulting encryption keys become. This visualizer simply illustrates the entropy generation process. It does not reveal sensitive data and cannot be used to derive your keys.</string>
+    <string name="screen_initialize_encryption_keys_description">Move your finger as randomly as possible across the screen. The longer you move it, the better. This significantly increases the cryptographic strength of the encryption keys.</string>
+    <string name="screen_initialize_encryption_keys_pseudo_pool">Pseudo Pool</string>
     <string name="screen_initialize_encryption_keys_title">Initialize Encryption Keys</string>
-    <string name="screen_initialize_encryption_keys_visualizer">Visualizer</string>
     <string name="screen_main_greeting">Tap the add icon in the bottom corner to add an account. You can also import accounts from other authenticator apps in Settings.</string>
     <string name="screen_main_no_matching_were_found">No matching accounts were found</string>
     <string name="screen_main_search">Search</string>

@@ -1,11 +1,10 @@
-package app.ninesevennine.twofactorauthenticator.features
+package app.ninesevennine.twofactorauthenticator.utils
 
 import android.content.Context
 import android.util.AtomicFile
 import android.util.Base64
 import android.util.Log
 import app.ninesevennine.twofactorauthenticator.Entry
-import app.ninesevennine.twofactorauthenticator.utils.Logger
 import java.io.File
 
 object AccountManagement {
@@ -19,7 +18,7 @@ object AccountManagement {
 
     const val IMPORT_ERROR_NO_ACCOUNTS = 0
     const val IMPORT_ERROR_INCORRECT_PASSPHRASE = -1
-    const val IMPORT_ERROR_OUTDATED_VERSION = -2
+    const val IMPORT_ERROR_INCORRECT_VERSION = -2
     const val IMPORT_ERROR_INVALID_FILE = -3
     const val IMPORT_ERROR_UNKNOWN = -4
 
@@ -54,7 +53,9 @@ object AccountManagement {
         return try {
             if (Entry.rustInterface.isClientSecretEmpty()) throw Exception("secret is empty")
 
-            val accountsData = if (Config.hasMigratedToSecret002) {
+            val accountsData =  if (Config.hasMigratedToSecret003) {
+                Entry.rustInterface.exportAccountsUsingKey003()
+            } else if (Config.hasMigratedToSecret002) {
                 Entry.rustInterface.exportAccountsUsingKey002()
             } else {
                 Entry.rustInterface.exportAccountsUsingSeed001()
@@ -75,7 +76,9 @@ object AccountManagement {
 
             val accountsData = atomicRead(target)
 
-            val result = if (Config.hasMigratedToSecret002) {
+            val result = if (Config.hasMigratedToSecret003) {
+                Entry.rustInterface.importAccountsUsingKey003(accountsData)
+            } else if (Config.hasMigratedToSecret002) {
                 Entry.rustInterface.importAccountsUsingKey002(accountsData)
             } else {
                 Entry.rustInterface.importAccountsUsingSeed001(accountsData)
@@ -84,7 +87,7 @@ object AccountManagement {
             when (result) {
                 IMPORT_ERROR_NO_ACCOUNTS -> Logger.i(TAG, "no accounts to import") // not an error
                 IMPORT_ERROR_INCORRECT_PASSPHRASE -> Logger.e(TAG, "incorrect passphrase")
-                IMPORT_ERROR_OUTDATED_VERSION -> Logger.e(TAG, "outdated version")
+                IMPORT_ERROR_INCORRECT_VERSION -> Logger.e(TAG, "incorrect version")
                 IMPORT_ERROR_INVALID_FILE -> Logger.e(TAG, "invalid file")
                 IMPORT_ERROR_UNKNOWN -> Logger.e(TAG, "unknown error")
                 else -> if (result < 0) Logger.e(TAG, "unexpected error code $result")
@@ -110,14 +113,20 @@ object AccountManagement {
         try {
             if (Entry.rustInterface.isClientSecretEmpty()) throw Exception("secret is empty")
 
-            val accountsData = if (Config.hasMigratedToSecret002) {
+            val accountsData = if (Config.hasMigratedToSecret003) {
+                val salt = Base64.decode(Config.automaticBackupsSalt, Base64.DEFAULT)
+                Entry.rustInterface.exportAccountsUsingAutomaticBackupsKey003(salt)
+            } else if (Config.hasMigratedToSecret002) {
                 val salt = Base64.decode(Config.automaticBackupsSalt, Base64.NO_WRAP)
                 Entry.rustInterface.exportAccountsUsingAutomaticBackupsKey002(salt)
             } else {
                 Entry.rustInterface.exportAccountsUsingAutomaticBackupsKey001()
             }
 
-            val file = File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE)
+            val file = File(
+                context.applicationContext.noBackupFilesDir,
+                ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE
+            )
             atomicWrite(file, accountsData)
         } catch (e: Exception) {
             Logger.e(TAG, "failed to saveAccountsUsingAutomaticBackupsKey", e)

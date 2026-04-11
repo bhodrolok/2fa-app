@@ -35,7 +35,7 @@ import androidx.core.net.toUri
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.BuildConfig
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.features.Config
+import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.features.Locale
 import app.ninesevennine.twofactorauthenticator.features.Theme
