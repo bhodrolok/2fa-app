@@ -31,14 +31,14 @@ fun SectionGroup(
     ) {
         Text(
             text = title,
-            modifier = Modifier.padding(horizontal = 12.dp),
+            modifier = Modifier.padding(horizontal = 8.dp),
             color = Theme.colors.primary,
             fontSize = 14.sp,
             fontWeight = FontWeight.W700,
             fontFamily = InterVariable
         )
 
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Column(
             modifier = Modifier

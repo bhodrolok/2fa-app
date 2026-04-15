@@ -115,7 +115,7 @@ fun SetupInitializeEncryptionKeys(navController: NavController) {
                     fontWeight = FontWeight.W700
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Box(
                     modifier = Modifier
