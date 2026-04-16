@@ -101,7 +101,7 @@ fun Settings(navController: NavController) {
                     title = stringResource(R.string.screen_settings_appearance)
                 ) {
                     SectionButton(
-                        painter = painterResource(R.drawable.globe),
+                        painter = painterResource(R.drawable.mi_language),
                         tint = Theme.colors.primary,
                         primaryText = stringResource(R.string.screen_settings_appearance_language),
                         secondaryText = currentLanguageDisplayName
