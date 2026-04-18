@@ -186,7 +186,7 @@ fun SetupAutomaticBackups(navController: NavController) {
 
                     RoundedButton(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        text = if (isLoading) spinnerText() else stringResource(R.string.common_button_recover)
+                        text = if (isLoading) spinnerText() else stringResource(R.string.common_button_restore)
                     ) {
                         if (isLoading) return@RoundedButton
 
@@ -206,7 +206,7 @@ fun SetupAutomaticBackups(navController: NavController) {
                             }
 
                             if (result > 0) {
-                                Logger.i(TAG, "successfully recovered $result account(s)")
+                                Logger.i(TAG, "successfully restored $result account(s)")
 
                                 AccountManagement.saveAccountsUsingKey(context)
 

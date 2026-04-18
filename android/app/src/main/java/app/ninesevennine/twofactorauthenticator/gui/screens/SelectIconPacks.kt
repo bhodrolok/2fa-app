@@ -113,7 +113,7 @@ fun SelectIconPacks(navController: NavController) {
 
                 SectionGroup(
                     modifier = Modifier.padding(16.dp),
-                    title = stringResource(R.string.screen_select_icon_packs_available)
+                    title = stringResource(R.string.screen_select_icon_packs_installed)
                 ) {
                     availableIconPacks.forEach { pack ->
                         SectionButton(

@@ -166,7 +166,7 @@ fun SetupGetStarted(navController: NavController) {
                         }
 
                         withContext(Dispatchers.Main) {
-                            navController.navigate(SetupInitializeEncryptionKeysRoute)
+                            navController.navigate(SetupInitializeCryptographicKeysRoute)
                         }
                     }
                 }

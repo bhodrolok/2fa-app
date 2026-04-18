@@ -66,7 +66,7 @@ fun Greeting(navController: NavController) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    var unableToLoadDecryptionKeys by remember { mutableStateOf(false) }
+    var unableToLoadKeys by remember { mutableStateOf(false) }
     var hasError by remember { mutableStateOf(false) }
     var promptCanceled by remember { mutableStateOf(false) }
     var wipeButtonTapsCount by remember { mutableIntStateOf(0) }
@@ -96,29 +96,29 @@ fun Greeting(navController: NavController) {
     val internalBackupExists = AccountManagement.hasAccountsUsingAutomaticBackupsKey(context)
 
     LaunchedEffect(Signals.authenticate) {
-        unableToLoadDecryptionKeys = false
+        unableToLoadKeys = false
         hasError = false
         promptCanceled = false
 
         if (Config.hasCompletedSetup) {
             if (Config.isUsingBiometrics) {
                 if (!KeyStoreAES.loadKey(true)) {
-                    unableToLoadDecryptionKeys = true
+                    unableToLoadKeys = true
                     return@LaunchedEffect
                 }
 
                 if (KeyStoreAES.isKeyInvalidated(true)) {
-                    unableToLoadDecryptionKeys = true
+                    unableToLoadKeys = true
                     return@LaunchedEffect
                 }
             } else {
                 if (!KeyStoreAES.loadKey(false)) {
-                    unableToLoadDecryptionKeys = true
+                    unableToLoadKeys = true
                     return@LaunchedEffect
                 }
 
                 if (KeyStoreAES.isKeyInvalidated(false)) {
-                    unableToLoadDecryptionKeys = true
+                    unableToLoadKeys = true
                     return@LaunchedEffect
                 }
             }
@@ -149,7 +149,7 @@ fun Greeting(navController: NavController) {
                     }
                 },
                 onError = {
-                    unableToLoadDecryptionKeys = true
+                    unableToLoadKeys = true
                 },
                 onCancel = {
                     Logger.i(TAG, "biometric prompt canceled")
@@ -199,7 +199,7 @@ fun Greeting(navController: NavController) {
             ) {
                 Spacer(modifier = Modifier.height(topInset + 16.dp))
 
-                if (unableToLoadDecryptionKeys) {
+                if (unableToLoadKeys) {
                     Icon(
                         painter = painterResource(R.drawable.mi_warning),
                         contentDescription = null,
@@ -266,7 +266,7 @@ fun Greeting(navController: NavController) {
                     )
                 }
 
-                if (unableToLoadDecryptionKeys || hasError || promptCanceled) {
+                if (unableToLoadKeys || hasError || promptCanceled) {
                     Spacer(modifier = Modifier.height(12.dp))
 
                     if (internalBackupExists) {
@@ -295,7 +295,7 @@ fun Greeting(navController: NavController) {
                             pluralStringResource(R.plurals.common_button_tap_n_times_to_confirm, 6 - wipeButtonTapsCount, 6 - wipeButtonTapsCount)
                         } else {
                             if (internalBackupExists)
-                                stringResource(R.string.screen_greeting_button_wipe_and_recover)
+                                stringResource(R.string.screen_greeting_button_wipe_and_restore_access)
                             else
                                 stringResource(R.string.screen_greeting_button_wipe)
                         }
@@ -315,7 +315,7 @@ fun Greeting(navController: NavController) {
             }
         }
 
-        if (unableToLoadDecryptionKeys || hasError || promptCanceled) {
+        if (unableToLoadKeys || hasError || promptCanceled) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomCenter

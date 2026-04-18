@@ -53,12 +53,12 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 
 @Serializable
-object SetupInitializeEncryptionKeysRoute
+object SetupInitializeCryptographicKeysRoute
 
-private const val TAG = "SetupInitializeEncryptionKeys"
+private const val TAG = "SetupInitializeCryptographicKeys"
 
 @Composable
-fun SetupInitializeEncryptionKeys(navController: NavController) {
+fun SetupInitializeCryptographicKeys(navController: NavController) {
     val haptic = LocalHapticFeedback.current
     val view = LocalView.current
 
@@ -107,7 +107,7 @@ fun SetupInitializeEncryptionKeys(navController: NavController) {
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp).fillMaxWidth()
             ) {
                 Text(
-                    text = stringResource(R.string.screen_initialize_encryption_keys_pseudo_pool),
+                    text = stringResource(R.string.screen_initialize_cryptographic_keys_pseudo_pool),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
@@ -149,7 +149,7 @@ fun SetupInitializeEncryptionKeys(navController: NavController) {
             }
 
             Text(
-                text = stringResource(R.string.screen_initialize_encryption_keys_title),
+                text = stringResource(R.string.screen_initialize_cryptographic_keys_title),
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 color = Theme.colors.primary,
                 fontSize = 18.sp,
@@ -160,7 +160,7 @@ fun SetupInitializeEncryptionKeys(navController: NavController) {
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = stringResource(R.string.screen_initialize_encryption_keys_description),
+                text = stringResource(R.string.screen_initialize_cryptographic_keys_description),
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 color = Theme.colors.primary,
                 fontSize = 14.sp,
