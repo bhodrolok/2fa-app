@@ -80,6 +80,7 @@
     <string name="screen_select_icon_packs_other_dont_suggest_colors">Don\'t Suggest Colors</string>
     <string name="screen_select_icon_packs_other_dont_suggest_colors_secondary">Default to white when adding an account</string>
     <string name="screen_select_icon_packs_style">Style</string>
+    <string name="screen_select_icon_packs_question_1">Where can I find Icons Packs?</string>
     <string name="screen_settings_acccount_management">Account Management</string>
     <string name="screen_settings_acccount_management_export_to_aegis">Export to Aegis</string>
     <string name="screen_settings_acccount_management_import_from_aegis">Import from Aegis</string>

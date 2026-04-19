@@ -63,6 +63,7 @@
     <string name="screen_select_icon_packs_other_dont_suggest_colors">Не Предлагать Цвета</string>
     <string name="screen_select_icon_packs_other_dont_suggest_colors_secondary">По умолчанию белый цвет при добавлении аккаунта</string>
     <string name="screen_select_icon_packs_style">Стиль</string>
+    <string name="screen_select_icon_packs_question_1">Где можно найти Наборы Значков?</string>
     <string name="screen_settings_acccount_management">Управление Аккаунтами</string>
     <string name="screen_settings_acccount_management_export_to_aegis">Экспорт в Aegis</string>
     <string name="screen_settings_acccount_management_import_from_aegis">Импорт из Aegis</string>

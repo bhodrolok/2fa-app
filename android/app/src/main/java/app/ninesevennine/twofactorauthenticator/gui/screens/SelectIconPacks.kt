@@ -1,5 +1,6 @@
 package app.ninesevennine.twofactorauthenticator.gui.screens
 
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -29,9 +30,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.features.IconPacksStyle
 import app.ninesevennine.twofactorauthenticator.features.Theme
@@ -39,6 +40,7 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.LeftButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionGroup
+import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Document
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.Signals
@@ -205,6 +207,14 @@ fun SelectIconPacks(navController: NavController) {
 
                         Config.save(context)
                     }
+                }
+
+                RoundedButton(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    text = stringResource(R.string.screen_select_icon_packs_question_1)
+                ) {
+                    val intent = Intent(Intent.ACTION_VIEW, "https://codeberg.org/979/default_icons_pack".toUri())
+                    context.startActivity(intent)
                 }
 
                 Spacer(modifier = Modifier.height(bottomInset + 64.dp))
