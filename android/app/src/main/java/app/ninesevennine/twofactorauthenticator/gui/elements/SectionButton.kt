@@ -128,7 +128,7 @@ fun SectionButton(
                 fontWeight = FontWeight.W700,
                 fontFamily = InterVariable,
                 overflow = TextOverflow.MiddleEllipsis,
-                maxLines = 1
+                maxLines = 2
             )
 
             secondaryText?.let {
