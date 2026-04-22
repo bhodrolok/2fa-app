@@ -9,9 +9,9 @@
     </a>
 </p>
 <p align="center">
-    <img src="images/komodo-preview-2fa-light.webp" width="17%"/>
-    <img src="images/komodo-preview-2fa-dark.webp" width="17%"/>
-    <img src="images/komodo-preview-2fa-pitch-black.webp" width="17%"/>
+    <img src="images/mustang-preview-2fa-light.webp" width="17%"/>
+    <img src="images/mustang-preview-2fa-dark.webp" width="17%"/>
+    <img src="images/mustang-preview-2fa-pitch-black.webp" width="17%"/>
 </p>
 
 ### Overview
@@ -70,6 +70,10 @@ We have a lot planned for 2026, though none of this is set in stone, and things 
 - **1.2** Unlock modes (Passphrase, Hardware keys)
 - **1.3** Sync and cloud backups
 - **1.4** iOS
+
+### Translations
+
+2fa is already available in several languages, and we'd love your help adding more languages or improving existing ones. You can do this by contributing to our [Codeberg Weblate](https://translate.codeberg.org/projects/979/2fa/).
 
 ### Support
 
