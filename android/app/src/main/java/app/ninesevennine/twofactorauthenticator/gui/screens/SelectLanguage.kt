@@ -117,6 +117,32 @@ fun SelectLanguage(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(12.dp))
 
+                RoundedRadioButton(
+                    painter = painterResource(R.drawable.flag_germany),
+                    text = LocaleOption.GERMAN.displayName,
+                    enabled = Locale.currentEffectiveLocale(context) == LocaleOption.GERMAN
+                ) {
+                    Logger.i(TAG, "language set to german")
+
+                    Locale.set(context, LocaleOption.GERMAN)
+                    Config.save(context)
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                RoundedRadioButton(
+                    painter = painterResource(R.drawable.flag_estonia),
+                    text = LocaleOption.Estonian.displayName,
+                    enabled = Locale.currentEffectiveLocale(context) == LocaleOption.Estonian
+                ) {
+                    Logger.i(TAG, "language set to estonian")
+
+                    Locale.set(context, LocaleOption.Estonian)
+                    Config.save(context)
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
                 AnimatedVisibility(
                     visible = showRefreshButton && Locale.localeOption != LocaleOption.SYSTEM,
                     enter = slideInVertically(

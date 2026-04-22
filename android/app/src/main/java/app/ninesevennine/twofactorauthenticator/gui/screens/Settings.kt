@@ -35,7 +35,6 @@ import androidx.core.net.toUri
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.BuildConfig
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.features.Locale
 import app.ninesevennine.twofactorauthenticator.features.Theme
@@ -45,6 +44,7 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionGroup
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
+import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import kotlinx.serialization.Serializable
@@ -63,7 +63,6 @@ fun Settings(navController: NavController) {
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
 
-    val currentLanguageDisplayName by remember { mutableStateOf(Locale.currentDisplayName()) }
     val currentThemeOption by remember { mutableStateOf(Theme.currentOption(context)) }
 
     val internalAppLogLauncher = rememberLauncherForActivityResult(
@@ -104,7 +103,8 @@ fun Settings(navController: NavController) {
                         painter = painterResource(R.drawable.mi_language),
                         tint = Theme.colors.primary,
                         primaryText = stringResource(R.string.screen_settings_appearance_language),
-                        secondaryText = currentLanguageDisplayName
+                        secondaryText = Locale.currentEffectiveLocale(context).displayName
+
                     ) {
                         navController.navigate(SelectLanguageRoute)
                     }

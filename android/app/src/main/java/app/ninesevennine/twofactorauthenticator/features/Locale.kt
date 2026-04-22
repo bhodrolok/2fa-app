@@ -6,23 +6,25 @@ import android.os.LocaleList
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import java.util.Locale as JavaLocale
+import androidx.core.os.ConfigurationCompat
 
 enum class LocaleOption(val tag: String, val displayName: String) {
     SYSTEM("", "Use System Default"),
     ENGLISH("en", "English International"),
     SPANISH("es", "Español"),
-    RUSSIAN("ru", "Русский");
+    RUSSIAN("ru", "Русский"),
+    GERMAN("de", "Deutsch"),
+    Estonian("et", "Eesti (90%)");
 
     companion object {
         fun fromLanguage(language: String): LocaleOption {
-            return entries.firstOrNull { it.tag == language } ?: ENGLISH
+            return entries.firstOrNull { it.tag == language } ?: SYSTEM
         }
     }
 }
 
 object Locale {
-    private var _localeOption by mutableStateOf(LocaleOption.ENGLISH)
+    private var _localeOption by mutableStateOf(LocaleOption.SYSTEM)
 
     val localeOption: LocaleOption get() = _localeOption
 
@@ -38,7 +40,22 @@ object Locale {
 
         when (value) {
             LocaleOption.SYSTEM -> {
-                localeManager.applicationLocales = LocaleList.getEmptyLocaleList()
+                val deviceLocales: LocaleList = LocaleList.getDefault()
+
+                if (deviceLocales.size() > 0) {
+                    for (i in 1 until deviceLocales.size()) {
+                        val deviceLang = deviceLocales[i].language
+
+                        val match = LocaleOption.entries.filter { it.tag.isNotEmpty() }.firstOrNull { it.tag == deviceLang }
+
+                        if (match != null && match.tag.isNotEmpty()) {
+                            localeManager.applicationLocales = LocaleList.forLanguageTags(match.tag)
+                            return
+                        }
+                    }
+                }
+
+                localeManager.applicationLocales = LocaleList.forLanguageTags(LocaleOption.ENGLISH.tag)
             }
 
             else -> {
@@ -48,30 +65,9 @@ object Locale {
     }
 
     fun currentEffectiveLocale(context: Context): LocaleOption {
-        val localeManager = getLocaleManager(context)
-        val appLocales = localeManager.applicationLocales
+        val activeLocale = ConfigurationCompat.getLocales(context.resources.configuration)[0]
+            ?: return LocaleOption.ENGLISH
 
-        val effectiveLocale: JavaLocale = if (!appLocales.isEmpty) {
-            appLocales[0]
-        } else {
-            JavaLocale.getDefault()
-        }
-
-        return LocaleOption.fromLanguage(effectiveLocale.language)
-    }
-
-    fun currentDisplayName(): String {
-        if (_localeOption != LocaleOption.SYSTEM) {
-            return _localeOption.displayName
-        }
-
-        val systemLocale = JavaLocale.getDefault()
-        val matched = LocaleOption.fromLanguage(systemLocale.language)
-
-        return if (matched != LocaleOption.SYSTEM) {
-            matched.displayName
-        } else {
-            LocaleOption.ENGLISH.displayName
-        }
+        return LocaleOption.fromLanguage(activeLocale.language)
     }
 }
