@@ -132,12 +132,12 @@ fun SelectLanguage(navController: NavController) {
 
                 RoundedRadioButton(
                     painter = painterResource(R.drawable.flag_estonia),
-                    text = LocaleOption.Estonian.displayName,
-                    enabled = Locale.currentEffectiveLocale(context) == LocaleOption.Estonian
+                    text = LocaleOption.ESTONIAN.displayName,
+                    enabled = Locale.currentEffectiveLocale(context) == LocaleOption.ESTONIAN
                 ) {
                     Logger.i(TAG, "language set to estonian")
 
-                    Locale.set(context, LocaleOption.Estonian)
+                    Locale.set(context, LocaleOption.ESTONIAN)
                     Config.save(context)
                 }
 

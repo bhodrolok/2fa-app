@@ -14,7 +14,7 @@ enum class LocaleOption(val tag: String, val displayName: String) {
     SPANISH("es", "Español"),
     RUSSIAN("ru", "Русский"),
     GERMAN("de", "Deutsch"),
-    Estonian("et", "Eesti (90%)");
+    ESTONIAN("et", "Eesti (90%)");
 
     companion object {
         fun fromLanguage(language: String): LocaleOption {
