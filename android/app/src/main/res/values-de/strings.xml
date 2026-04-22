@@ -6,7 +6,7 @@
     <string name="common_button_enable">Aktivieren</string>
     <string name="common_button_restore">Wiederherstellen</string>
     <string name="common_button_use_system_default">Systemstandard verwenden</string>
-    <string name="common_description_automatic_backups_found">Im internen Speicher der App wurde eine Sicherungskopie gefunden. Geben Sie unten Ihre Passphrase ein, um Ihre Konten wiederherzustellen.</string>
+    <string name="common_description_automatic_backups_found">Im internen Speicher der App wurde eine Sicherungskopie gefunden. Geben Sie unten Ihr Passwort ein, um Ihre Konten wiederherzustellen.</string>
     <string name="common_description_automatic_backups_part_1">Wann immer Sie Konten hinzufügen, ändern oder importieren, werden diese automatisch im internen Speicher der App ausgeführt. Dieser Speicherort ist vertraulich und für andere Apps oder System-Backup-Dienste nicht zugänglich.</string>
     <string name="common_description_automatic_backups_part_2">Sie sollten diese Funktion unbedingt nutzen. Auf diese Weise können Sie den Zugriff wiederherstellen, selbst wenn Ihre Schlüssel jemals ungültig werden sollten. Wenn Sie dies nicht tun, werden Sie möglicherweise dauerhaft ausgesperrt.</string>
     <string name="common_description_biometric_unlock">Die biometrische Entsperrung kann dazu führen, dass Ihre Schlüssel ungültig werden, wenn sich Ihr Sperrbildschirm oder private Bereiche ändern, Ihr Gerät aktualisiert wird oder die App längere Zeit nicht geöffnet wurde. Sie können den Zugriff wiederherstellen, indem Sie automatische Backups aktivieren.</string>
@@ -46,10 +46,10 @@
     <string name="screen_select_icon_packs_add">Hinzufügen</string>
     <string name="screen_select_icon_packs_installed">Installiert</string>
     <string name="screen_select_icon_packs_other">Sonstiges</string>
-    <string name="screen_select_icon_packs_other_dont_suggest_colors">Schlage keine Farben vor</string>
-    <string name="screen_select_icon_packs_other_dont_suggest_colors_secondary">Standardmäßig weiß beim Hinzufügen eines Accounts</string>
+    <string name="screen_select_icon_packs_other_dont_suggest_colors">Farben nicht vorschlagen</string>
+    <string name="screen_select_icon_packs_other_dont_suggest_colors_secondary">Standardmäßig weiß beim Hinzufügen eines Kontos</string>
     <string name="screen_select_icon_packs_style">Stil</string>
-    <string name="screen_select_icon_packs_question_1">Wo finde ich Symbole Pakete?</string>
+    <string name="screen_select_icon_packs_question_1">Wo kann ich Icon Pakete finden?</string>
     <string name="screen_settings_acccount_management_export_to_aegis">Exportiere zu Aegis</string>
     <string name="screen_settings_acccount_management_import_from_aegis">Importiere von Aegis</string>
     <string name="screen_settings_appearance">Aussehen</string>
@@ -70,7 +70,7 @@
     <string name="screen_settings_support">Support</string>
     <string name="screen_settings_support_codeberg_secondary">Quellcode von 2fa anzeigen</string>
     <string name="screen_settings_support_donate">Spenden</string>
-    <string name="screen_settings_support_donate_secondary">979 braucht Ihre Unterstützung, um weitermachen</string>
+    <string name="screen_settings_support_donate_secondary">979 benötigt Ihre Unterstützung, um weiterzumachen</string>
     <string name="screen_settings_title">Einstellungen</string>
     <string name="screen_setup_get_started_button">Loslegen</string>
     <string name="screen_setup_get_started_section_step_1">1. Kryptografische Schlüssel initialisieren</string>
@@ -88,9 +88,9 @@
     </plurals>
     <string name="icon_packs_style_tinted">Getönt</string>
     <string name="otp_card_style_compact">Kompakt</string>
-    <string name="screen_add_code_enter_manually">Manuell Eingeben</string>
-    <string name="screen_edit_delete_account">Account Löschen</string>
-    <string name="screen_edit_section_account_information">Account Informationen</string>
+    <string name="screen_add_code_enter_manually">Manuell eingeben</string>
+    <string name="screen_edit_delete_account">Konto löschen</string>
+    <string name="screen_edit_section_account_information">Kontoinformationen</string>
     <string name="screen_edit_section_account_information_name">Name</string>
     <string name="screen_edit_section_account_information_note">Notiz</string>
     <string name="screen_edit_section_advanced_settings">Erweiterte Optionen</string>
@@ -114,8 +114,8 @@
     <string name="screen_greeting_button_wipe_and_restore_access">Wischen und Zugriff wiederherstellen</string>
     <string name="screen_greeting_description_invalidated">Wir konnten die App nicht entsperren, da die Schlüssel nicht länger verwendbar sind.</string>
     <string name="screen_initialize_cryptographic_keys_pseudo_pool">Pseudo-Pool</string>
-    <string name="screen_main_greeting">Tippe das hinzufügen Symbol in der unteren Ecke um ein Konto hinzuzufügen. Es können ebenso Konten von anderen Identifizierungs-Apps in den Einstellungen importiert werden.</string>
-    <string name="screen_select_icon_packs_delete_active">Aktiv löschen</string>
+    <string name="screen_main_greeting">Tippe auf das Symbol \"Hinzufügen\" in der unteren Ecke, um ein Konto hinzuzufügen. In den Einstellungen können ebenso Konten von anderen Identifizierungs-Apps importiert werden.</string>
+    <string name="screen_select_icon_packs_delete_active">Aktiviertes löschen</string>
     <string name="screen_settings_acccount_management">Kontoverwaltung</string>
     <string name="screen_settings_appearance_theme">Thema</string>
     <string name="screen_settings_security_block_intents">Vorhaben blockieren</string>

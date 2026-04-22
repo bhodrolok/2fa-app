@@ -113,4 +113,15 @@
     <string name="common_button_continue_without">Jätka Ilma</string>
     <string name="screen_edit_section_advanced_settings_digits">Numbrid</string>
     <string name="screen_edit_section_advanced_settings_period">Ajavahemik</string>
+    <string name="screen_greeting_description_invalidated">Kuna krüptovõtmed polnud enam kasutatavad, siis me ei suutnud rakenduse lukustust avada.</string>
+    <string name="screen_greeting_description_something_wrong">Kuna salasõna/kasutajanimi polnud õige, siis me ei suutnud rakenduse lukustust avada. Palun käivita rakendus ja proovi uuesti.</string>
+    <string name="screen_greeting_button_wipe">Kustuta jäädavalt</string>
+    <string name="screen_greeting_button_wipe_and_restore_access">Kustuta jäädavalt ja taasta ligipääs</string>
+    <string name="screen_greeting_title_invalidated">Krüptovõtmed on muudetud mittekehtivaks</string>
+    <string name="screen_initialize_cryptographic_keys_description">Liiguta oma sõrme ekraanil nii juhuslikult, kui võimalik. Mida kauem sa seda teed, seda parem. See parandab märgatavalt krüptovõtmete tugevust (võtmed luuakse võimalikult suure entroopia alusel).</string>
+    <string name="screen_initialize_cryptographic_keys_title">Valmenda krüptovõtmed</string>
+    <string name="screen_initialize_cryptographic_keys_pseudo_pool">Pseudoentroopia ladu</string>
+    <string name="screen_settings_security_block_intents">Blokeeri rakenduste vaheline suhtlus</string>
+    <string name="screen_settings_security_block_intents_secondary">Eira tegevusi, mille on käivitanud välised rakendused</string>
+    <string name="screen_main_greeting">Kasutajakonto lisamiseks klõpsa ikooni all nurgas. Lisaks võid seadistustest importida muudest kaksiautentimise rakendustest eksporditud kasutajakontosid.</string>
 </resources>
