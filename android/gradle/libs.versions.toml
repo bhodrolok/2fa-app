@@ -29,7 +29,7 @@ navigation-compose = { group = "androidx.navigation", name = "navigation-compose
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version = "1.11.0" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version = "1.2.0" }
 androidx-biometric = { group = "androidx.biometric", name = "biometric", version = "1.1.0"}
-reorderable = { group = "sh.calvin.reorderable", name = "reorderable", version = "3.0.0" }
+reorderable = { group = "sh.calvin.reorderable", name = "reorderable", version = "3.1.0" }
 camerax-core = { group = "androidx.camera", name = "camera-core", version = "1.6.0"}
 camerax-camera2 = { group = "androidx.camera", name = "camera-camera2", version = "1.6.0"}
 camerax-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version = "1.6.0"}
