@@ -73,7 +73,7 @@ We have a lot planned for 2026, though none of this is set in stone, and things 
 
 ### Translations
 
-2fa is already available in several languages, and we'd love your help adding more languages or improving existing ones. You can do this by contributing to our [Codeberg Weblate](https://translate.codeberg.org/projects/979/2fa/).
+2fa is already available in several languages, and we'd love your help adding more or improving existing ones. You can do this by contributing to our [Codeberg Weblate](https://translate.codeberg.org/projects/979/2fa/).
 
 ### Support
 
