@@ -14,6 +14,7 @@ enum class LocaleOption(val tag: String, val displayName: String) {
     SPANISH("es", "Español"),
     RUSSIAN("ru", "Русский"),
     GERMAN("de", "Deutsch"),
+    DUTCH("nl", "Nederland"),
     ESTONIAN("et", "Eesti");
 
     companion object {
