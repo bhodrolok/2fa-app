@@ -68,7 +68,7 @@ e5b28ea1e051c232dea94c27c0592e2c002d17c5ca81788b51306d608afe52c5
 
 We have a lot planned for 2026, though none of this is set in stone, and things might change along the way.
 
-- **1.0** Google Play Store release
+- **1.0** ~~Google Play Store release~~
 - **1.1** QR scanning via intents
 - **1.2** Unlock modes (Passphrase, Hardware keys)
 - **1.3** Sync and cloud backups
