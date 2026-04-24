@@ -19,10 +19,10 @@ object IconPacks {
     private const val TAG = "IconPacks"
 
     data class PackInfo(val id: String, val primary: String, val secondary: String)
-    data class IconEntry(val issuers: List<String>, val file: String, val color: Color)
-    data class IconResult(val bitmap: Bitmap, val color: Color)
+    data class IconPackEntry(val issuers: List<String>, val file: String, val color: Color)
+    data class IconPackResult(val bitmap: Bitmap?, val color: Color?)
 
-    private var loadedIcons: List<IconEntry> = emptyList()
+    private var loadedIcons: List<IconPackEntry> = emptyList()
 
     fun load(context: Context, packId: String) {
         if (packId.isEmpty()) {
@@ -38,7 +38,7 @@ object IconPacks {
             loadedIcons = (0 until iconsArray.length()).map { i ->
                 val entry = iconsArray.getJSONObject(i)
                 val issuerArray = entry.getJSONArray("issuer")
-                IconEntry(
+                IconPackEntry(
                     issuers = (0 until issuerArray.length()).map { issuerArray.getString(it) },
                     file = when (Config.UsingIconPacksStyle) {
                         IconPacksStyle.TEXTURED.value -> entry.optString("textured", "")
@@ -51,25 +51,24 @@ object IconPacks {
         }
     }
 
-    fun get(context: Context, issuer: String): IconResult? {
-        val normalized = issuer.lowercase().trim()
-        val entry = loadedIcons.firstOrNull { it.issuers.any { s -> s == normalized } }
-            ?: return null
+    fun get(context: Context, issuer: String): IconPackResult {
+        val issuerNormalized = issuer.lowercase().trim()
+        val icon = loadedIcons.firstOrNull { it.issuers.any { s -> s == issuerNormalized } } ?: return IconPackResult(null, null)
 
-        if (entry.file.isBlank()) return null
+        if (icon.file.isBlank()) return IconPackResult(null, icon.color)
 
-        val svgFile = File(context.noBackupFilesDir, "icons/${Config.activeIconPackId}/assets/${entry.file}")
-        if (!svgFile.exists()) return null
+        val svgFile = File(context.noBackupFilesDir, "icons/${Config.activeIconPackId}/assets/${icon.file}")
+        if (!svgFile.exists()) return IconPackResult(null, icon.color)
 
         val sizePx = (52 * context.resources.displayMetrics.density + 0.5f).toInt()
 
         return try {
             val svgBytes = svgFile.readBytes()
-            val bitmap = Entry.rustInterface.svgToBitmap(svgBytes, sizePx, sizePx) ?: return null
-            IconResult(bitmap, entry.color)
+            val bitmap = Entry.rustInterface.svgToBitmap(svgBytes, sizePx, sizePx) ?: return IconPackResult(null, icon.color)
+            IconPackResult(bitmap, icon.color)
         } catch (_: Exception) {
             Logger.e(TAG, "Failed to load bitmap for $issuer")
-            null
+            IconPackResult(null, null)
         }
     }
 

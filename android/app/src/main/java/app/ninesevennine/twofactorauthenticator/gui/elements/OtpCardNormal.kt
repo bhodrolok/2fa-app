@@ -223,7 +223,7 @@ fun OtpCardNormal(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        if (iconResult != null) {
+                        if (iconResult.bitmap != null) {
                             Canvas(Modifier.size(52.dp)) {
                                 when (Config.UsingIconPacksStyle) {
                                     IconPacksStyle.TEXTURED.value -> {

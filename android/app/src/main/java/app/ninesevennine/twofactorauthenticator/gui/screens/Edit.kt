@@ -101,7 +101,7 @@ fun Edit(navController: NavController) {
         color = if (Config.isUsingIconPacksDontSuggestColors) {
             Color.White
         } else {
-            iconResult?.color ?: Color.White
+            iconResult.color ?: Color.White
         }
 
         Entry.rustInterface.setEditAccountColor(color.toArgb())
@@ -217,7 +217,7 @@ fun Edit(navController: NavController) {
                             }
                         )
 
-                        if (iconResult != null) {
+                        if (iconResult.color != null) {
                             SectionButtonSmall(
                                 text = stringResource(R.string.screen_edit_section_customization_use_suggestion),
                                 onClick = {
