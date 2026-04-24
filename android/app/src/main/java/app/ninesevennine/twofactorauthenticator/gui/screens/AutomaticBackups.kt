@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -45,12 +46,14 @@ import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
 import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Logger
+import app.ninesevennine.twofactorauthenticator.utils.Signals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -69,6 +72,8 @@ fun AutomaticBackups(navController: NavController) {
     var passphrase by remember { mutableStateOf("") }
     var passphraseStrength by remember { mutableFloatStateOf(0f) }
     var confirmPassphrase by remember { mutableStateOf("") }
+    var recoveryError by remember { mutableStateOf(false) }
+    var recoveryErrorCode by remember { mutableIntStateOf(0) }
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
@@ -144,21 +149,93 @@ fun AutomaticBackups(navController: NavController) {
                     fontWeight = FontWeight.Normal
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                if (AccountManagement.hasAccountsUsingAutomaticBackupsKey(context) && isUsingAutomaticBackups) {
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                if (isUsingAutomaticBackups) {
+                    Text(
+                        text = stringResource(R.string.common_description_automatic_backups_found),
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        color = Theme.colors.info,
+                        fontSize = 14.sp,
+                        fontFamily = InterVariable
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    ConfidentialTextBox(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        title = stringResource(R.string.common_title_passphrase),
+                        value = passphrase,
+                        onValueChange = {
+                            if (!isLoading) {
+                                passphrase = it
+                            }
+
+                            recoveryError = false
+                        },
+                        error = passphrase.isEmpty() || recoveryError
+                    )
+
+                    AnimatedVisibility(recoveryError) {
+                        Text(
+                            text = when (recoveryErrorCode) {
+                                AccountManagement.IMPORT_ERROR_NO_ACCOUNTS -> stringResource(R.string.common_import_error_no_accounts)
+                                AccountManagement.IMPORT_ERROR_INCORRECT_PASSPHRASE -> stringResource(R.string.common_import_error_incorrect_passphrase)
+                                AccountManagement.IMPORT_ERROR_INCORRECT_VERSION -> stringResource(R.string.common_import_error_incorrect_version)
+                                AccountManagement.IMPORT_ERROR_INVALID_FILE -> stringResource(R.string.common_import_error_invalid)
+                                else -> "Unknown error"
+                            },
+                            modifier = Modifier.fillMaxWidth().padding(start = 20.dp, top = 8.dp, end = 20.dp),
+                            color = Theme.colors.veryWeak,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Normal,
+                            fontFamily = InterVariable
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     RoundedButton(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        text = stringResource(R.string.common_button_disable)
+                        text = if (isLoading) spinnerText() else stringResource(R.string.common_button_restore)
                     ) {
-                        Config.isUsingAutomaticBackups = false
+                        if (isLoading) return@RoundedButton
 
-                        Logger.i(TAG, "automatic backups set to false")
+                        isLoading = true
+                        recoveryError = false
 
-                        Config.save(context)
-                        navController.popBackStack()
+                        scope.launch(Dispatchers.IO) {
+                            val data = AccountManagement.getAccountsUsingAutomaticBackupsKey(context)
+                            if (data == null) {
+                                isLoading = false
+                                return@launch
+                            }
+
+                            var result = Entry.rustInterface.importAccountsUsingAutomaticBackupsKey003(passphrase, data)
+                            if (result == AccountManagement.IMPORT_ERROR_INCORRECT_VERSION) {
+                                result = Entry.rustInterface.importAccounts(passphrase, data)
+                            }
+
+                            if (result > 0) {
+                                Logger.i(TAG, "successfully restored $result account(s)")
+
+                                AccountManagement.saveAccountsUsingKey(context)
+
+                                Signals.accountAdded = true
+
+                                withContext(Dispatchers.Main) {
+                                    navController.popBackStack(MainRoute, false)
+                                }
+                            } else {
+                                recoveryError = true
+                                recoveryErrorCode = result
+                                isLoading = false
+                            }
+                        }
                     }
                 } else {
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     ConfidentialTextBox(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         title = stringResource(R.string.common_title_passphrase),
@@ -270,7 +347,33 @@ fun AutomaticBackups(navController: NavController) {
             }
         }
 
+        if (isUsingAutomaticBackups) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                Column(
+                    modifier = Modifier.widthIn(max = 512.dp).fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    RoundedButtonClean(
+                        modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = bottomInset),
+                        text = stringResource(R.string.common_button_disable)
+                    ) {
+                        Config.isUsingAutomaticBackups = false
+
+                        Logger.i(TAG, "automatic backups set to false")
+
+                        Config.save(context)
+                        navController.popBackStack()
+                    }
+                }
+            }
+        }
+
         StartButtonHeader("") {
+            if (isLoading) return@StartButtonHeader
+
             navController.popBackStack()
         }
     }
