@@ -17,7 +17,8 @@
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
-        android:requestLegacyExternalStorage="false">
+        android:requestLegacyExternalStorage="false"
+        android:memtagMode="async">
         <activity
             android:name=".Main"
             android:theme="@style/Theme.TwoFactorAuthenticator.Splash"
