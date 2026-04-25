@@ -146,7 +146,6 @@ fun SetupGetStarted(navController: NavController) {
 
                         AccountManagement.deleteAccountsUsingKey(context)
 
-                        Config.hasMigratedToSecret003 = true
                         Config.hasCompletedSetup = false
                         Config.save(context)
 

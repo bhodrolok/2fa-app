@@ -53,13 +53,7 @@ object AccountManagement {
         return try {
             if (Entry.rustInterface.isClientSecretEmpty()) throw Exception("secret is empty")
 
-            val accountsData =  if (Config.hasMigratedToSecret003) {
-                Entry.rustInterface.exportAccountsUsingKey003()
-            } else if (Config.hasMigratedToSecret002) {
-                Entry.rustInterface.exportAccountsUsingKey002()
-            } else {
-                Entry.rustInterface.exportAccountsUsingSeed001()
-            }
+            val accountsData = Entry.rustInterface.exportAccountsUsingKey003()
 
             val file = File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_KEY_FILE)
             atomicWrite(file, accountsData)
@@ -76,13 +70,7 @@ object AccountManagement {
 
             val accountsData = atomicRead(target)
 
-            val result = if (Config.hasMigratedToSecret003) {
-                Entry.rustInterface.importAccountsUsingKey003(accountsData)
-            } else if (Config.hasMigratedToSecret002) {
-                Entry.rustInterface.importAccountsUsingKey002(accountsData)
-            } else {
-                Entry.rustInterface.importAccountsUsingSeed001(accountsData)
-            }
+            val result = Entry.rustInterface.importAccountsUsingKey003(accountsData)
 
             when (result) {
                 IMPORT_ERROR_NO_ACCOUNTS -> Logger.i(TAG, "no accounts to import") // not an error
@@ -113,15 +101,8 @@ object AccountManagement {
         try {
             if (Entry.rustInterface.isClientSecretEmpty()) throw Exception("secret is empty")
 
-            val accountsData = if (Config.hasMigratedToSecret003) {
-                val salt = Base64.decode(Config.automaticBackupsSalt, Base64.DEFAULT)
-                Entry.rustInterface.exportAccountsUsingAutomaticBackupsKey003(salt)
-            } else if (Config.hasMigratedToSecret002) {
-                val salt = Base64.decode(Config.automaticBackupsSalt, Base64.NO_WRAP)
-                Entry.rustInterface.exportAccountsUsingAutomaticBackupsKey002(salt)
-            } else {
-                Entry.rustInterface.exportAccountsUsingAutomaticBackupsKey001()
-            }
+            val salt = Base64.decode(Config.automaticBackupsSalt, Base64.DEFAULT)
+            val accountsData = Entry.rustInterface.exportAccountsUsingAutomaticBackupsKey003(salt)
 
             val file = File(
                 context.applicationContext.noBackupFilesDir,

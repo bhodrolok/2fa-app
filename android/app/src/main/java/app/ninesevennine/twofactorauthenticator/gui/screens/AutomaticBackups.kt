@@ -273,37 +273,17 @@ fun AutomaticBackups(navController: NavController) {
                             isLoading = true
 
                             scope.launch(Dispatchers.IO) {
-                                val oldSecret = if (Config.hasMigratedToSecret003) {
-                                    Entry.rustInterface.getSecret003()
-                                } else if (Config.hasMigratedToSecret002) {
-                                    Entry.rustInterface.getSecret002()
-                                } else {
-                                    Entry.rustInterface.getSecret001()
-                                }
+                                val oldSecret = Entry.rustInterface.getSecret003()
 
-                                if (Config.hasMigratedToSecret003) {
-                                    val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
-                                    Entry.rustInterface.setAutomaticBackupsPassphrase003(salt, passphrase)
-                                    Config.automaticBackupsSalt = Base64.encodeToString(salt, Base64.DEFAULT)
-                                } else if (Config.hasMigratedToSecret002) {
-                                    val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
-                                    Entry.rustInterface.setAutomaticBackupsPassphrase002(salt, passphrase)
-                                    Config.automaticBackupsSalt = Base64.encodeToString(salt, Base64.NO_WRAP)
-                                } else {
-                                    Entry.rustInterface.setAutomaticBackupsPassphrase001(passphrase)
-                                }
+                                val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
+                                Entry.rustInterface.setAutomaticBackupsPassphrase003(salt, passphrase)
+                                Config.automaticBackupsSalt = Base64.encodeToString(salt, Base64.DEFAULT)
 
                                 withContext(Dispatchers.Main) {
                                     KeyStoreAES.saveSecret(
                                         title = promptTitle,
                                         negative = promptNegative,
-                                        secret = if (Config.hasMigratedToSecret003) {
-                                            Entry.rustInterface.getSecret003()
-                                        } else if (Config.hasMigratedToSecret002) {
-                                            Entry.rustInterface.getSecret002()
-                                        } else {
-                                            Entry.rustInterface.getSecret001()
-                                        },
+                                        secret = Entry.rustInterface.getSecret003(),
                                         onSuccess = {
                                             AccountManagement.saveAccountsUsingAutomaticBackupsKey(context)
 
@@ -316,23 +296,12 @@ fun AutomaticBackups(navController: NavController) {
                                             navController.popBackStack()
                                         },
                                         onError = {
-                                            if (Config.hasMigratedToSecret003) {
-                                                Entry.rustInterface.setSecret003(oldSecret)
-                                            } else if (Config.hasMigratedToSecret002) {
-                                                Entry.rustInterface.setSecret002(oldSecret)
-                                            } else {
-                                                Entry.rustInterface.setSecret001(oldSecret)
-                                            }
+                                            Entry.rustInterface.setSecret003(oldSecret)
                                             isLoading = false
                                         },
                                         onCancel = {
-                                            if (Config.hasMigratedToSecret003) {
-                                                Entry.rustInterface.setSecret003(oldSecret)
-                                            } else if (Config.hasMigratedToSecret002) {
-                                                Entry.rustInterface.setSecret002(oldSecret)
-                                            } else {
-                                                Entry.rustInterface.setSecret001(oldSecret)
-                                            }
+                                            Entry.rustInterface.setSecret003(oldSecret)
+
                                             Logger.i(TAG, "biometric prompt canceled")
                                             isLoading = false
                                         }

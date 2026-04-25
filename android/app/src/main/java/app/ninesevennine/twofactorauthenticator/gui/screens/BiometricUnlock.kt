@@ -150,13 +150,7 @@ fun BiometricUnlock(navController: NavController) {
                                     KeyStoreAES.saveSecret(
                                         title = biometricUnlockText,
                                         negative = cancelText,
-                                        secret = if (Config.hasMigratedToSecret003) {
-                                            Entry.rustInterface.getSecret003()
-                                        } else if (Config.hasMigratedToSecret002) {
-                                            Entry.rustInterface.getSecret002()
-                                        } else {
-                                            Entry.rustInterface.getSecret001()
-                                        },
+                                        secret = Entry.rustInterface.getSecret003(),
                                         onSuccess = {
                                             Logger.i(TAG, "biometrics set to false")
 
@@ -201,13 +195,7 @@ fun BiometricUnlock(navController: NavController) {
                                     KeyStoreAES.saveSecret(
                                         title = biometricUnlockText,
                                         negative = cancelText,
-                                        secret = if (Config.hasMigratedToSecret003) {
-                                            Entry.rustInterface.getSecret003()
-                                        } else if (Config.hasMigratedToSecret002) {
-                                            Entry.rustInterface.getSecret002()
-                                        } else {
-                                            Entry.rustInterface.getSecret001()
-                                        },
+                                        secret = Entry.rustInterface.getSecret003(),
                                         onSuccess = {
                                             Logger.i(TAG, "biometrics set to true")
 
@@ -244,6 +232,8 @@ fun BiometricUnlock(navController: NavController) {
         }
 
         StartButtonHeader("") {
+            if (isLoading) return@StartButtonHeader
+
             navController.popBackStack()
         }
     }

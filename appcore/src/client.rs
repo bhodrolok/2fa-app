@@ -2,23 +2,7 @@ use zeroize::Zeroize;
 
 use crate::features::codegen::{Algorithm, CodeType, hotp, steam_custom};
 use crate::features::otpauth::{self, Account, AccountTruncated};
-use crate::management::XCHACHA20_KEY_NONCE_SIZE;
 use crate::utils;
-
-pub struct ClientSecret001 {
-    pub seed: [u8; 64],
-    pub automatic_backups_passphrase_hash: [u8; 56],
-    pub automatic_backups_passphrase_salt: [u8; 16],
-}
-
-pub const CLIENT_SECRET_001_SIZE: usize = 64 + 56 + 16;
-
-pub struct ClientSecret002 {
-    pub key: [u8; XCHACHA20_KEY_NONCE_SIZE],
-    pub automatic_backups_key: [u8; XCHACHA20_KEY_NONCE_SIZE],
-}
-
-pub const CLIENT_SECRET_002_SIZE: usize = XCHACHA20_KEY_NONCE_SIZE + XCHACHA20_KEY_NONCE_SIZE;
 
 pub const CLIENT_SECRET_003_KEY_LEN: usize = 64;
 pub const CLIENT_SECRET_003_AUTOMATIC_BACKUPS_KEY_LEN: usize = 64;
@@ -31,8 +15,6 @@ pub struct ClientSecret003 {
 }
 
 pub struct Client {
-    pub secret001: ClientSecret001,
-    pub secret002: ClientSecret002,
     pub secret003: ClientSecret003,
     pub edit: Option<Account>,
     pub accounts: Vec<Account>,
@@ -40,13 +22,6 @@ pub struct Client {
 
 impl Client {
     pub fn unload(&mut self) {
-        self.secret001.seed.zeroize();
-        self.secret001.automatic_backups_passphrase_hash.zeroize();
-        self.secret001.automatic_backups_passphrase_salt.zeroize();
-
-        self.secret002.key.zeroize();
-        self.secret002.automatic_backups_key.zeroize();
-
         self.secret003.key.zeroize();
         self.secret003.automatic_backups_key.zeroize();
 
@@ -67,38 +42,6 @@ impl Client {
         self.accounts.clear();
     }
 
-    pub fn set_automatic_backups001(&mut self, passphrase: &str) {
-        getrandom::fill(&mut self.secret001.automatic_backups_passphrase_salt).unwrap();
-
-        // m: 256 MiB t: 4 p: 2
-        let params = argon2::Params::new(256 * 1024, 4, 2, None).unwrap();
-        let argon2 =
-            argon2::Argon2::new(argon2::Algorithm::Argon2id, argon2::Version::V0x13, params);
-
-        argon2
-            .hash_password_into(
-                passphrase.as_bytes(),
-                &self.secret001.automatic_backups_passphrase_salt,
-                &mut self.secret001.automatic_backups_passphrase_hash,
-            )
-            .unwrap();
-    }
-
-    pub fn set_automatic_backups002(&mut self, salt: &[u8], passphrase: &str) {
-        // m: 256 MiB t: 4 p: 2
-        let params = argon2::Params::new(256 * 1024, 4, 2, None).unwrap();
-        let argon2 =
-            argon2::Argon2::new(argon2::Algorithm::Argon2id, argon2::Version::V0x13, params);
-
-        argon2
-            .hash_password_into(
-                passphrase.as_bytes(),
-                salt,
-                &mut self.secret002.automatic_backups_key,
-            )
-            .unwrap();
-    }
-
     pub fn set_automatic_backups003(&mut self, salt: &[u8], passphrase: &str) {
         // m: 256 MiB t: 4 p: 2
         let params = argon2::Params::new(256 * 1024, 4, 2, None).unwrap();
@@ -114,26 +57,6 @@ impl Client {
             .unwrap();
     }
 
-    pub fn get_secret001(&self) -> [u8; CLIENT_SECRET_001_SIZE] {
-        let mut secret = [0u8; CLIENT_SECRET_001_SIZE];
-        let s = &self.secret001;
-
-        secret[..64].copy_from_slice(&s.seed);
-        secret[64..64 + 56].copy_from_slice(&s.automatic_backups_passphrase_hash);
-        secret[64 + 56..].copy_from_slice(&s.automatic_backups_passphrase_salt);
-
-        secret
-    }
-
-    pub fn get_secret002(&self) -> [u8; CLIENT_SECRET_002_SIZE] {
-        let mut out = [0u8; CLIENT_SECRET_002_SIZE];
-
-        out[..XCHACHA20_KEY_NONCE_SIZE].copy_from_slice(&self.secret002.key);
-        out[XCHACHA20_KEY_NONCE_SIZE..].copy_from_slice(&self.secret002.automatic_backups_key);
-
-        out
-    }
-
     pub fn get_secret003(&self) -> [u8; CLIENT_SECRET_003_LEN] {
         let mut out = [0u8; CLIENT_SECRET_003_LEN];
 
@@ -141,25 +64,6 @@ impl Client {
         out[CLIENT_SECRET_003_KEY_LEN..].copy_from_slice(&self.secret003.automatic_backups_key);
 
         out
-    }
-
-    pub fn set_secret001(&mut self, secret: &[u8; CLIENT_SECRET_001_SIZE]) {
-        let s = &mut self.secret001;
-        s.seed.copy_from_slice(&secret[..64]);
-        s.automatic_backups_passphrase_hash
-            .copy_from_slice(&secret[64..64 + 56]);
-        s.automatic_backups_passphrase_salt
-            .copy_from_slice(&secret[64 + 56..]);
-    }
-
-    pub fn set_secret002(&mut self, secret: &[u8; CLIENT_SECRET_002_SIZE]) {
-        self.secret002
-            .key
-            .copy_from_slice(&secret[..XCHACHA20_KEY_NONCE_SIZE]);
-
-        self.secret002
-            .automatic_backups_key
-            .copy_from_slice(&secret[XCHACHA20_KEY_NONCE_SIZE..]);
     }
 
     pub fn set_secret003(&mut self, secret: &[u8; CLIENT_SECRET_003_LEN]) {
@@ -373,15 +277,6 @@ impl Client {
 impl Default for Client {
     fn default() -> Self {
         Self {
-            secret001: ClientSecret001 {
-                seed: [0u8; 64],
-                automatic_backups_passphrase_hash: [0u8; 56],
-                automatic_backups_passphrase_salt: [0u8; 16],
-            },
-            secret002: ClientSecret002 {
-                key: [0u8; XCHACHA20_KEY_NONCE_SIZE],
-                automatic_backups_key: [0u8; XCHACHA20_KEY_NONCE_SIZE],
-            },
             secret003: ClientSecret003 {
                 key: [0u8; CLIENT_SECRET_003_KEY_LEN],
                 automatic_backups_key: [0u8; CLIENT_SECRET_003_AUTOMATIC_BACKUPS_KEY_LEN],

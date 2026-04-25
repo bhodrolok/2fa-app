@@ -23,40 +23,6 @@ pub const IMPORT_ERROR_INVALID_FILE: i32 = -3;
 pub const IMPORT_ERROR_UNKNOWN: i32 = -4;
 
 impl Client {
-    pub fn export_accounts_using_seed_001(&self) -> String {
-        let key: [u8; XCHACHA20_KEY_SIZE] = self.secret001.seed[0..XCHACHA20_KEY_SIZE]
-            .try_into()
-            .unwrap();
-        let nonce: [u8; XCHACHA20_NONCE_SIZE] = self.secret001.seed
-            [XCHACHA20_KEY_SIZE..XCHACHA20_KEY_SIZE + XCHACHA20_NONCE_SIZE]
-            .try_into()
-            .unwrap();
-
-        let db = self.export_accounts_db_002(&key, &nonce);
-
-        serde_json::json!({
-            "version": 2,
-            "db": db
-        })
-        .to_string()
-    }
-
-    pub fn export_accounts_using_key_002(&self) -> String {
-        let key: [u8; XCHACHA20_KEY_SIZE] =
-            self.secret002.key[..XCHACHA20_KEY_SIZE].try_into().unwrap();
-
-        let nonce: [u8; XCHACHA20_NONCE_SIZE] =
-            self.secret002.key[XCHACHA20_KEY_SIZE..].try_into().unwrap();
-
-        let db = self.export_accounts_db_002(&key, &nonce);
-
-        serde_json::json!({
-            "version": 2,
-            "db": db
-        })
-        .to_string()
-    }
-
     pub fn export_accounts_using_key_003(&self) -> String {
         use hkdf::Hkdf;
         use sha3::Sha3_512;
@@ -76,47 +42,6 @@ impl Client {
         serde_json::json!({
             "version": 3,
             "salt": data_encoding::BASE64.encode(&salt),
-            "db": db
-        })
-        .to_string()
-    }
-
-    pub fn export_accounts_using_automatic_backups_key_001(&self) -> String {
-        let key: [u8; XCHACHA20_KEY_SIZE] = self.secret001.automatic_backups_passphrase_hash
-            [0..XCHACHA20_KEY_SIZE]
-            .try_into()
-            .unwrap();
-        let nonce: [u8; XCHACHA20_NONCE_SIZE] = self.secret001.automatic_backups_passphrase_hash
-            [XCHACHA20_KEY_SIZE..XCHACHA20_KEY_SIZE + XCHACHA20_NONCE_SIZE]
-            .try_into()
-            .unwrap();
-
-        let db = self.export_accounts_db_002(&key, &nonce);
-
-        serde_json::json!({
-            "version": 2,
-            "salt": data_encoding::BASE64.encode(&self.secret001.automatic_backups_passphrase_salt),
-            "db": db
-        })
-        .to_string()
-    }
-
-    pub fn export_accounts_using_automatic_backups_key_002(&self, salt: &[u8]) -> String {
-        let key: [u8; XCHACHA20_KEY_SIZE] = self.secret002.automatic_backups_key
-            [..XCHACHA20_KEY_SIZE]
-            .try_into()
-            .unwrap();
-
-        let nonce: [u8; XCHACHA20_NONCE_SIZE] = self.secret002.automatic_backups_key
-            [XCHACHA20_KEY_SIZE..]
-            .try_into()
-            .unwrap();
-
-        let db = self.export_accounts_db_002(&key, &nonce);
-
-        serde_json::json!({
-            "version": 2,
-            "salt": data_encoding::BASE64.encode(salt),
             "db": db
         })
         .to_string()
@@ -323,49 +248,6 @@ impl Client {
         let ciphertext = cipher.encrypt(nonce, plaintext.as_bytes()).unwrap();
 
         data_encoding::BASE64.encode(&ciphertext)
-    }
-
-    pub fn import_accounts_using_seed_001(&mut self, data: &str) -> i32 {
-        let obj: serde_json::Value = match serde_json::from_str(data) {
-            Ok(v) => v,
-            Err(_) => return IMPORT_ERROR_INVALID_FILE,
-        };
-
-        let db = match obj.get("db").and_then(|v| v.as_str()) {
-            Some(s) => s,
-            None => return IMPORT_ERROR_INVALID_FILE,
-        };
-
-        let key: [u8; XCHACHA20_KEY_SIZE] = self.secret001.seed[0..XCHACHA20_KEY_SIZE]
-            .try_into()
-            .unwrap();
-
-        let nonce: [u8; XCHACHA20_NONCE_SIZE] = self.secret001.seed
-            [XCHACHA20_KEY_SIZE..XCHACHA20_KEY_SIZE + XCHACHA20_NONCE_SIZE]
-            .try_into()
-            .unwrap();
-
-        self.import_accounts_db_002(db, &key, &nonce)
-    }
-
-    pub fn import_accounts_using_key_002(&mut self, data: &str) -> i32 {
-        let obj: serde_json::Value = match serde_json::from_str(data) {
-            Ok(v) => v,
-            Err(_) => return IMPORT_ERROR_INVALID_FILE,
-        };
-
-        let db = match obj.get("db").and_then(|v| v.as_str()) {
-            Some(s) => s,
-            None => return IMPORT_ERROR_INVALID_FILE,
-        };
-
-        let key: [u8; XCHACHA20_KEY_SIZE] =
-            self.secret002.key[..XCHACHA20_KEY_SIZE].try_into().unwrap();
-
-        let nonce: [u8; XCHACHA20_NONCE_SIZE] =
-            self.secret002.key[XCHACHA20_KEY_SIZE..].try_into().unwrap();
-
-        self.import_accounts_db_002(db, &key, &nonce)
     }
 
     pub fn import_accounts_using_key_003(&mut self, data: &str) -> i32 {

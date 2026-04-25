@@ -42,13 +42,13 @@ import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.BuildConfig
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
-import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
+import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
+import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import kotlinx.coroutines.Dispatchers
@@ -128,13 +128,7 @@ fun Greeting(navController: NavController) {
                 negative = promptNegative,
                 onSuccess = { secret ->
                     scope.launch(Dispatchers.IO) {
-                        if (Config.hasMigratedToSecret003) {
-                            Entry.rustInterface.setSecret003(secret)
-                        } else if (Config.hasMigratedToSecret002) {
-                            Entry.rustInterface.setSecret002(secret)
-                        } else {
-                            Entry.rustInterface.setSecret001(secret)
-                        }
+                        Entry.rustInterface.setSecret003(secret)
 
                         if (!AccountManagement.loadAccountsUsingKey(context)) {
                             hasError = true

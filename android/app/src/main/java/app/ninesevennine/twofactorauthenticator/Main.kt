@@ -16,7 +16,6 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.UseIncognitoKeyboard
@@ -59,8 +58,7 @@ import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStarted
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStartedRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupInitializeCryptographicKeys
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupInitializeCryptographicKeysRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.VulnerabilityMessageScreen
-import app.ninesevennine.twofactorauthenticator.gui.screens.VulnerabilityMessageScreenRoute
+import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.utils.ZXing
 import kotlinx.coroutines.Dispatchers
@@ -123,7 +121,6 @@ class Main : FragmentActivity() {
                     composable<ImportAegisRoute> { ImportAegis(navController) }
                     composable<EditRoute> { Edit(navController) }
                     composable<AddCodeRoute> { AddCode(navController) }
-                    composable<VulnerabilityMessageScreenRoute> { VulnerabilityMessageScreen(navController) }
                 }
             }
         }

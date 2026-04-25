@@ -18,9 +18,6 @@ object Config {
     private const val KEY_LOCALE = "locale"
     private const val KEY_THEME = "theme"
 
-    var hasSeenVulnerabilityMessage: Boolean = false
-    var hasMigratedToSecret003: Boolean = false
-    var hasMigratedToSecret002: Boolean = false
     var hasCompletedSetup: Boolean = false
     var automaticBackupsSalt: String = ""
     var activeIconPackId by mutableStateOf("")
@@ -52,8 +49,6 @@ object Config {
         Locale.set(context, locale)
         Theme.set(context, theme)
 
-        hasMigratedToSecret003 = prefs.getBoolean("has_migrated_to_secret_003", false)
-        hasMigratedToSecret002 = prefs.getBoolean("has_migrated_to_secret_002", false)
         hasCompletedSetup = prefs.getBoolean("has_completed_setup", false)
         automaticBackupsSalt = prefs.getString("automatic_backups_salt", "") ?: ""
         activeIconPackId = prefs.getString("active_icon_pack_id", "") ?: ""
@@ -80,8 +75,6 @@ object Config {
         prefs.edit().apply {
             putString(KEY_LOCALE, Locale.localeOption.tag)
             putInt(KEY_THEME, Theme.themeOption.value)
-            putBoolean("has_migrated_to_secret_003", hasMigratedToSecret003)
-            putBoolean("has_migrated_to_secret_002", hasMigratedToSecret002)
             putBoolean("has_completed_setup", hasCompletedSetup)
             putString("automatic_backups_salt", automaticBackupsSalt)
             putString("active_icon_pack_id", activeIconPackId)
