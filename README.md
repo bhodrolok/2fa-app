@@ -58,11 +58,21 @@ On top of that, we added a few features to keep your data from leaking in ways y
 
 ### Verifying Releases
 
-All releases are signed and must have the following SHA-256 certificate fingerprint. The Google Play Store version is also signed, but Google may override it with their own fingerprint.
+All releases are signed and must have the following SHA-256 certificate fingerprint.
 
-```bash
-e5b28ea1e051c232dea94c27c0592e2c002d17c5ca81788b51306d608afe52c5
 ```
+app.ninesevennine.twofactorauthenticator
+E5:B2:8E:A1:E0:51:C2:32:DE:A9:4C:27:C0:59:2E:2C:00:2D:17:C5:CA:81:78:8B:51:30:6D:60:8A:FE:52:C5
+
+app.ninesevennine.twofactorauthenticator.play
+E5:B2:8E:A1:E0:51:C2:32:DE:A9:4C:27:C0:59:2E:2C:00:2D:17:C5:CA:81:78:8B:51:30:6D:60:8A:FE:52:C5
+8B:E5:AB:1C:DC:0B:5D:B1:63:60:AB:4B:03:B2:37:13:71:B8:8D:28:4F:84:48:B1:13:A5:D6:8A:38:E5:B3:56 // Google's certificate fingerprint
+
+app.ninesevennine.twofactorauthenticator.accrescent
+E5:B2:8E:A1:E0:51:C2:32:DE:A9:4C:27:C0:59:2E:2C:00:2D:17:C5:CA:81:78:8B:51:30:6D:60:8A:FE:52:C5
+```
+
+When verifying, make sure to compare the hashes across multiple sources, such as our [website](https://979.st/2fa/verifying-releases/).
 
 ### Roadmap
 
