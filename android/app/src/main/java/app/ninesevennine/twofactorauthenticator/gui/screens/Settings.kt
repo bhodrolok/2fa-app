@@ -217,6 +217,14 @@ fun Settings(navController: NavController) {
                     title = stringResource(R.string.screen_settings_security)
                 ) {
                     SectionButton(
+                        painter = painterResource(R.drawable.random_alphabet),
+                        tint = Theme.colors.primary,
+                        primaryText = stringResource(R.string.common_title_change_passphrase)
+                    ) {
+                        navController.navigate(ChangePassphraseRoute)
+                    }
+
+                    SectionButton(
                         painter = painterResource(R.drawable.mi_fingerprint),
                         tint = Theme.colors.primary,
                         primaryText = stringResource(R.string.common_title_biometric_unlock),
@@ -289,15 +297,6 @@ fun Settings(navController: NavController) {
                     modifier = Modifier.padding(16.dp),
                     title = stringResource(R.string.screen_settings_acccount_management)
                 ) {
-                    SectionButton(
-                        painter = painterResource(R.drawable.mi_settings_backup_restore),
-                        tint = Theme.colors.primary,
-                        primaryText = stringResource(R.string.common_title_automatic_backups),
-                        enabled = Config.isUsingAutomaticBackups
-                    ) {
-                        navController.navigate(AutomaticBackupsRoute)
-                    }
-
                     SectionButton(
                         painter = painterResource(R.drawable.mi_upload),
                         tint = Theme.colors.primary,

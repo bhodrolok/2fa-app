@@ -43,14 +43,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
-import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
+import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
 import app.ninesevennine.twofactorauthenticator.utils.Document
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.Signals
@@ -178,7 +177,7 @@ fun Import(navController: NavController) {
                             AccountManagement.IMPORT_ERROR_INCORRECT_PASSPHRASE -> stringResource(R.string.common_import_error_incorrect_passphrase)
                             AccountManagement.IMPORT_ERROR_INCORRECT_VERSION -> stringResource(R.string.common_import_error_incorrect_version)
                             AccountManagement.IMPORT_ERROR_INVALID_FILE -> stringResource(R.string.common_import_error_invalid)
-                            else -> "Unknown error"
+                            else -> stringResource(R.string.common_import_error_unknown)
                         },
                         modifier = Modifier.fillMaxWidth().padding(start = 20.dp, top = 8.dp, end = 20.dp),
                         color = Theme.colors.veryWeak,
@@ -207,10 +206,9 @@ fun Import(navController: NavController) {
                         if (result > 0) {
                             Logger.i(TAG, "successfully imported $result account(s)")
 
-                            AccountManagement.saveAccountsUsingKey(context)
-
-                            if (Config.isUsingAutomaticBackups) {
-                                AccountManagement.saveAccountsUsingAutomaticBackupsKey(context)
+                            if (!AccountManagement.saveAccounts(context)) {
+                                isLoading = false
+                                return@launch
                             }
 
                             Signals.accountAdded = true

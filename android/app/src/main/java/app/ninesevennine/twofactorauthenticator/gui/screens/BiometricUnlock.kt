@@ -35,15 +35,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
-import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
+import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -72,8 +70,8 @@ fun BiometricUnlock(navController: NavController) {
         // intercept the system back button when loading.
     }
 
-    val biometricUnlockText = "Confirm Biometrics"
-    val cancelText = "Cancel"
+    val promptTitle = stringResource(R.string.common_title_confirm_biometrics)
+    val promptNegative = stringResource(R.string.common_button_cancel)
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -113,7 +111,7 @@ fun BiometricUnlock(navController: NavController) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = stringResource(R.string.common_description_biometric_unlock),
+                    text = stringResource(R.string.common_biometric_unlock_description),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
@@ -127,88 +125,69 @@ fun BiometricUnlock(navController: NavController) {
                     if (isUsingBiometrics) {
                         RoundedButton(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                            text = if (isLoading) spinnerText() else stringResource(R.string.common_button_disable)
+                            text = stringResource(R.string.common_button_disable)
                         ) {
                             if (isLoading) return@RoundedButton
 
                             isLoading = true
 
                             scope.launch(Dispatchers.IO) {
-                                val isBiometricKey = false
+                                Config.isUsingBiometrics = false
+                                Config.save(context)
 
-                                KeyStoreAES.deleteKey(isBiometricKey)
+                                Logger.i(TAG, "biometrics set to false")
 
-                                KeyStoreAES.generateKey(isBiometricKey)
-                                if (!KeyStoreAES.loadKey(isBiometricKey)) {
-                                    isLoading = false
-                                    return@launch
-                                }
+                                KeyStoreAES.deleteKey(isBiometricKey = true)
+                                KeyStoreAES.deleteUnlockPassphraseHashFile()
 
                                 withContext(Dispatchers.Main) {
-                                    Config.isUsingBiometrics = isBiometricKey
-
-                                    KeyStoreAES.saveSecret(
-                                        title = biometricUnlockText,
-                                        negative = cancelText,
-                                        secret = Entry.rustInterface.getSecret003(),
-                                        onSuccess = {
-                                            Logger.i(TAG, "biometrics set to false")
-
-                                            Config.save(context)
-
-                                            navController.popBackStack()
-                                        },
-                                        onError = {
-                                            isLoading = false
-                                        },
-                                        onCancel = {
-                                            Logger.i(TAG, "biometric prompt canceled")
-                                            isLoading = false
-                                        }
-                                    )
+                                    navController.popBackStack()
                                 }
                             }
                         }
                     } else {
                         RoundedButton(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                            text = if (isLoading) spinnerText() else stringResource(R.string.common_button_enable)
+                            text = stringResource(R.string.common_button_enable)
                         ) {
                             if (isLoading) return@RoundedButton
 
                             isLoading = true
 
                             scope.launch(Dispatchers.IO) {
-                                val isBiometricKey = true
+                                KeyStoreAES.deleteKey(isBiometricKey = true)
 
-                                KeyStoreAES.deleteKey(isBiometricKey)
+                                KeyStoreAES.generateKey(isBiometricKey = true)
+                                if (!KeyStoreAES.loadKey(isBiometricKey = true)) {
+                                    Logger.i(TAG, "unable to load biometric key")
 
-                                KeyStoreAES.generateKey(isBiometricKey)
-                                if (!KeyStoreAES.loadKey(isBiometricKey)) {
-                                    isLoading = false
+                                    withContext(Dispatchers.Main) {
+                                        navController.popBackStack()
+                                    }
+
                                     return@launch
                                 }
 
                                 withContext(Dispatchers.Main) {
-                                    Config.isUsingBiometrics = isBiometricKey
-
-                                    KeyStoreAES.saveSecret(
-                                        title = biometricUnlockText,
-                                        negative = cancelText,
-                                        secret = Entry.rustInterface.getSecret003(),
+                                    KeyStoreAES.saveUnlockPassphraseHash(
+                                        promptTitle = promptTitle,
+                                        promptNegative = promptNegative,
                                         onSuccess = {
+                                            Config.isUsingBiometrics = true
                                             Logger.i(TAG, "biometrics set to true")
 
                                             Config.save(context)
 
                                             navController.popBackStack()
                                         },
-                                        onError = {
+                                        onCancel = {
+                                            Logger.i(TAG, "biometric confirmation cancelled")
                                             isLoading = false
                                         },
-                                        onCancel = {
-                                            Logger.i(TAG, "biometric prompt canceled")
-                                            isLoading = false
+                                        onError = {
+                                            Logger.e(TAG, "biometric confirmation failed")
+
+                                            navController.popBackStack()
                                         }
                                     )
                                 }

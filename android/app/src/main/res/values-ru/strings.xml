@@ -2,7 +2,7 @@
 <resources>
     <string name="common_button_cancel">Отменить</string>
     <string name="common_button_continue">Продолжить</string>
-    <string name="common_button_continue_without">Продолжить Без</string>
+    <string name="common_button_skip">Продолжить Без</string>
     <string name="common_button_disable">Отключить</string>
     <string name="common_button_enable">Включить</string>
     <string name="common_button_restore">Восстановить</string>
@@ -11,7 +11,6 @@
     <string name="common_import_error_incorrect_version">Неверная версия</string>
     <string name="common_import_error_invalid">Недопустимый файл</string>
     <string name="common_import_error_no_accounts">Нет аккаунтов для импорта</string>
-    <string name="common_title_automatic_backups">Автоматическое Резервное Копирование</string>
     <string name="common_title_biometric_unlock">Биометрическая Разблокировка</string>
     <string name="common_title_confirm_biometrics">Подтвердить Биометрию</string>
     <string name="common_title_confirm_passphrase">Подтвердите Парольную Фразу</string>
@@ -51,10 +50,6 @@
     <string name="screen_edit_section_customization_saturation">Насыщенность</string>
     <string name="screen_edit_section_customization_use_suggestion">Использовать Предложение</string>
     <string name="screen_edit_title">Изменить</string>
-    <string name="screen_greeting_backup_found">В внутреннем хранилище приложения найдена резервная копия.</string>
-    <string name="screen_greeting_backup_not_found">В внутреннем хранилище приложения резервная копия не найдена.</string>
-    <string name="screen_greeting_button_wipe">Стереть</string>
-    <string name="screen_initialize_cryptographic_keys_pseudo_pool">Псевдо-Пул</string>
     <string name="screen_main_no_matching_were_found">Совпадающие аккаунты не найдены</string>
     <string name="screen_main_search">Поиск</string>
     <string name="screen_select_icon_packs_add">Добавить</string>
@@ -92,7 +87,6 @@
     <string name="screen_settings_title">Настройки</string>
     <string name="screen_setup_get_started_button">Начать</string>
     <string name="screen_setup_get_started_section_step_2">2. Включить Биометрическую Разблокировку</string>
-    <string name="screen_setup_get_started_section_step_3">3. Включить Автоматическое Резервное Копирование</string>
     <string name="screen_setup_get_started_section_title">Нажмите \"Начать\" для начала настройки</string>
     <string name="screen_setup_get_started_welcome">Приветствуем вас в 2fa!</string>
     <string name="theme_option_dark">Тёмный</string>
@@ -110,21 +104,11 @@
         <item quantity="many">Показано %d аккаунтов</item>
         <item quantity="other">Показано %d аккаунтов</item>
     </plurals>
-    <string name="common_description_automatic_backups_found">В внутреннем хранилище приложения найдена резервная копия. Введите ниже вашу парольную фразу, чтобы восстановить аккаунты.</string>
-    <string name="common_description_automatic_backups_part_1">При добавлении, изменении или импорте аккаунтов они автоматически экспортируются во внутреннее хранилище приложения. Это расположение является конфиденциальным и недоступным для других приложений или системных служб резервного копирования.</string>
-    <string name="common_description_automatic_backups_part_2">Ожидается, что вы воспользуетесь этой функцией. Таким образом, вы сможете восстановить доступ даже в том случае, если ваши ключи когда-либо будут аннулированы. Если вы этого не сделаете, в конечном итоге вам будет навсегда закрыт доступ.</string>
-    <string name="common_description_biometric_unlock">Использование биометрической разблокировки может аннулировать ваши ключи, если изменится экран блокировки или личные пространства, обновится устройство или приложение не открывалось в течение длительного времени. Вы всегда можете восстановить свои аккаунты, включив автоматическое резервное копирование.</string>
+    <string name="common_biometric_unlock_description">Использование биометрической разблокировки может аннулировать ваши ключи, если изменится экран блокировки или личные пространства, обновится устройство или приложение не открывалось в течение длительного времени. Вы всегда можете восстановить свои аккаунты, включив автоматическое резервное копирование.</string>
     <string name="common_description_biometric_unlock_unsupported">Биометрическая разблокировка может не поддерживаться на этом устройстве. Убедитесь, что биометрия настроена в настройках вашего устройства.</string>
     <string name="common_import_description">Вы импортируете аккаунты из \"%s\". Это перезапишет совпадающие аккаунты и добавит отсутствующие.</string>
     <string name="screen_export_aegis_description">Вы создаёте зашифрованную копию ваших аккаунтов, совместимую с Aegis. Этот формат может содержать не все данные и не должен использоваться для импорта аккаунтов обратно в это приложение.</string>
     <string name="screen_export_description">Вы создаёте зашифрованную копию ваших аккаунтов. Сохраните её на своё устройство или в облачный сервис, которому доверяете.</string>
-    <string name="screen_greeting_button_wipe_and_restore_access">Стереть и Восстановить Доступ</string>
-    <string name="screen_greeting_description_invalidated">Мы не смогли разблокировать приложение, поскольку ключи больше не работают.</string>
-    <string name="screen_greeting_description_something_wrong">Мы не смогли разблокировать приложение из-за неверных учетных данных. Перезапустите приложение и попробуйте ещё раз.</string>
-    <string name="screen_greeting_title_invalidated">Ключи Аннулированы</string>
-    <string name="screen_greeting_title_something_wrong">Что-то Пошло Не Так</string>
-    <string name="screen_initialize_cryptographic_keys_description">Проведите пальцем по экрану как можно более хаотично. Чем дольше вы будете проводить пальцем, тем лучше. Это значительно повышает криптографическую прочность ключей.</string>
-    <string name="screen_initialize_cryptographic_keys_title">Инициализировать Криптографические Ключи</string>
     <string name="screen_main_greeting">Нажмите на значок добавления в нижнем углу, чтобы добавить аккаунт. Вы также можете импортировать аккаунты из других приложений-аутентификаторов в разделе «Настройки».</string>
     <string name="screen_select_icon_packs_installed">Установлено</string>
     <string name="screen_setup_get_started_section_step_1">1. Инициализировать Криптографические Ключи</string>

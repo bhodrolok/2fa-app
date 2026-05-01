@@ -6,6 +6,8 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import app.ninesevennine.twofactorauthenticator.Entry
+import app.ninesevennine.twofactorauthenticator.utils.AtomicFileSystem
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import java.security.KeyStore
@@ -25,6 +27,7 @@ object KeyStoreAES {
     private const val REGULAR_KEY_ALIAS = "regular"
     private const val BIOMETRIC_KEY_ALIAS = "biometric"
     private const val SECRET_FILENAME = "secret.bin"
+    private const val UNLOCK_PASSPHRASE_HASH_FILE = "unlock_passphrase_hash.bin"
 
     private val supportedAesKeySizes = listOf(256, 128)
 
@@ -162,6 +165,143 @@ object KeyStoreAES {
         }.getOrDefault(false)
     }
 
+    fun saveUnlockPassphraseHash(
+        promptTitle: String,
+        promptNegative: String,
+        onSuccess: () -> Unit,
+        onCancel: () -> Unit,
+        onError: () -> Unit,
+    ) {
+        val currentActivity = activity ?: run { onError(); return }
+        val key = biometricKey ?: run { onError(); return }
+
+        val cipher = Cipher.getInstance(AES_TRANSFORMATION).apply {
+            init(Cipher.ENCRYPT_MODE, key)
+        }
+
+        val callback = object : BiometricPrompt.AuthenticationCallback() {
+            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                try {
+                    val authenticatedCipher = result.cryptoObject?.cipher ?: cipher
+                    val data = authenticatedCipher.iv + authenticatedCipher.doFinal(Entry.rustInterface.getUnlockPassphraseHash())
+
+                    val file = currentActivity.noBackupFilesDir.resolve(UNLOCK_PASSPHRASE_HASH_FILE)
+                    AtomicFileSystem.write(file, data)
+
+                    Logger.i(TAG, "unlock passphrase hash saved")
+                    onSuccess()
+                } catch (e: Exception) {
+                    Logger.w(TAG, "failed to save unlock passphrase hash", e)
+                    onError()
+                }
+            }
+
+            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                Logger.w(TAG, "failed to save unlock passphrase hash with errorCode $errorCode and reason $errString")
+
+                when (errorCode) {
+                    BiometricPrompt.ERROR_NEGATIVE_BUTTON,
+                    BiometricPrompt.ERROR_USER_CANCELED,
+                    BiometricPrompt.ERROR_CANCELED -> onCancel()
+                    else -> onError()
+                }
+            }
+
+            override fun onAuthenticationFailed() {
+                Logger.w(TAG, "failed to save unlock passphrase hash")
+            }
+        }
+
+        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+            .setTitle(promptTitle)
+            .setNegativeButtonText(promptNegative)
+            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+            .build()
+
+        BiometricPrompt(currentActivity, ContextCompat.getMainExecutor(currentActivity), callback)
+            .authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
+    }
+
+    fun loadUnlockPassphraseHash(
+        promptTitle: String,
+        promptNegative: String,
+        onSuccess: () -> Unit,
+        onCancel: () -> Unit,
+        onError: () -> Unit,
+    ) {
+        val currentActivity = activity ?: run { onError(); return }
+        val key = biometricKey ?: run { onError(); return }
+
+        val file = currentActivity.noBackupFilesDir.resolve(UNLOCK_PASSPHRASE_HASH_FILE)
+        if (!file.exists()) { onError(); return }
+
+        val data = try { AtomicFileSystem.read(file) } catch (e: Exception) { onError(); return }
+        if (data.size < GCM_IV_LENGTH) { onError(); return }
+
+        val iv = data.copyOfRange(0, GCM_IV_LENGTH)
+        val ciphertext = data.copyOfRange(GCM_IV_LENGTH, data.size)
+
+        val cipher = Cipher.getInstance(AES_TRANSFORMATION).apply {
+            init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(GCM_TAG_LENGTH, iv))
+        }
+
+        val callback = object : BiometricPrompt.AuthenticationCallback() {
+            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                try {
+                    val authenticatedCipher = result.cryptoObject?.cipher ?: cipher
+                    Entry.rustInterface.setUnlockPassphraseHash(authenticatedCipher.doFinal(ciphertext))
+
+                    Logger.i(TAG, "unlock passphrase hash loaded")
+                    onSuccess()
+                } catch (e: Exception) {
+                    Logger.w(TAG, "failed to load unlock passphrase hash", e)
+                    onError()
+                }
+            }
+
+            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                Logger.w(TAG, "failed to load unlock passphrase hash with errorCode $errorCode and reason $errString")
+
+                when (errorCode) {
+                    BiometricPrompt.ERROR_NEGATIVE_BUTTON,
+                    BiometricPrompt.ERROR_USER_CANCELED,
+                    BiometricPrompt.ERROR_CANCELED -> onCancel()
+                    else -> onError()
+                }
+            }
+
+            override fun onAuthenticationFailed() {
+                Logger.w(TAG, "failed to load unlock passphrase hash")
+            }
+        }
+
+        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+            .setTitle(promptTitle)
+            .setNegativeButtonText(promptNegative)
+            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+            .build()
+
+        BiometricPrompt(currentActivity, ContextCompat.getMainExecutor(currentActivity), callback)
+            .authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
+    }
+
+    fun deleteUnlockPassphraseHashFile() {
+        val currentActivity = activity ?: return
+        val file = currentActivity.noBackupFilesDir.resolve(UNLOCK_PASSPHRASE_HASH_FILE)
+
+        try {
+            if (file.exists()) {
+                if (file.delete()) {
+                    Logger.i(TAG, "successfully deleted unlock passphrase hash file")
+                } else {
+                    Logger.w(TAG, "failed to delete unlock passphrase hash file")
+                }
+            }
+        } catch (e: Exception) {
+            Logger.e(TAG, "failed to delete unlock passphrase hash file", e)
+        }
+    }
+
     fun saveSecret(
         title: String,
         negative: String,
@@ -185,7 +325,7 @@ object KeyStoreAES {
                         val authenticatedCipher = result.cryptoObject?.cipher ?: cipher
                         val encryptedSecret = authenticatedCipher.iv + authenticatedCipher.doFinal(secret)
 
-                        currentActivity.noBackupFilesDir.resolve(SECRET_FILENAME).writeBytes(encryptedSecret)
+                        currentActivity.noBackupFilesDir.resolve(UNLOCK_PASSPHRASE_HASH_FILE).writeBytes(encryptedSecret)
                         Logger.i(TAG, "secret saved")
                         onSuccess()
                     } catch (e: Exception) {

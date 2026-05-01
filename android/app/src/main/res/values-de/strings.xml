@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="common_button_continue">Fortfahren</string>
-    <string name="common_button_continue_without">Ohne fortfahren</string>
+    <string name="common_button_skip">Ohne fortfahren</string>
     <string name="common_button_disable">Deaktivieren</string>
     <string name="common_button_enable">Aktivieren</string>
     <string name="common_button_restore">Wiederherstellen</string>
     <string name="common_button_use_system_default">Systemstandard verwenden</string>
-    <string name="common_description_automatic_backups_found">Im internen Speicher der App wurde eine Sicherungskopie gefunden. Geben Sie unten Ihr Passwort ein, um Ihre Konten wiederherzustellen.</string>
-    <string name="common_description_automatic_backups_part_1">Wann immer Sie Konten hinzufügen, ändern oder importieren, werden diese automatisch im internen Speicher der App ausgeführt. Dieser Speicherort ist vertraulich und für andere Apps oder System-Backup-Dienste nicht zugänglich.</string>
-    <string name="common_description_automatic_backups_part_2">Sie sollten diese Funktion unbedingt nutzen. Auf diese Weise können Sie den Zugriff wiederherstellen, selbst wenn Ihre Schlüssel jemals ungültig werden sollten. Wenn Sie dies nicht tun, werden Sie möglicherweise dauerhaft ausgesperrt.</string>
-    <string name="common_description_biometric_unlock">Die biometrische Entsperrung kann dazu führen, dass Ihre Schlüssel ungültig werden, wenn sich Ihr Sperrbildschirm oder private Bereiche ändern, Ihr Gerät aktualisiert wird oder die App längere Zeit nicht geöffnet wurde. Sie können den Zugriff wiederherstellen, indem Sie automatische Backups aktivieren.</string>
+    <string name="common_biometric_unlock_description">Die biometrische Entsperrung kann dazu führen, dass Ihre Schlüssel ungültig werden, wenn sich Ihr Sperrbildschirm oder private Bereiche ändern, Ihr Gerät aktualisiert wird oder die App längere Zeit nicht geöffnet wurde. Sie können den Zugriff wiederherstellen, indem Sie automatische Backups aktivieren.</string>
     <string name="common_description_biometric_unlock_unsupported">Die biometrische Entsperrung wird auf diesem Gerät möglicherweise nicht unterstützt. Stellen Sie sicher, dass Sie in Ihren Geräteeinstellungen Biometrie eingerichtet haben.</string>
     <string name="common_import_error_incorrect_passphrase">Falsches Passwort</string>
     <string name="common_import_error_incorrect_version">Falsche Version</string>
     <string name="common_import_error_invalid">Ungültige Datei</string>
     <string name="common_import_error_no_accounts">Keine Konten zum Importieren vorhanden</string>
-    <string name="common_title_automatic_backups">Automatische Backups</string>
     <string name="common_title_biometric_unlock">Biometrische Entsperrung</string>
     <string name="common_title_confirm_biometrics">Biometrie bestätigen</string>
     <string name="common_title_confirm_passphrase">Passwort bestätigen</string>
@@ -39,10 +35,6 @@
     <string name="screen_edit_section_customization_paste">Einfügen</string>
     <string name="screen_edit_section_customization_saturation">Sättigung</string>
     <string name="screen_edit_title">Bearbeiten</string>
-    <string name="screen_greeting_backup_found">Ein Backup wurde im internen Speicher der App gefunden.</string>
-    <string name="screen_greeting_backup_not_found">Es konnte kein Backup im internen Speicher der App gefunden werden.</string>
-    <string name="screen_greeting_title_invalidated">Schlüssel ungültig</string>
-    <string name="screen_greeting_title_something_wrong">Es ist ein Fehler aufgetreten</string>
     <string name="screen_select_icon_packs_add">Hinzufügen</string>
     <string name="screen_select_icon_packs_installed">Installiert</string>
     <string name="screen_select_icon_packs_other">Sonstiges</string>
@@ -75,7 +67,6 @@
     <string name="screen_setup_get_started_button">Loslegen</string>
     <string name="screen_setup_get_started_section_step_1">1. Kryptografische Schlüssel initialisieren</string>
     <string name="screen_setup_get_started_section_step_2">2. Biometrische Entsperrung aktivieren</string>
-    <string name="screen_setup_get_started_section_step_3">3. Automatische Backups aktivieren</string>
     <string name="screen_setup_get_started_section_title">Klicken Sie auf „Loslegen“, um mit der Einrichtung zu beginnen</string>
     <string name="screen_setup_get_started_welcome">Willkommen zu 2fa!</string>
     <string name="theme_option_dark">Dunkel</string>
@@ -101,19 +92,12 @@
     <string name="screen_edit_section_customization_use_suggestion">Anwendungsvorschlag</string>
     <string name="screen_export_aegis_description">Sie erstellen eine mit Aegis kompatible, verschlüsselte Kopie Ihrer Konten. Dieses Format enthält möglicherweise nicht alle Daten und sollte nicht zum Zurückimportieren von Konten in diese App verwendet werden.</string>
     <string name="screen_export_description">Sie erstellen eine verschlüsselte Kopie Ihrer Konten. Speichern Sie diese auf Ihrem lokalen Gerät oder bei einem Cloud-Anbieter Ihres Vertrauens.</string>
-    <string name="screen_greeting_description_something_wrong">Wir konnten die App nicht entsperren, da die angegebenen Anmeldedaten ungültig sind. Bitte starte die App neu und versuche es erneut.</string>
-    <string name="screen_initialize_cryptographic_keys_description">Bewegen Sie Ihren Finger so zufällig wie möglich über den Bildschirm. Je länger Sie ihn bewegen, desto besser. Dies erhöht die kryptografische Stärke der Schlüssel.</string>
-    <string name="screen_initialize_cryptographic_keys_title">Kryptografische Schlüssel initialisieren</string>
     <string name="screen_main_no_matching_were_found">Es wurden keine passenden Konten gefunden</string>
     <string name="screen_main_search">Suche</string>
     <string name="otp_card_style_grid">Gitter</string>
     <string name="screen_edit_section_account_information_issuer">Aussteller</string>
     <string name="screen_edit_section_advanced_settings_secret">Geheimnis</string>
     <string name="screen_edit_section_advanced_settings_type">Art</string>
-    <string name="screen_greeting_button_wipe">Wischen</string>
-    <string name="screen_greeting_button_wipe_and_restore_access">Wischen und Zugriff wiederherstellen</string>
-    <string name="screen_greeting_description_invalidated">Wir konnten die App nicht entsperren, da die Schlüssel nicht länger verwendbar sind.</string>
-    <string name="screen_initialize_cryptographic_keys_pseudo_pool">Pseudo-Pool</string>
     <string name="screen_main_greeting">Tippe auf das Symbol \"Hinzufügen\" in der unteren Ecke, um ein Konto hinzuzufügen. In den Einstellungen können ebenso Konten von anderen Identifizierungs-Apps importiert werden.</string>
     <string name="screen_select_icon_packs_delete_active">Aktiviertes löschen</string>
     <string name="screen_settings_acccount_management">Kontoverwaltung</string>

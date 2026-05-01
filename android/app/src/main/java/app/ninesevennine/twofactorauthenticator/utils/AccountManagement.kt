@@ -13,6 +13,7 @@ object AccountManagement {
     private const val ACCOUNTS_USING_KEY_FILE = "accounts_using_key.2fa"
     private const val ACCOUNTS_USING_KEY_FILE_OLD = "accounts_using_seed.2fa"
 
+    private const val ACCOUNTS_FILE = "accounts.2fa"
     private const val ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE = "accounts_using_automatic_backups_key.2fa"
     private const val ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE_OLD = "accounts_using_automatic_internal_backups.2fa"
 
@@ -95,6 +96,42 @@ object AccountManagement {
         AtomicFile(File(dir, ACCOUNTS_USING_KEY_FILE_OLD)).delete()
 
         Logger.i(TAG, "deleteAccountsUsingKey completed")
+    }
+
+    fun saveAccounts(context: Context): Boolean {
+        return try {
+            if (Entry.rustInterface.isClientSecretEmpty()) {
+                throw Exception("unlock passphrase hash is empty")
+            }
+
+            val salt = Base64.decode(Config.unlockPassphraseSalt, Base64.DEFAULT)
+            val data = Entry.rustInterface.exportAccountsUsingUnlockPassphraseHash(salt)
+
+            val file = context.dataDir.resolve(ACCOUNTS_FILE)
+            AtomicFileSystem.write(file, data.toByteArray(Charsets.UTF_8))
+
+            true
+        } catch (e: Exception) {
+            Logger.e(TAG, "failed to save accounts", e)
+            false
+        }
+    }
+
+    fun hasAccounts(context: Context): Boolean {
+        val file = context.dataDir.resolve(ACCOUNTS_FILE)
+        return file.exists()
+    }
+
+    fun loadAccounts(context: Context): Int {
+        return try {
+            val file = context.dataDir.resolve(ACCOUNTS_FILE)
+            val data = AtomicFileSystem.read(file)
+
+            Entry.rustInterface.importAccountsUsingUnlockPassphraseHash(data.toString(Charsets.UTF_8))
+        } catch (e: Exception) {
+            Logger.e(TAG, "failed to load accounts", e)
+            IMPORT_ERROR_UNKNOWN
+        }
     }
 
     fun saveAccountsUsingAutomaticBackupsKey(context: Context) {

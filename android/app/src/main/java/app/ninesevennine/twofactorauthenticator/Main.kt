@@ -22,8 +22,8 @@ import app.ninesevennine.twofactorauthenticator.features.UseIncognitoKeyboard
 import app.ninesevennine.twofactorauthenticator.features.setScreenSecure
 import app.ninesevennine.twofactorauthenticator.gui.screens.AddCode
 import app.ninesevennine.twofactorauthenticator.gui.screens.AddCodeRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.AutomaticBackups
-import app.ninesevennine.twofactorauthenticator.gui.screens.AutomaticBackupsRoute
+import app.ninesevennine.twofactorauthenticator.gui.screens.ChangePassphrase
+import app.ninesevennine.twofactorauthenticator.gui.screens.ChangePassphraseRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.BiometricUnlock
 import app.ninesevennine.twofactorauthenticator.gui.screens.BiometricUnlockRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Edit
@@ -50,14 +50,11 @@ import app.ninesevennine.twofactorauthenticator.gui.screens.SelectTheme
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectThemeRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Settings
 import app.ninesevennine.twofactorauthenticator.gui.screens.SettingsRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupAutomaticBackups
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupAutomaticBackupsRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupBiometricUnlock
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupBiometricUnlockRoute
+import app.ninesevennine.twofactorauthenticator.gui.screens.SetupCreateAPassphrase
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStarted
 import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStartedRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupInitializeCryptographicKeys
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupInitializeCryptographicKeysRoute
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.utils.ZXing
@@ -103,9 +100,8 @@ class Main : FragmentActivity() {
                     popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) }
                 ) {
                     composable<SetupGetStartedRoute> { SetupGetStarted(navController) }
-                    composable<SetupInitializeCryptographicKeysRoute> { SetupInitializeCryptographicKeys(navController) }
+                    composable<SetupCreateAPassphrase> { SetupCreateAPassphrase(navController) }
                     composable<SetupBiometricUnlockRoute> { SetupBiometricUnlock(navController) }
-                    composable<SetupAutomaticBackupsRoute> { SetupAutomaticBackups(navController) }
                     composable<MainRoute> { Main(navController) }
                     composable<GreetingRoute> { Greeting(navController) }
                     composable<SettingsRoute> { Settings(navController) }
@@ -114,7 +110,7 @@ class Main : FragmentActivity() {
                     composable<SelectOtpCardStyleRoute> { SelectOtpCardStyle(navController) }
                     composable<SelectIconPacksRoute> { SelectIconPacks(navController) }
                     composable<BiometricUnlockRoute> { BiometricUnlock(navController) }
-                    composable<AutomaticBackupsRoute> { AutomaticBackups(navController) }
+                    composable<ChangePassphraseRoute> { ChangePassphrase(navController) }
                     composable<ExportRoute> { Export(navController) }
                     composable<ImportRoute> { Import(navController) }
                     composable<ExportAegisRoute> { ExportAegis(navController) }

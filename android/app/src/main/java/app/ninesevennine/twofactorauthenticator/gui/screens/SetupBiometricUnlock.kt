@@ -1,7 +1,5 @@
 package app.ninesevennine.twofactorauthenticator.gui.screens
 
-import androidx.biometric.BiometricManager
-import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,21 +24,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
+import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.serialization.Serializable
 
@@ -52,6 +49,8 @@ private const val TAG = "SetupBiometricUnlock"
 
 @Composable
 fun SetupBiometricUnlock(navController: NavController) {
+    val context = LocalContext.current
+
     val isFullBiometricAvailable by remember {
         mutableStateOf(
             KeyStoreAES.isBiometricAvailable() && KeyStoreAES.isBiometricKeyLoaded()
@@ -100,7 +99,7 @@ fun SetupBiometricUnlock(navController: NavController) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = stringResource(R.string.common_description_biometric_unlock),
+                    text = stringResource(R.string.common_biometric_unlock_description),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
@@ -115,33 +114,27 @@ fun SetupBiometricUnlock(navController: NavController) {
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         text = stringResource(R.string.common_button_enable)
                     ) {
-                        val currentActivity = navController.context as? FragmentActivity ?: return@RoundedButton
-
-                        val executor = ContextCompat.getMainExecutor(currentActivity)
-
-                        val callback = object : BiometricPrompt.AuthenticationCallback() {
-                            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                        KeyStoreAES.saveUnlockPassphraseHash(
+                            promptTitle = promptTitle,
+                            promptNegative = promptNegative,
+                            onSuccess = {
                                 Config.isUsingBiometrics = true
+                                Config.hasCompletedSetup = true
+                                Config.save(context)
+
                                 Logger.i(TAG, "biometrics set to true")
-                                navController.navigate(SetupAutomaticBackupsRoute)
+
+                                navController.navigate(MainRoute) {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            },
+                            onCancel = {
+                                Logger.i(TAG, "biometric confirmation cancelled")
+                            },
+                            onError = {
+                                Logger.e(TAG, "biometric confirmation failed")
                             }
-
-                            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                                Logger.i(TAG, "biometric confirmation cancelled or errored: $errString")
-                            }
-
-                            override fun onAuthenticationFailed() {
-                                Logger.i(TAG, "biometric confirmation failed")
-                            }
-                        }
-
-                        val promptInfo = BiometricPrompt.PromptInfo.Builder()
-                            .setTitle(promptTitle)
-                            .setNegativeButtonText(promptNegative)
-                            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
-                            .build()
-
-                        BiometricPrompt(currentActivity, executor, callback).authenticate(promptInfo)
+                        )
                     }
                 } else {
                     Spacer(modifier = Modifier.height(12.dp))
@@ -169,13 +162,17 @@ fun SetupBiometricUnlock(navController: NavController) {
             ) {
                 RoundedButtonClean(
                     modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = bottomInset),
-                    text = stringResource(R.string.common_button_continue_without)
+                    text = stringResource(R.string.common_button_skip)
                 ) {
                     Config.isUsingBiometrics = false
-
                     Logger.i(TAG, "biometrics set to false")
 
-                    navController.navigate(SetupAutomaticBackupsRoute)
+                    Config.hasCompletedSetup = true
+                    Config.save(context)
+
+                    navController.navigate(MainRoute) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             }
         }

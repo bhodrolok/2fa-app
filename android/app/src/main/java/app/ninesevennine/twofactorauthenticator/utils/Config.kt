@@ -19,6 +19,7 @@ object Config {
     private const val KEY_THEME = "theme"
 
     var hasCompletedSetup: Boolean = false
+    var unlockPassphraseSalt: String = ""
     var automaticBackupsSalt: String = ""
     var activeIconPackId by mutableStateOf("")
     var UsingOtpCardStyle by mutableIntStateOf(OtpCardStyle.NORMAL.value)
@@ -50,6 +51,7 @@ object Config {
         Theme.set(context, theme)
 
         hasCompletedSetup = prefs.getBoolean("has_completed_setup", false)
+        unlockPassphraseSalt = prefs.getString("unlock_passphrase_salt", "") ?: ""
         automaticBackupsSalt = prefs.getString("automatic_backups_salt", "") ?: ""
         activeIconPackId = prefs.getString("active_icon_pack_id", "") ?: ""
         UsingOtpCardStyle = prefs.getInt("using_otp_card_style", OtpCardStyle.NORMAL.value)
@@ -76,6 +78,7 @@ object Config {
             putString(KEY_LOCALE, Locale.localeOption.tag)
             putInt(KEY_THEME, Theme.themeOption.value)
             putBoolean("has_completed_setup", hasCompletedSetup)
+            putString("unlock_passphrase_salt", unlockPassphraseSalt)
             putString("automatic_backups_salt", automaticBackupsSalt)
             putString("active_icon_pack_id", activeIconPackId)
             putInt("using_otp_card_style", UsingOtpCardStyle)

@@ -29,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,8 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
-import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
@@ -58,8 +55,6 @@ private const val TAG = "SetupGetStarted"
 
 @Composable
 fun SetupGetStarted(navController: NavController) {
-    val context = LocalContext.current
-
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
@@ -121,14 +116,6 @@ fun SetupGetStarted(navController: NavController) {
                     ) {
 
                     }
-
-                    SectionButton(
-                        painter = painterResource(R.drawable.mi_settings_backup_restore),
-                        tint = Theme.colors.primary,
-                        primaryText = stringResource(R.string.screen_setup_get_started_section_step_3)
-                    ) {
-
-                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -144,18 +131,7 @@ fun SetupGetStarted(navController: NavController) {
                     scope.launch(Dispatchers.IO) {
                         Logger.i(TAG, "get started pressed")
 
-                        AccountManagement.deleteAccountsUsingKey(context)
-
-                        Config.hasCompletedSetup = false
-                        Config.save(context)
-
-                        KeyStoreAES.deleteKey(isBiometricKey = false)
                         KeyStoreAES.deleteKey(isBiometricKey = true)
-
-                        KeyStoreAES.generateKey(isBiometricKey = false)
-                        if (!KeyStoreAES.loadKey(isBiometricKey = false)) {
-                            return@launch
-                        }
 
                         if (KeyStoreAES.isBiometricAvailable()) {
                             KeyStoreAES.generateKey(isBiometricKey = true)
@@ -165,7 +141,7 @@ fun SetupGetStarted(navController: NavController) {
                         }
 
                         withContext(Dispatchers.Main) {
-                            navController.navigate(SetupInitializeCryptographicKeysRoute)
+                            navController.navigate(SetupCreateAPassphrase)
                         }
                     }
                 }

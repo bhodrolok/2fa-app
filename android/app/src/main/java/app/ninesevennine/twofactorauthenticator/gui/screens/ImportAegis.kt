@@ -42,14 +42,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
-import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
+import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
 import app.ninesevennine.twofactorauthenticator.utils.Document
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.Signals
@@ -196,10 +195,9 @@ fun ImportAegis(navController: NavController) {
                         val result = Entry.rustInterface.importAccountsAegis(passphrase, importData)
 
                         if (result) {
-                            AccountManagement.saveAccountsUsingKey(context)
-
-                            if (Config.isUsingAutomaticBackups) {
-                                AccountManagement.saveAccountsUsingAutomaticBackupsKey(context)
+                            if (!AccountManagement.saveAccounts(context)) {
+                                isLoading = false
+                                return@launch
                             }
 
                             Signals.accountAdded = true

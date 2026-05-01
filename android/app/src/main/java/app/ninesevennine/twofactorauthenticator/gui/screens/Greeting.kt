@@ -1,8 +1,10 @@
 package app.ninesevennine.twofactorauthenticator.gui.screens
 
 import android.net.Uri
+import android.util.Base64
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -45,8 +47,10 @@ import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
+import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
+import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
 import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Logger
@@ -66,10 +70,12 @@ fun Greeting(navController: NavController) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    var unableToLoadKeys by remember { mutableStateOf(false) }
-    var hasError by remember { mutableStateOf(false) }
-    var promptCanceled by remember { mutableStateOf(false) }
-    var wipeButtonTapsCount by remember { mutableIntStateOf(0) }
+    var fallbackToPassphrase by remember { mutableStateOf(false) }
+    var biometricKeyRecreationRequired by remember { mutableStateOf(false) }
+    var passphrase by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
+    var unlockError by remember { mutableStateOf(false) }
+    var unlockErrorCode by remember { mutableIntStateOf(0) }
     var versionNameTapsCount by remember { mutableIntStateOf(0) }
 
     val internalAppLogLauncher = rememberLauncherForActivityResult(
@@ -91,91 +97,47 @@ fun Greeting(navController: NavController) {
     val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
 
     val promptTitle = stringResource(R.string.common_title_biometric_unlock)
+    val promptTitle2 = stringResource(R.string.common_title_confirm_biometrics)
     val promptNegative = stringResource(R.string.common_button_cancel)
 
-    val internalBackupExists = AccountManagement.hasAccountsUsingAutomaticBackupsKey(context)
-
     LaunchedEffect(Signals.authenticate) {
-        unableToLoadKeys = false
-        hasError = false
-        promptCanceled = false
-
-        if (Config.hasCompletedSetup) {
-            if (Config.isUsingBiometrics) {
-                if (!KeyStoreAES.loadKey(true)) {
-                    unableToLoadKeys = true
-                    return@LaunchedEffect
-                }
-
-                if (KeyStoreAES.isKeyInvalidated(true)) {
-                    unableToLoadKeys = true
-                    return@LaunchedEffect
-                }
-            } else {
-                if (!KeyStoreAES.loadKey(false)) {
-                    unableToLoadKeys = true
-                    return@LaunchedEffect
-                }
-
-                if (KeyStoreAES.isKeyInvalidated(false)) {
-                    unableToLoadKeys = true
-                    return@LaunchedEffect
-                }
-            }
-
-            KeyStoreAES.loadSecret(
-                title = promptTitle,
-                negative = promptNegative,
-                onSuccess = { secret ->
-                    scope.launch(Dispatchers.IO) {
-                        Entry.rustInterface.setSecret003(secret)
-
-                        if (!AccountManagement.loadAccountsUsingKey(context)) {
-                            hasError = true
-                            return@launch
-                        }
-
-                        withContext(Dispatchers.Main) {
-                            navController.navigate(MainRoute) {
-                                popUpTo(0) { inclusive = true }
-                            }
-                        }
-                    }
-                },
-                onError = {
-                    unableToLoadKeys = true
-                },
-                onCancel = {
-                    Logger.i(TAG, "biometric prompt canceled")
-                    promptCanceled = true
-                }
-            )
-        } else {
-            KeyStoreAES.saveSecret(
-                title = promptTitle,
-                negative = promptNegative,
-                secret = Entry.rustInterface.getSecret003(),
-                onSuccess = {
-                    scope.launch(Dispatchers.IO) {
-                        Config.hasCompletedSetup = true
-                        Config.save(context)
-
-                        withContext(Dispatchers.Main) {
-                            navController.navigate(MainRoute) {
-                                popUpTo(0) { inclusive = true }
-                            }
-                        }
-                    }
-                },
-                onError = {
-                    hasError = true
-                },
-                onCancel = {
-                    Logger.i(TAG, "biometric prompt canceled")
-                    promptCanceled = true
-                }
-            )
+        if (!Config.isUsingBiometrics) {
+            fallbackToPassphrase = true
+            return@LaunchedEffect
         }
+
+        if (!KeyStoreAES.loadKey(isBiometricKey = true)) {
+            biometricKeyRecreationRequired = true
+            fallbackToPassphrase = true
+            return@LaunchedEffect
+        }
+
+        if (KeyStoreAES.isKeyInvalidated(isBiometricKey = true)) {
+            biometricKeyRecreationRequired = true
+            fallbackToPassphrase = true
+            return@LaunchedEffect
+        }
+
+        KeyStoreAES.loadUnlockPassphraseHash(
+            promptTitle = promptTitle,
+            promptNegative = promptNegative,
+            onSuccess = {
+                if (AccountManagement.loadAccounts(context) < 0) {
+                    fallbackToPassphrase = true
+                } else {
+                    Logger.i(TAG, "access granted via biometrics")
+                    navController.navigate(MainRoute) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            },
+            onCancel = {
+                fallbackToPassphrase = true
+            },
+            onError = {
+                fallbackToPassphrase = true
+            }
+        )
     }
 
     Box(
@@ -183,7 +145,7 @@ fun Greeting(navController: NavController) {
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).imePadding(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -193,64 +155,131 @@ fun Greeting(navController: NavController) {
             ) {
                 Spacer(modifier = Modifier.height(topInset + 16.dp))
 
-                if (unableToLoadKeys) {
+                if (fallbackToPassphrase) {
                     Icon(
-                        painter = painterResource(R.drawable.mi_warning),
+                        painter = painterResource(R.drawable.random_alphabet),
                         contentDescription = null,
                         modifier = Modifier.size(96.dp),
-                        tint = Theme.colors.veryWeak
+                        tint = Theme.colors.primary
                     )
 
                     Spacer(modifier = Modifier.height(32.dp))
 
-                    Text(
-                        text = stringResource(R.string.screen_greeting_title_invalidated),
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        color = Theme.colors.primary,
-                        fontSize = 18.sp,
-                        fontFamily = InterVariable,
-                        fontWeight = FontWeight.W700
+                    ConfidentialTextBox(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        title = stringResource(R.string.common_title_passphrase),
+                        value = passphrase,
+                        onValueChange = {
+                            if (!isLoading) {
+                                passphrase = it
+                            }
+                        },
+                        error = unlockError
                     )
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                    AnimatedVisibility(unlockError) {
+                        Text(
+                            text = when (unlockErrorCode) {
+                                AccountManagement.IMPORT_ERROR_NO_ACCOUNTS -> stringResource(R.string.common_import_error_no_accounts) // Won't ever happen.
+                                AccountManagement.IMPORT_ERROR_INCORRECT_PASSPHRASE -> stringResource(R.string.common_import_error_incorrect_passphrase)
+                                AccountManagement.IMPORT_ERROR_INCORRECT_VERSION -> stringResource(R.string.common_import_error_incorrect_version)
+                                AccountManagement.IMPORT_ERROR_INVALID_FILE -> stringResource(R.string.common_import_error_invalid)
+                                else -> stringResource(R.string.common_import_error_unknown)
+                            },
+                            modifier = Modifier.fillMaxWidth().padding(start = 20.dp, top = 8.dp, end = 20.dp),
+                            color = Theme.colors.veryWeak,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Normal,
+                            fontFamily = InterVariable
+                        )
+                    }
 
-                    Text(
-                        text = stringResource(R.string.screen_greeting_description_invalidated),
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        color = Theme.colors.primary,
-                        fontSize = 14.sp,
-                        fontFamily = InterVariable,
-                        fontWeight = FontWeight.Normal
-                    )
-                } else if (hasError || promptCanceled){
-                    Icon(
-                        painter = painterResource(R.drawable.mi_warning),
-                        contentDescription = null,
-                        modifier = Modifier.size(96.dp),
-                        tint = Theme.colors.weak
-                    )
+                    RoundedButton(
+                        modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                        text = if (isLoading) spinnerText() else stringResource(R.string.screen_greeting_button_unlock)
+                    ) {
+                        if (isLoading) return@RoundedButton
 
-                    Spacer(modifier = Modifier.height(32.dp))
+                        isLoading = true
 
-                    Text(
-                        text = stringResource(R.string.screen_greeting_title_something_wrong),
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        color = Theme.colors.primary,
-                        fontSize = 18.sp,
-                        fontFamily = InterVariable,
-                        fontWeight = FontWeight.W700
-                    )
+                        unlockError = false
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                        scope.launch(Dispatchers.IO) {
+                            val salt = Base64.decode(Config.unlockPassphraseSalt, Base64.DEFAULT)
+                            Entry.rustInterface.changeUnlockPassphraseHash(salt, passphrase)
 
-                    Text(
-                        text = stringResource(R.string.screen_greeting_description_something_wrong),
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        color = Theme.colors.primary,
-                        fontSize = 14.sp,
-                        fontFamily = InterVariable,
-                        fontWeight = FontWeight.Normal,
-                    )
+                            val result = AccountManagement.loadAccounts(context)
+                            if (result < 0) {
+                                isLoading = false
+                                unlockError = true
+                                unlockErrorCode = result
+                            } else {
+                                Logger.i(TAG, "access granted via passphrase")
+
+                                if (biometricKeyRecreationRequired) {
+                                    KeyStoreAES.deleteKey(isBiometricKey = true)
+
+                                    KeyStoreAES.generateKey(isBiometricKey = true)
+                                    if (!KeyStoreAES.loadKey(isBiometricKey = true)) {
+                                        Logger.i(TAG, "unable to load recreated biometric key")
+
+                                        Config.isUsingBiometrics = false
+                                        Config.save(context)
+
+                                        Logger.i(TAG, "biometrics set to false")
+
+                                        navController.navigate(MainRoute) {
+                                            popUpTo(0) { inclusive = true }
+                                        }
+                                    }
+
+                                    withContext(Dispatchers.Main) {
+                                        KeyStoreAES.saveUnlockPassphraseHash(
+                                            promptTitle = promptTitle2,
+                                            promptNegative = promptNegative,
+                                            onSuccess = {
+                                                Logger.i(TAG, "successfully recreated biometric key")
+
+                                                navController.navigate(MainRoute) {
+                                                    popUpTo(0) { inclusive = true }
+                                                }
+                                            },
+                                            onCancel = {
+                                                Logger.i(TAG, "biometric recreation confirmation cancelled")
+
+                                                Config.isUsingBiometrics = false
+                                                Config.save(context)
+
+                                                Logger.i(TAG, "biometrics set to false")
+
+                                                navController.navigate(MainRoute) {
+                                                    popUpTo(0) { inclusive = true }
+                                                }
+                                            },
+                                            onError = {
+                                                Logger.e(TAG, "biometric recreation confirmation failed")
+
+                                                Config.isUsingBiometrics = false
+                                                Config.save(context)
+
+                                                Logger.i(TAG, "biometrics set to false")
+
+                                                navController.navigate(MainRoute) {
+                                                    popUpTo(0) { inclusive = true }
+                                                }
+                                            }
+                                        )
+                                    }
+                                } else {
+                                    withContext(Dispatchers.Main) {
+                                        navController.navigate(MainRoute) {
+                                            popUpTo(0) { inclusive = true }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 } else {
                     Icon(
                         painter = painterResource(R.drawable.logo_rectangle),
@@ -260,56 +289,11 @@ fun Greeting(navController: NavController) {
                     )
                 }
 
-                if (unableToLoadKeys || hasError || promptCanceled) {
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    if (internalBackupExists) {
-                        Text(
-                            text = stringResource(R.string.screen_greeting_backup_found),
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                            color = Theme.colors.good,
-                            fontSize = 14.sp,
-                            fontFamily = InterVariable
-                        )
-                    } else {
-                        Text(
-                            text = stringResource(R.string.screen_greeting_backup_not_found),
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                            color = Theme.colors.veryWeak,
-                            fontSize = 14.sp,
-                            fontFamily = InterVariable
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    RoundedButton(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        text = if (wipeButtonTapsCount > 0) {
-                            pluralStringResource(R.plurals.common_button_tap_n_times_to_confirm, 6 - wipeButtonTapsCount, 6 - wipeButtonTapsCount)
-                        } else {
-                            if (internalBackupExists)
-                                stringResource(R.string.screen_greeting_button_wipe_and_restore_access)
-                            else
-                                stringResource(R.string.screen_greeting_button_wipe)
-                        }
-                    ) {
-                        if (wipeButtonTapsCount < 5) {
-                            wipeButtonTapsCount++
-                            return@RoundedButton
-                        }
-
-                        navController.navigate(SetupGetStartedRoute) {
-                            popUpTo(0) { inclusive = true }
-                        }
-                    }
-                }
-
                 Spacer(modifier = Modifier.height(bottomInset + 64.dp))
             }
         }
 
-        if (unableToLoadKeys || hasError || promptCanceled) {
+        if (fallbackToPassphrase) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomCenter

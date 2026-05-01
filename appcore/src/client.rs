@@ -14,8 +14,11 @@ pub struct ClientSecret003 {
     pub automatic_backups_key: [u8; CLIENT_SECRET_003_AUTOMATIC_BACKUPS_KEY_LEN],
 }
 
+pub const CLIENT_UNLOCK_PASSPHRASE_HASH_LEN: usize = 64;
+
 pub struct Client {
     pub secret003: ClientSecret003,
+    pub unlock_passphrase_hash: [u8; CLIENT_UNLOCK_PASSPHRASE_HASH_LEN],
     pub edit: Option<Account>,
     pub accounts: Vec<Account>,
 }
@@ -24,6 +27,8 @@ impl Client {
     pub fn unload(&mut self) {
         self.secret003.key.zeroize();
         self.secret003.automatic_backups_key.zeroize();
+
+        self.unlock_passphrase_hash.zeroize();
 
         if let Some(edit) = &mut self.edit {
             edit.secret.zeroize();
@@ -57,6 +62,25 @@ impl Client {
             .unwrap();
     }
 
+    pub fn set_unlock_passphrase_hash(&mut self, hash: &[u8; CLIENT_UNLOCK_PASSPHRASE_HASH_LEN]) {
+        self.unlock_passphrase_hash.copy_from_slice(hash);
+    }
+
+    pub fn change_unlock_passphrase_hash(&mut self, salt: &[u8], passphrase: &str) {
+        // m: 256 MiB t: 4 p: 2
+        let params = argon2::Params::new(256 * 1024, 4, 2, None).unwrap();
+        let argon2 =
+            argon2::Argon2::new(argon2::Algorithm::Argon2id, argon2::Version::V0x13, params);
+
+        argon2
+            .hash_password_into(
+                passphrase.as_bytes(),
+                salt,
+                &mut self.unlock_passphrase_hash,
+            )
+            .unwrap();
+    }
+
     pub fn get_secret003(&self) -> [u8; CLIENT_SECRET_003_LEN] {
         let mut out = [0u8; CLIENT_SECRET_003_LEN];
 
@@ -64,6 +88,10 @@ impl Client {
         out[CLIENT_SECRET_003_KEY_LEN..].copy_from_slice(&self.secret003.automatic_backups_key);
 
         out
+    }
+
+    pub fn get_unlock_passphrase_hash(&self) -> [u8; CLIENT_UNLOCK_PASSPHRASE_HASH_LEN] {
+        self.unlock_passphrase_hash
     }
 
     pub fn set_secret003(&mut self, secret: &[u8; CLIENT_SECRET_003_LEN]) {
@@ -281,6 +309,7 @@ impl Default for Client {
                 key: [0u8; CLIENT_SECRET_003_KEY_LEN],
                 automatic_backups_key: [0u8; CLIENT_SECRET_003_AUTOMATIC_BACKUPS_KEY_LEN],
             },
+            unlock_passphrase_hash: [0u8; CLIENT_UNLOCK_PASSPHRASE_HASH_LEN],
             edit: None,
             accounts: Vec::new(),
         }

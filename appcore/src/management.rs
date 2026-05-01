@@ -77,6 +77,33 @@ impl Client {
         .to_string()
     }
 
+    pub fn export_accounts_using_unlock_passphrase_hash(&self, passphrase_salt: &[u8]) -> String {
+        use hkdf::Hkdf;
+        use sha3::Sha3_512;
+
+        let mut hkdf_salt = [0u8; 16];
+        getrandom::fill(&mut hkdf_salt).unwrap();
+
+        let mut salt = Vec::with_capacity(hkdf_salt.len() + passphrase_salt.len());
+        salt.extend_from_slice(&hkdf_salt);
+        salt.extend_from_slice(passphrase_salt);
+
+        let hk = Hkdf::<Sha3_512>::new(Some(&salt), &self.unlock_passphrase_hash);
+        let mut okm = [0u8; AEGIS256_KEY_NONCE_LEN];
+        hk.expand(b"979.2fa.v3", &mut okm).unwrap();
+
+        let key: [u8; AEGIS256_KEY_LEN] = okm[..AEGIS256_KEY_LEN].try_into().unwrap();
+        let nonce: [u8; AEGIS256_NONCE_LEN] = okm[AEGIS256_KEY_LEN..].try_into().unwrap();
+
+        let db = self.export_accounts_db_003(&key, &nonce);
+        serde_json::json!({
+            "version": 3,
+            "salt": data_encoding::BASE64.encode(&salt),
+            "db": db
+        })
+        .to_string()
+    }
+
     pub fn export_accounts(&self, passphrase: &str) -> String {
         let mut salt = [0u8; 16];
         getrandom::fill(&mut salt).unwrap();
@@ -338,6 +365,46 @@ impl Client {
         }
 
         let hk = Hkdf::<Sha3_512>::new(Some(&salt), &automatic_backups_key);
+        let mut okm = [0u8; AEGIS256_KEY_NONCE_LEN];
+        hk.expand(b"979.2fa.v3", &mut okm).unwrap();
+
+        let key: [u8; AEGIS256_KEY_LEN] = okm[..AEGIS256_KEY_LEN].try_into().unwrap();
+        let nonce: [u8; AEGIS256_NONCE_LEN] = okm[AEGIS256_KEY_LEN..].try_into().unwrap();
+
+        self.import_accounts_db_003(&key, &nonce, db)
+    }
+
+    pub fn import_accounts_using_unlock_passphrase_hash(&mut self, data: &str) -> i32 {
+        use hkdf::Hkdf;
+        use sha3::Sha3_512;
+
+        let obj: serde_json::Value = match serde_json::from_str(data) {
+            Ok(v) => v,
+            Err(_) => return IMPORT_ERROR_INVALID_FILE,
+        };
+
+        if obj.get("version").and_then(|v| v.as_u64()) != Some(3) {
+            return IMPORT_ERROR_INCORRECT_VERSION;
+        }
+
+        let db = match obj.get("db").and_then(|v| v.as_str()) {
+            Some(s) => s,
+            None => return IMPORT_ERROR_INVALID_FILE,
+        };
+
+        let salt = match obj.get("salt").and_then(|v| v.as_str()) {
+            Some(s) => match data_encoding::BASE64.decode(s.as_bytes()) {
+                Ok(b) => b,
+                Err(_) => return IMPORT_ERROR_INVALID_FILE,
+            },
+            None => return IMPORT_ERROR_INVALID_FILE,
+        };
+
+        if salt.len() <= 16 {
+            return IMPORT_ERROR_INVALID_FILE;
+        }
+
+        let hk = Hkdf::<Sha3_512>::new(Some(&salt), &self.unlock_passphrase_hash);
         let mut okm = [0u8; AEGIS256_KEY_NONCE_LEN];
         hk.expand(b"979.2fa.v3", &mut okm).unwrap();
 
