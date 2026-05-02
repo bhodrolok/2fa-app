@@ -2,7 +2,7 @@
 <resources>
     <string name="common_button_cancel">Cancelar</string>
     <string name="common_button_continue">Continuar</string>
-    <string name="common_button_skip">Continuar Sin</string>
+    <string name="common_button_skip">Omitir</string>
     <string name="common_button_disable">Desactivar</string>
     <string name="common_button_enable">Activar</string>
     <string name="common_button_restore">Restablecer</string>
@@ -99,7 +99,7 @@
         <item quantity="many">Mostrando %d de cuentas</item>
         <item quantity="other">Mostrando %d cuentas</item>
     </plurals>
-    <string name="common_biometric_unlock_description">El uso del desbloqueo biométrico puede invalidar tus llaves si cambia la pantalla de bloqueo o los espacios privados, si se actualiza el dispositivo o si llevas mucho tiempo sin abrir la aplicación. Siempre podrás restablecer el acceso activando las copias de seguridad automáticas.</string>
+    <string name="common_biometric_unlock_description">En lugar de introducir tu contraseña cada vez, puedes utilizar datos biométricos para desbloquear la aplicación. De vez en cuando tendrás que introducir tu contraseña, y en ocasiones será la única forma de desbloquear la aplicación.</string>
     <string name="common_description_biometric_unlock_unsupported">Es posible que el desbloqueo biométrico no sea compatible con este dispositivo. Asegúrate de tener la biometría configurada en los ajustes de tu dispositivo.</string>
     <string name="common_import_description">Estás importando cuentas desde \"%s\". Esto sobrescribirá las cuentas que coincidan y añadirá las que falten.</string>
     <string name="feature_qr_code_scanner_camera_permission">Se requiere permiso de la cámara para escanear códigos QR</string>
@@ -108,6 +108,12 @@
     <string name="screen_export_description">Estás creando una copia cifrada de tus cuentas. Guárdala en tu dispositivo local o en un servicio cloud de confianza.</string>
     <string name="screen_main_greeting">Toca el icono de añadir situado en la esquina inferior para añadir una cuenta. También puedes importar cuentas desde otras aplicaciones de autenticación en Ajustes.</string>
     <string name="screen_select_icon_packs_installed">Instaladas</string>
-    <string name="screen_setup_get_started_section_step_1">1. Inicializar Llaves Criptográficas</string>
-    <string name="screen_setup_get_started_section_step_2">2. Habilitar Desbloqueo Biométrico</string>
+    <string name="screen_setup_get_started_section_step_1">1. Crea una frase de contraseña</string>
+    <string name="screen_setup_get_started_section_step_2">2. Habilitar desbloqueo biométrico</string>
+    <string name="common_button_change">Cambiar</string>
+    <string name="common_import_error_unknown">Desconocido</string>
+    <string name="common_title_change_passphrase">Cmbiar la frase de contraseña (o frase de acceso)</string>
+    <string name="common_unlock_passphrase_description">Elige una frase de acceso fácil de recordar para desbloquear la aplicación. Puedes usar palabras, espacios y símbolos.</string>
+    <string name="screen_greeting_button_unlock">Desbloquear</string>
+    <string name="screen_setup_create_a_passphrase_title">Crear la frase de contraseña (o frase de acceso)</string>
 </resources>
