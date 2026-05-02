@@ -11,9 +11,11 @@ import androidx.core.os.ConfigurationCompat
 enum class LocaleOption(val tag: String, val displayName: String) {
     SYSTEM("", "Use System Default"),
     ENGLISH("en", "English International"),
+    CHINESE("zh", "中文"),
     SPANISH("es", "Español"),
     RUSSIAN("ru", "Русский"),
     GERMAN("de", "Deutsch"),
+    KOREAN("ko", "한국어"),
     UKRAINIAN("uk", "Українська"),
     DUTCH("nl", "Nederland"),
     ESTONIAN("et", "Eesti");

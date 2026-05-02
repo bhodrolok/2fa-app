@@ -36,12 +36,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.features.Locale
 import app.ninesevennine.twofactorauthenticator.features.LocaleOption
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedRadioButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedRefreshButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
+import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.serialization.Serializable
 
@@ -92,6 +92,19 @@ fun SelectLanguage(navController: NavController) {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 RoundedRadioButton(
+                    painter = painterResource(R.drawable.flag_china),
+                    text = LocaleOption.CHINESE.displayName,
+                    enabled = Locale.currentEffectiveLocale(context) == LocaleOption.CHINESE
+                ) {
+                    Logger.i(TAG, "language set to chinese")
+
+                    Locale.set(context, LocaleOption.CHINESE)
+                    Config.save(context)
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                RoundedRadioButton(
                     painter = painterResource(R.drawable.flag_spain),
                     text = LocaleOption.SPANISH.displayName,
                     enabled = Locale.currentEffectiveLocale(context) == LocaleOption.SPANISH
@@ -125,6 +138,19 @@ fun SelectLanguage(navController: NavController) {
                     Logger.i(TAG, "language set to german")
 
                     Locale.set(context, LocaleOption.GERMAN)
+                    Config.save(context)
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                RoundedRadioButton(
+                    painter = painterResource(R.drawable.flag_south_korea),
+                    text = LocaleOption.KOREAN.displayName,
+                    enabled = Locale.currentEffectiveLocale(context) == LocaleOption.KOREAN
+                ) {
+                    Logger.i(TAG, "language set to korean")
+
+                    Locale.set(context, LocaleOption.KOREAN)
                     Config.save(context)
                 }
 
