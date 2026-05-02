@@ -25,56 +25,6 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_generateClientSecretWithEntropy(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    entropy_array: JIntArray,
-) {
-    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
-        use sha3::{Digest, Sha3_512};
-
-        let len = entropy_array.len(env).unwrap();
-        let mut entropy_vec = vec![0i32; len];
-        entropy_array.get_region(env, 0, &mut entropy_vec).unwrap();
-        let entropy: Vec<u8> = entropy_vec.iter().flat_map(|v| v.to_le_bytes()).collect();
-
-        let first = Sha3_512::digest(&entropy);
-        let second = Sha3_512::digest(&first);
-
-        let mut client = CLIENT.lock().unwrap();
-        client.secret003.key.copy_from_slice(&first);
-        client
-            .secret003
-            .automatic_backups_key
-            .copy_from_slice(&second);
-
-        Ok(())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setAutomaticBackupsPassphrase003(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    salt: JByteArray,
-    passphrase: JString,
-) {
-    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
-        let salt = env.convert_byte_array(&salt).unwrap();
-        let passphrase: String = passphrase.to_string();
-
-        let mut client = CLIENT.lock().unwrap();
-        client.set_automatic_backups003(&salt, &passphrase);
-
-        Ok(())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
-}
-
-#[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setUnlockPassphraseHash(
     mut unowned_env: EnvUnowned,
     _class: JClass,
@@ -118,26 +68,6 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     });
 
     outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_getSecret003(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-) -> jbyteArray {
-    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
-        let client = CLIENT.lock().unwrap();
-        let secret = client.get_secret003();
-
-        let output = env.new_byte_array(secret.len()).unwrap();
-
-        let secret_i8: Vec<i8> = secret.iter().map(|b| *b as i8).collect();
-        output.set_region(env, 0, &secret_i8).unwrap();
-
-        Ok(output.into_raw())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
 }
 
 #[unsafe(no_mangle)]
@@ -765,42 +695,6 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         }
 
         Ok(0)
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_exportAccountsUsingKey003(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-) -> jstring {
-    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
-        let client = CLIENT.lock().unwrap();
-        Ok(env
-            .new_string(client.export_accounts_using_key_003())
-            .unwrap()
-            .into_raw())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_exportAccountsUsingAutomaticBackupsKey003(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    salt: JByteArray,
-) -> jstring {
-    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
-        let salt = env.convert_byte_array(&salt).unwrap();
-
-        let client = CLIENT.lock().unwrap();
-
-        Ok(env
-            .new_string(client.export_accounts_using_automatic_backups_key_003(&salt))
-            .unwrap()
-            .into_raw())
     });
 
     outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()

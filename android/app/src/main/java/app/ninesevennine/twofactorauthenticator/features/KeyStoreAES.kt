@@ -8,7 +8,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.utils.AtomicFileSystem
-import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import java.security.KeyStore
 import javax.crypto.Cipher
@@ -235,7 +234,7 @@ object KeyStoreAES {
         val file = currentActivity.noBackupFilesDir.resolve(UNLOCK_PASSPHRASE_HASH_FILE)
         if (!file.exists()) { onError(); return }
 
-        val data = try { AtomicFileSystem.read(file) } catch (e: Exception) { onError(); return }
+        val data = try { AtomicFileSystem.read(file) } catch (_: Exception) { onError(); return }
         if (data.size < GCM_IV_LENGTH) { onError(); return }
 
         val iv = data.copyOfRange(0, GCM_IV_LENGTH)
@@ -302,82 +301,9 @@ object KeyStoreAES {
         }
     }
 
-    fun saveSecret(
-        title: String,
-        negative: String,
-        secret: ByteArray,
-        onSuccess: () -> Unit,
-        onError: () -> Unit,
-        onCancel: () -> Unit = {}
-    ) {
-        val currentActivity = activity ?: run { onError(); return }
-
-        if (Config.isUsingBiometrics) {
-            val key = biometricKey ?: run { onError(); return }
-
-            val cipher = Cipher.getInstance(AES_TRANSFORMATION).apply {
-                init(Cipher.ENCRYPT_MODE, key)
-            }
-
-            val callback = object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                    try {
-                        val authenticatedCipher = result.cryptoObject?.cipher ?: cipher
-                        val encryptedSecret = authenticatedCipher.iv + authenticatedCipher.doFinal(secret)
-
-                        currentActivity.noBackupFilesDir.resolve(UNLOCK_PASSPHRASE_HASH_FILE).writeBytes(encryptedSecret)
-                        Logger.i(TAG, "secret saved")
-                        onSuccess()
-                    } catch (e: Exception) {
-                        Logger.w(TAG, "failed to save secret", e)
-                        onError()
-                    }
-                }
-
-                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                    when (errorCode) {
-                        BiometricPrompt.ERROR_NEGATIVE_BUTTON,
-                        BiometricPrompt.ERROR_USER_CANCELED -> onCancel()
-                        else -> onError()
-                    }
-                }
-
-                override fun onAuthenticationFailed() {}
-            }
-
-            val promptInfo = BiometricPrompt.PromptInfo.Builder()
-                .setTitle(title)
-                .setNegativeButtonText(negative)
-                .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
-                .build()
-
-            BiometricPrompt(currentActivity, ContextCompat.getMainExecutor(currentActivity), callback)
-                .authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
-        } else {
-            val key = regularKey ?: run { onError(); return }
-
-            try {
-                val cipher = Cipher.getInstance(AES_TRANSFORMATION).apply {
-                    init(Cipher.ENCRYPT_MODE, key)
-                }
-                val encryptedSecret = cipher.iv + cipher.doFinal(secret)
-
-                currentActivity.noBackupFilesDir.resolve(SECRET_FILENAME).writeBytes(encryptedSecret)
-                Logger.i(TAG, "secret saved")
-                onSuccess()
-            } catch (e: Exception) {
-                Logger.w(TAG, "failed to save secret", e)
-                onError()
-            }
-        }
-    }
-
     fun loadSecret(
-        title: String,
-        negative: String,
         onSuccess: (ByteArray) -> Unit,
-        onError: () -> Unit,
-        onCancel: () -> Unit = {}
+        onError: () -> Unit
     ) {
         val currentActivity = activity ?: run { onError(); return }
 
@@ -395,55 +321,16 @@ object KeyStoreAES {
         val iv = encryptedSecret.copyOfRange(0, GCM_IV_LENGTH)
         val ciphertext = encryptedSecret.copyOfRange(GCM_IV_LENGTH, encryptedSecret.size)
 
-        if (Config.isUsingBiometrics) {
-            val key = biometricKey ?: run { onError(); return }
+        val key = regularKey ?: run { onError(); return }
 
+        try {
             val cipher = Cipher.getInstance(AES_TRANSFORMATION).apply {
                 init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(GCM_TAG_LENGTH, iv))
             }
-
-            val callback = object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                    try {
-                        val authenticatedCipher = result.cryptoObject?.cipher ?: cipher
-                        onSuccess(authenticatedCipher.doFinal(ciphertext))
-                    } catch (e: Exception) {
-                        Logger.w(TAG, "failed to load secret", e)
-                        onError()
-                    }
-                }
-
-                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                    when (errorCode) {
-                        BiometricPrompt.ERROR_NEGATIVE_BUTTON,
-                        BiometricPrompt.ERROR_USER_CANCELED -> onCancel()
-                        else -> onError()
-                    }
-                }
-
-                override fun onAuthenticationFailed() {}
-            }
-
-            val promptInfo = BiometricPrompt.PromptInfo.Builder()
-                .setTitle(title)
-                .setNegativeButtonText(negative)
-                .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
-                .build()
-
-            BiometricPrompt(currentActivity, ContextCompat.getMainExecutor(currentActivity), callback)
-                .authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
-        } else {
-            val key = regularKey ?: run { onError(); return }
-
-            try {
-                val cipher = Cipher.getInstance(AES_TRANSFORMATION).apply {
-                    init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(GCM_TAG_LENGTH, iv))
-                }
-                onSuccess(cipher.doFinal(ciphertext))
-            } catch (e: Exception) {
-                Logger.w(TAG, "failed to load secret", e)
-                onError()
-            }
+            onSuccess(cipher.doFinal(ciphertext))
+        } catch (e: Exception) {
+            Logger.w(TAG, "failed to load secret", e)
+            onError()
         }
     }
 }

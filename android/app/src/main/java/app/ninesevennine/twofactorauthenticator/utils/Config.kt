@@ -33,7 +33,7 @@ object Config {
     var isUsingLockOnExit by mutableStateOf(false)
     var isUsingBlockIntents by mutableStateOf(false)
     var isUsingAutomaticBackups by mutableStateOf(false)
-    var UsingIconPacksStyle by mutableIntStateOf(IconPacksStyle.TINTED.value)
+    var UsingIconPacksStyle by mutableIntStateOf(IconPacksStyle.TEXTURED.value)
     var isUsingIconPacksDontSuggestColors by mutableStateOf(false)
 
     fun load(context: Context) {

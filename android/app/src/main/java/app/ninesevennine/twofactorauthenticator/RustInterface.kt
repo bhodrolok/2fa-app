@@ -8,11 +8,8 @@ class RustInterface {
     }
 
     external fun clientUnload()
-    external fun generateClientSecretWithEntropy(entropyArray: IntArray)
-    external fun setAutomaticBackupsPassphrase003(salt: ByteArray, passphrase: String)
     external fun setUnlockPassphraseHash(hash: ByteArray)
     external fun changeUnlockPassphraseHash(salt: ByteArray, passphrase: String)
-    external fun getSecret003(): ByteArray
     external fun getUnlockPassphraseHash(): ByteArray
     external fun setSecret003(secret: ByteArray)
     external fun isClientSecretEmpty(): Boolean
@@ -42,8 +39,6 @@ class RustInterface {
     external fun deleteAccount(id: Long)
     external fun incrementAccountCounterAndGet(id: Long): Long
 
-    external fun exportAccountsUsingKey003(): String
-    external fun exportAccountsUsingAutomaticBackupsKey003(salt: ByteArray): String
     external fun exportAccountsUsingUnlockPassphraseHash(salt: ByteArray): String
     external fun exportAccounts(passphrase: String): String
     external fun exportAccountsAegis(passphrase: String): String

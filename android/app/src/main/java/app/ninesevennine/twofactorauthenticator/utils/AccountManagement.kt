@@ -3,7 +3,6 @@ package app.ninesevennine.twofactorauthenticator.utils
 import android.content.Context
 import android.util.AtomicFile
 import android.util.Base64
-import android.util.Log
 import app.ninesevennine.twofactorauthenticator.Entry
 import java.io.File
 
@@ -23,19 +22,6 @@ object AccountManagement {
     const val IMPORT_ERROR_INVALID_FILE = -3
     const val IMPORT_ERROR_UNKNOWN = -4
 
-    private fun atomicWrite(file: File, data: String) {
-        val atomicFile = AtomicFile(file)
-        val fos = atomicFile.startWrite()
-        try {
-            fos.write(data.toByteArray(Charsets.UTF_8))
-            atomicFile.finishWrite(fos)
-        } catch (e: Exception) {
-            atomicFile.failWrite(fos)
-            Log.e(TAG, "failed to atomicWrite ${file.name}", e)
-            Logger.e(TAG, "failed to atomicWrite ${file.name}", e)
-        }
-    }
-
     private fun atomicRead(file: File): String {
         return AtomicFile(file).readFully().toString(Charsets.UTF_8)
     }
@@ -48,19 +34,6 @@ object AccountManagement {
         if (fileOld.exists()) return fileOld
 
         return null
-    }
-
-    fun saveAccountsUsingKey(context: Context) {
-        return try {
-            if (Entry.rustInterface.isClientSecretEmpty()) throw Exception("secret is empty")
-
-            val accountsData = Entry.rustInterface.exportAccountsUsingKey003()
-
-            val file = File(context.applicationContext.noBackupFilesDir, ACCOUNTS_USING_KEY_FILE)
-            atomicWrite(file, accountsData)
-        } catch (e: Exception) {
-            Logger.e(TAG, "failed to saveAccountsUsingKey", e)
-        }
     }
 
     fun loadAccountsUsingKey(context: Context): Boolean {
@@ -87,15 +60,6 @@ object AccountManagement {
             Logger.e(TAG, "failed to loadAccountsUsingKey", e)
             false
         }
-    }
-
-    fun deleteAccountsUsingKey(context: Context) {
-        val dir = context.applicationContext.noBackupFilesDir
-
-        AtomicFile(File(dir, ACCOUNTS_USING_KEY_FILE)).delete()
-        AtomicFile(File(dir, ACCOUNTS_USING_KEY_FILE_OLD)).delete()
-
-        Logger.i(TAG, "deleteAccountsUsingKey completed")
     }
 
     fun saveAccounts(context: Context): Boolean {
@@ -131,33 +95,6 @@ object AccountManagement {
         } catch (e: Exception) {
             Logger.e(TAG, "failed to load accounts", e)
             IMPORT_ERROR_UNKNOWN
-        }
-    }
-
-    fun saveAccountsUsingAutomaticBackupsKey(context: Context) {
-        try {
-            if (Entry.rustInterface.isClientSecretEmpty()) throw Exception("secret is empty")
-
-            val salt = Base64.decode(Config.automaticBackupsSalt, Base64.DEFAULT)
-            val accountsData = Entry.rustInterface.exportAccountsUsingAutomaticBackupsKey003(salt)
-
-            val file = File(
-                context.applicationContext.noBackupFilesDir,
-                ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE
-            )
-            atomicWrite(file, accountsData)
-        } catch (e: Exception) {
-            Logger.e(TAG, "failed to saveAccountsUsingAutomaticBackupsKey", e)
-        }
-    }
-
-    fun hasAccountsUsingAutomaticBackupsKey(context: Context): Boolean {
-        return try {
-            val dir = context.applicationContext.noBackupFilesDir
-            resolveFile(dir, ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE, ACCOUNTS_USING_AUTOMATIC_BACKUPS_KEY_FILE_OLD) != null
-        } catch (e: Exception) {
-            Logger.e(TAG, "failed to check hasAccountsUsingAutomaticBackupsKey", e)
-            false
         }
     }
 

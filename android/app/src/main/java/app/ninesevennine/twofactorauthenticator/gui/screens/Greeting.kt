@@ -59,6 +59,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import java.security.SecureRandom
 
 @Serializable
 object GreetingRoute
@@ -205,10 +206,38 @@ fun Greeting(navController: NavController) {
                         unlockError = false
 
                         scope.launch(Dispatchers.IO) {
-                            val salt = Base64.decode(Config.unlockPassphraseSalt, Base64.DEFAULT)
-                            Entry.rustInterface.changeUnlockPassphraseHash(salt, passphrase)
+                            val result = if (AccountManagement.hasAccounts(context)) {
+                                val salt = Base64.decode(Config.unlockPassphraseSalt, Base64.DEFAULT)
+                                Entry.rustInterface.changeUnlockPassphraseHash(salt, passphrase)
 
-                            val result = AccountManagement.loadAccounts(context)
+                                AccountManagement.loadAccounts(context)
+                            } else {
+                                val data = AccountManagement.getAccountsUsingAutomaticBackupsKey(context)
+                                if (data == null) { // This should not happen.
+                                    isLoading = false
+                                    return@launch
+                                }
+
+                                var res = Entry.rustInterface.importAccountsUsingAutomaticBackupsKey003(passphrase, data)
+                                if (res == AccountManagement.IMPORT_ERROR_INCORRECT_VERSION) {
+                                    res = Entry.rustInterface.importAccounts(passphrase, data)
+                                }
+
+                                if (res >= 0) {
+                                    val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
+                                    Entry.rustInterface.changeUnlockPassphraseHash(salt, passphrase)
+
+                                    Config.unlockPassphraseSalt = Base64.encodeToString(salt, Base64.DEFAULT)
+                                    Config.save(context)
+
+                                    Logger.i(TAG, "unlock passphrase hash set")
+
+                                    AccountManagement.saveAccounts(context)
+                                }
+
+                                res
+                            }
+
                             if (result < 0) {
                                 isLoading = false
                                 unlockError = true
@@ -252,6 +281,9 @@ fun Greeting(navController: NavController) {
 
                                                 Logger.i(TAG, "biometrics set to false")
 
+                                                KeyStoreAES.deleteKey(isBiometricKey = true)
+                                                KeyStoreAES.deleteUnlockPassphraseHashFile()
+
                                                 navController.navigate(MainRoute) {
                                                     popUpTo(0) { inclusive = true }
                                                 }
@@ -263,6 +295,9 @@ fun Greeting(navController: NavController) {
                                                 Config.save(context)
 
                                                 Logger.i(TAG, "biometrics set to false")
+
+                                                KeyStoreAES.deleteKey(isBiometricKey = true)
+                                                KeyStoreAES.deleteUnlockPassphraseHashFile()
 
                                                 navController.navigate(MainRoute) {
                                                     popUpTo(0) { inclusive = true }

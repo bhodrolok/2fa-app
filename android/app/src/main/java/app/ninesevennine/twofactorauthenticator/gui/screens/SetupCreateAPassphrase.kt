@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
+import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
@@ -163,6 +164,21 @@ fun SetupCreateAPassphrase(navController: NavController) {
 
                         scope.launch(Dispatchers.IO) {
                             Logger.i(TAG, "continue pressed")
+
+                            if (KeyStoreAES.loadKey(isBiometricKey = false)) {
+                                if (!KeyStoreAES.isKeyInvalidated(isBiometricKey = false)) {
+                                    KeyStoreAES.loadSecret(
+                                        onSuccess = { secret ->
+                                            Entry.rustInterface.setSecret003(secret)
+                                        },
+                                        onError = {
+
+                                        }
+                                    )
+
+                                    AccountManagement.loadAccountsUsingKey(context)
+                                }
+                            }
 
                             val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
                             Entry.rustInterface.changeUnlockPassphraseHash(salt, passphrase)

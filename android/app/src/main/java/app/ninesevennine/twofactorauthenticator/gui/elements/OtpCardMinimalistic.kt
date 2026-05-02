@@ -299,11 +299,7 @@ fun OtpCardMinimalistic(
                                     onCounterChange(newCounter)
 
                                     scope.launch(Dispatchers.IO) {
-                                        AccountManagement.saveAccountsUsingKey(context)
-
-                                        if (Config.isUsingAutomaticBackups) {
-                                            AccountManagement.saveAccountsUsingAutomaticBackupsKey(context)
-                                        }
+                                        AccountManagement.saveAccounts(context)
                                     }
                                 }
                             ),

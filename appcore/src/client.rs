@@ -47,21 +47,6 @@ impl Client {
         self.accounts.clear();
     }
 
-    pub fn set_automatic_backups003(&mut self, salt: &[u8], passphrase: &str) {
-        // m: 256 MiB t: 4 p: 2
-        let params = argon2::Params::new(256 * 1024, 4, 2, None).unwrap();
-        let argon2 =
-            argon2::Argon2::new(argon2::Algorithm::Argon2id, argon2::Version::V0x13, params);
-
-        argon2
-            .hash_password_into(
-                passphrase.as_bytes(),
-                salt,
-                &mut self.secret003.automatic_backups_key,
-            )
-            .unwrap();
-    }
-
     pub fn set_unlock_passphrase_hash(&mut self, hash: &[u8; CLIENT_UNLOCK_PASSPHRASE_HASH_LEN]) {
         self.unlock_passphrase_hash.copy_from_slice(hash);
     }

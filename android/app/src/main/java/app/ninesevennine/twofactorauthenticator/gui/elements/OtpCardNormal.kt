@@ -56,8 +56,6 @@ import app.ninesevennine.twofactorauthenticator.AccountTruncated
 import app.ninesevennine.twofactorauthenticator.CodeType
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
-import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.features.IconPacksStyle
 import app.ninesevennine.twofactorauthenticator.features.Theme
@@ -65,7 +63,9 @@ import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.OtpCard
 import app.ninesevennine.twofactorauthenticator.gui.screens.EditRoute
+import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
 import app.ninesevennine.twofactorauthenticator.utils.Clipboard
+import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Time
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -365,11 +365,7 @@ fun OtpCardNormal(
 
                                         if (!isEditing) {
                                             scope.launch(Dispatchers.IO) {
-                                                AccountManagement.saveAccountsUsingKey(context)
-
-                                                if (Config.isUsingAutomaticBackups) {
-                                                    AccountManagement.saveAccountsUsingAutomaticBackupsKey(context)
-                                                }
+                                                AccountManagement.saveAccounts(context)
                                             }
                                         }
                                     }

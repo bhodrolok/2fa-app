@@ -1,6 +1,7 @@
 package app.ninesevennine.twofactorauthenticator
 
 import android.app.Application
+import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.PrivateApi
@@ -34,5 +35,12 @@ class Entry : Application() {
         }
 
         Config.load(this)
+
+        if (!AccountManagement.hasAccounts(this)) {
+            val data = AccountManagement.getAccountsUsingAutomaticBackupsKey(this)
+            if (data == null) {
+                Config.hasCompletedSetup = false
+            }
+        }
     }
 }

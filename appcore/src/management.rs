@@ -23,60 +23,6 @@ pub const IMPORT_ERROR_INVALID_FILE: i32 = -3;
 pub const IMPORT_ERROR_UNKNOWN: i32 = -4;
 
 impl Client {
-    pub fn export_accounts_using_key_003(&self) -> String {
-        use hkdf::Hkdf;
-        use sha3::Sha3_512;
-
-        let mut salt = [0u8; 16];
-        getrandom::fill(&mut salt).unwrap();
-
-        let hk = Hkdf::<Sha3_512>::new(Some(&salt), &self.secret003.key);
-        let mut okm = [0u8; AEGIS256_KEY_NONCE_LEN];
-        hk.expand(b"979.2fa.v3", &mut okm).unwrap();
-
-        let key: [u8; AEGIS256_KEY_LEN] = okm[..AEGIS256_KEY_LEN].try_into().unwrap();
-        let nonce: [u8; AEGIS256_NONCE_LEN] = okm[AEGIS256_KEY_LEN..].try_into().unwrap();
-
-        let db = self.export_accounts_db_003(&key, &nonce);
-
-        serde_json::json!({
-            "version": 3,
-            "salt": data_encoding::BASE64.encode(&salt),
-            "db": db
-        })
-        .to_string()
-    }
-
-    pub fn export_accounts_using_automatic_backups_key_003(
-        &self,
-        passphrase_salt: &[u8],
-    ) -> String {
-        use hkdf::Hkdf;
-        use sha3::Sha3_512;
-
-        let mut hkdf_salt = [0u8; 16];
-        getrandom::fill(&mut hkdf_salt).unwrap();
-
-        let mut salt = Vec::with_capacity(hkdf_salt.len() + passphrase_salt.len());
-        salt.extend_from_slice(&hkdf_salt);
-        salt.extend_from_slice(passphrase_salt);
-
-        let hk = Hkdf::<Sha3_512>::new(Some(&salt), &self.secret003.automatic_backups_key);
-        let mut okm = [0u8; AEGIS256_KEY_NONCE_LEN];
-        hk.expand(b"979.2fa.v3", &mut okm).unwrap();
-
-        let key: [u8; AEGIS256_KEY_LEN] = okm[..AEGIS256_KEY_LEN].try_into().unwrap();
-        let nonce: [u8; AEGIS256_NONCE_LEN] = okm[AEGIS256_KEY_LEN..].try_into().unwrap();
-
-        let db = self.export_accounts_db_003(&key, &nonce);
-        serde_json::json!({
-            "version": 3,
-            "salt": data_encoding::BASE64.encode(&salt),
-            "db": db
-        })
-        .to_string()
-    }
-
     pub fn export_accounts_using_unlock_passphrase_hash(&self, passphrase_salt: &[u8]) -> String {
         use hkdf::Hkdf;
         use sha3::Sha3_512;
@@ -204,77 +150,6 @@ impl Client {
         output.extend_from_slice(&tag);
 
         data_encoding::BASE64.encode(&output)
-    }
-
-    pub fn export_accounts_db_002(
-        &self,
-        key: &[u8; XCHACHA20_KEY_SIZE],
-        nonce: &[u8; XCHACHA20_NONCE_SIZE],
-    ) -> String {
-        use chacha20poly1305::{KeyInit, aead::AeadMut};
-
-        let mut accounts_array: Vec<serde_json::Value> = Vec::with_capacity(self.accounts.len());
-
-        for account in &self.accounts {
-            let mut account_obj = serde_json::Value::Object(serde_json::Map::new());
-
-            account_obj["id"] = data_encoding::HEXLOWER_PERMISSIVE
-                .encode(&account.id.to_be_bytes())
-                .into();
-
-            if !account.name.is_empty() {
-                account_obj["name"] = account.name.clone().into();
-            }
-
-            if !account.issuer.is_empty() {
-                account_obj["issuer"] = account.issuer.clone().into();
-            }
-
-            if !account.note.is_empty() {
-                account_obj["note"] = account.note.clone().into();
-            }
-
-            account_obj["secret"] = data_encoding::BASE64.encode(&account.secret).into();
-            account_obj["code_type"] = match account.code_type {
-                CodeType::HOTP => "HOTP".into(),
-                CodeType::TOTP => "TOTP".into(),
-                CodeType::STEAM => "STEAM".into(),
-            };
-
-            if matches!(account.code_type, CodeType::HOTP | CodeType::TOTP) {
-                account_obj["algorithm"] = match account.algorithm {
-                    Algorithm::SHA1 => "SHA1".into(),
-                    Algorithm::SHA256 => "SHA256".into(),
-                    Algorithm::SHA512 => "SHA512".into(),
-                };
-
-                account_obj["digits"] = account.digits.into();
-            }
-
-            if account.code_type == CodeType::HOTP {
-                account_obj["counter"] = account.counter.into();
-            }
-
-            if account.code_type == CodeType::TOTP {
-                account_obj["period"] = account.period.into();
-            }
-
-            account_obj["color"] = data_encoding::HEXLOWER_PERMISSIVE
-                .encode(&account.color.to_be_bytes())
-                .into();
-
-            accounts_array.push(account_obj);
-        }
-
-        let plaintext = serde_json::to_string(&serde_json::Value::Array(accounts_array))
-            .unwrap_or_else(|_| "[]".to_string());
-
-        let mut cipher = chacha20poly1305::XChaCha20Poly1305::new(key.into());
-        let nonce = chacha20poly1305::XNonce::from_slice(nonce);
-
-        let ciphertext = cipher.encrypt(nonce, plaintext.as_bytes()).unwrap();
-
-        data_encoding::BASE64.encode(&ciphertext)
     }
 
     pub fn import_accounts_using_key_003(&mut self, data: &str) -> i32 {
