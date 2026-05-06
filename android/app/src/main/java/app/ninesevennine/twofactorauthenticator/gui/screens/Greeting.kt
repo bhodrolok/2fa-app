@@ -124,6 +124,7 @@ fun Greeting(navController: NavController) {
             promptNegative = promptNegative,
             onSuccess = {
                 if (AccountManagement.loadAccounts(context) < 0) {
+                    biometricKeyRecreationRequired = true
                     fallbackToPassphrase = true
                 } else {
                     Logger.i(TAG, "access granted via biometrics")
@@ -136,6 +137,7 @@ fun Greeting(navController: NavController) {
                 fallbackToPassphrase = true
             },
             onError = {
+                biometricKeyRecreationRequired = true
                 fallbackToPassphrase = true
             }
         )
@@ -202,7 +204,6 @@ fun Greeting(navController: NavController) {
                         if (isLoading) return@RoundedButton
 
                         isLoading = true
-
                         unlockError = false
 
                         scope.launch(Dispatchers.IO) {
