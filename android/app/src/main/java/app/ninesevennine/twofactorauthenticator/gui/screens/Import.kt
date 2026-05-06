@@ -35,6 +35,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -67,6 +69,9 @@ private const val TAG = "Import"
 fun Import(navController: NavController) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     var passphrase by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
@@ -106,6 +111,44 @@ fun Import(navController: NavController) {
 
     BackHandler(enabled = isLoading) {
         // intercept the system back button when loading.
+    }
+
+    val performImport = performImport@ {
+        if (isLoading || importData.isEmpty()) return@performImport
+
+        isLoading = true
+        importError = false
+
+        focusManager.clearFocus()
+        keyboardController?.hide()
+
+        scope.launch(Dispatchers.IO) {
+            Logger.i(TAG, "importing accounts")
+
+            val result = Entry.rustInterface.importAccounts(passphrase, importData)
+
+            if (result > 0) {
+                Logger.i(TAG, "successfully imported $result account(s)")
+
+                if (!AccountManagement.saveAccounts(context)) {
+                    isLoading = false
+                    return@launch
+                }
+
+                Signals.accountAdded = true
+
+                withContext(Dispatchers.Main) {
+                    navController.popBackStack(MainRoute, false)
+                }
+            } else {
+                Logger.i(TAG, "failed importing accounts")
+                importError = true
+                importErrorCode = result
+                isLoading = false
+            }
+        }
+
+        Unit
     }
 
     Box(
@@ -160,6 +203,7 @@ fun Import(navController: NavController) {
                     modifier = Modifier.padding(horizontal = 16.dp),
                     title = stringResource(R.string.common_title_passphrase),
                     value = passphrase,
+                    error = passphrase.isEmpty() || importError,
                     onValueChange = {
                         if (!isLoading) {
                             passphrase = it
@@ -167,7 +211,7 @@ fun Import(navController: NavController) {
 
                         importError = false
                     },
-                    error = passphrase.isEmpty() || importError
+                    onDone = performImport
                 )
 
                 AnimatedVisibility(importError) {
@@ -191,39 +235,9 @@ fun Import(navController: NavController) {
 
                 RoundedButton(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    text = if (isLoading) spinnerText() else stringResource(R.string.common_title_import)
-                ) {
-                    if (isLoading || importData.isEmpty()) return@RoundedButton
-
-                    isLoading = true
-                    importError = false
-
-                    scope.launch(Dispatchers.IO) {
-                        Logger.i(TAG, "importing accounts")
-
-                        val result = Entry.rustInterface.importAccounts(passphrase, importData)
-
-                        if (result > 0) {
-                            Logger.i(TAG, "successfully imported $result account(s)")
-
-                            if (!AccountManagement.saveAccounts(context)) {
-                                isLoading = false
-                                return@launch
-                            }
-
-                            Signals.accountAdded = true
-
-                            withContext(Dispatchers.Main) {
-                                navController.popBackStack(MainRoute, false)
-                            }
-                        } else {
-                            Logger.i(TAG, "failed importing accounts")
-                            importError = true
-                            importErrorCode = result
-                            isLoading = false
-                        }
-                    }
-                }
+                    text = if (isLoading) spinnerText() else stringResource(R.string.common_title_import),
+                    onClick = performImport
+                )
 
                 Spacer(modifier = Modifier.height(bottomInset + 80.dp))
             }

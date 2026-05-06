@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -33,6 +34,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -55,11 +57,14 @@ fun ConfidentialTextBox(
     modifier: Modifier = Modifier,
     title: String,
     value: String = "",
+    error: Boolean = false,
     onValueChange: (String) -> Unit = {},
-    error: Boolean = false
+    onDone: () -> Unit = {}
 ) {
     val haptic = LocalHapticFeedback.current
     val view = LocalView.current
+
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -104,7 +109,9 @@ fun ConfidentialTextBox(
                     painter = if (visible) painterResource(R.drawable.mi_visibility_off) else painterResource(R.drawable.mi_visibility),
                     contentDescription = null,
                     tint = Theme.colors.primary,
-                    modifier = Modifier.padding(top = 1.dp).size(16.dp)
+                    modifier = Modifier
+                        .padding(top = 1.dp)
+                        .size(16.dp)
                 )
                 Text(
                     text = if (visible) stringResource(R.string.common_title_hide) else stringResource(R.string.common_title_show),
@@ -133,6 +140,12 @@ fun ConfidentialTextBox(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    keyboardController?.hide()
+                    onDone()
+                }
+            ),
             decorationBox = { innerTextField ->
                 val shape = RoundedCornerShape(8.dp)
 
@@ -141,7 +154,11 @@ fun ConfidentialTextBox(
                         .fillMaxWidth()
                         .height(40.dp)
                         .background(color = Theme.colors.background, shape = shape)
-                        .border(1.dp, if (error) Theme.colors.veryWeak else Theme.colors.border, shape)
+                        .border(
+                            1.dp,
+                            if (error) Theme.colors.veryWeak else Theme.colors.border,
+                            shape
+                        )
                         .padding(horizontal = 12.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {

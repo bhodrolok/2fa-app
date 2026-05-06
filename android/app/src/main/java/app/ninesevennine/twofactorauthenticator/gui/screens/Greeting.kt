@@ -35,6 +35,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -70,6 +72,9 @@ private const val TAG = "Greeting"
 fun Greeting(navController: NavController) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     var fallbackToPassphrase by remember { mutableStateOf(false) }
     var biometricKeyRecreationRequired by remember { mutableStateOf(false) }
@@ -143,6 +148,128 @@ fun Greeting(navController: NavController) {
         )
     }
 
+    val performPassphraseUnlock = performPassphraseUnlock@ {
+        if (isLoading) return@performPassphraseUnlock
+
+        isLoading = true
+        unlockError = false
+
+        focusManager.clearFocus()
+        keyboardController?.hide()
+
+        scope.launch(Dispatchers.IO) {
+            val result = if (AccountManagement.hasAccounts(context)) {
+                val salt = Base64.decode(Config.unlockPassphraseSalt, Base64.DEFAULT)
+                Entry.rustInterface.changeUnlockPassphraseHash(salt, passphrase)
+
+                AccountManagement.loadAccounts(context)
+            } else {
+                val data = AccountManagement.getAccountsUsingAutomaticBackupsKey(context)
+                if (data == null) { // This should not happen.
+                    isLoading = false
+                    return@launch
+                }
+
+                var res = Entry.rustInterface.importAccountsUsingAutomaticBackupsKey003(passphrase, data)
+                if (res == AccountManagement.IMPORT_ERROR_INCORRECT_VERSION) {
+                    res = Entry.rustInterface.importAccounts(passphrase, data)
+                }
+
+                if (res >= 0) {
+                    val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
+                    Entry.rustInterface.changeUnlockPassphraseHash(salt, passphrase)
+
+                    Config.unlockPassphraseSalt = Base64.encodeToString(salt, Base64.DEFAULT)
+                    Config.save(context)
+
+                    Logger.i(TAG, "unlock passphrase hash set")
+
+                    AccountManagement.saveAccounts(context)
+                }
+
+                res
+            }
+
+            if (result < 0) {
+                isLoading = false
+                unlockError = true
+                unlockErrorCode = result
+            } else {
+                Logger.i(TAG, "access granted via passphrase")
+
+                if (biometricKeyRecreationRequired) {
+                    KeyStoreAES.deleteKey(isBiometricKey = true)
+
+                    KeyStoreAES.generateKey(isBiometricKey = true)
+                    if (!KeyStoreAES.loadKey(isBiometricKey = true)) {
+                        Logger.i(TAG, "unable to load recreated biometric key")
+
+                        Config.isUsingBiometrics = false
+                        Config.save(context)
+
+                        Logger.i(TAG, "biometrics set to false")
+
+                        navController.navigate(MainRoute) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+
+                    withContext(Dispatchers.Main) {
+                        KeyStoreAES.saveUnlockPassphraseHash(
+                            promptTitle = promptTitle2,
+                            promptNegative = promptNegative,
+                            onSuccess = {
+                                Logger.i(TAG, "successfully recreated biometric key")
+
+                                navController.navigate(MainRoute) {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            },
+                            onCancel = {
+                                Logger.i(TAG, "biometric recreation confirmation cancelled")
+
+                                Config.isUsingBiometrics = false
+                                Config.save(context)
+
+                                Logger.i(TAG, "biometrics set to false")
+
+                                KeyStoreAES.deleteKey(isBiometricKey = true)
+                                KeyStoreAES.deleteUnlockPassphraseHashFile()
+
+                                navController.navigate(MainRoute) {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            },
+                            onError = {
+                                Logger.e(TAG, "biometric recreation confirmation failed")
+
+                                Config.isUsingBiometrics = false
+                                Config.save(context)
+
+                                Logger.i(TAG, "biometrics set to false")
+
+                                KeyStoreAES.deleteKey(isBiometricKey = true)
+                                KeyStoreAES.deleteUnlockPassphraseHashFile()
+
+                                navController.navigate(MainRoute) {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            }
+                        )
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        navController.navigate(MainRoute) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                }
+            }
+        }
+
+        Unit
+    }
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -172,12 +299,13 @@ fun Greeting(navController: NavController) {
                         modifier = Modifier.padding(horizontal = 16.dp),
                         title = stringResource(R.string.common_title_passphrase),
                         value = passphrase,
+                        error = unlockError,
                         onValueChange = {
                             if (!isLoading) {
                                 passphrase = it
                             }
                         },
-                        error = unlockError
+                        onDone = performPassphraseUnlock
                     )
 
                     AnimatedVisibility(unlockError) {
@@ -199,123 +327,9 @@ fun Greeting(navController: NavController) {
 
                     RoundedButton(
                         modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                        text = if (isLoading) spinnerText() else stringResource(R.string.screen_greeting_button_unlock)
-                    ) {
-                        if (isLoading) return@RoundedButton
-
-                        isLoading = true
-                        unlockError = false
-
-                        scope.launch(Dispatchers.IO) {
-                            val result = if (AccountManagement.hasAccounts(context)) {
-                                val salt = Base64.decode(Config.unlockPassphraseSalt, Base64.DEFAULT)
-                                Entry.rustInterface.changeUnlockPassphraseHash(salt, passphrase)
-
-                                AccountManagement.loadAccounts(context)
-                            } else {
-                                val data = AccountManagement.getAccountsUsingAutomaticBackupsKey(context)
-                                if (data == null) { // This should not happen.
-                                    isLoading = false
-                                    return@launch
-                                }
-
-                                var res = Entry.rustInterface.importAccountsUsingAutomaticBackupsKey003(passphrase, data)
-                                if (res == AccountManagement.IMPORT_ERROR_INCORRECT_VERSION) {
-                                    res = Entry.rustInterface.importAccounts(passphrase, data)
-                                }
-
-                                if (res >= 0) {
-                                    val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
-                                    Entry.rustInterface.changeUnlockPassphraseHash(salt, passphrase)
-
-                                    Config.unlockPassphraseSalt = Base64.encodeToString(salt, Base64.DEFAULT)
-                                    Config.save(context)
-
-                                    Logger.i(TAG, "unlock passphrase hash set")
-
-                                    AccountManagement.saveAccounts(context)
-                                }
-
-                                res
-                            }
-
-                            if (result < 0) {
-                                isLoading = false
-                                unlockError = true
-                                unlockErrorCode = result
-                            } else {
-                                Logger.i(TAG, "access granted via passphrase")
-
-                                if (biometricKeyRecreationRequired) {
-                                    KeyStoreAES.deleteKey(isBiometricKey = true)
-
-                                    KeyStoreAES.generateKey(isBiometricKey = true)
-                                    if (!KeyStoreAES.loadKey(isBiometricKey = true)) {
-                                        Logger.i(TAG, "unable to load recreated biometric key")
-
-                                        Config.isUsingBiometrics = false
-                                        Config.save(context)
-
-                                        Logger.i(TAG, "biometrics set to false")
-
-                                        navController.navigate(MainRoute) {
-                                            popUpTo(0) { inclusive = true }
-                                        }
-                                    }
-
-                                    withContext(Dispatchers.Main) {
-                                        KeyStoreAES.saveUnlockPassphraseHash(
-                                            promptTitle = promptTitle2,
-                                            promptNegative = promptNegative,
-                                            onSuccess = {
-                                                Logger.i(TAG, "successfully recreated biometric key")
-
-                                                navController.navigate(MainRoute) {
-                                                    popUpTo(0) { inclusive = true }
-                                                }
-                                            },
-                                            onCancel = {
-                                                Logger.i(TAG, "biometric recreation confirmation cancelled")
-
-                                                Config.isUsingBiometrics = false
-                                                Config.save(context)
-
-                                                Logger.i(TAG, "biometrics set to false")
-
-                                                KeyStoreAES.deleteKey(isBiometricKey = true)
-                                                KeyStoreAES.deleteUnlockPassphraseHashFile()
-
-                                                navController.navigate(MainRoute) {
-                                                    popUpTo(0) { inclusive = true }
-                                                }
-                                            },
-                                            onError = {
-                                                Logger.e(TAG, "biometric recreation confirmation failed")
-
-                                                Config.isUsingBiometrics = false
-                                                Config.save(context)
-
-                                                Logger.i(TAG, "biometrics set to false")
-
-                                                KeyStoreAES.deleteKey(isBiometricKey = true)
-                                                KeyStoreAES.deleteUnlockPassphraseHashFile()
-
-                                                navController.navigate(MainRoute) {
-                                                    popUpTo(0) { inclusive = true }
-                                                }
-                                            }
-                                        )
-                                    }
-                                } else {
-                                    withContext(Dispatchers.Main) {
-                                        navController.navigate(MainRoute) {
-                                            popUpTo(0) { inclusive = true }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                        text = if (isLoading) spinnerText() else stringResource(R.string.screen_greeting_button_unlock),
+                        onClick = performPassphraseUnlock
+                    )
                 } else {
                     Icon(
                         painter = painterResource(R.drawable.logo_rectangle),
