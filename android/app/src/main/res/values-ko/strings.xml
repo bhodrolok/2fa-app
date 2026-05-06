@@ -85,7 +85,7 @@
     <string name="screen_settings_appearance_icon_packs">아이콘 팩</string>
     <string name="icon_packs_style_textured">질감형</string>
     <string name="screen_edit_section_advanced_settings_digits">자릿수</string>
-    <string name="screen_setup_get_started_section_step_1">1. 암호화 키 초기화</string>
+    <string name="screen_setup_get_started_section_step_1">1. 패스프레이즈 생성</string>
     <string name="screen_select_icon_packs_installed">설치됨</string>
     <string name="otp_card_style_normal">기본</string>
     <string name="screen_setup_get_started_welcome">2fa에 오신 것을 환영합니다!</string>
@@ -104,4 +104,12 @@
     <string name="screen_settings_security_secure_clipboard">클립보드 보안</string>
     <string name="common_button_continue">계속</string>
     <string name="common_import_error_invalid">유효하지 않은 파일</string>
+    <string name="common_button_change">변경</string>
+    <string name="common_button_skip">건너뛰기</string>
+    <string name="common_biometric_unlock_description">매번 패스프레이즈를 입력하는 대신 생체 인식으로 앱을 잠금 해제할 수 있습니다. 가끔씩 패스프레이즈를 입력해야 하며, 때로는 앱을 잠금 해제하는 유일한 방법으로 제시될 수도 있습니다.</string>
+    <string name="common_import_error_unknown">알 수 없음</string>
+    <string name="common_title_change_passphrase">패스프레이즈 변경</string>
+    <string name="common_unlock_passphrase_description">앱을 잠금 해제할 패스프레이즈는 기억할 수 있는 것으로 선택하십시오. 단어, 공백 및 특수문자를 사용할 수 있습니다.</string>
+    <string name="screen_greeting_button_unlock">잠금 해제</string>
+    <string name="screen_setup_create_a_passphrase_title">패스프레이즈 생성</string>
 </resources>

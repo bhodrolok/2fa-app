@@ -35,7 +35,7 @@
     <string name="screen_edit_section_advanced_settings">Täiendavad seadistused</string>
     <string name="screen_edit_section_advanced_settings_algorithm">Algoritm</string>
     <string name="screen_edit_section_advanced_settings_counter">Loendur</string>
-    <string name="common_biometric_unlock_description">Lukustuse avamine biomeetrilise stuvastamisega võib muuta sinu võtmed kehtetuks, kui muutub sinu lukustusvaade või privaatne andmeruum, seadme tarkvara uuendatakse või kui rakendust pole mõnda aega avatud. Juurdepääsu saad alati taastada, lülitades sisse automaatsed varukoopiad.</string>
+    <string name="common_biometric_unlock_description">Selle asemel, et iga kord sisestada salafraasi, võid rakenduse lukustuse avamiseks kasutada ka biomeetrilist tuvastust. Sel puhul pead salafraasi sisestama vahetevahel ning mõnel puhul ilma selle ta avada ei saagi.</string>
     <string name="common_description_biometric_unlock_unsupported">Sellel seadmel ei pruugi biomeetriline lukustuse avamine toimida. Veendu, et oled nutiseadme seadistustes biomeetrilise tuvastuse kasutusele võtnud.</string>
     <string name="common_import_description">Sa oled importimas kasutajakontosid rakendusest/teenusest „%s“. Sellega kirjutatakse olemasolevad kirjed üle ning lisatakse puuduvad kirjed.</string>
     <string name="screen_setup_get_started_welcome">Tere tulemast, see on 2fa!</string>
@@ -82,7 +82,7 @@
     <string name="screen_settings_security">Turvalisus</string>
     <string name="screen_settings_title">Seadistused</string>
     <string name="screen_setup_get_started_button">Alusta siit</string>
-    <string name="screen_setup_get_started_section_step_1">1. Valmenda krüptovõtmed</string>
+    <string name="screen_setup_get_started_section_step_1">1. Loo salafraas</string>
     <string name="screen_setup_get_started_section_step_2">2. Võta kasutusele biomeetriline lukustuse avamine</string>
     <string name="screen_setup_get_started_section_title">Seadistamiseks klõpsa valikut „Alusta siit“</string>
     <string name="screen_main_no_matching_were_found">Vastavaid kasutajakontosid ei leidunud</string>
@@ -102,10 +102,16 @@
     <string name="screen_settings_support">Kasutajatugi</string>
     <string name="screen_settings_support_donate">Toeta rahaliselt</string>
     <string name="screen_settings_support_donate_secondary">979 vajab jätkamiseks sinu tuge</string>
-    <string name="common_button_skip">Jätka Ilma</string>
+    <string name="common_button_skip">Jäta vahele</string>
     <string name="screen_edit_section_advanced_settings_digits">Numbrid</string>
     <string name="screen_edit_section_advanced_settings_period">Ajavahemik</string>
     <string name="screen_settings_security_block_intents">Blokeeri rakenduste vaheline suhtlus</string>
     <string name="screen_settings_security_block_intents_secondary">Eira tegevusi, mille on käivitanud välised rakendused</string>
     <string name="screen_main_greeting">Kasutajakonto lisamiseks klõpsa ikooni all nurgas. Lisaks võid seadistustest importida muudest kaksiautentimise rakendustest eksporditud kasutajakontosid.</string>
+    <string name="common_button_change">Muuda</string>
+    <string name="common_import_error_unknown">Pole teada</string>
+    <string name="common_title_change_passphrase">Muuda salafraasi</string>
+    <string name="common_unlock_passphrase_description">Rakenduse lukustuse avamiseks valis hästi meeldejääv salafraas. Võid kasutada sõnu, numbreid, tühikuid ja erimärke.</string>
+    <string name="screen_greeting_button_unlock">Ava lukustus</string>
+    <string name="screen_setup_create_a_passphrase_title">Loo salafraas</string>
 </resources>

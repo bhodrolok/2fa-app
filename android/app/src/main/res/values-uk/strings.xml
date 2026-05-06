@@ -112,4 +112,10 @@
     </plurals>
     <string name="screen_export_aegis_description">Ви створюєте зашифровану копію своїх облікових записів, сумісну з Aegis. Цей формат може містити не всі дані та не повинен використовуватися для імпорту облікових записів назад у цю програму.</string>
     <string name="screen_settings_security_block_intents">Блокувати запити</string>
+    <string name="common_button_change">Змінити</string>
+    <string name="common_import_error_unknown">Невідомо</string>
+    <string name="common_title_change_passphrase">Змінити пароль</string>
+    <string name="common_unlock_passphrase_description">Виберіть запам\'ятовуваний пароль, щоб розблокувати застосунок. Ви можете використовувати слова, пробіли та символи.</string>
+    <string name="screen_greeting_button_unlock">Розблокувати</string>
+    <string name="screen_setup_create_a_passphrase_title">Створити пароль</string>
 </resources>
