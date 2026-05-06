@@ -81,7 +81,7 @@ impl Client {
         const R: u32 = 8;
         const P: u32 = 2;
 
-        let params = ScryptParams::new((N as f64).log2() as u8, R, P, 32).unwrap();
+        let params = ScryptParams::new((N as f64).log2() as u8, R, P).unwrap();
 
         let mut derived_key = [0u8; 32];
         scrypt::scrypt(passphrase.as_bytes(), &salt, &params, &mut derived_key).unwrap();
@@ -251,7 +251,7 @@ impl Client {
                 None => continue,
             };
 
-            let params = match scrypt::Params::new((n as f64).log2() as u8, r, p, 32) {
+            let params = match scrypt::Params::new((n as f64).log2() as u8, r, p) {
                 Ok(p) => p,
                 Err(_) => continue,
             };
