@@ -59,7 +59,7 @@ object Logger {
                 f.appendText(line)
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to write to log file", e)
+            Log.e(TAG, "failed to write to log file", e)
         }
 
         when (type) {
