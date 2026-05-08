@@ -7,7 +7,6 @@
     <string name="common_button_enable">Ввімкнути</string>
     <string name="common_button_restore">Відновити</string>
     <string name="common_button_use_system_default">За замовчуванням</string>
-    <string name="common_biometric_unlock_description">Використання біометричного розблокування може зробити ваші ключі невідповідними, якщо зміниться блокування екрану або особисті області, пристрій оновиться або якщо застосунок не відкривався певний час. Ви завжди можете відновити доступ, увімкнувши автоматичне резервне копіювання.</string>
     <string name="common_description_biometric_unlock_unsupported">Біометричне розблокування може не підтримуватися на цьому пристрої. Переконайтеся, що у вас налаштовано біометрію в налаштуваннях пристрою.</string>
     <string name="common_import_description">Ви імпортуєте облікові записи з \"%s\". Це перезапише відповідні облікові записи та додасть будь-які відсутні.</string>
     <string name="common_import_error_incorrect_passphrase">Неправильний пароль</string>
@@ -91,7 +90,6 @@
     <string name="screen_settings_support_donate_secondary">979 потребує вашої підтримки</string>
     <string name="screen_settings_title">Налаштування</string>
     <string name="screen_setup_get_started_button">Почати</string>
-    <string name="screen_setup_get_started_section_step_1">1. Ініціалізація криптографічних ключів</string>
     <string name="screen_setup_get_started_section_step_2">2. Увімкніть біометричне розблокування</string>
     <string name="screen_setup_get_started_section_title">Натисніть «Почати», щоб розпочати налаштування</string>
     <string name="screen_setup_get_started_welcome">Ласкаво просимо до 2fa!</string>
