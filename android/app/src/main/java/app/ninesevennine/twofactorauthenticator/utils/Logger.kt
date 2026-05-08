@@ -7,15 +7,30 @@ import kotlin.time.Clock
 
 object Logger {
     private const val TAG = "Logger"
-
     private const val FILE = "app.log"
 
+    @Volatile
     private var file: File? = null
     private val lock = Any()
 
     fun init(context: Context) {
-        file = File(context.noBackupFilesDir, FILE).apply {
-            if (!exists()) createNewFile()
+        if (file == null) {
+            synchronized(lock) {
+                if (file == null) {
+                    try {
+                        val logFile = File(context.cacheDir, FILE)
+                        if (!logFile.exists()) {
+                            val created = logFile.createNewFile()
+                            if (!created) {
+                                Log.e(TAG, "could not create log file")
+                            }
+                        }
+                        file = logFile
+                    } catch (e: Exception) {
+                        Log.e(TAG, "failed to initialise log file", e)
+                    }
+                }
+            }
         }
     }
 
@@ -28,18 +43,23 @@ object Logger {
     private fun log(type: Char, tag: String, msg: String, t: Throwable? = null) {
         val f = file ?: return
 
-        val line = if (t == null) {
-            "[${ts()}][$type][$tag] $msg\n"
-        } else {
-            "[${ts()}][$type][$tag] $msg\n${Log.getStackTraceString(t)}\n"
+        val line = buildString {
+            append("[${ts()}][$type][$tag] $msg\n")
+            if (t != null) {
+                append(Log.getStackTraceString(t))
+                append("\n")
+            }
         }
 
         try {
             synchronized(lock) {
+                if (!f.exists()) {
+                    f.createNewFile()
+                }
                 f.appendText(line)
             }
         } catch (e: Exception) {
-            Log.e(TAG, "!!!!!!!!!!", e)
+            Log.e(TAG, "Failed to write to log file", e)
         }
 
         when (type) {
@@ -59,8 +79,13 @@ object Logger {
 
     fun getFullLog(): String {
         return try {
+            val currentFile = file ?: return ""
             synchronized(lock) {
-                file?.takeIf { it.exists() }?.readText() ?: ""
+                if (currentFile.exists()) {
+                    currentFile.readText()
+                } else {
+                    ""
+                }
             }
         } catch (e: Exception) {
             "failed to read log\n${e.message}"

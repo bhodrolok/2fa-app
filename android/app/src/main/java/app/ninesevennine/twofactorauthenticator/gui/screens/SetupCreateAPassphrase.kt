@@ -183,7 +183,7 @@ fun SetupCreateAPassphrase(navController: NavController) {
                             val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
                             Entry.rustInterface.changeUnlockPassphraseHash(salt, passphrase)
 
-                            Config.unlockPassphraseSalt = Base64.encodeToString(salt, Base64.DEFAULT)
+                            Config.unlockPassphraseSalt = Base64.encodeToString(salt, Base64.NO_WRAP)
                             Config.save(context)
 
                             Logger.i(TAG, "unlock passphrase hash set")

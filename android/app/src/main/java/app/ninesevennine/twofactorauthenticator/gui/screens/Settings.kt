@@ -368,8 +368,13 @@ fun Settings(navController: NavController) {
                         return@RoundedButtonClean
                     }
 
+                    versionNameTapsCount = 0
+
                     Signals.suppressLockOnExit = true
+
+                    Config.dump()
                     Logger.i(TAG, "downloading app log")
+
                     internalAppLogLauncher.launch("app.log")
                 }
             }
