@@ -15,9 +15,7 @@
         android:theme="@style/Theme.TwoFactorAuthenticator"
         android:supportsRtl="true"
         android:allowBackup="false"
-        android:fullBackupContent="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
-        android:requestLegacyExternalStorage="false"
         android:memtagMode="async">
         <activity
             android:name=".Main"
@@ -25,7 +23,6 @@
             android:exported="true"
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustNothing"
-            android:excludeFromRecents="false"
             android:enableOnBackInvokedCallback="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
