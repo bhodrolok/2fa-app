@@ -36,7 +36,7 @@ class Entry : Application() {
 
         Config.load(this)
 
-        if (!AccountManagement.hasAccounts(this)) {
+        if (!AccountManagement.hasAccounts(this) && Config.isUsingAutomaticBackups) {
             val data = AccountManagement.getAccountsUsingAutomaticBackupsKey(this)
             if (data == null) {
                 Config.hasCompletedSetup = false
