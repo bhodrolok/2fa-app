@@ -144,10 +144,12 @@ fun ChangePassphrase(navController: NavController) {
                     }
                 )
 
-                StrengthIndicator(
-                    modifier = Modifier.padding(start = 20.dp, top = 12.dp, end = 20.dp),
-                    strength = passphraseStrength
-                )
+                AnimatedVisibility(passphrase.isNotEmpty()) {
+                    StrengthIndicator(
+                        modifier = Modifier.padding(start = 20.dp, top = 12.dp, end = 20.dp),
+                        strength = passphraseStrength
+                    )
+                }
 
                 AnimatedVisibility(isPassphraseValid) {
                     ConfidentialTextBox(
