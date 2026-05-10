@@ -121,12 +121,16 @@ fun Main(navController: NavController) {
     }
 
     val lazyGridState = rememberLazyGridState()
-    val reorderableLazyGridState = rememberReorderableLazyGridState(lazyGridState) { from, to ->
-        if (query.isEmpty()) {
-            accounts.add(to.index, accounts.removeAt(from.index))
-            Entry.rustInterface.reorderAccount(from.index, to.index)
+    val reorderableLazyGridState = rememberReorderableLazyGridState(
+        lazyGridState = lazyGridState,
+        scrollThreshold = 144.dp,
+        onMove = { from, to ->
+            if (query.isEmpty()) {
+                accounts.add(to.index, accounts.removeAt(from.index))
+                Entry.rustInterface.reorderAccount(from.index, to.index)
+            }
         }
-    }
+    )
 
     LaunchedEffect(query) {
         if (query.isNotBlank() && accounts.isNotEmpty()) {
