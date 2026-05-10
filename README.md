@@ -27,24 +27,14 @@
 - Add accounts via QR codes, OTPAuth links, files, or your gallery.
 - Highly customizable, with account colors and icon packs, including textured and tinted options.
 - Advanced security features such as biometric unlock, screen security, secure clipboard, lock on exit, and intent blocking.
-- Automatic backups, along with manual export and import of your accounts in `.2fa` or Aegis `.json` formats.
+- Manual export and import of accounts in `.2fa` or Aegis `.json` encrypted formats.
 - And more!
 
 ### Security
 
-All accounts are encrypted and stored in the app's internal directory using our own format (extension `.2fa`). This format is the same whether the file is used internally or for exports. The only difference between them is where the cipher key comes from.
+All accounts are stored inside the app's internal directory using our format with the extension `.2fa`. They are encrypted with [AEGIS-256](https://datatracker.ietf.org/doc/draft-irtf-cfrg-aegis-aead/) and the key used is derived from hashing your passphrase with [Argon2id](https://en.wikipedia.org/wiki/Argon2). This method is used for both exports and internal storage, with the only difference being that internal storage takes an additional step by running the hash through [HKDF](https://en.wikipedia.org/wiki/HKDF) using [SHA3-512](https://en.wikipedia.org/wiki/SHA-3) with an additional random salt on every disk write.
 
-Accounts are encrypted using AEGIS-256. For exports and automatic backups, cipher keys are derived from hashing your passphrase with Argon2id using some very aggressive parameters, but we also enforce a minimum passphrase strength, and even the weakest passphrase we allow would take centuries to crack.
-
-The cipher key that decrypts your accounts when you open the app doesn't come from a passphrase. During setup, you move your finger across the screen to generate entropy. We hash that entropy with SHA3-512 to produce your accounts key, then hash the result again with SHA3-512 to produce your automatic backups key. These two keys are stored together in what we call a ClientSecret. Both are derived in a single operation before anything is written, so the ClientSecret is never left partially filled with zeros. If you later choose to enable automatic backups with a passphrase, only the backup key gets overridden.
-
-When the app encrypts or decrypts the internal accounts file, it doesn't use the ClientSecret keys directly. Each key is 512 bits, twice what AEGIS-256 needs, giving the system more headroom than the cipher alone. The key is run through HKDF-SHA3-512 with a fresh random salt and a version-specific label to produce the 256-bit key and nonce for that specific file. The salt is stored alongside the file so it can be re-derived on decryption. This guarantees that no two files ever share the same key and nonce pair, even when they come from the same ClientSecret.
-
-Of course the ClientSecret has to be stored somewhere. We encrypt it with AES-GCM, the most secure cipher available on the Android KeyStore, and try to generate the largest key possible on the Secure Element. If that fails, we step down in key size, and if the Secure Element isn't available at all, we repeat the process for the Trusted Execution Environment.
-
-In the KeyStore generation process, if you're using biometrics, some special flags are set that can invalidate your key. This can happen if your lock screen changes, your private spaces change, your device updates, or if the app hasn't been opened in a while.
-
-These conditions depend on your device's software and firmware and might not always trigger. If your key is invalidated, the ClientSecret becomes permanently inaccessible. This is why we strongly recommend enabling automatic backups. They use the same `.2fa` format, sit in the same internal directory, but are encrypted with a passphrase you choose. If your key is ever invalidated, this is how you get your accounts back. Without an automatic backup or a previously exported backup, your accounts are gone. This is by design.
+If you choose to use biometrics, the passphrase hash must be stored. It's encrypted using the Android Keystore with [AES-GCM](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) and StrongBox (when available). The result is saved in the `no_backup` folder, in a file named `unlock_passphrase_hash.bin`, meaning it won't be included in system backups or when transferring to a new device. Also, the biometric key can become invalid due to several reasons. If this happens, decrypting won't be possible, and you will have to enter your passphrase, after which you will be prompted to confirm biometrics in order to re-establish them.
 
 On top of that, we added a few features to keep your data from leaking in ways you might not expect. Here are some that might need a bit of explaining.
 
@@ -52,7 +42,7 @@ On top of that, we added a few features to keep your data from leaking in ways y
 
 - **Secure Clipboard:** When you copy a code, your system can show it in clipboard previews, suggestions, and even sync it to other devices. This marks copied codes as extra sensitive so the system knows to hide them. If you want your keyboard or system to autofill codes, you should keep this disabled.
 
-- **Lock on Exit:** When the app goes into the background, we securely erase the ClientSecret and all your account names, issuers, notes, and secrets from memory. This means you'll have to re-authenticate every time you open the app.
+- **Lock on Exit:** When the app goes into the background, we securely erase the `unlock_passphrase_hash` and all your account names, issuers, notes, and secrets from memory. This means you'll have to re-authenticate every time you open the app.
 
 - **Block Intents:** On Android, other apps can send data into yours, like sharing an image or a link. We use this to let you add accounts by sharing QR code images or OTPAuth links from other apps. The image decoding and QR parsing are handled by Android and ZXing, respectively, not by us. If an exploit exists in either of those, a malicious app could craft data specifically to trigger it. Enabling this drops all incoming data from other apps entirely, closing that attack surface at the cost of not being able to share into 2fa. We eventually want to replace both the image decoding and QR parsing with our own Rust implementations.
 
