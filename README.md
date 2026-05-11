@@ -69,8 +69,8 @@ When verifying, make sure to compare the hashes across multiple sources, such as
 We have a lot planned for 2026, though none of this is set in stone, and things might change along the way.
 
 - ~~**1.0** Google Play Store release~~
-- **1.1** Passphrase unlock
-- **1.2** Cross-device sync and cloud backups
+- ~~**1.1** Passphrase Unlock and Cloud Backups~~
+- **1.2** Cross-device Sync
 - **1.3** iOS
 
 ### Translations
