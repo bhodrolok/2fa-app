@@ -70,7 +70,7 @@
     <string name="screen_select_icon_packs_other_dont_suggest_colors">Pas de suggestion de couleur</string>
     <string name="screen_select_icon_packs_other_dont_suggest_colors_secondary">Par défaut blanc lors de l\'ajout d\'un compte</string>
     <string name="screen_select_icon_packs_style">Style</string>
-    <string name="screen_select_icon_packs_question_1">Où puis-je trouver ces packs d\'icônes ?</string>
+    <string name="screen_select_icon_packs_question_1">Où puis-je trouver ces packs d\'icônes ?</string>
     <string name="screen_settings_acccount_management">Gestion du compte</string>
     <string name="screen_settings_acccount_management_export_to_aegis">Exporter vers Aegis</string>
     <string name="screen_settings_acccount_management_import_from_aegis">Importer depuis Aegis</string>
