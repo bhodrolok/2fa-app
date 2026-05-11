@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <data-extraction-rules>
     <cloud-backup>
-        <exclude domain="root" path="." />
+        <include domain="root" path="accounts.2fa" />
+        <include domain="sharedpref" path="config.xml" />
     </cloud-backup>
     <device-transfer>
         <include domain="root" path="accounts.2fa" />
