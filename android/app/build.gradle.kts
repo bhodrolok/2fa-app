@@ -17,8 +17,8 @@ android {
         // minor (000)
         // type (0 alpha, 1 beta, 2 release candidate, 3 release)
         // patch (000)
-        versionCode = 10013000 // M mmm T ppp
-        versionName = "1.1.0"
+        versionCode = 10013001 // M mmm T ppp
+        versionName = "1.1.1"
 
         ndk {
             abiFilters.addAll(listOf("arm64-v8a"))
