@@ -19,14 +19,14 @@ object IconPacks {
     private const val TAG = "IconPacks"
 
     data class PackInfo(val id: String, val primary: String, val secondary: String)
-    data class IconPackEntry(val issuers: List<String>, val file: String, val color: Color)
+    data class IconPackEntry(val file: String, val color: Color)
     data class IconPackResult(val bitmap: Bitmap?, val color: Color?)
 
-    private var loadedIcons: List<IconPackEntry> = emptyList()
+    private var loadedIconsMap: Map<String, IconPackEntry> = emptyMap()
 
     fun load(context: Context, packId: String) {
         if (packId.isEmpty()) {
-            loadedIcons = emptyList()
+            loadedIconsMap = emptyMap()
             return
         }
 
@@ -35,17 +35,28 @@ object IconPacks {
             val json = JSONObject(metaFile.readText())
             val iconsArray = json.getJSONArray("icons")
 
-            loadedIcons = (0 until iconsArray.length()).map { i ->
+            val newMap = mutableMapOf<String, IconPackEntry>()
+
+            for (i in 0 until iconsArray.length()) {
                 val entry = iconsArray.getJSONObject(i)
                 val issuerArray = entry.getJSONArray("issuer")
-                IconPackEntry(
-                    issuers = (0 until issuerArray.length()).map { issuerArray.getString(it) },
-                    file = when (Config.UsingIconPacksStyle) {
-                        IconPacksStyle.TEXTURED.value -> entry.optString("textured", "")
-                        else -> entry.optString("tinted", "")
-                    }.takeIf { it.endsWith(".svg") } ?: "",
-                    color = (entry.optString("color", "").let { ColorPicker.fromHexString(it) } ?: Color.White).copy(alpha = 1f))
+                
+                val iconFile = when (Config.UsingIconPacksStyle) {
+                    IconPacksStyle.TEXTURED.value -> entry.optString("textured", "")
+                    else -> entry.optString("tinted", "")
+                }.takeIf { it.endsWith(".svg") } ?: ""
+
+                val iconColor = (entry.optString("color", "").let { 
+                    ColorPicker.fromHexString(it) 
+                } ?: Color.White).copy(alpha = 1f)
+
+                val packEntry = IconPackEntry(iconFile, iconColor)
+                
+                for (j in 0 until issuerArray.length()) {
+                    newMap[issuerArray.getString(j).lowercase().trim()] = packEntry
+                }
             }
+            loadedIconsMap = newMap
         } catch (_: Exception) {
             Logger.e(TAG, "failed to load icons for pack $packId")
         }
@@ -53,7 +64,7 @@ object IconPacks {
 
     fun get(context: Context, issuer: String): IconPackResult {
         val issuerNormalized = issuer.lowercase().trim()
-        val icon = loadedIcons.firstOrNull { it.issuers.any { s -> s == issuerNormalized } } ?: return IconPackResult(null, null)
+        val icon = loadedIconsMap[issuerNormalized] ?: return IconPackResult(null, null)
 
         if (icon.file.isBlank()) return IconPackResult(null, icon.color)
 
@@ -64,61 +75,53 @@ object IconPacks {
 
         return try {
             val svgBytes = svgFile.readBytes()
-            val bitmap = Entry.rustInterface.svgToBitmap(svgBytes, sizePx, sizePx) ?: return IconPackResult(null, icon.color)
+            val bitmap = Entry.rustInterface.svgToBitmap(svgBytes, sizePx, sizePx) 
             IconPackResult(bitmap, icon.color)
         } catch (_: Exception) {
             Logger.e(TAG, "Failed to load bitmap for $issuer")
-            IconPackResult(null, null)
+            IconPackResult(null, icon.color)
         }
     }
 
     fun getAvailable(context: Context): List<PackInfo> {
         val iconsDir = File(context.noBackupFilesDir, "icons")
-
         if (!iconsDir.exists()) return emptyList()
 
-        return iconsDir.listFiles()
-            ?.filter { it.isDirectory }
-            ?.mapNotNull { packDir ->
-                val metaFile = File(packDir, "metadata.json")
+        return iconsDir.listFiles()?.filter { it.isDirectory }?.mapNotNull { packDir ->
+            val metaFile = File(packDir, "metadata.json")
 
-                if (!metaFile.exists()) {
-                    packDir.deleteRecursively()
-                    return@mapNotNull null
-                }
-
-                try {
-                    val json = JSONObject(metaFile.readText())
-
-//                    if (json.getInt("version") != 1) return@mapNotNull null
-
-                    PackInfo(
-                        id = packDir.name,
-                        primary = json.getString("primary"),
-                        secondary = json.optString("secondary", "")
-                    )
-                } catch (_: Exception) {
-                    Logger.e(TAG, "failed to parse metadata.json in ${packDir.name}, deleting")
-                    packDir.deleteRecursively()
-                    null
-                }
+            if (!metaFile.exists()) {
+                packDir.deleteRecursively()
+                return@mapNotNull null
             }
-            ?: emptyList()
+
+            try {
+                val json = JSONObject(metaFile.readText())
+                PackInfo(
+                    id = packDir.name,
+                    primary = json.getString("primary"),
+                    secondary = json.optString("secondary", "")
+                )
+            } catch (_: Exception) {
+                Logger.e(TAG, "failed to parse metadata.json in ${packDir.name}, deleting")
+                packDir.deleteRecursively()
+                null
+            }
+        } ?: emptyList()
     }
 
     fun getActivePrimary(context: Context): String? {
-        return getAvailable(context).firstOrNull { it.id == Config.activeIconPackId }?.primary
+        val currentId = Config.activeIconPackId
+        if (currentId.isEmpty()) return null
+        return getAvailable(context).firstOrNull { it.id == currentId }?.primary
     }
 
     fun delete(context: Context, id: String) {
         if (id.isEmpty()) return
-
         File(context.noBackupFilesDir, "icons/$id").deleteRecursively()
-
         if (Config.activeIconPackId == id) {
-            loadedIcons = emptyList()
+            loadedIconsMap = emptyMap()
         }
-
         Logger.i(TAG, "deleted pack $id")
     }
 }
