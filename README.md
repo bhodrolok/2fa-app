@@ -19,11 +19,11 @@
 
 ### Overview
 
-2fa's only purpose is to provide single-use codes known as one-time passwords. It is a two-factor authenticator, and the concept is nothing new. There are plenty of other authenticators and alternatives with more features but with worse security and privacy than ours. We built 2fa to take full advantage of your device's hardware security, along with the latest cryptographic standards, to keep your accounts safe. The app is offline and includes unique features that no other authenticator app offers.
+2fa's only purpose is to provide single-use codes, also known as one-time passwords. It is a two-factor authenticator, and this concept is nothing new. While there are plenty of other authenticators with more features, they offer worse security and privacy than ours. We developed 2fa to take full advantage of your device's hardware security and the latest cryptographic standards to protect your accounts. The app is offline and includes unique features that no other authenticator app offers.
 
 ### Features
 
-- Support for TOTP, HOTP, and Steam Guard codes.
+- Support for [TOTP](https://wikipedia.org/wiki/Time-based_one-time_password), [HOTP](https://wikipedia.org/wiki/HMAC-based_one-time_password), and Steam Guard codes.
 - Add accounts via QR codes, OTPAuth links, files, or your gallery.
 - Highly customizable, with account colors and icon packs, including textured and tinted options.
 - Advanced security features such as biometric unlock, screen security, secure clipboard, lock on exit, and intent blocking.
@@ -32,15 +32,15 @@
 
 ### Security
 
-All accounts are stored inside the app's internal directory using our format with the extension `.2fa`. They are encrypted with [AEGIS-256](https://datatracker.ietf.org/doc/draft-irtf-cfrg-aegis-aead/) and the key used is derived from hashing your passphrase with [Argon2id](https://en.wikipedia.org/wiki/Argon2). This method is used for both exports and internal storage, with the only difference being that internal storage takes an additional step by running the hash through [HKDF](https://en.wikipedia.org/wiki/HKDF) using [SHA3-512](https://en.wikipedia.org/wiki/SHA-3) with an additional random salt on every disk write.
+All accounts are stored i the app's internal directory in our specially designed format with the .2fa extension. They are encrypted using [AEGIS-256](https://datatracker.ietf.org/doc/draft-irtf-cfrg-aegis-aead/), using a key derived from hashing your passphrase with [Argon2id](https://en.wikipedia.org/wiki/Argon2). This method is used for both exports and internal storage, with the only difference being that internal storage takes an additional step. This step involves running the hash through [HKDF](https://en.wikipedia.org/wiki/HKDF) using [SHA3-512](https://en.wikipedia.org/wiki/SHA-3) with an additional random salt on every disk write.
 
-If you choose to use biometrics, the passphrase hash must be stored. It's encrypted using the Android Keystore with [AES-GCM](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) and StrongBox (when available). The result is saved in the `no_backup` folder, in a file named `unlock_passphrase_hash.bin`, meaning it won't be included in system backups or when transferring to a new device. Also, the biometric key can become invalid due to several reasons. If this happens, decrypting won't be possible, and you will have to enter your passphrase, after which you will be prompted to confirm biometrics in order to re-establish them.
+If you choose to use biometrics, the passphrase hash must be stored. This is encrypted using the Android Keystore with [AES-GCM](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) and StrongBox, if available. This result is saved in the `no_backup` folder in a file named `unlock_passphrase_hash.bin`, meaning that it will not be included in system backups or when transferring to a new device. Also, the biometric key can become invalid due to several reasons. If this happens, decryption will not be possible anymore, and you would have to enter your passphrase. You would then be prompted to confirm your biometrics in order to re-establish them.
 
 On top of that, we added a few features to keep your data from leaking in ways you might not expect. Here are some that might need a bit of explaining.
 
-- **Incognito Keyboard:** Your keyboard normally remembers what you type to improve predictions, which means your account names, issuers, and secrets could end up stored in keyboard dictionaries. This prevents that by telling your keyboard to stop learning while you're in the app.
+- **Incognito Keyboard:** Your keyboard usually remembers what you type in order to improve its suggestions. This means that your usernames, passwords and other secrets could end up stored in the keyboard dictionary. This feature prevents that by stopping your keyboard from learning while you're in the app.
 
-- **Secure Clipboard:** When you copy a code, your system can show it in clipboard previews, suggestions, and even sync it to other devices. This marks copied codes as extra sensitive so the system knows to hide them. If you want your keyboard or system to autofill codes, you should keep this disabled.
+- **Secure Clipboard:** When you copy a code, your system may display it in clipboard previews and suggestions, and it may even be synced to other devices. Copied codes are marked as extra sensitive, so the system knows to hide them. If you want your keyboard or system to autofill codes, you should leave this feature disabled.
 
 - **Lock on Exit:** When the app goes into the background, we securely erase the `unlock_passphrase_hash` and all your account names, issuers, notes, and secrets from memory. This means you'll have to re-authenticate every time you open the app.
 
