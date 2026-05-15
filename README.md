@@ -19,36 +19,36 @@
 
 ### Overview
 
-2fa's only purpose is to provide single-use codes, also known as one-time passwords. It is a two-factor authenticator, and this concept is nothing new. While there are plenty of other authenticators with more features, they offer worse security and privacy than ours. We developed 2fa to take full advantage of your device's hardware security and the latest cryptographic standards to protect your accounts. The app is offline and includes unique features that no other authenticator app offers.
+2fa's sole purpose is to provide single-use codes, also known as one-time passwords. It is a two-factor authenticator, a concept that is nothing new. While there are plenty of other authenticators with more features, they often offer worse security and privacy than ours. We developed 2fa to take full advantage of your device's hardware security and the latest cryptographic standards to protect your accounts. The app works completely offline and includes unique features that no other authenticator app offers.
 
 ### Features
 
 - Support for [TOTP](https://wikipedia.org/wiki/Time-based_one-time_password), [HOTP](https://wikipedia.org/wiki/HMAC-based_one-time_password), and Steam Guard codes.
-- Add accounts via QR codes, OTPAuth links, files, or your gallery.
-- Highly customizable, with account colors and icon packs, including textured and tinted options.
-- Advanced security features such as biometric unlock, screen security, secure clipboard, lock on exit, and intent blocking.
+- Account creation via QR codes, OTPAuth links, files, or your gallery.
+- High customizability, featuring account colors and icon packs (including textured and tinted options).
+- Advanced security features such as biometric unlock, screen security, a secure clipboard, lock on exit, and intent blocking.
 - Manual export and import of accounts in `.2fa` or Aegis `.json` encrypted formats.
 - And more!
 
 ### Security
 
-All accounts are stored i the app's internal directory in our specially designed format with the .2fa extension. They are encrypted using [AEGIS-256](https://datatracker.ietf.org/doc/draft-irtf-cfrg-aegis-aead/), using a key derived from hashing your passphrase with [Argon2id](https://en.wikipedia.org/wiki/Argon2). This method is used for both exports and internal storage, with the only difference being that internal storage takes an additional step. This step involves running the hash through [HKDF](https://en.wikipedia.org/wiki/HKDF) using [SHA3-512](https://en.wikipedia.org/wiki/SHA-3) with an additional random salt on every disk write.
+All accounts are stored in the app's internal directory in our specially designed format with the `.2fa` extension. They are encrypted using [AEGIS-256](https://datatracker.ietf.org/doc/draft-irtf-cfrg-aegis-aead/), utilizing a key derived from hashing your passphrase with [Argon2id](https://en.wikipedia.org/wiki/Argon2). This method is used for both exports and internal storage, with the only difference being that internal storage requires an additional step. This step involves running the hash through [HKDF](https://en.wikipedia.org/wiki/HKDF) using [SHA3-512](https://en.wikipedia.org/wiki/SHA-3) with an additional random salt on every disk write.
 
-If you choose to use biometrics, the passphrase hash must be stored. This is encrypted using the Android Keystore with [AES-GCM](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) and StrongBox, if available. This result is saved in the `no_backup` folder in a file named `unlock_passphrase_hash.bin`, meaning that it will not be included in system backups or when transferring to a new device. Also, the biometric key can become invalid due to several reasons. If this happens, decryption will not be possible anymore, and you would have to enter your passphrase. You would then be prompted to confirm your biometrics in order to re-establish them.
+If you choose to use biometrics, the passphrase hash must be stored. This is encrypted using the Android Keystore with [AES-GCM](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) and StrongBox, if available. The result is saved in the `no_backup` folder in a file named `unlock_passphrase_hash.bin`, meaning it will not be included in system backups or when transferring to a new device. Additionally, the biometric key can become invalid for several reasons. If this happens, decryption will no longer be possible using biometrics, and you will have to enter your passphrase. You will then be prompted to confirm your biometrics in order to re-establish them.
 
-On top of that, we added a few features to keep your data from leaking in ways you might not expect. Here are some that might need a bit of explaining.
+On top of that, we have added a few features to keep your data from leaking in ways you might not expect. Here are some that might need a bit of explaining:
 
-- **Incognito Keyboard:** Your keyboard usually remembers what you type in order to improve its suggestions. This means that your usernames, passwords and other secrets could end up stored in the keyboard dictionary. This feature prevents that by stopping your keyboard from learning while you're in the app.
+- **Incognito Keyboard:** Your keyboard usually remembers what you type to improve its predictions. This means your usernames, passwords, and other secrets could end up stored in the keyboard dictionary. This feature prevents that by stopping your keyboard from learning while you are using the app.
 
-- **Secure Clipboard:** When you copy a code, your system may display it in clipboard previews and suggestions, and it may even be synced to other devices. Copied codes are marked as extra sensitive, so the system knows to hide them. If you want your keyboard or system to autofill codes, you should leave this feature disabled.
+- **Secure Clipboard:** When you copy a code, your system may display it in clipboard previews and suggestions, or even sync it to other devices. Copied codes are marked as extra sensitive so the system knows to hide them. If you want your keyboard or system to autofill codes, you should leave this feature disabled.
 
-- **Lock on Exit:** When the app goes into the background, we securely erase the `unlock_passphrase_hash` and all your account names, issuers, notes, and secrets from memory. This means you'll have to re-authenticate every time you open the app.
+- **Lock on Exit:** When the app goes into the background, we securely erase the `unlock_passphrase_hash` and all of your account names, issuers, notes, and secrets from memory. This means you will have to re-authenticate every time you open the app.
 
-- **Block Intents:** On Android, other apps can send data into yours, like sharing an image or a link. We use this to let you add accounts by sharing QR code images or OTPAuth links from other apps. The image decoding and QR parsing are handled by Android and ZXing, respectively, not by us. If an exploit exists in either of those, a malicious app could craft data specifically to trigger it. Enabling this drops all incoming data from other apps entirely, closing that attack surface at the cost of not being able to share into 2fa. We eventually want to replace both the image decoding and QR parsing with our own Rust implementations.
+- **Block Intents:** On Android, other apps can send data to yours, such as sharing an image or a link. We use this to let you add accounts by sharing QR code images or OTPAuth links from other apps. Image decoding and QR parsing are handled by Android and ZXing, respectively, rather than our own code. If an exploit exists in either of those tools, a malicious app could craft data specifically to trigger it. Enabling this feature drops all incoming data from other apps entirely, closing that attack surface at the cost of not being able to share directly into 2fa. We eventually plan to replace both image decoding and QR parsing with our own Rust implementations.
 
 ### Verifying Releases
 
-All releases are signed and must have the following SHA-256 certificate fingerprint.
+All releases are signed and must match the following SHA-256 certificate fingerprints:
 
 ```
 app.ninesevennine.twofactorauthenticator
@@ -75,8 +75,8 @@ We have a lot planned for 2026, though none of this is set in stone, and things 
 
 ### Translations
 
-2fa is already available in several languages, and we'd love your help adding more or improving existing ones. You can do this by contributing to our [Codeberg Weblate](https://translate.codeberg.org/projects/979/2fa/).
+2fa is already available in several languages, and we would love your help adding more or improving the existing ones. You can do this by contributing to our [Codeberg Weblate](https://translate.codeberg.org/projects/979/2fa/).
 
 ### Support
 
-If you have any problems using 2fa, found a bug, or just have a question, don't hesitate to reach us on [Discord](https://discord.gg/zxgXNzhYJu). If you'd like to support and accelerate our work, please consider [donating](https://979.st/donate/).
+If you have any problems using 2fa, find a bug, or just have a question, don't hesitate to reach out to us on [Discord](https://discord.gg/zxgXNzhYJu). If you would like to support and accelerate our work, please consider [donating](https://979.st/donate/).
