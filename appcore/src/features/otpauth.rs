@@ -3,8 +3,9 @@ use crate::{
     utils::{self},
 };
 use url::Url;
+use zeroize::Zeroize;
 
-#[derive(Clone)]
+#[derive(Clone, Zeroize)]
 pub struct Account {
     pub id: u64,
     pub name: String,

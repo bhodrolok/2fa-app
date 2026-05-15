@@ -9,6 +9,7 @@ pub const CLIENT_SECRET_003_AUTOMATIC_BACKUPS_KEY_LEN: usize = 64;
 pub const CLIENT_SECRET_003_LEN: usize =
     CLIENT_SECRET_003_KEY_LEN + CLIENT_SECRET_003_AUTOMATIC_BACKUPS_KEY_LEN;
 
+#[derive(Zeroize)]
 pub struct ClientSecret003 {
     pub key: [u8; CLIENT_SECRET_003_KEY_LEN],
     pub automatic_backups_key: [u8; CLIENT_SECRET_003_AUTOMATIC_BACKUPS_KEY_LEN],
@@ -25,24 +26,16 @@ pub struct Client {
 
 impl Client {
     pub fn unload(&mut self) {
-        self.secret003.key.zeroize();
-        self.secret003.automatic_backups_key.zeroize();
-
+        self.secret003.zeroize();
         self.unlock_passphrase_hash.zeroize();
 
         if let Some(edit) = &mut self.edit {
-            edit.secret.zeroize();
-            edit.name.zeroize();
-            edit.issuer.zeroize();
-            edit.note.zeroize();
+            edit.zeroize();
         }
         self.edit = None;
 
         for account in &mut self.accounts {
-            account.secret.zeroize();
-            account.name.zeroize();
-            account.issuer.zeroize();
-            account.note.zeroize();
+            account.zeroize();
         }
         self.accounts.clear();
     }
@@ -52,7 +45,6 @@ impl Client {
     }
 
     pub fn change_unlock_passphrase_hash(&mut self, salt: &[u8], passphrase: &str) {
-        // m: 256 MiB t: 4 p: 2
         let params = argon2::Params::new(256 * 1024, 4, 2, None).unwrap();
         let argon2 =
             argon2::Argon2::new(argon2::Algorithm::Argon2id, argon2::Version::V0x13, params);
@@ -130,34 +122,32 @@ impl Client {
         }
     }
 
+    fn truncate_account(account: &Account) -> AccountTruncated {
+        AccountTruncated {
+            id: account.id,
+            name: account.name.clone(),
+            issuer: account.issuer.clone(),
+            code_type: account.code_type,
+            counter: account.counter,
+            period: account.period,
+            digits: account.digits,
+            color: account.color,
+        }
+    }
+
     pub fn get_accounts_truncated_filtered(&self, query: &str) -> Vec<AccountTruncated> {
         if query.is_empty() {
-            return self
-                .accounts
-                .iter()
-                .map(|account| AccountTruncated {
-                    id: account.id,
-                    name: account.name.clone(),
-                    issuer: account.issuer.clone(),
-                    code_type: account.code_type,
-                    counter: account.counter,
-                    period: account.period,
-                    digits: account.digits,
-                    color: account.color,
-                })
-                .collect();
+            return self.accounts.iter().map(Self::truncate_account).collect();
         }
 
         let query_lower = query.to_lowercase();
+        
+        let query_chars: Vec<char> = query_lower.chars().collect();
+        let query_ngrams: Vec<(char, char)> = query_chars.windows(2).map(|w| (w[0], w[1])).collect();
 
-        fn ngram_overlap_score(query: &str, target: &str) -> f32 {
-            let query_chars: Vec<char> = query.chars().collect();
+        let ngram_overlap_score = |target: &str| -> f32 {
             let target_chars: Vec<char> = target.chars().collect();
-
-            let query_ngrams: Vec<(char, char)> =
-                query_chars.windows(2).map(|w| (w[0], w[1])).collect();
-            let target_ngrams: Vec<(char, char)> =
-                target_chars.windows(2).map(|w| (w[0], w[1])).collect();
+            let target_ngrams: Vec<(char, char)> = target_chars.windows(2).map(|w| (w[0], w[1])).collect();
 
             if query_ngrams.is_empty() || target_ngrams.is_empty() {
                 return 0.0;
@@ -169,7 +159,7 @@ impl Client {
                 .count();
 
             (2 * common_count) as f32 / (query_ngrams.len() + target_ngrams.len()) as f32
-        }
+        };
 
         let threshold: f32 = match query_lower.len() {
             0..=3 => 0.3,
@@ -185,8 +175,8 @@ impl Client {
                 let issuer_lower = account.issuer.to_lowercase();
                 let note_lower = account.note.to_lowercase();
 
-                let mut name_score = ngram_overlap_score(&query_lower, &name_lower);
-                let mut issuer_score = ngram_overlap_score(&query_lower, &issuer_lower);
+                let mut name_score = ngram_overlap_score(&name_lower);
+                let mut issuer_score = ngram_overlap_score(&issuer_lower);
                 let note_score = if note_lower.contains(&query_lower) {
                     1.0
                 } else {
@@ -211,20 +201,12 @@ impl Client {
             })
             .collect();
 
-        filtered.sort_unstable_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
+
+        filtered.sort_unstable_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
 
         filtered
             .into_iter()
-            .map(|(account, _)| AccountTruncated {
-                id: account.id,
-                name: account.name.clone(),
-                issuer: account.issuer.clone(),
-                code_type: account.code_type,
-                counter: account.counter,
-                period: account.period,
-                digits: account.digits,
-                color: account.color,
-            })
+            .map(|(account, _)| Self::truncate_account(account))
             .collect()
     }
 
