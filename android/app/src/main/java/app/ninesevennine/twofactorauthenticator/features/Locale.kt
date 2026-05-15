@@ -45,21 +45,17 @@ object Locale {
 
         when (value) {
             LocaleOption.SYSTEM -> {
-                val deviceLocales: LocaleList = LocaleList.getDefault()
+                val deviceLocales = LocaleList.getDefault()
+                
+                for (i in 1 until deviceLocales.size()) {
+                    val deviceLang = deviceLocales[i].language
+                    val match = LocaleOption.fromLanguage(deviceLang)
 
-                if (deviceLocales.size() > 0) {
-                    for (i in 1 until deviceLocales.size()) {
-                        val deviceLang = deviceLocales[i].language
-
-                        val match = LocaleOption.entries.filter { it.tag.isNotEmpty() }.firstOrNull { it.tag == deviceLang }
-
-                        if (match != null && match.tag.isNotEmpty()) {
-                            localeManager.applicationLocales = LocaleList.forLanguageTags(match.tag)
-                            return
-                        }
+                    if (match != LocaleOption.SYSTEM) {
+                        localeManager.applicationLocales = LocaleList.forLanguageTags(match.tag)
+                        return
                     }
                 }
-
                 localeManager.applicationLocales = LocaleList.forLanguageTags(LocaleOption.ENGLISH.tag)
             }
 
@@ -70,7 +66,7 @@ object Locale {
     }
 
     fun currentEffectiveLocale(context: Context): LocaleOption {
-        val activeLocale = ConfigurationCompat.getLocales(context.resources.configuration)[0]
+        val activeLocale = ConfigurationCompat.getLocales(context.resources.configuration).get(0)
             ?: return LocaleOption.ENGLISH
 
         return LocaleOption.fromLanguage(activeLocale.language)

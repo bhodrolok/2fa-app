@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowInsetsControllerCompat
+import java.lang.ref.WeakReference
 
 enum class ThemeOption(val value: Int) {
     SYSTEM(0),
@@ -17,20 +18,26 @@ enum class ThemeOption(val value: Int) {
 }
 
 data class ThemeColors(
-    val background: Color = Color(0),
-    val surface: Color = Color(0),
-    val primary: Color = Color(0),
-    val secondary: Color = Color(0),
-    val border: Color = Color(0),
-    val veryWeak: Color = Color(0),
-    val weak: Color = Color(0),
-    val good: Color = Color(0),
-    val strong: Color = Color(0),
-    val info: Color = Color(0)
+    val background: Color = Color.Unspecified,
+    val surface: Color = Color.Unspecified,
+    val primary: Color = Color.Unspecified,
+    val secondary: Color = Color.Unspecified,
+    val border: Color = Color.Unspecified,
+    val veryWeak: Color = Color.Unspecified,
+    val weak: Color = Color.Unspecified,
+    val good: Color = Color.Unspecified,
+    val strong: Color = Color.Unspecified,
+    val info: Color = Color.Unspecified
 )
 
 object Theme {
-    var window: Window? = null
+    private var windowRef: WeakReference<Window>? = null
+
+    var window: Window?
+        get() = windowRef?.get()
+        set(value) {
+            windowRef = value?.let { WeakReference(it) }
+        }
 
     private var _themeOption by mutableStateOf(ThemeOption.SYSTEM)
     private var _colors by mutableStateOf(ThemeColors())
@@ -83,13 +90,6 @@ object Theme {
 
     fun set(context: Context, value: ThemeOption) {
         _themeOption = value
-        _colors = when (value) {
-            ThemeOption.SYSTEM -> if (isSystemDark(context)) dark else light
-            ThemeOption.LIGHT -> light
-            ThemeOption.DARK -> dark
-            ThemeOption.PITCH_BLACK -> pitchBlack
-        }
-
         update(context)
     }
 
@@ -108,9 +108,18 @@ object Theme {
                 _colors = if (darkMode) dark else light
                 applyBarAppearance(!darkMode)
             }
-
-            ThemeOption.LIGHT -> applyBarAppearance(true)
-            ThemeOption.DARK, ThemeOption.PITCH_BLACK -> applyBarAppearance(false)
+            ThemeOption.LIGHT -> {
+                _colors = light
+                applyBarAppearance(true)
+            }
+            ThemeOption.DARK -> {
+                _colors = dark
+                applyBarAppearance(false)
+            }
+            ThemeOption.PITCH_BLACK -> {
+                _colors = pitchBlack
+                applyBarAppearance(false)
+            }
         }
     }
 
