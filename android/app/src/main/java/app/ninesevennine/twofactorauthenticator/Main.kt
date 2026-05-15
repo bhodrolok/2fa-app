@@ -69,7 +69,7 @@ class Main : FragmentActivity() {
         Theme.window = window
         Theme.update(this)
 
-        setScreenSecure(this, Config.isUsingScreenSecurity)
+        this.setScreenSecure(Config.isUsingScreenSecurity)
 
         KeyStoreAES.setActivity(this)
 
@@ -125,7 +125,7 @@ class Main : FragmentActivity() {
     override fun onResume() {
         super.onResume()
 
-        setScreenSecure(this, Config.isUsingScreenSecurity)
+        this.setScreenSecure(Config.isUsingScreenSecurity)
 
         if (Entry.rustInterface.isClientSecretEmpty()) Signals.authenticate++
     }
