@@ -245,7 +245,7 @@ fun Settings(navController: NavController) {
                         Logger.i(TAG, "screen security set to ${Config.isUsingScreenSecurity}")
 
                         (context as? Activity)?.let { activity ->
-                            activity.setScreenSecure(Config.isUsingScreenSecurity)
+                            setScreenSecure(activity, Config.isUsingScreenSecurity)
                         }
 
                         Config.save(context)

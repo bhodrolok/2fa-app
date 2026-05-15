@@ -3,10 +3,10 @@ package app.ninesevennine.twofactorauthenticator.features
 import android.app.Activity
 import android.view.WindowManager
 
-fun Activity.setScreenSecure(isSecure: Boolean) {
+fun setScreenSecure(activity: Activity, isSecure: Boolean) {
     if (isSecure) {
-        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        activity.window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
     } else {
-        window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        activity.window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
     }
 }
