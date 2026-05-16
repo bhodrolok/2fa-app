@@ -1,0 +1,12 @@
+2fa's only purpose is to provide single-use codes known as one-time passwords. It is a two-factor authenticator, and the concept is nothing new. There are plenty of other authenticators and alternatives with more features but with worse security and privacy than ours. We built 2fa to take full advantage of your device's hardware security, along with the latest cryptographic standards, to keep your accounts safe. The app is offline and includes unique features that no other authenticator app offers.
+
+Features
+
+- Support for TOTP, HOTP, and Steam Guard codes.
+- Add accounts via QR codes, OTPAuth links, files, or your gallery.
+- Highly customizable, with account colors and icon packs, including textured and tinted options.
+- Advanced security features such as biometric unlock, screen security, secure clipboard, lock on exit, and intent blocking.
+- Manual export and import of accounts in .2fa or Aegis .json encrypted formats.
+- And more!
+
+If you would like to support and accelerate our work, please consider donating: <a href="https://979.st/donate/">https://979.st/donate/</a>
