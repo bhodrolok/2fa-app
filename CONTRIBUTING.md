@@ -11,6 +11,7 @@ All commits must follow these rules to ensure a clean, traceable, and verifiable
 - **One logical change per commit.** A commit should address a single, atomic change (e.g., one bug fix, one feature addition, one refactor). Do not bundle unrelated changes together.
 - **Keep commits small and focused.** If your commit message requires an "and" to describe it, it should likely be split into multiple commits.
 - **Avoid "mega-commits".** Large, sweeping changes that touch many unrelated files make review difficult and hinder bisecting to identify regressions.
+- **All commits must be signed.** Commits must be signed using GPG or SSH. Unsigned commits will not be accepted.
 
 **Commit Message Format**
 
