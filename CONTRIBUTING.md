@@ -1,6 +1,6 @@
 ### Contributor License Agreement (CLA)
 
-All contributors must agree to the [Contributor License Agreement](/CLA). **By submitting a contribution (such as a pull request, patch, issue comment containing code, or any other material), you confirm that you have read, understood, and agree to be bound by these terms.**
+All contributors must agree to the [Contributor License Agreement](https://codeberg.org/979/2fa/src/branch/main/CLA). **By submitting a contribution (such as a pull request, patch, issue comment containing code, or any other material), you confirm that you have read, understood, and agree to be bound by these terms.**
 
 If you do not agree to these terms, please do not submit contributions.
 
