@@ -18,38 +18,36 @@ pub enum Algorithm {
     SHA512,
 }
 
+#[inline]
+fn truncate(result: &[u8]) -> u32 {
+    let offset = (result[result.len() - 1] & 0x0f) as usize;
+    u32::from_be_bytes(result[offset..offset + 4].try_into().unwrap()) & 0x7fffffff
+}
+
 // https://www.rfc-editor.org/rfc/rfc4226
 pub fn hotp(secret: &[u8], algorithm: Algorithm, digits: u32, counter: u64) -> String {
     let counter_bytes = counter.to_be_bytes();
 
-    let result = match algorithm {
+    let truncated = match algorithm {
         Algorithm::SHA1 => {
-            let mut mac = Hmac::<Sha1>::new_from_slice(secret).unwrap();
+            let mut mac = Hmac::<Sha1>::new_from_slice(secret).expect("HMAC accepts any key length");
             mac.update(&counter_bytes);
-            mac.finalize().into_bytes().to_vec()
+            truncate(&mac.finalize().into_bytes())
         }
         Algorithm::SHA256 => {
-            let mut mac = Hmac::<Sha256>::new_from_slice(secret).unwrap();
+            let mut mac = Hmac::<Sha256>::new_from_slice(secret).expect("HMAC accepts any key length");
             mac.update(&counter_bytes);
-            mac.finalize().into_bytes().to_vec()
+            truncate(&mac.finalize().into_bytes())
         }
         Algorithm::SHA512 => {
-            let mut mac = Hmac::<Sha512>::new_from_slice(secret).unwrap();
+            let mut mac = Hmac::<Sha512>::new_from_slice(secret).expect("HMAC accepts any key length");
             mac.update(&counter_bytes);
-            mac.finalize().into_bytes().to_vec()
+            truncate(&mac.finalize().into_bytes())
         }
     };
 
-    let offset = (result[result.len() - 1] & 0x0f) as usize;
-    let truncated = u32::from_be_bytes([
-        result[offset],
-        result[offset + 1],
-        result[offset + 2],
-        result[offset + 3],
-    ]) & 0x7fffffff;
-
-    let modulus = 10u64.pow(digits);
-    let code = (truncated as u64 % modulus) as u64;
+    let modulus = 10u32.pow(digits);
+    let code = truncated % modulus;
 
     format!("{:0width$}", code, width = digits as usize)
 }
@@ -69,7 +67,7 @@ pub fn totp_custom(
 pub fn totp(secret: &[u8], algorithm: Algorithm, digits: u32, period: u64) -> String {
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
-        .unwrap()
+        .expect("System time is before UNIX epoch")
         .as_secs();
 
     totp_custom(secret, algorithm, digits, now, period)
@@ -84,17 +82,12 @@ pub fn steam_custom(secret: &[u8], timestamp: u64) -> String {
     let counter = timestamp / period;
     let counter_bytes = counter.to_be_bytes();
 
-    let mut mac = Hmac::<Sha1>::new_from_slice(secret).unwrap();
+    let mut mac = Hmac::<Sha1>::new_from_slice(secret).expect("HMAC accepts any key length");
     mac.update(&counter_bytes);
     let result = mac.finalize().into_bytes();
 
     let offset = (result[result.len() - 1] & 0x0f) as usize;
-    let mut code = u32::from_be_bytes([
-        result[offset],
-        result[offset + 1],
-        result[offset + 2],
-        result[offset + 3],
-    ]) & 0x7fffffff;
+    let mut code = u32::from_be_bytes(result[offset..offset + 4].try_into().unwrap()) & 0x7fffffff;
 
     let mut chars = ['\0'; 5];
     for i in 0..5 {
@@ -108,7 +101,7 @@ pub fn steam_custom(secret: &[u8], timestamp: u64) -> String {
 pub fn steam(secret: &[u8]) -> String {
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
-        .unwrap()
+        .expect("System time is before UNIX epoch")
         .as_secs();
 
     steam_custom(secret, now)

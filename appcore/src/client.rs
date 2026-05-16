@@ -67,8 +67,8 @@ impl Client {
         out
     }
 
-    pub fn get_unlock_passphrase_hash(&self) -> [u8; CLIENT_UNLOCK_PASSPHRASE_HASH_LEN] {
-        self.unlock_passphrase_hash
+    pub fn get_unlock_passphrase_hash(&self) -> &[u8; CLIENT_UNLOCK_PASSPHRASE_HASH_LEN] {
+        &self.unlock_passphrase_hash
     }
 
     pub fn set_secret003(&mut self, secret: &[u8; CLIENT_SECRET_003_LEN]) {
@@ -146,8 +146,7 @@ impl Client {
         let query_ngrams: Vec<(char, char)> = query_chars.windows(2).map(|w| (w[0], w[1])).collect();
 
         let ngram_overlap_score = |target: &str| -> f32 {
-            let target_chars: Vec<char> = target.chars().collect();
-            let target_ngrams: Vec<(char, char)> = target_chars.windows(2).map(|w| (w[0], w[1])).collect();
+            let target_ngrams: Vec<(char, char)> = target.chars().collect::<Vec<char>>().windows(2).map(|w| (w[0], w[1])).collect();
 
             if query_ngrams.is_empty() || target_ngrams.is_empty() {
                 return 0.0;
@@ -263,9 +262,7 @@ impl Client {
     }
 
     pub fn delete_account(&mut self, id: u64) {
-        if let Some(pos) = self.accounts.iter().position(|a| a.id == id) {
-            self.accounts.remove(pos);
-        }
+        self.accounts.retain(|a| a.id != id);
     }
 }
 

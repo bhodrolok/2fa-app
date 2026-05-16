@@ -33,34 +33,27 @@ pub struct AccountTruncated {
 }
 
 pub fn parse(url: &str) -> Option<Account> {
-    let url = match Url::parse(url) {
-        Ok(u) => u,
-        Err(_) => return None,
-    };
+    let url = Url::parse(url).ok()?;
 
     if url.scheme() != "otpauth" {
         return None;
     }
 
-    let mut code_type = match url.host_str()?.to_lowercase().as_str() {
-        "hotp" => CodeType::HOTP,
-        "totp" => CodeType::TOTP,
-        _ => return None,
+    let host = url.host_str()?;
+    let mut code_type = if host.eq_ignore_ascii_case("hotp") {
+        CodeType::HOTP
+    } else if host.eq_ignore_ascii_case("totp") {
+        CodeType::TOTP
+    } else {
+        return None;
     };
 
-    let raw_label = match url.path().strip_prefix('/') {
-        Some(l) => l,
-        None => return None,
-    };
-
-    let label = match percent_encoding::percent_decode_str(raw_label).decode_utf8() {
-        Ok(l) => l,
-        Err(_) => return None,
-    };
+    let raw_label = url.path().strip_prefix('/')?;
+    let label = percent_encoding::percent_decode_str(raw_label).decode_utf8().ok()?;
 
     let (label_issuer, name) = match label.split_once(':') {
         Some((i, n)) => (i.to_string(), n.trim_start().to_string()),
-        None => (String::new(), label.to_string()),
+        None => (String::new(), label.into_owned()),
     };
 
     let mut secret_str = None;
@@ -75,11 +68,13 @@ pub fn parse(url: &str) -> Option<Account> {
             "secret" => secret_str = Some(value.into_owned()),
             "issuer" => issuer = value.into_owned(),
             "algorithm" => {
-                algorithm = match value.to_uppercase().as_str() {
-                    "SHA256" => Algorithm::SHA256,
-                    "SHA512" => Algorithm::SHA512,
-                    _ => Algorithm::SHA1,
-                }
+                algorithm = if value.eq_ignore_ascii_case("SHA256") {
+                    Algorithm::SHA256
+                } else if value.eq_ignore_ascii_case("SHA512") {
+                    Algorithm::SHA512
+                } else {
+                    Algorithm::SHA1
+                };
             }
             "digits" => digits = value.parse().unwrap_or(digits),
             "counter" => counter = value.parse().unwrap_or(counter),
@@ -94,15 +89,10 @@ pub fn parse(url: &str) -> Option<Account> {
         period = 30;
     }
 
-    let secret_str = match secret_str {
-        Some(s) => s,
-        None => return None,
-    };
-
-    let secret = match data_encoding::BASE32_NOPAD.decode(secret_str.to_uppercase().as_bytes()) {
-        Ok(s) => s,
-        Err(_) => return None,
-    };
+    let secret_str = secret_str?;
+    let secret = data_encoding::BASE32_NOPAD
+        .decode(secret_str.to_uppercase().as_bytes())
+        .ok()?;
 
     Some(Account {
         id: getrandom::u64().unwrap_or(0),
