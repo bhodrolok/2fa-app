@@ -15,24 +15,11 @@ impl Client {
         let mut entries_array: Vec<serde_json::Value> = Vec::with_capacity(self.accounts.len());
 
         for account in &self.accounts {
-            let mut info = serde_json::Value::Object(serde_json::Map::new());
-
-            info["secret"] = data_encoding::BASE32_NOPAD.encode(&account.secret).into();
-
-            info["algo"] = match account.algorithm {
-                Algorithm::SHA1 => "SHA1".into(),
-                Algorithm::SHA256 => "SHA256".into(),
-                Algorithm::SHA512 => "SHA512".into(),
+            let digits = if account.code_type == CodeType::STEAM {
+                5
+            } else {
+                account.digits
             };
-
-            let mut digits = account.digits;
-            if account.code_type == CodeType::STEAM {
-                digits = 5;
-            }
-
-            info["digits"] = digits.into();
-            info["counter"] = account.counter.into();
-            info["period"] = account.period.into();
 
             let entry = serde_json::json!({
                 "type": match account.code_type {
@@ -44,7 +31,17 @@ impl Client {
                 "name": account.name,
                 "issuer": account.issuer,
                 "note": account.note,
-                "info": info,
+                "info": {
+                    "secret": data_encoding::BASE32_NOPAD.encode(&account.secret),
+                    "algo": match account.algorithm {
+                        Algorithm::SHA1 => "SHA1",
+                        Algorithm::SHA256 => "SHA256",
+                        Algorithm::SHA512 => "SHA512",
+                    },
+                    "digits": digits,
+                    "counter": account.counter,
+                    "period": account.period,
+                },
             });
 
             entries_array.push(entry);
@@ -52,7 +49,7 @@ impl Client {
 
         let db_obj = serde_json::json!({
             "version": 3,
-            "entries": serde_json::Value::Array(entries_array),
+            "entries": entries_array,
         });
 
         let db_plaintext = serde_json::to_string(&db_obj).unwrap();
@@ -111,7 +108,7 @@ impl Client {
         });
 
         let header = serde_json::json!({
-            "slots": serde_json::Value::Array(vec![slot]),
+            "slots": vec![slot],
             "params": {
                 "nonce": data_encoding::HEXLOWER.encode(&db_nonce),
                 "tag": data_encoding::HEXLOWER.encode(&db_tag),
@@ -129,132 +126,50 @@ impl Client {
     pub fn import_accounts_aegis(&mut self, passphrase: &str, data: &str) -> bool {
         use aes_gcm::{Aes256Gcm, KeyInit, aead::Aead};
 
-        let obj: serde_json::Value = match serde_json::from_str(data) {
-            Ok(v) => v,
-            Err(_) => return false,
-        };
+        let Ok(obj) = serde_json::from_str::<serde_json::Value>(data) else { return false; };
 
-        let version = match obj.get("version").and_then(|v| v.as_u64()) {
-            Some(v) => v,
-            None => return false,
-        };
+        let Some(version) = obj.get("version").and_then(|v| v.as_u64()) else { return false; };
+        if version != 1 { return false; }
 
-        if version != 1 {
-            return false;
-        }
+        let Some(header) = obj.get("header").and_then(|v| v.as_object()) else { return false; };
+        let Some(slots) = header.get("slots").and_then(|v| v.as_array()) else { return false; };
+        let Some(params) = header.get("params").and_then(|v| v.as_object()) else { return false; };
 
-        let header = match obj.get("header").and_then(|v| v.as_object()) {
-            Some(h) => h,
-            None => return false,
-        };
+        let Some(db_nonce_str) = params.get("nonce").and_then(|v| v.as_str()) else { return false; };
+        let Ok(db_nonce) = data_encoding::HEXLOWER_PERMISSIVE.decode(db_nonce_str.as_bytes()) else { return false; };
 
-        let slots = match header.get("slots").and_then(|v| v.as_array()) {
-            Some(s) => s,
-            None => return false,
-        };
+        let Some(db_tag_str) = params.get("tag").and_then(|v| v.as_str()) else { return false; };
+        let Ok(db_tag) = data_encoding::HEXLOWER_PERMISSIVE.decode(db_tag_str.as_bytes()) else { return false; };
 
-        let params = match header.get("params").and_then(|v| v.as_object()) {
-            Some(p) => p,
-            None => return false,
-        };
-
-        let db_nonce = match params.get("nonce").and_then(|v| v.as_str()) {
-            Some(s) => match data_encoding::HEXLOWER_PERMISSIVE.decode(s.as_bytes()) {
-                Ok(b) => b,
-                Err(_) => return false,
-            },
-            None => return false,
-        };
-
-        let db_tag = match params.get("tag").and_then(|v| v.as_str()) {
-            Some(s) => match data_encoding::HEXLOWER_PERMISSIVE.decode(s.as_bytes()) {
-                Ok(b) => b,
-                Err(_) => return false,
-            },
-            None => return false,
-        };
-
-        let db_encrypted = match obj.get("db").and_then(|v| v.as_str()) {
-            Some(s) => match data_encoding::BASE64.decode(s.as_bytes()) {
-                Ok(b) => b,
-                Err(_) => return false,
-            },
-            None => return false,
-        };
+        let Some(db_enc_str) = obj.get("db").and_then(|v| v.as_str()) else { return false; };
+        let Ok(db_encrypted) = data_encoding::BASE64.decode(db_enc_str.as_bytes()) else { return false; };
 
         let mut master_key: Option<Vec<u8>> = None;
 
         for slot in slots {
-            let slot_obj = match slot.as_object() {
-                Some(o) => o,
-                None => continue,
-            };
+            let Some(slot_obj) = slot.as_object() else { continue; };
+            let Some(slot_type) = slot_obj.get("type").and_then(|v| v.as_u64()) else { continue; };
+            if slot_type != 1 { continue; }
 
-            let slot_type = match slot_obj.get("type").and_then(|v| v.as_u64()) {
-                Some(t) => t,
-                None => continue,
-            };
+            let Some(n) = slot_obj.get("n").and_then(|v| v.as_u64()).map(|v| v as u32) else { continue; };
+            let Some(r) = slot_obj.get("r").and_then(|v| v.as_u64()).map(|v| v as u32) else { continue; };
+            let Some(p) = slot_obj.get("p").and_then(|v| v.as_u64()).map(|v| v as u32) else { continue; };
 
-            if slot_type != 1 {
-                continue;
-            }
+            let Some(salt_str) = slot_obj.get("salt").and_then(|v| v.as_str()) else { continue; };
+            let Ok(salt) = data_encoding::HEXLOWER_PERMISSIVE.decode(salt_str.as_bytes()) else { continue; };
 
-            let n = match slot_obj.get("n").and_then(|v| v.as_u64()) {
-                Some(v) => v as u32,
-                None => continue,
-            };
+            let Some(key_params) = slot_obj.get("key_params").and_then(|v| v.as_object()) else { continue; };
+            
+            let Some(key_nonce_str) = key_params.get("nonce").and_then(|v| v.as_str()) else { continue; };
+            let Ok(key_nonce) = data_encoding::HEXLOWER_PERMISSIVE.decode(key_nonce_str.as_bytes()) else { continue; };
 
-            let r = match slot_obj.get("r").and_then(|v| v.as_u64()) {
-                Some(v) => v as u32,
-                None => continue,
-            };
+            let Some(key_tag_str) = key_params.get("tag").and_then(|v| v.as_str()) else { continue; };
+            let Ok(key_tag) = data_encoding::HEXLOWER_PERMISSIVE.decode(key_tag_str.as_bytes()) else { continue; };
 
-            let p = match slot_obj.get("p").and_then(|v| v.as_u64()) {
-                Some(v) => v as u32,
-                None => continue,
-            };
+            let Some(key_enc_str) = slot_obj.get("key").and_then(|v| v.as_str()) else { continue; };
+            let Ok(key_encrypted) = data_encoding::HEXLOWER_PERMISSIVE.decode(key_enc_str.as_bytes()) else { continue; };
 
-            let salt = match slot_obj.get("salt").and_then(|v| v.as_str()) {
-                Some(s) => match data_encoding::HEXLOWER_PERMISSIVE.decode(s.as_bytes()) {
-                    Ok(b) => b,
-                    Err(_) => continue,
-                },
-                None => continue,
-            };
-
-            let key_params = match slot_obj.get("key_params").and_then(|v| v.as_object()) {
-                Some(kp) => kp,
-                None => continue,
-            };
-
-            let key_nonce = match key_params.get("nonce").and_then(|v| v.as_str()) {
-                Some(s) => match data_encoding::HEXLOWER_PERMISSIVE.decode(s.as_bytes()) {
-                    Ok(b) => b,
-                    Err(_) => continue,
-                },
-                None => continue,
-            };
-
-            let key_tag = match key_params.get("tag").and_then(|v| v.as_str()) {
-                Some(s) => match data_encoding::HEXLOWER_PERMISSIVE.decode(s.as_bytes()) {
-                    Ok(b) => b,
-                    Err(_) => continue,
-                },
-                None => continue,
-            };
-
-            let key_encrypted = match slot_obj.get("key").and_then(|v| v.as_str()) {
-                Some(s) => match data_encoding::HEXLOWER_PERMISSIVE.decode(s.as_bytes()) {
-                    Ok(b) => b,
-                    Err(_) => continue,
-                },
-                None => continue,
-            };
-
-            let params = match scrypt::Params::new((n as f64).log2() as u8, r, p) {
-                Ok(p) => p,
-                Err(_) => continue,
-            };
+            let Ok(params) = scrypt::Params::new((n as f64).log2() as u8, r, p) else { continue; };
 
             let mut derived_key = [0u8; 32];
             if scrypt::scrypt(passphrase.as_bytes(), &salt, &params, &mut derived_key).is_err() {
@@ -265,89 +180,45 @@ impl Client {
             ciphertext_with_tag.extend_from_slice(&key_encrypted);
             ciphertext_with_tag.extend_from_slice(&key_tag);
 
-            let cipher = Aes256Gcm::new_from_slice(&derived_key).unwrap();
+            let Ok(cipher) = Aes256Gcm::new_from_slice(&derived_key) else { continue; };
             let nonce = aes_gcm::Nonce::from_slice(&key_nonce);
 
-            let decrypted = match cipher.decrypt(nonce, ciphertext_with_tag.as_ref()) {
-                Ok(d) => d,
-                Err(_) => continue,
-            };
-
-            master_key = Some(decrypted);
-            break;
+            if let Ok(decrypted) = cipher.decrypt(nonce, ciphertext_with_tag.as_ref()) {
+                master_key = Some(decrypted);
+                break;
+            }
         }
 
-        let master_key = match master_key {
-            Some(k) => k,
-            None => return false,
-        };
+        let Some(master_key) = master_key else { return false; };
 
         let mut ciphertext_with_tag = Vec::with_capacity(db_encrypted.len() + db_tag.len());
         ciphertext_with_tag.extend_from_slice(&db_encrypted);
         ciphertext_with_tag.extend_from_slice(&db_tag);
 
-        let cipher = match Aes256Gcm::new_from_slice(&master_key) {
-            Ok(c) => c,
-            Err(_) => return false,
-        };
-
+        let Ok(cipher) = Aes256Gcm::new_from_slice(&master_key) else { return false; };
         let nonce = aes_gcm::Nonce::from_slice(&db_nonce);
 
-        let decrypted = match cipher.decrypt(nonce, ciphertext_with_tag.as_ref()) {
-            Ok(d) => d,
-            Err(_) => return false,
-        };
+        let Ok(decrypted) = cipher.decrypt(nonce, ciphertext_with_tag.as_ref()) else { return false; };
+        let Ok(db_str) = String::from_utf8(decrypted) else { return false; };
+        let Ok(db_obj) = serde_json::from_str::<serde_json::Value>(&db_str) else { return false; };
 
-        let db_str = match String::from_utf8(decrypted) {
-            Ok(s) => s,
-            Err(_) => return false,
-        };
+        let Some(db_version) = db_obj.get("version").and_then(|v| v.as_u64()) else { return false; };
+        if db_version != 3 { return false; }
 
-        let db_obj: serde_json::Value = match serde_json::from_str(&db_str) {
-            Ok(v) => v,
-            Err(_) => return false,
-        };
-
-        let db_version = match db_obj.get("version").and_then(|v| v.as_u64()) {
-            Some(v) => v,
-            None => return false,
-        };
-
-        if db_version != 3 {
-            return false;
-        }
-
-        let entries = match db_obj.get("entries").and_then(|v| v.as_array()) {
-            Some(e) => e,
-            None => return false,
-        };
-
-        let entries_str = match serde_json::to_string(entries) {
-            Ok(s) => s,
-            Err(_) => return false,
-        };
+        let Some(entries) = db_obj.get("entries").and_then(|v| v.as_array()) else { return false; };
+        let Ok(entries_str) = serde_json::to_string(entries) else { return false; };
 
         self.import_accounts_aegis_entries_003(&entries_str)
     }
 
     pub fn import_accounts_aegis_entries_003(&mut self, entries: &str) -> bool {
-        let json_array: serde_json::Value = match serde_json::from_slice(&entries.as_bytes()) {
-            Ok(val) => val,
-            Err(_) => return false,
-        };
-
-        let json_array = match json_array.as_array() {
-            Some(arr) => arr,
-            None => return false,
-        };
+        let Ok(json_array) = serde_json::from_slice::<serde_json::Value>(entries.as_bytes()) else { return false; };
+        let Some(json_array) = json_array.as_array() else { return false; };
 
         let mut new_accounts: Vec<Account> = Vec::with_capacity(json_array.len());
 
         for item in json_array {
-            let obj = match item.as_object() {
-                Some(o) => o,
-                None => continue,
-            };
+            let Some(obj) = item.as_object() else { continue; };
 
             let code_type = match obj.get("type").and_then(|v| v.as_str()) {
                 Some("totp") => CodeType::TOTP,
@@ -356,44 +227,17 @@ impl Client {
                 _ => continue,
             };
 
-            let id = match obj.get("uuid").and_then(|v| v.as_str()) {
-                Some(uuid) => match utils::convert::uuid_to_id(uuid) {
-                    Some(id) => id,
-                    None => continue,
-                },
-                None => continue,
-            };
+            let Some(id_str) = obj.get("uuid").and_then(|v| v.as_str()) else { continue; };
+            let Some(id) = utils::convert::uuid_to_id(id_str) else { continue; };
 
-            let name = obj
-                .get("name")
-                .and_then(|v| v.as_str())
-                .unwrap_or("")
-                .to_string();
+            let name = obj.get("name").and_then(|v| v.as_str()).unwrap_or("").to_string();
+            let issuer = obj.get("issuer").and_then(|v| v.as_str()).unwrap_or("").to_string();
+            let note = obj.get("note").and_then(|v| v.as_str()).unwrap_or("").to_string();
 
-            let issuer = obj
-                .get("issuer")
-                .and_then(|v| v.as_str())
-                .unwrap_or("")
-                .to_string();
+            let Some(info) = obj.get("info").and_then(|v| v.as_object()) else { continue; };
 
-            let note = obj
-                .get("note")
-                .and_then(|v| v.as_str())
-                .unwrap_or("")
-                .to_string();
-
-            let info = match obj.get("info").and_then(|v| v.as_object()) {
-                Some(i) => i,
-                None => continue,
-            };
-
-            let secret = match info.get("secret").and_then(|v| v.as_str()) {
-                Some(s) => match data_encoding::BASE32_NOPAD.decode(s.as_bytes()) {
-                    Ok(b) => b,
-                    Err(_) => continue,
-                },
-                None => continue,
-            };
+            let Some(secret_str) = info.get("secret").and_then(|v| v.as_str()) else { continue; };
+            let Ok(secret) = data_encoding::BASE32_NOPAD.decode(secret_str.as_bytes()) else { continue; };
 
             let algorithm = match info.get("algo").and_then(|v| v.as_str()) {
                 Some("SHA1") => Algorithm::SHA1,
@@ -403,22 +247,18 @@ impl Client {
             };
 
             let mut period = info.get("period").and_then(|v| v.as_u64()).unwrap_or(30);
-            if period < 10 {
-                continue;
-            }
+            if period < 10 { continue; }
 
             let mut digits = info.get("digits").and_then(|v| v.as_u64()).unwrap_or(6) as u32;
             if code_type == CodeType::STEAM {
                 period = 30;
                 digits = 5;
             }
-            if digits < 4 || digits > 10 {
-                continue;
-            }
+            if !(4..=10).contains(&digits) { continue; }
 
             let counter = info.get("counter").and_then(|v| v.as_u64()).unwrap_or(0);
 
-            let account = Account {
+            new_accounts.push(Account {
                 id,
                 name,
                 issuer,
@@ -430,9 +270,7 @@ impl Client {
                 counter,
                 period,
                 color: utils::colors::WHITE,
-            };
-
-            new_accounts.push(account);
+            });
         }
 
         for imported in new_accounts {
