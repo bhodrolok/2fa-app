@@ -1,1 +1,1 @@
-A dedicated two-factor authenticator built to securely manage your one-time passwords
+A two-factor authenticator built to securely manage your one-time passwords
