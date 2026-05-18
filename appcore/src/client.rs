@@ -1,8 +1,9 @@
 use zeroize::Zeroize;
 
-use crate::features::codegen::{Algorithm, CodeType, hotp, steam_custom};
 use crate::features::otpauth::{self, Account, AccountTruncated};
+use crate::features::{hotp, steam};
 use crate::utils;
+use crate::utils::types::{Algorithm, CodeType};
 
 pub const CLIENT_SECRET_003_KEY_LEN: usize = 64;
 pub const CLIENT_SECRET_003_AUTOMATIC_BACKUPS_KEY_LEN: usize = 64;
@@ -141,12 +142,18 @@ impl Client {
         }
 
         let query_lower = query.to_lowercase();
-        
+
         let query_chars: Vec<char> = query_lower.chars().collect();
-        let query_ngrams: Vec<(char, char)> = query_chars.windows(2).map(|w| (w[0], w[1])).collect();
+        let query_ngrams: Vec<(char, char)> =
+            query_chars.windows(2).map(|w| (w[0], w[1])).collect();
 
         let ngram_overlap_score = |target: &str| -> f32 {
-            let target_ngrams: Vec<(char, char)> = target.chars().collect::<Vec<char>>().windows(2).map(|w| (w[0], w[1])).collect();
+            let target_ngrams: Vec<(char, char)> = target
+                .chars()
+                .collect::<Vec<char>>()
+                .windows(2)
+                .map(|w| (w[0], w[1]))
+                .collect();
 
             if query_ngrams.is_empty() || target_ngrams.is_empty() {
                 return 0.0;
@@ -200,8 +207,8 @@ impl Client {
             })
             .collect();
 
-
-        filtered.sort_unstable_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
+        filtered
+            .sort_unstable_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
 
         filtered
             .into_iter()
@@ -229,19 +236,19 @@ impl Client {
         let final_counter = if show_next { counter + 1 } else { counter };
 
         match account.code_type {
-            CodeType::TOTP => hotp(
+            CodeType::TOTP => hotp::generate(
                 &account.secret,
                 account.algorithm,
                 account.digits,
                 final_counter,
             ),
-            CodeType::HOTP => hotp(
+            CodeType::HOTP => hotp::generate(
                 &account.secret,
                 account.algorithm,
                 account.digits,
                 account.counter,
             ),
-            CodeType::STEAM => steam_custom(&account.secret, final_counter * account.period),
+            CodeType::STEAM => steam::generate(&account.secret, final_counter * account.period),
         }
     }
 

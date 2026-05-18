@@ -1,10 +1,10 @@
 use crate::{
     client::{CLIENT_SECRET_003_AUTOMATIC_BACKUPS_KEY_LEN, Client},
-    features::{
-        codegen::{Algorithm, CodeType},
-        otpauth::Account,
+    features::otpauth::Account,
+    utils::{
+        self,
+        types::{Algorithm, CodeType},
     },
-    utils,
 };
 
 pub const XCHACHA20_KEY_SIZE: usize = 32;

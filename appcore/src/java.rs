@@ -1,8 +1,8 @@
 use crate::{
     CLIENT,
     client::{CLIENT_SECRET_003_LEN, CLIENT_UNLOCK_PASSPHRASE_HASH_LEN},
-    features::codegen::{Algorithm, CodeType},
-    helpers,
+    features::{self},
+    utils::types::{Algorithm, CodeType},
 };
 use jni::{
     EnvUnowned,
@@ -1008,7 +1008,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 ) -> f32 {
     let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
         let passphrase: String = passphrase.to_string();
-        Ok(helpers::estimate_passphrase_strength(passphrase.as_str()))
+        Ok(features::passphrase::estimate_strength(passphrase.as_str()))
     });
 
     outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()

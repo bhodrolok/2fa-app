@@ -1,6 +1,6 @@
-use crate::{
-    features::codegen::{Algorithm, CodeType},
-    utils::{self},
+use crate::utils::{
+    self,
+    types::{Algorithm, CodeType},
 };
 use url::Url;
 use zeroize::Zeroize;
@@ -49,7 +49,9 @@ pub fn parse(url: &str) -> Option<Account> {
     };
 
     let raw_label = url.path().strip_prefix('/')?;
-    let label = percent_encoding::percent_decode_str(raw_label).decode_utf8().ok()?;
+    let label = percent_encoding::percent_decode_str(raw_label)
+        .decode_utf8()
+        .ok()?;
 
     let (label_issuer, name) = match label.split_once(':') {
         Some((i, n)) => (i.to_string(), n.trim_start().to_string()),

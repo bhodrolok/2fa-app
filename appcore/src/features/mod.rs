@@ -1,3 +1,6 @@
 pub mod aegis;
-pub mod codegen;
+pub mod hotp;
 pub mod otpauth;
+pub mod passphrase;
+pub mod steam;
+pub mod totp;

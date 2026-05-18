@@ -1,5 +1,4 @@
-// Normalize zxcvbn estimate to 0.0-1.0 strength scale.
-pub fn estimate_passphrase_strength(passphrase: &str) -> f32 {
+pub fn estimate_strength(passphrase: &str) -> f32 {
     let estimate = zxcvbn::zxcvbn(&passphrase, &[]);
 
     let min_log = 3.0;
