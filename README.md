@@ -70,8 +70,9 @@ We have a lot planned for 2026, though none of this is set in stone, and things 
 
 - ~~**1.0** Google Play Store release~~
 - ~~**1.1** Passphrase Unlock and Cloud Backups~~
-- **1.2** Cross-device Sync
-- **1.3** iOS
+- **1.2** Cleanup, reproducible builds and prepare for audit
+- **1.3** Cross-device Sync
+- **1.4** iOS
 
 ### Translations
 
