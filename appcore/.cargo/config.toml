@@ -1,0 +1,5 @@
+[target.aarch64-linux-android]
+rustflags = [
+    "-C", "link-arg=-Wl,--build-id=none,--strip-all,--platform-version=android,34.0,36.0",
+    "-C", "target-feature=+neon,+mte"
+]

@@ -1,9 +1,6 @@
 .DS_Store
-.idea
 
 # appcore
-appcore/.cargo
-appcore/Cargo.lock
 appcore/target
 
 # android
