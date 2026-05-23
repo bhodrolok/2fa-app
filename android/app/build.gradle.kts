@@ -8,6 +8,9 @@ android {
     namespace = "app.ninesevennine.twofactorauthenticator"
     compileSdk = 36
 
+    buildToolsVersion = "36.1.0"
+    ndkVersion = "30.0.14904198"
+
     defaultConfig {
         applicationId = "app.ninesevennine.twofactorauthenticator"
         minSdk = 34
@@ -42,19 +45,8 @@ android {
         }
     }
 
-    signingConfigs {
-        create("release") {
-            enableV1Signing = false
-            enableV2Signing = true // Required for Obtainium
-            enableV3Signing = false // Temporarily disable V3 signing
-            enableV4Signing = false // Temporarily disable V4 signing
-        }
-    }
-
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
-
             isMinifyEnabled = true
             isShrinkResources = true
             isDebuggable = false
