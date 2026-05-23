@@ -8,8 +8,10 @@ if [[ "$OS" == "darwin" && "$ARCH" == "arm64" ]]; then
     ARCH="x86_64"
 fi
 
-PROVISIONING_NDK="${PROVISIONING_NDK:-30.0.14904198}"
-ANDROID_NDK="${ANDROID_HOME}/ndk/${PROVISIONING_NDK}"
+ANDROID="$(dirname "$0")/android"
+
+NDK_VERSION="$(grep "ndkVersion =" "$ANDROID/app/build.gradle.kts" | grep -o -E '"[0-9]+(\.[0-9]+)+"' | tr -d '"')"
+ANDROID_NDK="${ANDROID_HOME}/ndk/${NDK_VERSION}"
 NDK_BIN="${ANDROID_NDK}/toolchains/llvm/prebuilt/${OS}-${ARCH}/bin"
 
 APPCORE="$(dirname "$0")/appcore"
