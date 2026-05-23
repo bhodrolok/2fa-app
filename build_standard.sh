@@ -4,7 +4,7 @@ set -euo pipefail
 ANDROID="$(dirname "$0")/android"
 REQUIRED_GRADLE_VERSION=$(grep "distributionUrl" "$ANDROID/gradle/wrapper/gradle-wrapper.properties" | grep -o -E "gradle-[0-9]+\.[0-9]+\.[0-9]+" | cut -d'-' -f2)
 
-GRADLE_INFO=$("$GRADLE_BIN" --version)
+GRADLE_INFO=$(gradle --version)
 GRADLE_VERSION=$(echo "$GRADLE_INFO" | grep "Gradle " | awk '{print $2}')
 
 if [[ "$GRADLE_VERSION" != "$REQUIRED_GRADLE_VERSION" ]]; then
@@ -35,4 +35,4 @@ rm -rf "$ANDROID/build"
 rm -rf "$ANDROID/app/build"
 
 SOURCE_DATE_EPOCH=$(git --no-pager log -1 --format=%ct) \
-"$GRADLE_BIN" -p "$ANDROID" clean assembleStandardRelease --no-daemon
+gradle -p "$ANDROID" clean assembleStandardRelease --no-daemon
