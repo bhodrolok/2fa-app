@@ -29,7 +29,7 @@ CC_aarch64_linux_android="${NDK_BIN}/aarch64-linux-android34-clang" \
 AR_aarch64_linux_android="${NDK_BIN}/llvm-ar" \
 SOURCE_DATE_EPOCH=$(git --no-pager log -1 --format=%ct) \
 RUSTFLAGS="--remap-path-prefix ${APPCORE}= --remap-path-prefix ${HOME}/.cargo/registry/= --remap-path-prefix ${HOME}= --remap-path-scope=object" \
-cargo build --locked --release --target aarch64-linux-android --manifest-path "${APPCORE}/Cargo.toml"
+cargo build --quiet --locked --release --target aarch64-linux-android --manifest-path "${APPCORE}/Cargo.toml"
 
 "${NDK_BIN}/llvm-strip" --strip-all "${APPCORE}/target/aarch64-linux-android/release/libappcore.so"
 

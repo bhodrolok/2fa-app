@@ -54,5 +54,6 @@ if [[ "$FORMAT" == "apk" ]]; then
     UNSIGNED_APK="$APK_DIR/app-${1}-release-unsigned.apk"
     ALIGNED_APK="$APK_DIR/app-${1}-release-unsigned-aligned.apk"
 
-    $ZIPALIGN -v -P 16 4 "$UNSIGNED_APK" "$ALIGNED_APK"
+    "$ZIPALIGN" -P 16 4 "$UNSIGNED_APK" "$ALIGNED_APK"
+    "$ZIPALIGN" -c -P 16 4 "$ALIGNED_APK"
 fi
