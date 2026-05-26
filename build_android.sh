@@ -45,3 +45,14 @@ rm -rf "$ANDROID/app/build"
 
 SOURCE_DATE_EPOCH=$(git --no-pager log -1 --format=%ct) \
 gradle -p "$ANDROID" clean "$GRADLE_TASK" --no-daemon
+
+if [[ "$FORMAT" == "apk" ]]; then
+    BUILD_TOOLS_VERSION=$(grep "buildToolsVersion =" "$ANDROID/app/build.gradle.kts" | grep -o -E '"[0-9]+(\.[0-9]+)+"' | tr -d '"')
+    ZIPALIGN="$ANDROID_HOME/build-tools/$BUILD_TOOLS_VERSION/zipalign"
+
+    APK_DIR="$ANDROID/app/build/outputs/apk/${1}/release"
+    UNSIGNED_APK="$APK_DIR/app-${1}-release-unsigned.apk"
+    ALIGNED_APK="$APK_DIR/app-${1}-release-unsigned-aligned.apk"
+
+    $ZIPALIGN -v -P 16 4 "$UNSIGNED_APK" "$ALIGNED_APK"
+fi
