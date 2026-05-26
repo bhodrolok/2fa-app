@@ -1,28 +1,6 @@
-Please use the regular issue tracker when reporting a bug. If it's a security-sensitive issue, send your report directly to [security@979.st](mailto:seurity@979.st), making sure you have first read our [security transparency](https://979.st/security-transparency/) page.
+Sensitive security issues can be reported to [security@979.st](mailto:seurity@979.st). Please use the regular issue tracker if the issue does not need to be kept private.
 
+Encryption can be performed via our age public key:
 ```
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-mG8EagtW8xMFK4EEACIDAwQfKJeEesf04BN8J33nYutsJC2e5D3M2XzUClnrWvNx
-mzKGtfaZxJA/76KwUN7U2TAQTPQGcj90tAupDOtOC7MpI42uddDcslaSmJJtJMIy
-8OUQgUV0/nPJPiQWy7091bS0FTk3OSA8c2VjdXJpdHlAOTc5LnN0PojVBBMTCQBd
-FiEEBuxqBd2qebs1XpERzwQq9bloqpkFAmoLVvMbFIAAAAAABAAObWFudTIsMi41
-KzEuMTIsMCwzAhsDBQkJZgGABQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJ
-EM8EKvW5aKqZ/jABgOzKxxtrjj8JEpgBTpxXlHCxgm+kZ4ToWHkes5MaWJd/1sWL
-IEModP2QKWpza/K+FgGA1RE5a61e1DcvCh/DiTtL17/QBPJxwovbGbZKz+dlmPNl
-Q1fLhCDynokRvcR6Tw9/uG8EagtW8xMFK4EEACIDAwR3yEIc1wujkMbKJypp9dPD
-bALjEwWvpgvgtphUD2sCTBj6VN0iWTzrO3r20szqOXZTdwCaNF86UcqnhfOKfg3E
-SaoAFtPmvDXgzUndifeKCkIs+AXAgezkDTHlrCXRPkKIugQYEwkAQhYhBAbsagXd
-qnm7NV6REc8EKvW5aKqZBQJqC1bzGxSAAAAAAAQADm1hbnUyLDIuNSsxLjEyLDAs
-MwIbIAUJCWYBgAAKCRDPBCr1uWiqmd3nAYDreJNrcbTriFJHGwZkpz8vzqI8ePXj
-tHRvIKyjGJcSv3tcF2zLRcrd9KV+gwtd7ygBeQFYNqK3MLVQx55vHWVlk1oSnjcy
-+s7eawt+ZYTRVTU/Pnmq3RHiolxMU+sk4wKsMrhzBGoLVvMSBSuBBAAiAwMEAEoR
-4OPy0JynyWTzIrq+uvAm6lMOMjZtJHufxap6xPRUvjYcVXNt+d6as+y1/5+/JU0J
-Fe3PVFMcH7AijxesUdoKFPL/0X6ufTJ4xXP3pWffQjXkVVY3ApQzgFK5hpfRAwEJ
-CYi6BBgTCQBCFiEEBuxqBd2qebs1XpERzwQq9bloqpkFAmoLVvMbFIAAAAAABAAO
-bWFudTIsMi41KzEuMTIsMCwzAhsMBQkJZgGAAAoJEM8EKvW5aKqZbcoBgOdQgwrK
-XzslpZIynjhenR5a5DsYGWWOOpTMv7SbAJlDtjf0XsMNQpiRVFzQFDUXZAGA4OMl
-UCSP4K/3iUsihVGV2ik7k5OCyjBr2fgRolO/ibU8yNepeBfTDXgrOq7WHFz0
-=R/sU
------END PGP PUBLIC KEY BLOCK-----
+age1yubikey1qwn5tc55r3qe5cyx9jmgxfymerqz3qf9enwpeesm27jelxn6g5n9wdrquvz
 ```
