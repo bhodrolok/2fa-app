@@ -68,7 +68,7 @@
     <string name="screen_setup_get_started_section_step_1">1. Erstelle eine Passphrase</string>
     <string name="screen_setup_get_started_section_step_2">2. Biometrische Entsperrung aktivieren</string>
     <string name="screen_setup_get_started_section_title">Klicken Sie auf „Loslegen“, um mit der Einrichtung zu beginnen</string>
-    <string name="screen_setup_get_started_welcome">Willkommen zu 2fa!</string>
+    <string name="screen_setup_get_started_welcome">Willkommen bei 2fa!</string>
     <string name="theme_option_dark">Dunkel</string>
     <string name="theme_option_light">Hell</string>
     <string name="theme_option_pitch_black">Pechschwarz</string>
@@ -105,8 +105,8 @@
     <string name="screen_settings_security_block_intents">Vorhaben blockieren</string>
     <string name="screen_settings_security_block_intents_secondary">Ignoriere Aktionen von externen Apps</string>
     <plurals name="common_button_tap_n_times_to_confirm">
-        <item quantity="one">Tippe Noch %d Mal, Um Zu Bestätigen</item>
-        <item quantity="other">Tippe Noch %d Mal, Um Zu Bestätigen</item>
+        <item quantity="one">Tippe noch %d Mal, um zu bestätigen</item>
+        <item quantity="other">Tippe noch %d Mal, um zu bestätigen</item>
     </plurals>
     <string name="common_button_change">Ändern</string>
     <string name="common_import_error_unknown">Unbekannt</string>
