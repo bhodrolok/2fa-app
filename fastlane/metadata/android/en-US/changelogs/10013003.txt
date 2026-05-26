@@ -1,4 +1,5 @@
 Changes since the 1.1.2 release:
+- Added additional logging when adding, modifying or deleting an account.
 - Fixed `User not authenticated` crash. This issue primarily affected GrapheneOS users who utilize Private Space or multiple user profiles with biometrics. Previously, attempting to unlock the app in these scenarios would cause it to crash, requiring a full device restart to resolve.
 - Updated German thanks to @MaxrregMustermann.
 - Updated Android `composeBom` to `2026.05.01`.
