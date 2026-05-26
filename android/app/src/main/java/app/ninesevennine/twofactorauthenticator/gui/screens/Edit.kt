@@ -47,8 +47,6 @@ import app.ninesevennine.twofactorauthenticator.Algorithm
 import app.ninesevennine.twofactorauthenticator.CodeType
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
-import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.gui.elements.EditHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.OtpCardNormal
@@ -61,8 +59,11 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.SectionGroup
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionHueSlider
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionSaturationSlider
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionTextBox
+import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
 import app.ninesevennine.twofactorauthenticator.utils.Clipboard
 import app.ninesevennine.twofactorauthenticator.utils.ColorPicker
+import app.ninesevennine.twofactorauthenticator.utils.Config
+import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.utils.Time
 import kotlinx.coroutines.Dispatchers
@@ -72,6 +73,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 object EditRoute
+
+private const val TAG = "Edit"
 
 @Composable
 fun Edit(navController: NavController) {
@@ -405,6 +408,8 @@ fun Edit(navController: NavController) {
                             return@launch
                         }
 
+                        Logger.i(TAG, "successfully deleted an account")
+
                         withContext(Dispatchers.Main) {
                             navController.popBackStack(MainRoute, false)
                         }
@@ -452,6 +457,10 @@ fun Edit(navController: NavController) {
                     if (Signals.checkEditAccountSome) {
                         Signals.checkEditAccountSome = false
                         Signals.accountAdded = true
+
+                        Logger.i(TAG, "successfully added an account")
+                    } else {
+                        Logger.i(TAG, "successfully modified an account")
                     }
 
                     withContext(Dispatchers.Main) {
