@@ -168,7 +168,7 @@ fun SetupCreateAPassphrase(navController: NavController) {
                             Logger.i(TAG, "continue pressed")
 
                             if (KeyStoreAES.loadKey(isBiometricKey = false)) {
-                                if (!KeyStoreAES.isKeyInvalidated(isBiometricKey = false)) {
+                                if (KeyStoreAES.isKeyUsable(isBiometricKey = false)) {
                                     KeyStoreAES.loadSecret(
                                         onSuccess = { secret ->
                                             Entry.rustInterface.setSecret003(secret)

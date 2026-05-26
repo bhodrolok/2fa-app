@@ -133,7 +133,7 @@ object KeyStoreAES {
         }
     }
 
-    fun isKeyInvalidated(isBiometricKey: Boolean): Boolean {
+    fun isKeyUsable(isBiometricKey: Boolean): Boolean {
         val alias = if (isBiometricKey) BIOMETRIC_KEY_ALIAS else REGULAR_KEY_ALIAS
 
         return try {
@@ -143,10 +143,10 @@ object KeyStoreAES {
             val cipher = Cipher.getInstance(AES_TRANSFORMATION)
             cipher.init(Cipher.ENCRYPT_MODE, key)
 
-            false
-        } catch (e: Exception) {
-            Logger.e(TAG, "$alias key is invalidated", e)
             true
+        } catch (e: Exception) {
+            Logger.e(TAG, "$alias key is not usable", e)
+            false
         }
     }
 

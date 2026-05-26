@@ -53,7 +53,7 @@ fun SetupBiometricUnlock(navController: NavController) {
 
     val isFullBiometricAvailable by remember {
         mutableStateOf(
-            KeyStoreAES.isBiometricAvailable() && KeyStoreAES.isBiometricKeyLoaded()
+            KeyStoreAES.isBiometricAvailable() && KeyStoreAES.isBiometricKeyLoaded() && KeyStoreAES.isKeyUsable(isBiometricKey = true)
         )
     }
 

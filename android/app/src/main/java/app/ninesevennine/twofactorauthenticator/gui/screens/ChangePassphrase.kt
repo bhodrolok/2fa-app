@@ -189,6 +189,19 @@ fun ChangePassphrase(navController: NavController) {
 
                             withContext(Dispatchers.Main) {
                                 if (Config.isUsingBiometrics) {
+                                    if (!KeyStoreAES.isKeyUsable(isBiometricKey = true)) {
+                                        Config.isUsingBiometrics = false
+                                        Config.save(context)
+
+                                        Logger.i(TAG, "biometrics set to false")
+
+                                        KeyStoreAES.deleteKey(isBiometricKey = true)
+                                        KeyStoreAES.deleteUnlockPassphraseHashFile()
+
+                                        navController.popBackStack()
+                                        return@withContext
+                                    }
+
                                     KeyStoreAES.saveUnlockPassphraseHash(
                                         promptTitle = promptTitle,
                                         promptNegative = promptNegative,

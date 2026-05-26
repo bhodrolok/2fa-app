@@ -158,12 +158,8 @@ fun BiometricUnlock(navController: NavController) {
                                 KeyStoreAES.deleteKey(isBiometricKey = true)
 
                                 KeyStoreAES.generateKey(isBiometricKey = true)
-                                if (!KeyStoreAES.loadKey(isBiometricKey = true)) {
-                                    Logger.i(TAG, "unable to load biometric key")
-
-                                    withContext(Dispatchers.Main) {
-                                        navController.popBackStack()
-                                    }
+                                if (!KeyStoreAES.loadKey(isBiometricKey = true) || !KeyStoreAES.isKeyUsable(isBiometricKey = true)) {
+                                    isLoading = false
 
                                     return@launch
                                 }
@@ -186,8 +182,7 @@ fun BiometricUnlock(navController: NavController) {
                                         },
                                         onError = {
                                             Logger.e(TAG, "biometric confirmation failed")
-
-                                            navController.popBackStack()
+                                            isLoading = false
                                         }
                                     )
                                 }

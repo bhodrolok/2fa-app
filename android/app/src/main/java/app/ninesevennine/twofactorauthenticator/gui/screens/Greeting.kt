@@ -118,7 +118,7 @@ fun Greeting(navController: NavController) {
             return@LaunchedEffect
         }
 
-        if (KeyStoreAES.isKeyInvalidated(isBiometricKey = true)) {
+        if (!KeyStoreAES.isKeyUsable(isBiometricKey = true)) {
             biometricKeyRecreationRequired = true
             fallbackToPassphrase = true
             return@LaunchedEffect
@@ -199,19 +199,14 @@ fun Greeting(navController: NavController) {
 
                 if (biometricKeyRecreationRequired) {
                     KeyStoreAES.deleteKey(isBiometricKey = true)
-
                     KeyStoreAES.generateKey(isBiometricKey = true)
-                    if (!KeyStoreAES.loadKey(isBiometricKey = true)) {
-                        Logger.i(TAG, "unable to load recreated biometric key")
 
-                        Config.isUsingBiometrics = false
-                        Config.save(context)
-
-                        Logger.i(TAG, "biometrics set to false")
-
+                    if (!KeyStoreAES.loadKey(isBiometricKey = true) || !KeyStoreAES.isKeyUsable(isBiometricKey = true)) {
                         navController.navigate(MainRoute) {
                             popUpTo(0) { inclusive = true }
                         }
+
+                        return@launch
                     }
 
                     withContext(Dispatchers.Main) {
@@ -228,28 +223,12 @@ fun Greeting(navController: NavController) {
                             onCancel = {
                                 Logger.i(TAG, "biometric recreation confirmation cancelled")
 
-                                Config.isUsingBiometrics = false
-                                Config.save(context)
-
-                                Logger.i(TAG, "biometrics set to false")
-
-                                KeyStoreAES.deleteKey(isBiometricKey = true)
-                                KeyStoreAES.deleteUnlockPassphraseHashFile()
-
                                 navController.navigate(MainRoute) {
                                     popUpTo(0) { inclusive = true }
                                 }
                             },
                             onError = {
                                 Logger.e(TAG, "biometric recreation confirmation failed")
-
-                                Config.isUsingBiometrics = false
-                                Config.save(context)
-
-                                Logger.i(TAG, "biometrics set to false")
-
-                                KeyStoreAES.deleteKey(isBiometricKey = true)
-                                KeyStoreAES.deleteUnlockPassphraseHashFile()
 
                                 navController.navigate(MainRoute) {
                                     popUpTo(0) { inclusive = true }
