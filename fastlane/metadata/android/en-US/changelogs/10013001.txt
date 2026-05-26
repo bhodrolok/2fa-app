@@ -1,1 +1,0 @@
-* Fixed migration not prompting setup if automatic backups were not used.
