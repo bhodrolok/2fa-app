@@ -128,12 +128,12 @@ fun Import(navController: NavController) {
             val result = Entry.rustInterface.importAccounts(passphrase, importData)
 
             if (result > 0) {
-                Logger.i(TAG, "successfully imported $result account(s)")
-
                 if (!AccountManagement.saveAccounts(context)) {
                     isLoading = false
                     return@launch
                 }
+
+                Logger.i(TAG, "successfully imported $result account(s)")
 
                 Signals.accountAdded = true
 

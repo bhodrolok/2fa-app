@@ -130,6 +130,8 @@ fun ImportAegis(navController: NavController) {
                     return@launch
                 }
 
+                Logger.i(TAG, "successfully imported an unknown number of accounts")
+
                 Signals.accountAdded = true
 
                 withContext(Dispatchers.Main) {
