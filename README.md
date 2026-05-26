@@ -64,16 +64,6 @@ E5:B2:8E:A1:E0:51:C2:32:DE:A9:4C:27:C0:59:2E:2C:00:2D:17:C5:CA:81:78:8B:51:30:6D
 
 When verifying, make sure to compare the hashes across multiple sources, such as our [website](https://979.st/2fa/verifying-releases/).
 
-### Roadmap
-
-We have a lot planned for 2026, though none of this is set in stone, and things might change along the way.
-
-- ~~**1.0** Google Play Store release~~
-- ~~**1.1** Passphrase Unlock and Cloud Backups~~
-- **1.2** Cleanup, reproducible builds and prepare for audit
-- **1.3** Cross-device Sync
-- **1.4** iOS
-
 ### Translations
 
 2fa is already available in several languages, and we would love your help adding more or improving the existing ones. You can do this by contributing to our [Codeberg Weblate](https://translate.codeberg.org/projects/979/2fa/).
