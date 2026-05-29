@@ -8,8 +8,8 @@ android {
     namespace = "app.ninesevennine.twofactorauthenticator"
     compileSdk = 36
 
-    buildToolsVersion = "36.1.0"
-    ndkVersion = "30.0.14904198"
+    buildToolsVersion = libs.versions.sdk.get()
+    ndkVersion = libs.versions.ndk.get()
 
     defaultConfig {
         applicationId = "app.ninesevennine.twofactorauthenticator"
@@ -63,8 +63,9 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_25
-        targetCompatibility = JavaVersion.VERSION_25
+        val javaVersion = JavaVersion.toVersion(libs.versions.java.get())
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
     }
 
     buildFeatures {

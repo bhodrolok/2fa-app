@@ -1,6 +1,7 @@
 .DS_Store
 
 # appcore
+appcore/.cargo
 appcore/target
 
 # android

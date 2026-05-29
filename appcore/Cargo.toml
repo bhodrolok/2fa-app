@@ -6,13 +6,6 @@ edition = "2024"
 [lib]
 crate-type = ["cdylib"]
 
-[profile.release]
-opt-level = 3
-lto = "fat"
-codegen-units = 1
-panic = "abort"
-strip = true
-
 [dependencies]
 aegis = { version = "0.9.8", default-features = false, features = ["std", "pure-rust"] }
 aes-gcm = "0.10.3"

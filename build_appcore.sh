@@ -9,29 +9,43 @@ if [[ "$OS" == "darwin" && "$ARCH" == "arm64" ]]; then
 fi
 
 ANDROID="$(dirname "$0")/android"
-
-NDK_VERSION="$(grep "ndkVersion =" "$ANDROID/app/build.gradle.kts" | grep -o -E '"[0-9]+(\.[0-9]+)+"' | tr -d '"')"
-ANDROID_NDK="${ANDROID_HOME}/ndk/${NDK_VERSION}"
-NDK_BIN="${ANDROID_NDK}/toolchains/llvm/prebuilt/${OS}-${ARCH}/bin"
-
 APPCORE="$(dirname "$0")/appcore"
+CONFIG_TOML="${APPCORE}/.cargo/config.toml"
 
-if [[ -d "${APPCORE}/target" ]]; then
-    rm -rf "${APPCORE}/target"
-fi
+MINIMUM_SDK_VERSION="$(sed -n 's/.*minSdk = \([0-9]*\).*/\1/p' "${ANDROID}/app/build.gradle.kts")"
+NDK_VERSION="$(sed -n 's/^ndk = "\([^"]*\)".*/\1/p' "${ANDROID}/gradle/libs.versions.toml")"
+
+NDK_BIN="${ANDROID_HOME}/ndk/${NDK_VERSION}/toolchains/llvm/prebuilt/${OS}-${ARCH}/bin"
+
+mkdir -p "${APPCORE}/.cargo"
+cat << EOF > "$CONFIG_TOML"
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[target.aarch64-linux-android]
+ar = "${NDK_BIN}/llvm-ar"
+linker = "${NDK_BIN}/aarch64-linux-android${MINIMUM_SDK_VERSION}-clang"
+rustflags = [
+    "-C", "link-arg=-Wl,--build-id=none",
+    "-C", "link-arg=-Wl,--strip-all",
+    "-C", "target-feature=+neon,+mte",
+    "--remap-path-prefix", "${APPCORE}=",
+    "--remap-path-prefix", "${HOME}/.cargo/registry/=",
+    "--remap-path-prefix", "${HOME}=",
+    "--remap-path-scope=object"
+]
+EOF
 
 if [[ ! -f "${APPCORE}/Cargo.lock" ]]; then
     cargo generate-lockfile --manifest-path "${APPCORE}/Cargo.toml"
 fi
 
-CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER="${NDK_BIN}/aarch64-linux-android34-clang" \
-CC_aarch64_linux_android="${NDK_BIN}/aarch64-linux-android34-clang" \
-AR_aarch64_linux_android="${NDK_BIN}/llvm-ar" \
 SOURCE_DATE_EPOCH=$(git --no-pager log -1 --format=%ct) \
-RUSTFLAGS="--remap-path-prefix ${APPCORE}= --remap-path-prefix ${HOME}/.cargo/registry/= --remap-path-prefix ${HOME}= --remap-path-scope=object" \
-cargo build --quiet --locked --release --target aarch64-linux-android --manifest-path "${APPCORE}/Cargo.toml"
-
-"${NDK_BIN}/llvm-strip" --strip-all "${APPCORE}/target/aarch64-linux-android/release/libappcore.so"
+cargo build --quiet --locked --release --target aarch64-linux-android --manifest-path "${APPCORE}/Cargo.toml" --config "$CONFIG_TOML"
 
 mkdir -p "${APPCORE}/target/jniLibs/arm64-v8a"
 cp "${APPCORE}/target/aarch64-linux-android/release/libappcore.so" "${APPCORE}/target/jniLibs/arm64-v8a/"

@@ -21,21 +21,14 @@ if [[ "$GRADLE_VERSION" != "$REQUIRED_GRADLE_VERSION" ]]; then
     exit 1
 fi
 
-REQUIRED_JVM_VERSION="25.0.3"
-REQUIRED_JVM_VENDOR="Eclipse Adoptium"
+REQUIRED_JVM_VERSION="25"
 
 JVM_LAUNCHER=$(echo "$GRADLE_INFO" | grep "Launcher JVM:")
 
-JVM_VERSION=$(echo "$JVM_LAUNCHER" | awk '{print $3}')
-JVM_VENDOR=$(echo "$JVM_LAUNCHER" | cut -d'(' -f2 | cut -d' ' -f1,2)
+JVM_VERSION=$(echo "$JVM_LAUNCHER" | awk '{print $3}' | cut -d. -f1)
 
 if [[ "$JVM_VERSION" != "$REQUIRED_JVM_VERSION" ]]; then
     echo "incorrect jvm version $JVM_VERSION needs to be $REQUIRED_JVM_VERSION"
-    exit 1
-fi
-
-if [[ "$JVM_VENDOR" != "$REQUIRED_JVM_VENDOR" ]]; then
-    echo "incorrect jvm vendor $JVM_VENDOR needs to be $REQUIRED_JVM_VENDOR"
     exit 1
 fi
 
