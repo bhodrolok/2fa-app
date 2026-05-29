@@ -32,7 +32,7 @@ linker = "${NDK_BIN}/aarch64-linux-android${MINIMUM_SDK_VERSION}-clang"
 rustflags = [
     "-C", "link-arg=-Wl,--build-id=none",
     "-C", "link-arg=-Wl,--strip-all",
-    "-C", "target-feature=+neon,+mte",
+    "-C", "target-feature=+neon",
     "--remap-path-prefix", "${APPCORE}=",
     "--remap-path-prefix", "${HOME}/.cargo/registry/=",
     "--remap-path-prefix", "${HOME}=",
