@@ -41,7 +41,7 @@ rustflags = [
 EOF
 
 if [[ ! -f "${APPCORE}/Cargo.lock" ]]; then
-    cargo generate-lockfile --manifest-path "${APPCORE}/Cargo.toml"
+    cargo generate-lockfile --quiet --manifest-path "${APPCORE}/Cargo.toml" --config "$CONFIG_TOML"
 fi
 
 SOURCE_DATE_EPOCH=$(git --no-pager log -1 --format=%ct) \
