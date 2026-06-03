@@ -12,8 +12,7 @@ fi
 
 ANDROID="$(dirname "$0")/android"
 WRAPPER_JAR="${ANDROID}/gradle/wrapper/gradle-wrapper.jar"
-JAVA="${JAVA_HOME}/bin/java"
-JAVA_VERSION="$("$JAVA" -version 2>&1 | sed -n 's/.*version "\([0-9]*\)\..*/\1/p')"
+JAVA_VERSION="$(java -version 2>&1 | sed -n 's/.*version "\([0-9]*\)\..*/\1/p')"
 REQUIRED_JAVA_VERSION="$(sed -n 's/java = "\(.*\)"/\1/p' "${ANDROID}/gradle/libs.versions.toml")"
 
 if [[ "$JAVA_VERSION" != "$REQUIRED_JAVA_VERSION" ]]; then
@@ -22,7 +21,7 @@ if [[ "$JAVA_VERSION" != "$REQUIRED_JAVA_VERSION" ]]; then
 fi
 
 SOURCE_DATE_EPOCH=$(git --no-pager log -1 --format=%ct) \
-"$JAVA" -jar "$WRAPPER_JAR" -q -p "$ANDROID" clean "$GRADLE_TASK" --no-daemon
+java -jar "$WRAPPER_JAR" -q -p "$ANDROID" clean "$GRADLE_TASK" --no-daemon
 
 if [[ "$FORMAT" == "apk" ]]; then
     SDK="$(sed -n 's/^sdk = "\(.*\)"/\1/p' "${ANDROID}/gradle/libs.versions.toml")"
