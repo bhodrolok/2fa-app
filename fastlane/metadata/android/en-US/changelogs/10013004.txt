@@ -1,0 +1,6 @@
+Changes since the 1.1.3 release:
+- Improved apk size and memory footprint.
+- Switched from Eclipse Adoptium to OpenJDK.
+- Updated Android `kotlin` to `2.4.0`.
+- Updated Rust `aegis` to `0.9.12`.
+- Updated Rust `rustc` to `1.96.0`.
