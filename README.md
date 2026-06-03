@@ -23,7 +23,7 @@
 
 ### Features
 
-- Support for TOTP, HOTP, and Steam Guard codes.
+- Support for [TOTP](https://en.wikipedia.org/wiki/Time-based_one-time_password), [HOTP](https://en.wikipedia.org/wiki/HMAC-based_one-time_password), and [Steam Guard](https://cs2central.gg/blog/steam-desktop-authenticator-guide) codes via `.maFile`.
 - Add accounts via QR codes, OTPAuth links, files, or your gallery.
 - Highly customizable, with account colors and icon packs, including textured and tinted options.
 - Advanced security features such as biometric unlock, screen security, secure clipboard, lock on exit, and intent blocking.
@@ -32,9 +32,9 @@
 
 ### Security
 
-All accounts are stored inside the app's internal directory using our format with the extension `.2fa`. They are encrypted with [AEGIS-256](https://datatracker.ietf.org/doc/draft-irtf-cfrg-aegis-aead/) and the key used is derived from hashing your passphrase with [Argon2id](https://en.wikipedia.org/wiki/Argon2). This method is used for both exports and internal storage, with the only difference being that internal storage takes an additional step by running the hash through [HKDF](https://en.wikipedia.org/wiki/HKDF) using [SHA3-512](https://en.wikipedia.org/wiki/SHA-3) with an additional random salt on every disk write.
+All accounts are stored inside the app's internal directory using our format with the extension `.2fa`. They are encrypted with [AEGIS-256](https://doc.libsodium.org/doc/secret-key_cryptography/aead/aegis-256) and the key used is derived from hashing your passphrase with [Argon2id](https://veracrypt.io/en/Argon2id.html). This method is used for both exports and internal storage, with the only difference being that internal storage takes an additional step by running the hash through [HKDF](https://en.wikipedia.org/wiki/HKDF) using [SHA3-512](https://en.wikipedia.org/wiki/SHA-3) with an additional random salt on every disk write.
 
-If you choose to use biometrics, the passphrase hash must be stored. It's encrypted using the Android Keystore with [AES-GCM](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) and StrongBox (when available). The result is saved in the `no_backup` folder, in a file named `unlock_passphrase_hash.bin`, meaning it won't be included in system backups or when transferring to a new device. Also, the biometric key can become invalid due to several reasons. If this happens, decrypting won't be possible, and you will have to enter your passphrase, after which you will be prompted to confirm biometrics in order to re-establish them.
+If you choose to use biometrics, the passphrase hash must be stored. It's encrypted using the Android Keystore with [AES-GCM](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) and [StrongBox](https://en.wikipedia.org/wiki/Secure_element) (when available). The result is saved in the `no_backup` folder, in a file named `unlock_passphrase_hash.bin`, meaning it won't be included in system backups or when transferring to a new device. Also, the biometric key can become invalid due to several reasons. If this happens, decrypting won't be possible, and you will have to enter your passphrase, after which you will be prompted to confirm biometrics in order to re-establish them.
 
 On top of that, we added a few features to keep your data from leaking in ways you might not expect. Here are some that might need a bit of explaining.
 
@@ -62,12 +62,12 @@ app.ninesevennine.twofactorauthenticator.accrescent
 E5:B2:8E:A1:E0:51:C2:32:DE:A9:4C:27:C0:59:2E:2C:00:2D:17:C5:CA:81:78:8B:51:30:6D:60:8A:FE:52:C5
 ```
 
-When verifying, make sure to compare the hashes across multiple sources, such as our [website](https://979.st/2fa/verifying-releases/).
+When verifying, make sure to compare the hashes across multiple sources, such as our [website](https://979.st/2fa/verifying-releases).
 
 ### Translations
 
-2fa is already available in several languages, and we would love your help adding more or improving the existing ones. You can do this by contributing to our [Codeberg Weblate](https://translate.codeberg.org/projects/979/2fa/).
+2fa is already available in several languages, and we would love your help adding more or improving the existing ones. You can do this by contributing to our [Codeberg Weblate](https://translate.codeberg.org/projects/979/2fa).
 
 ### Support
 
-If you have any problems using 2fa, find a bug, or just have a question, don't hesitate to reach out to us on [Discord](https://discord.gg/zxgXNzhYJu). If you would like to support and accelerate our work, please consider [donating](https://979.st/donate/).
+If you have any problems using 2fa, find a bug, or just have a question, don't hesitate to reach out to us on [Discord](https://discord.gg/zxgXNzhYJu). If you would like to support and accelerate our work, please consider [donating](https://979.st/donate).
