@@ -1,20 +1,23 @@
 <p align="center">
-  <img src="images/2fa.svg" width="150"/>
+  <img src="./images/2fa.svg" width="150"/>
 </p>
 <h1 align="center">2fa</h1>
 <h4 align="center">A dedicated two-factor authenticator built to securely manage your one-time passwords</h4>
 <p align="center">
     <a href="https://accrescent.app/app/app.ninesevennine.twofactorauthenticator.accrescent">
-        <img alt="Get it on Accrescent" src="https://accrescent.app/badges/get-it-on.png" height="80">
+        <img alt="Get it on Accrescent" src="./images/get-it-on-accrescent.webp" height="80">
     </a>
     <a href="https://play.google.com/store/apps/details?id=app.ninesevennine.twofactorauthenticator.play">
-        <img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height="80">
+        <img alt="Get it on Google Play" src="./images/get-it-on-google-play.webp" height="80">
+    </a>
+    <a href="https://apt.izzysoft.de/fdroid/index/apk/app.ninesevennine.twofactorauthenticator">
+        <img alt="Get it on IzzyOnDroid" src="./images/get-it-on-izzyondroid.webp" height="80">
     </a>
 </p>
 <p align="center">
-    <img src="images/mustang-preview-2fa-light.webp" width="17%"/>
-    <img src="images/mustang-preview-2fa-dark.webp" width="17%"/>
-    <img src="images/mustang-preview-2fa-pitch-black.webp" width="17%"/>
+    <img src="./images/mustang-preview-2fa-light.webp" width="17%"/>
+    <img src="./images/mustang-preview-2fa-dark.webp" width="17%"/>
+    <img src="./images/mustang-preview-2fa-pitch-black.webp" width="17%"/>
 </p>
 
 ### Overview
