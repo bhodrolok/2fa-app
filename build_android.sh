@@ -21,7 +21,7 @@ if [[ "$JAVA_VERSION" != "$REQUIRED_JAVA_VERSION" ]]; then
 fi
 
 SOURCE_DATE_EPOCH=$(git --no-pager log -1 --format=%ct) \
-java -jar "$WRAPPER_JAR" -q -p "$ANDROID" clean "$GRADLE_TASK" --no-daemon
+java -jar "$WRAPPER_JAR" -q -p "$ANDROID" clean "$GRADLE_TASK" --no-build-cache --no-configuration-cache --no-daemon
 
 if [[ "$FORMAT" == "apk" ]]; then
     SDK="$(sed -n 's/^sdk = "\(.*\)"/\1/p' "${ANDROID}/gradle/libs.versions.toml")"
