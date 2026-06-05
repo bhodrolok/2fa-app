@@ -10,7 +10,7 @@
     <a href="https://play.google.com/store/apps/details?id=app.ninesevennine.twofactorauthenticator.play">
         <img alt="Get it on Google Play" src="./images/get-it-on-google-play.webp" height="80">
     </a>
-    <a href="https://apt.izzysoft.de/fdroid/index/apk/app.ninesevennine.twofactorauthenticator">
+    <a href="https://apt.izzysoft.de/packages/app.ninesevennine.twofactorauthenticator">
         <img alt="Get it on IzzyOnDroid" src="./images/get-it-on-izzyondroid.webp" height="80">
     </a>
 </p>
