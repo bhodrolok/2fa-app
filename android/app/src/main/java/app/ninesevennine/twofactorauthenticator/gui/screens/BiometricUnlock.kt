@@ -137,7 +137,7 @@ fun BiometricUnlock(navController: NavController) {
 
                                 Logger.i(TAG, "biometrics set to false")
 
-                                KeyStoreAES.deleteKey(isBiometricKey = true)
+                                KeyStoreAES.deleteBiometricKey()
                                 KeyStoreAES.deleteUnlockPassphraseHashFile()
 
                                 withContext(Dispatchers.Main) {
@@ -155,10 +155,10 @@ fun BiometricUnlock(navController: NavController) {
                             isLoading = true
 
                             scope.launch(Dispatchers.IO) {
-                                KeyStoreAES.deleteKey(isBiometricKey = true)
+                                KeyStoreAES.deleteBiometricKey()
 
-                                KeyStoreAES.generateKey(isBiometricKey = true)
-                                if (!KeyStoreAES.loadKey(isBiometricKey = true) || !KeyStoreAES.isKeyUsable(isBiometricKey = true)) {
+                                KeyStoreAES.generateBiometricKey()
+                                if (!KeyStoreAES.loadBiometricKey() || !KeyStoreAES.isBiometricKeyUsable()) {
                                     isLoading = false
 
                                     return@launch
@@ -170,18 +170,18 @@ fun BiometricUnlock(navController: NavController) {
                                         promptNegative = promptNegative,
                                         onSuccess = {
                                             Config.isUsingBiometrics = true
-                                            Logger.i(TAG, "biometrics set to true")
-
                                             Config.save(context)
+
+                                            Logger.i(TAG, "successfully saved the unlock passphrase hash for biometrics")
 
                                             navController.popBackStack()
                                         },
                                         onCancel = {
-                                            Logger.i(TAG, "biometric confirmation cancelled")
+                                            Logger.i(TAG, "cancelled saving unlock passphrase hash for biometrics")
                                             isLoading = false
                                         },
                                         onError = {
-                                            Logger.e(TAG, "biometric confirmation failed")
+                                            Logger.e(TAG, "failed saving unlock passphrase hash for biometrics")
                                             isLoading = false
                                         }
                                     )

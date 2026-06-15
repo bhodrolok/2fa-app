@@ -40,16 +40,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
-import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
 import app.ninesevennine.twofactorauthenticator.utils.Config
-import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -58,8 +55,6 @@ import java.security.SecureRandom
 
 @Serializable
 object SetupCreateAPassphrase
-
-private const val TAG = "SetupCreateAPassphrase"
 
 @Composable
 fun SetupCreateAPassphrase(navController: NavController) {
@@ -165,34 +160,11 @@ fun SetupCreateAPassphrase(navController: NavController) {
                         isLoading = true
 
                         scope.launch(Dispatchers.IO) {
-                            Logger.i(TAG, "continue pressed")
-
-                            if (KeyStoreAES.loadKey(isBiometricKey = false)) {
-                                if (KeyStoreAES.isKeyUsable(isBiometricKey = false)) {
-                                    KeyStoreAES.loadSecret(
-                                        onSuccess = { secret ->
-                                            Entry.rustInterface.setSecret003(secret)
-                                        },
-                                        onError = {
-
-                                        }
-                                    )
-
-                                    AccountManagement.loadAccountsUsingKey(context)
-                                }
-                            }
-
                             val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
                             Entry.rustInterface.changeUnlockPassphraseHash(salt, passphrase)
 
                             Config.unlockPassphraseSalt = Base64.encodeToString(salt, Base64.NO_WRAP)
                             Config.save(context)
-
-                            Logger.i(TAG, "unlock passphrase hash set")
-
-                            if (!AccountManagement.saveAccounts(context)) {
-                                return@launch
-                            }
 
                             withContext(Dispatchers.Main) {
                                 navController.navigate(SetupBiometricUnlockRoute)

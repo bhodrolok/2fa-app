@@ -42,7 +42,6 @@ import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionGroup
-import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -50,8 +49,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 object SetupGetStartedRoute
-
-private const val TAG = "SetupGetStarted"
 
 @Composable
 fun SetupGetStarted(navController: NavController) {
@@ -129,13 +126,10 @@ fun SetupGetStarted(navController: NavController) {
                     isLoading = true
 
                     scope.launch(Dispatchers.IO) {
-                        Logger.i(TAG, "get started pressed")
-
-                        KeyStoreAES.deleteKey(isBiometricKey = true)
-
                         if (KeyStoreAES.isBiometricAvailable()) {
-                            KeyStoreAES.generateKey(isBiometricKey = true)
-                            if (!KeyStoreAES.loadKey(isBiometricKey = true)) {
+                            KeyStoreAES.deleteBiometricKey()
+                            KeyStoreAES.generateBiometricKey()
+                            if (!KeyStoreAES.loadBiometricKey()) {
                                 return@launch
                             }
                         }

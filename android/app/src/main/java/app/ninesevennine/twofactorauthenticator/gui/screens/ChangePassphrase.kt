@@ -187,55 +187,40 @@ fun ChangePassphrase(navController: NavController) {
 
                             Config.save(context)
 
-                            withContext(Dispatchers.Main) {
-                                if (Config.isUsingBiometrics) {
-                                    if (!KeyStoreAES.isKeyUsable(isBiometricKey = true)) {
-                                        Config.isUsingBiometrics = false
-                                        Config.save(context)
+                            Logger.i(TAG, "successfully changed the unlock passphrase hash")
 
-                                        Logger.i(TAG, "biometrics set to false")
-
-                                        KeyStoreAES.deleteKey(isBiometricKey = true)
-                                        KeyStoreAES.deleteUnlockPassphraseHashFile()
-
+                            if (Config.isUsingBiometrics) {
+                                if (!KeyStoreAES.isBiometricKeyLoaded() || !KeyStoreAES.isBiometricKeyUsable()) {
+                                    withContext(Dispatchers.Main) {
                                         navController.popBackStack()
-                                        return@withContext
                                     }
 
+                                    return@launch
+                                }
+
+                                withContext(Dispatchers.Main) {
                                     KeyStoreAES.saveUnlockPassphraseHash(
                                         promptTitle = promptTitle,
                                         promptNegative = promptNegative,
                                         onSuccess = {
+                                            Logger.i(TAG, "successfully saved the unlock passphrase hash for biometrics")
+
                                             navController.popBackStack()
                                         },
                                         onCancel = {
-                                            Logger.i(TAG, "biometric confirmation cancelled")
-
-                                            Config.isUsingBiometrics = false
-                                            Config.save(context)
-
-                                            Logger.i(TAG, "biometrics set to false")
-
-                                            KeyStoreAES.deleteKey(isBiometricKey = true)
-                                            KeyStoreAES.deleteUnlockPassphraseHashFile()
+                                            Logger.i(TAG, "cancelled saving unlock passphrase hash for biometrics")
 
                                             navController.popBackStack()
                                         },
                                         onError = {
-                                            Logger.e(TAG, "biometric confirmation failed")
-
-                                            Config.isUsingBiometrics = false
-                                            Config.save(context)
-
-                                            Logger.i(TAG, "biometrics set to false")
-
-                                            KeyStoreAES.deleteKey(isBiometricKey = true)
-                                            KeyStoreAES.deleteUnlockPassphraseHashFile()
+                                            Logger.e(TAG, "failed saving unlock passphrase hash for biometrics")
 
                                             navController.popBackStack()
                                         }
                                     )
-                                } else {
+                                }
+                            } else {
+                                withContext(Dispatchers.Main) {
                                     navController.popBackStack()
                                 }
                             }

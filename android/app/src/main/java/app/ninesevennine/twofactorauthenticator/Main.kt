@@ -69,7 +69,7 @@ class Main : FragmentActivity() {
         Theme.window = window
         Theme.update(this)
 
-        setScreenSecure(this,Config.isUsingScreenSecurity)
+        setScreenSecure(activity = this, Config.isUsingScreenSecurity)
 
         KeyStoreAES.setActivity(this)
 
@@ -79,7 +79,7 @@ class Main : FragmentActivity() {
             val navController = rememberNavController()
 
             LaunchedEffect(Signals.authenticate) {
-                if (Config.hasCompletedSetup && Entry.rustInterface.isClientSecretEmpty() && navController.currentBackStackEntry?.destination?.hasRoute<GreetingRoute>() != true) {
+                if (Config.hasCompletedSetup && Entry.rustInterface.isClientUnlockPassphraseHashEmpty() && navController.currentBackStackEntry?.destination?.hasRoute<GreetingRoute>() != true) {
                     navController.navigate(GreetingRoute) {
                         popUpTo(0) { inclusive = true }
                         anim { enter = 0; exit = 0; popEnter = 0; popExit = 0 }
@@ -127,7 +127,7 @@ class Main : FragmentActivity() {
 
         setScreenSecure(this, Config.isUsingScreenSecurity)
 
-        if (Entry.rustInterface.isClientSecretEmpty()) Signals.authenticate++
+        if (Entry.rustInterface.isClientUnlockPassphraseHashEmpty()) Signals.authenticate++
     }
 
     override fun onStop() {

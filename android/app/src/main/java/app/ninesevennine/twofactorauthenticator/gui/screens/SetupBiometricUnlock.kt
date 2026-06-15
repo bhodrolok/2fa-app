@@ -53,7 +53,7 @@ fun SetupBiometricUnlock(navController: NavController) {
 
     val isFullBiometricAvailable by remember {
         mutableStateOf(
-            KeyStoreAES.isBiometricAvailable() && KeyStoreAES.isBiometricKeyLoaded() && KeyStoreAES.isKeyUsable(isBiometricKey = true)
+            KeyStoreAES.isBiometricAvailable() && KeyStoreAES.isBiometricKeyLoaded() && KeyStoreAES.isBiometricKeyUsable()
         )
     }
 
@@ -122,17 +122,17 @@ fun SetupBiometricUnlock(navController: NavController) {
                                 Config.hasCompletedSetup = true
                                 Config.save(context)
 
-                                Logger.i(TAG, "biometrics set to true")
+                                Logger.i(TAG, "successfully saved the unlock passphrase hash for biometrics")
 
                                 navController.navigate(MainRoute) {
                                     popUpTo(0) { inclusive = true }
                                 }
                             },
                             onCancel = {
-                                Logger.i(TAG, "biometric confirmation cancelled")
+                                Logger.i(TAG, "cancelled saving unlock passphrase hash for biometrics")
                             },
                             onError = {
-                                Logger.e(TAG, "biometric confirmation failed")
+                                Logger.e(TAG, "failed saving unlock passphrase hash for biometrics")
                             }
                         )
                     }
@@ -165,10 +165,10 @@ fun SetupBiometricUnlock(navController: NavController) {
                     text = stringResource(R.string.common_button_skip)
                 ) {
                     Config.isUsingBiometrics = false
-                    Logger.i(TAG, "biometrics set to false")
-
                     Config.hasCompletedSetup = true
                     Config.save(context)
+
+                    Logger.i(TAG, "biometrics set to false")
 
                     navController.navigate(MainRoute) {
                         popUpTo(0) { inclusive = true }

@@ -11,8 +11,7 @@ class RustInterface {
     external fun setUnlockPassphraseHash(hash: ByteArray)
     external fun changeUnlockPassphraseHash(salt: ByteArray, passphrase: String)
     external fun getUnlockPassphraseHash(): ByteArray
-    external fun setSecret003(secret: ByteArray)
-    external fun isClientSecretEmpty(): Boolean
+    external fun isClientUnlockPassphraseHashEmpty(): Boolean
 
     external fun setEditAccountEmpty()
     external fun setEditAccountNone()
@@ -42,8 +41,6 @@ class RustInterface {
     external fun exportAccountsUsingUnlockPassphraseHash(salt: ByteArray): String
     external fun exportAccounts(passphrase: String): String
     external fun exportAccountsAegis(passphrase: String): String
-    external fun importAccountsUsingKey003(data: String): Int
-    external fun importAccountsUsingAutomaticBackupsKey003(passphrase: String, data: String): Int
     external fun importAccountsUsingUnlockPassphraseHash(data: String): Int
     external fun importAccounts(passphrase: String, data: String): Int
     external fun importAccountsAegis(passphrase: String, data: String): Boolean

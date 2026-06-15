@@ -5,21 +5,9 @@ use crate::features::{hotp, steam};
 use crate::utils;
 use crate::utils::types::{Algorithm, CodeType};
 
-pub const CLIENT_SECRET_003_KEY_LEN: usize = 64;
-pub const CLIENT_SECRET_003_AUTOMATIC_BACKUPS_KEY_LEN: usize = 64;
-pub const CLIENT_SECRET_003_LEN: usize =
-    CLIENT_SECRET_003_KEY_LEN + CLIENT_SECRET_003_AUTOMATIC_BACKUPS_KEY_LEN;
-
-#[derive(Zeroize)]
-pub struct ClientSecret003 {
-    pub key: [u8; CLIENT_SECRET_003_KEY_LEN],
-    pub automatic_backups_key: [u8; CLIENT_SECRET_003_AUTOMATIC_BACKUPS_KEY_LEN],
-}
-
 pub const CLIENT_UNLOCK_PASSPHRASE_HASH_LEN: usize = 64;
 
 pub struct Client {
-    pub secret003: ClientSecret003,
     pub unlock_passphrase_hash: [u8; CLIENT_UNLOCK_PASSPHRASE_HASH_LEN],
     pub edit: Option<Account>,
     pub accounts: Vec<Account>,
@@ -27,7 +15,6 @@ pub struct Client {
 
 impl Client {
     pub fn unload(&mut self) {
-        self.secret003.zeroize();
         self.unlock_passphrase_hash.zeroize();
 
         if let Some(edit) = &mut self.edit {
@@ -59,27 +46,8 @@ impl Client {
             .unwrap();
     }
 
-    pub fn get_secret003(&self) -> [u8; CLIENT_SECRET_003_LEN] {
-        let mut out = [0u8; CLIENT_SECRET_003_LEN];
-
-        out[..CLIENT_SECRET_003_KEY_LEN].copy_from_slice(&self.secret003.key);
-        out[CLIENT_SECRET_003_KEY_LEN..].copy_from_slice(&self.secret003.automatic_backups_key);
-
-        out
-    }
-
     pub fn get_unlock_passphrase_hash(&self) -> &[u8; CLIENT_UNLOCK_PASSPHRASE_HASH_LEN] {
         &self.unlock_passphrase_hash
-    }
-
-    pub fn set_secret003(&mut self, secret: &[u8; CLIENT_SECRET_003_LEN]) {
-        self.secret003
-            .key
-            .copy_from_slice(&secret[..CLIENT_SECRET_003_KEY_LEN]);
-
-        self.secret003
-            .automatic_backups_key
-            .copy_from_slice(&secret[CLIENT_SECRET_003_KEY_LEN..]);
     }
 
     pub fn set_edit_account_empty(&mut self) {
@@ -276,10 +244,6 @@ impl Client {
 impl Default for Client {
     fn default() -> Self {
         Self {
-            secret003: ClientSecret003 {
-                key: [0u8; CLIENT_SECRET_003_KEY_LEN],
-                automatic_backups_key: [0u8; CLIENT_SECRET_003_AUTOMATIC_BACKUPS_KEY_LEN],
-            },
             unlock_passphrase_hash: [0u8; CLIENT_UNLOCK_PASSPHRASE_HASH_LEN],
             edit: None,
             accounts: Vec::new(),

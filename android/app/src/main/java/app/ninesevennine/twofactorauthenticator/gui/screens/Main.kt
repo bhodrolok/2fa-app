@@ -98,7 +98,7 @@ object MainRoute
 @Composable
 fun Main(navController: NavController) {
     LaunchedEffect(Signals.checkEditAccountSome) {
-        if (Entry.rustInterface.isEditAccountSome() && !Entry.rustInterface.isClientSecretEmpty()) {
+        if (Entry.rustInterface.isEditAccountSome() && !Entry.rustInterface.isClientUnlockPassphraseHashEmpty()) {
             navController.navigate(EditRoute)
         }
     }

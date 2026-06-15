@@ -61,7 +61,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
-import java.security.SecureRandom
 
 @Serializable
 object GreetingRoute
@@ -112,40 +111,37 @@ fun Greeting(navController: NavController) {
             return@LaunchedEffect
         }
 
-        if (!KeyStoreAES.loadKey(isBiometricKey = true)) {
-            biometricKeyRecreationRequired = true
-            fallbackToPassphrase = true
-            return@LaunchedEffect
-        }
+        if (KeyStoreAES.loadBiometricKey() && KeyStoreAES.isBiometricKeyUsable()) {
+            KeyStoreAES.loadUnlockPassphraseHash(
+                promptTitle = promptTitle,
+                promptNegative = promptNegative,
+                onSuccess = {
+                    if (AccountManagement.loadAccounts(context) < 0) {
+                        biometricKeyRecreationRequired = true
+                        fallbackToPassphrase = true
+                    } else {
+                        Logger.i(TAG, "access granted via biometrics")
+                        navController.navigate(MainRoute) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                },
+                onCancel = {
+                    Logger.i(TAG, "biometric confirmation cancelled")
 
-        if (!KeyStoreAES.isKeyUsable(isBiometricKey = true)) {
-            biometricKeyRecreationRequired = true
-            fallbackToPassphrase = true
-            return@LaunchedEffect
-        }
+                    fallbackToPassphrase = true
+                },
+                onError = {
+                    Logger.e(TAG, "biometric confirmation failed")
 
-        KeyStoreAES.loadUnlockPassphraseHash(
-            promptTitle = promptTitle,
-            promptNegative = promptNegative,
-            onSuccess = {
-                if (AccountManagement.loadAccounts(context) < 0) {
                     biometricKeyRecreationRequired = true
                     fallbackToPassphrase = true
-                } else {
-                    Logger.i(TAG, "access granted via biometrics")
-                    navController.navigate(MainRoute) {
-                        popUpTo(0) { inclusive = true }
-                    }
                 }
-            },
-            onCancel = {
-                fallbackToPassphrase = true
-            },
-            onError = {
-                biometricKeyRecreationRequired = true
-                fallbackToPassphrase = true
-            }
-        )
+            )
+        } else {
+            biometricKeyRecreationRequired = true
+            fallbackToPassphrase = true
+        }
     }
 
     val performPassphraseUnlock = performPassphraseUnlock@ {
@@ -158,37 +154,10 @@ fun Greeting(navController: NavController) {
         keyboardController?.hide()
 
         scope.launch(Dispatchers.IO) {
-            val result = if (AccountManagement.hasAccounts(context)) {
-                val salt = Base64.decode(Config.unlockPassphraseSalt, Base64.DEFAULT)
-                Entry.rustInterface.changeUnlockPassphraseHash(salt, passphrase)
+            val salt = Base64.decode(Config.unlockPassphraseSalt, Base64.DEFAULT)
+            Entry.rustInterface.changeUnlockPassphraseHash(salt, passphrase)
 
-                AccountManagement.loadAccounts(context)
-            } else {
-                val data = AccountManagement.getAccountsUsingAutomaticBackupsKey(context)
-                if (data == null) { // This should not happen.
-                    isLoading = false
-                    return@launch
-                }
-
-                var res = Entry.rustInterface.importAccountsUsingAutomaticBackupsKey003(passphrase, data)
-                if (res == AccountManagement.IMPORT_ERROR_INCORRECT_VERSION) {
-                    res = Entry.rustInterface.importAccounts(passphrase, data)
-                }
-
-                if (res >= 0) {
-                    val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
-                    Entry.rustInterface.changeUnlockPassphraseHash(salt, passphrase)
-
-                    Config.unlockPassphraseSalt = Base64.encodeToString(salt, Base64.NO_WRAP)
-                    Config.save(context)
-
-                    Logger.i(TAG, "unlock passphrase hash set")
-
-                    AccountManagement.saveAccounts(context)
-                }
-
-                res
-            }
+            val result = AccountManagement.loadAccounts(context)
 
             if (result < 0) {
                 isLoading = false
@@ -198,10 +167,10 @@ fun Greeting(navController: NavController) {
                 Logger.i(TAG, "access granted via passphrase")
 
                 if (biometricKeyRecreationRequired) {
-                    KeyStoreAES.deleteKey(isBiometricKey = true)
-                    KeyStoreAES.generateKey(isBiometricKey = true)
+                    KeyStoreAES.deleteBiometricKey()
+                    KeyStoreAES.generateBiometricKey()
 
-                    if (!KeyStoreAES.loadKey(isBiometricKey = true) || !KeyStoreAES.isKeyUsable(isBiometricKey = true)) {
+                    if (!KeyStoreAES.loadBiometricKey() || !KeyStoreAES.isBiometricKeyUsable()) {
                         navController.navigate(MainRoute) {
                             popUpTo(0) { inclusive = true }
                         }
@@ -214,21 +183,21 @@ fun Greeting(navController: NavController) {
                             promptTitle = promptTitle2,
                             promptNegative = promptNegative,
                             onSuccess = {
-                                Logger.i(TAG, "successfully recreated biometric key")
+                                Logger.i(TAG, "successfully saved the recreated unlock passphrase hash for biometrics")
 
                                 navController.navigate(MainRoute) {
                                     popUpTo(0) { inclusive = true }
                                 }
                             },
                             onCancel = {
-                                Logger.i(TAG, "biometric recreation confirmation cancelled")
+                                Logger.i(TAG, "cancelled saving unlock passphrase hash for recreated biometrics")
 
                                 navController.navigate(MainRoute) {
                                     popUpTo(0) { inclusive = true }
                                 }
                             },
                             onError = {
-                                Logger.e(TAG, "biometric recreation confirmation failed")
+                                Logger.e(TAG, "failed saving unlock passphrase hash for recreated biometrics")
 
                                 navController.navigate(MainRoute) {
                                     popUpTo(0) { inclusive = true }
