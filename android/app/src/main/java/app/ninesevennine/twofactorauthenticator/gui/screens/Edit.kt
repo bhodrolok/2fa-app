@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -40,7 +41,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.AccountTruncated
 import app.ninesevennine.twofactorauthenticator.Algorithm
@@ -48,6 +51,8 @@ import app.ninesevennine.twofactorauthenticator.CodeType
 import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
+import app.ninesevennine.twofactorauthenticator.features.Theme
+import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.EditHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.OtpCardNormal
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
@@ -144,6 +149,17 @@ fun Edit(navController: NavController) {
             Column(modifier = Modifier.widthIn(max = 512.dp)) {
                 Spacer(modifier = Modifier.height(topInset + 80.dp))
 
+                Text(
+                    text = stringResource(R.string.common_button_preview),
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    color = Theme.colors.primary,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.W700,
+                    fontFamily = InterVariable
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
                 Box(
                     modifier = Modifier.padding(horizontal = 16.dp)
                 ) {
@@ -189,7 +205,7 @@ fun Edit(navController: NavController) {
                 ) {
                     SectionGroup(
                         modifier = Modifier.padding(16.dp),
-                        title = stringResource(R.string.screen_edit_section_customization)
+                        title = stringResource(R.string.screen_edit_section_color)
                     ) {
                         Spacer(Modifier.height(8.dp))
 
@@ -206,8 +222,8 @@ fun Edit(navController: NavController) {
                         }
 
                         SectionDualButtonSmall(
-                            leftText = stringResource(R.string.screen_edit_section_customization_copy),
-                            rightText = stringResource(R.string.screen_edit_section_customization_paste),
+                            leftText = stringResource(R.string.screen_edit_section_color_copy),
+                            rightText = stringResource(R.string.screen_edit_section_color_paste),
                             onLeft = {
                                 Clipboard.copy(context, "color", ColorPicker.toRgbHexString(color), false)
                             },
@@ -222,7 +238,7 @@ fun Edit(navController: NavController) {
 
                         if (iconResult.color != null) {
                             SectionButtonSmall(
-                                text = stringResource(R.string.screen_edit_section_customization_use_suggestion),
+                                text = stringResource(R.string.screen_edit_section_color_preset),
                                 onClick = {
                                     color = iconResult.color
                                     Entry.rustInterface.setEditAccountColor(color.toArgb())
@@ -236,12 +252,12 @@ fun Edit(navController: NavController) {
 
                 SectionGroup(
                     modifier = Modifier.padding(16.dp),
-                    title = stringResource(R.string.screen_edit_section_account_information)
+                    title = stringResource(R.string.screen_edit_section_labels)
                 ) {
                     Spacer(Modifier.height(8.dp))
 
                     SectionTextBox(
-                        title = stringResource(R.string.screen_edit_section_account_information_name),
+                        title = stringResource(R.string.screen_edit_section_labels_name),
                         value = name,
                         onValueChange = {
                             Entry.rustInterface.setEditAccountName(it.trim())
@@ -250,7 +266,7 @@ fun Edit(navController: NavController) {
                     )
 
                     SectionTextBox(
-                        title = stringResource(R.string.screen_edit_section_account_information_issuer),
+                        title = stringResource(R.string.screen_edit_section_labels_issuer),
                         value = issuer,
                         onValueChange = {
                             Entry.rustInterface.setEditAccountIssuer(it.trim())
@@ -259,7 +275,7 @@ fun Edit(navController: NavController) {
                     )
 
                     SectionTextBox(
-                        title = stringResource(R.string.screen_edit_section_account_information_note),
+                        title = stringResource(R.string.screen_edit_section_labels_note),
                         value = note,
                         onValueChange = {
                             Entry.rustInterface.setEditAccountNote(it.trim())
@@ -272,12 +288,12 @@ fun Edit(navController: NavController) {
 
                 SectionGroup(
                     modifier = Modifier.padding(16.dp),
-                    title = stringResource(R.string.screen_edit_section_advanced_settings)
+                    title = stringResource(R.string.screen_edit_section_parameters)
                 ) {
                     Spacer(Modifier.height(8.dp))
 
                     SectionConfidentialTextBox(
-                        title = stringResource(R.string.screen_edit_section_advanced_settings_secret),
+                        title = stringResource(R.string.screen_edit_section_parameters_secret),
                         value = secretBase32NoPad,
                         onValueChange = {
                             val trimmed = it.trim()
@@ -291,7 +307,7 @@ fun Edit(navController: NavController) {
                     )
 
                     SectionDropdownSingleChoice(
-                        title = stringResource(R.string.screen_edit_section_advanced_settings_type),
+                        title = stringResource(R.string.screen_edit_section_parameters_type),
                         options = CodeType.entries.toTypedArray(),
                         selectedOption = codeType,
                         onOptionSelected = {
@@ -316,7 +332,7 @@ fun Edit(navController: NavController) {
 
                     if (codeType != CodeType.STEAM) {
                         SectionDropdownSingleChoice(
-                            title = stringResource(R.string.screen_edit_section_advanced_settings_algorithm),
+                            title = stringResource(R.string.screen_edit_section_parameters_algorithm),
                             options = Algorithm.entries.toTypedArray(),
                             selectedOption = algorithm,
                             onOptionSelected = {
@@ -329,7 +345,7 @@ fun Edit(navController: NavController) {
 
                         if (codeType == CodeType.HOTP) {
                             SectionTextBox(
-                                title = stringResource(R.string.screen_edit_section_advanced_settings_counter),
+                                title = stringResource(R.string.screen_edit_section_parameters_counter),
                                 value = counter,
                                 onValueChange = {
                                     val trimmed = it.trim()
@@ -347,7 +363,7 @@ fun Edit(navController: NavController) {
                             )
                         } else {
                             SectionTextBox(
-                                title = stringResource(R.string.screen_edit_section_advanced_settings_period),
+                                title = stringResource(R.string.screen_edit_section_parameters_period),
                                 value = period,
                                 onValueChange = {
                                     val trimmed = it.trim()
@@ -366,7 +382,7 @@ fun Edit(navController: NavController) {
                         }
 
                         SectionTextBox(
-                            title = stringResource(R.string.screen_edit_section_advanced_settings_digits),
+                            title = stringResource(R.string.screen_edit_section_parameters_digits),
                             value = digits,
                             onValueChange = {
                                 val trimmed = it.trim()
@@ -392,7 +408,7 @@ fun Edit(navController: NavController) {
                     text = if (deleteButtonTapsCount > 0) {
                         pluralStringResource(R.plurals.common_button_tap_n_times_to_confirm, 6 - deleteButtonTapsCount, 6 - deleteButtonTapsCount)
                     } else {
-                        stringResource(R.string.screen_edit_delete_account)
+                        stringResource(R.string.screen_edit_delete)
                     }
                 ) {
                     if (deleteButtonTapsCount < 5) {
