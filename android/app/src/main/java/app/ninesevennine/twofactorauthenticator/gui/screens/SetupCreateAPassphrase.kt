@@ -46,6 +46,7 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
+import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -165,6 +166,8 @@ fun SetupCreateAPassphrase(navController: NavController) {
 
                             Config.unlockPassphraseSalt = Base64.encodeToString(salt, Base64.NO_WRAP)
                             Config.save(context)
+
+                            AccountManagement.saveAccounts(context)
 
                             withContext(Dispatchers.Main) {
                                 navController.navigate(SetupBiometricUnlockRoute)
