@@ -57,9 +57,9 @@
     <string name="screen_select_icon_packs_other_dont_suggest_colors_secondary">El color predeterminado al agregar una cuenta es el blanco</string>
     <string name="screen_select_icon_packs_style">Estilo</string>
     <string name="screen_select_icon_packs_question_1">¿Dónde puedo encontrar paquetes de iconos?</string>
-    <string name="screen_settings_acccount_management">Gestión de cuentas</string>
-    <string name="screen_settings_acccount_management_export_to_aegis">Exportar a Aegis</string>
-    <string name="screen_settings_acccount_management_import_from_aegis">Importar desde Aegis</string>
+    <string name="screen_settings_management">Gestión de cuentas</string>
+    <string name="screen_settings_management_export_to_aegis">Exportar a Aegis</string>
+    <string name="screen_settings_management_import_from_aegis">Importar desde Aegis</string>
     <string name="screen_settings_appearance">Apariencia</string>
     <string name="screen_settings_appearance_card_style">Estilo de la tarjeta</string>
     <string name="screen_settings_appearance_icon_packs">Paquetes de iconos</string>

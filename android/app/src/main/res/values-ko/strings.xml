@@ -72,7 +72,7 @@
     <string name="screen_settings_support_donate">기부</string>
     <string name="common_title_confirm_biometrics">생체 인식 확인</string>
     <string name="screen_settings_security_screen_security">화면 보안</string>
-    <string name="screen_settings_acccount_management_export_to_aegis">Aegis로 내보내기</string>
+    <string name="screen_settings_management_export_to_aegis">Aegis로 내보내기</string>
     <string name="common_title_export">내보내기</string>
     <string name="screen_setup_get_started_button">시작하기</string>
     <string name="screen_edit_section_parameters_type">유형</string>
@@ -89,13 +89,13 @@
     <string name="screen_select_icon_packs_installed">설치됨</string>
     <string name="otp_card_style_normal">기본</string>
     <string name="screen_setup_get_started_welcome">2fa에 오신 것을 환영합니다!</string>
-    <string name="screen_settings_acccount_management_import_from_aegis">Aegis에서 가져오기</string>
+    <string name="screen_settings_management_import_from_aegis">Aegis에서 가져오기</string>
     <string name="icon_packs_style_tinted">틴트</string>
     <string name="screen_settings_behavior_tap_to_reveal_codes">탭하여 코드 표시</string>
     <string name="feature_qr_code_scanner_camera_permission">QR 코드 스캔을 위해 카메라 권한이 필요합니다</string>
     <string name="screen_edit_section_color_paste">붙여넣기</string>
     <string name="screen_select_icon_packs_style">스타일</string>
-    <string name="screen_settings_acccount_management">계정 관리</string>
+    <string name="screen_settings_management">계정 관리</string>
     <string name="screen_select_icon_packs_delete_active">활성 삭제</string>
     <string name="screen_settings_behavior_focus_search_on_launch">앱 시작 시 검색창 포커스</string>
     <plurals name="screen_main_showing_n_accounts">

@@ -64,9 +64,9 @@
     <string name="screen_select_icon_packs_other_dont_suggest_colors_secondary">Білий колір за замовчуванням під час додавання акаунта</string>
     <string name="screen_select_icon_packs_style">Стиль</string>
     <string name="screen_select_icon_packs_question_1">Де можна знайти набори значків?</string>
-    <string name="screen_settings_acccount_management">Керування акаунтами</string>
-    <string name="screen_settings_acccount_management_export_to_aegis">Експорт до Aegis</string>
-    <string name="screen_settings_acccount_management_import_from_aegis">Імпорт з Aegis</string>
+    <string name="screen_settings_management">Керування акаунтами</string>
+    <string name="screen_settings_management_export_to_aegis">Експорт до Aegis</string>
+    <string name="screen_settings_management_import_from_aegis">Імпорт з Aegis</string>
     <string name="screen_settings_appearance">Зовнішній вигляд</string>
     <string name="screen_settings_appearance_card_style">Стиль картки</string>
     <string name="screen_settings_appearance_icon_packs">Набори значків</string>

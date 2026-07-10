@@ -295,7 +295,7 @@ fun Settings(navController: NavController) {
 
                 SectionGroup(
                     modifier = Modifier.padding(16.dp),
-                    title = stringResource(R.string.screen_settings_acccount_management)
+                    title = stringResource(R.string.screen_settings_management)
                 ) {
                     SectionButton(
                         painter = painterResource(R.drawable.mi_upload),
@@ -318,7 +318,7 @@ fun Settings(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.aegis),
                         tint = Theme.colors.primary,
-                        primaryText = stringResource(R.string.screen_settings_acccount_management_export_to_aegis),
+                        primaryText = stringResource(R.string.screen_settings_management_export_to_aegis),
                         secondaryText = ".json"
                     ) {
                         navController.navigate(ExportAegisRoute)
@@ -327,7 +327,7 @@ fun Settings(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.aegis),
                         tint = Theme.colors.primary,
-                        primaryText = stringResource(R.string.screen_settings_acccount_management_import_from_aegis),
+                        primaryText = stringResource(R.string.screen_settings_management_import_from_aegis),
                         secondaryText = ".json"
                     ) {
                         navController.navigate(ImportAegisRoute)
@@ -341,10 +341,20 @@ fun Settings(navController: NavController) {
                     SectionButton(
                         painter = painterResource(R.drawable.codeberg),
                         tint = if (Theme.themeOption == ThemeOption.PITCH_BLACK) Theme.colors.primary else Theme.colors.strong,
-                        primaryText = "Codeberg",
+                        primaryText = stringResource(R.string.screen_settings_support_codeberg_primary),
                         secondaryText = stringResource(R.string.screen_settings_support_codeberg_secondary),
                     ) {
                         val intent = Intent(Intent.ACTION_VIEW, "https://codeberg.org/979/2fa".toUri())
+                        context.startActivity(intent)
+                    }
+
+                    SectionButton(
+                        painter = painterResource(R.drawable.mi_translate),
+                        tint = Theme.colors.primary,
+                        primaryText = stringResource(R.string.screen_settings_support_translations_primary),
+                        secondaryText = stringResource(R.string.screen_settings_support_translations_secondary)
+                    ) {
+                        val intent = Intent(Intent.ACTION_VIEW, "https://translate.codeberg.org/projects/979/2fa/".toUri())
                         context.startActivity(intent)
                     }
 

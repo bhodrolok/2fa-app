@@ -73,9 +73,9 @@
     <string name="screen_select_icon_packs_other_dont_suggest_colors_secondary">Default to white when adding an account</string>
     <string name="screen_select_icon_packs_style">Style</string>
     <string name="screen_select_icon_packs_question_1">Where can I find Icons Packs?</string>
-    <string name="screen_settings_acccount_management">Account Management</string>
-    <string name="screen_settings_acccount_management_export_to_aegis">Export to Aegis</string>
-    <string name="screen_settings_acccount_management_import_from_aegis">Import from Aegis</string>
+    <string name="screen_settings_management">Management</string>
+    <string name="screen_settings_management_export_to_aegis">Export to Aegis</string>
+    <string name="screen_settings_management_import_from_aegis">Import from Aegis</string>
     <string name="screen_settings_appearance">Appearance</string>
     <string name="screen_settings_appearance_card_style">Card Style</string>
     <string name="screen_settings_appearance_icon_packs">Icon Packs</string>
@@ -95,7 +95,10 @@
     <string name="screen_settings_security_secure_clipboard">Secure Clipboard</string>
     <string name="screen_settings_security_secure_clipboard_secondary">Hide copied codes from suggestions and previews</string>
     <string name="screen_settings_support">Support</string>
-    <string name="screen_settings_support_codeberg_secondary">View 2fa\'s source code</string>
+    <string name="screen_settings_support_codeberg_primary">Source Code</string>
+    <string name="screen_settings_support_codeberg_secondary">Visit the 2fa Codeberg page</string>
+    <string name="screen_settings_support_translations_primary">Translations</string>
+    <string name="screen_settings_support_translations_secondary">Help us translate 2fa into more languages</string>
     <string name="screen_settings_support_donate">Donate</string>
     <string name="screen_settings_support_donate_secondary">979 needs your support to continue</string>
     <string name="screen_settings_title">Settings</string>

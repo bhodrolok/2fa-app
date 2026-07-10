@@ -42,8 +42,8 @@
     <string name="screen_select_icon_packs_other_dont_suggest_colors_secondary">Standardmäßig weiß beim Hinzufügen eines Kontos</string>
     <string name="screen_select_icon_packs_style">Stil</string>
     <string name="screen_select_icon_packs_question_1">Wo kann ich Icon Pakete finden?</string>
-    <string name="screen_settings_acccount_management_export_to_aegis">Exportiere zu Aegis</string>
-    <string name="screen_settings_acccount_management_import_from_aegis">Importiere von Aegis</string>
+    <string name="screen_settings_management_export_to_aegis">Exportiere zu Aegis</string>
+    <string name="screen_settings_management_import_from_aegis">Importiere von Aegis</string>
     <string name="screen_settings_appearance">Aussehen</string>
     <string name="screen_settings_appearance_card_style">Karten Stil</string>
     <string name="screen_settings_appearance_icon_packs">Icon Paket</string>
@@ -100,7 +100,7 @@
     <string name="screen_edit_section_parameters_type">Art</string>
     <string name="screen_main_greeting">Tippe auf das Symbol \"Hinzufügen\" in der unteren Ecke, um ein Konto hinzuzufügen. In den Einstellungen können ebenso Konten von anderen Identifizierungs-Apps importiert werden.</string>
     <string name="screen_select_icon_packs_delete_active">Aktiviertes löschen</string>
-    <string name="screen_settings_acccount_management">Kontoverwaltung</string>
+    <string name="screen_settings_management">Kontoverwaltung</string>
     <string name="screen_settings_appearance_theme">Thema</string>
     <string name="screen_settings_security_block_intents">Vorhaben blockieren</string>
     <string name="screen_settings_security_block_intents_secondary">Ignoriere Aktionen von externen Apps</string>

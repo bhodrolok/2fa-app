@@ -82,7 +82,7 @@
     <string name="screen_main_search">搜索</string>
     <string name="screen_settings_support_donate">捐赠</string>
     <string name="screen_settings_security_screen_security">屏幕安全</string>
-    <string name="screen_settings_acccount_management_export_to_aegis">导出到Aegis</string>
+    <string name="screen_settings_management_export_to_aegis">导出到Aegis</string>
     <string name="screen_setup_get_started_button">开始使用</string>
     <string name="screen_edit_section_parameters_type">类型</string>
     <string name="screen_settings_appearance_theme">主题</string>
@@ -94,11 +94,11 @@
     <string name="screen_setup_get_started_section_step_1">1. 创建密码短语</string>
     <string name="screen_select_icon_packs_installed">已安装</string>
     <string name="screen_setup_get_started_welcome">欢迎使用2fa!</string>
-    <string name="screen_settings_acccount_management_import_from_aegis">从Aegis导入</string>
+    <string name="screen_settings_management_import_from_aegis">从Aegis导入</string>
     <string name="screen_settings_behavior_tap_to_reveal_codes">点击以显示代码</string>
     <string name="screen_edit_section_color_paste">粘贴</string>
     <string name="screen_select_icon_packs_style">风格</string>
-    <string name="screen_settings_acccount_management">账户管理</string>
+    <string name="screen_settings_management">账户管理</string>
     <string name="screen_select_icon_packs_delete_active">删除活动</string>
     <string name="screen_settings_behavior_focus_search_on_launch">在发布时聚焦搜索</string>
     <plurals name="screen_main_showing_n_accounts">

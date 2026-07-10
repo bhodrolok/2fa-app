@@ -59,9 +59,9 @@
     <string name="screen_select_icon_packs_other_dont_suggest_colors_secondary">По умолчанию белый цвет при добавлении аккаунта</string>
     <string name="screen_select_icon_packs_style">Стиль</string>
     <string name="screen_select_icon_packs_question_1">Где можно найти наборы значков?</string>
-    <string name="screen_settings_acccount_management">Управление аккаунтами</string>
-    <string name="screen_settings_acccount_management_export_to_aegis">Экспорт в Aegis</string>
-    <string name="screen_settings_acccount_management_import_from_aegis">Импорт из Aegis</string>
+    <string name="screen_settings_management">Управление аккаунтами</string>
+    <string name="screen_settings_management_export_to_aegis">Экспорт в Aegis</string>
+    <string name="screen_settings_management_import_from_aegis">Импорт из Aegis</string>
     <string name="screen_settings_appearance">Внешний вид</string>
     <string name="screen_settings_appearance_card_style">Стиль карточки</string>
     <string name="screen_settings_appearance_icon_packs">Наборы значков</string>
