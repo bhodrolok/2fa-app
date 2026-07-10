@@ -46,9 +46,9 @@ fun RoundedButton(
 
     val shape = RoundedCornerShape(24.dp)
 
-    val surface = if (hazardColors) Theme.colors.rSurface else Theme.colors.surface
-    val border = if (hazardColors) Theme.colors.rBorder else Theme.colors.border
-    val primary = if (hazardColors) Theme.colors.rPrimary else Theme.colors.primary
+    val surface = if (hazardColors) Theme.colors.hSurface else Theme.colors.surface
+    val border = if (hazardColors) Theme.colors.hBorder else Theme.colors.border
+    val primary = if (hazardColors) Theme.colors.hPrimary else Theme.colors.primary
 
     Box(
         modifier = modifier

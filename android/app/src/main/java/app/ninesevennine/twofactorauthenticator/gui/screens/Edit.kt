@@ -252,12 +252,12 @@ fun Edit(navController: NavController) {
 
                 SectionGroup(
                     modifier = Modifier.padding(16.dp),
-                    title = stringResource(R.string.screen_edit_section_labels)
+                    title = stringResource(R.string.screen_edit_section_details)
                 ) {
                     Spacer(Modifier.height(8.dp))
 
                     SectionTextBox(
-                        title = stringResource(R.string.screen_edit_section_labels_name),
+                        title = stringResource(R.string.screen_edit_section_details_name),
                         value = name,
                         onValueChange = {
                             Entry.rustInterface.setEditAccountName(it.trim())
@@ -266,7 +266,7 @@ fun Edit(navController: NavController) {
                     )
 
                     SectionTextBox(
-                        title = stringResource(R.string.screen_edit_section_labels_issuer),
+                        title = stringResource(R.string.screen_edit_section_details_issuer),
                         value = issuer,
                         onValueChange = {
                             Entry.rustInterface.setEditAccountIssuer(it.trim())
@@ -275,7 +275,7 @@ fun Edit(navController: NavController) {
                     )
 
                     SectionTextBox(
-                        title = stringResource(R.string.screen_edit_section_labels_note),
+                        title = stringResource(R.string.screen_edit_section_details_note),
                         value = note,
                         onValueChange = {
                             Entry.rustInterface.setEditAccountNote(it.trim())

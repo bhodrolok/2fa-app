@@ -34,10 +34,10 @@
     <string name="otp_card_style_normal">Простий</string>
     <string name="screen_add_code_enter_manually">Ввести вручну</string>
     <string name="screen_edit_delete_account">Видалити акаунт</string>
-    <string name="screen_edit_section_labels">Інформація про акаунт</string>
-    <string name="screen_edit_section_labels_issuer">Емітент</string>
-    <string name="screen_edit_section_labels_name">Назва</string>
-    <string name="screen_edit_section_labels_note">Нотатка</string>
+    <string name="screen_edit_section_details">Інформація про акаунт</string>
+    <string name="screen_edit_section_details_issuer">Емітент</string>
+    <string name="screen_edit_section_details_name">Назва</string>
+    <string name="screen_edit_section_details_note">Нотатка</string>
     <string name="screen_edit_section_parameters">Розширені налаштування</string>
     <string name="screen_edit_section_parameters_algorithm">Алгоритм</string>
     <string name="screen_edit_section_parameters_counter">Лічильник</string>

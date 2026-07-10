@@ -28,10 +28,10 @@
     <string name="otp_card_style_normal">Tavaline</string>
     <string name="screen_add_code_enter_manually">Sisesta käsitsi</string>
     <string name="screen_edit_delete_account">Kustuta kasutajakonto</string>
-    <string name="screen_edit_section_labels">Kasutajakonto teave</string>
-    <string name="screen_edit_section_labels_issuer">Väljaandja</string>
-    <string name="screen_edit_section_labels_name">Nimi</string>
-    <string name="screen_edit_section_labels_note">Märkus</string>
+    <string name="screen_edit_section_details">Kasutajakonto teave</string>
+    <string name="screen_edit_section_details_issuer">Väljaandja</string>
+    <string name="screen_edit_section_details_name">Nimi</string>
+    <string name="screen_edit_section_details_note">Märkus</string>
     <string name="screen_edit_section_parameters">Täiendavad seadistused</string>
     <string name="screen_edit_section_parameters_algorithm">Algoritm</string>
     <string name="screen_edit_section_parameters_counter">Loendur</string>

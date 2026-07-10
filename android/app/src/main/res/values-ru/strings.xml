@@ -32,10 +32,10 @@
     <string name="otp_card_style_normal">Обычный</string>
     <string name="screen_add_code_enter_manually">Ввести вручную</string>
     <string name="screen_edit_delete_account">Удалить аккаунт</string>
-    <string name="screen_edit_section_labels">Информация аккаунта</string>
-    <string name="screen_edit_section_labels_issuer">Эмитент</string>
-    <string name="screen_edit_section_labels_name">Имя</string>
-    <string name="screen_edit_section_labels_note">Заметка</string>
+    <string name="screen_edit_section_details">Информация аккаунта</string>
+    <string name="screen_edit_section_details_issuer">Эмитент</string>
+    <string name="screen_edit_section_details_name">Имя</string>
+    <string name="screen_edit_section_details_note">Заметка</string>
     <string name="screen_edit_section_parameters">Расширенные настройки</string>
     <string name="screen_edit_section_parameters_algorithm">Алгоритм</string>
     <string name="screen_edit_section_parameters_counter">Счётчик</string>

@@ -39,10 +39,10 @@
     <string name="otp_card_style_normal">Normal</string>
     <string name="screen_add_code_enter_manually">Saisir manuellement</string>
     <string name="screen_edit_delete_account">Supprimer le compte</string>
-    <string name="screen_edit_section_labels">Information du compte</string>
-    <string name="screen_edit_section_labels_issuer">Émetteur</string>
-    <string name="screen_edit_section_labels_name">Nom</string>
-    <string name="screen_edit_section_labels_note">Note</string>
+    <string name="screen_edit_section_details">Information du compte</string>
+    <string name="screen_edit_section_details_issuer">Émetteur</string>
+    <string name="screen_edit_section_details_name">Nom</string>
+    <string name="screen_edit_section_details_note">Note</string>
     <string name="screen_edit_section_parameters">Paramètres avancés</string>
     <string name="screen_edit_section_parameters_algorithm">Algorithme</string>
     <string name="screen_edit_section_parameters_counter">Compteur</string>

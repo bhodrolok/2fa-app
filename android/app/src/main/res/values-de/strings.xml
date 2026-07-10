@@ -81,9 +81,9 @@
     <string name="otp_card_style_compact">Kompakt</string>
     <string name="screen_add_code_enter_manually">Manuell eingeben</string>
     <string name="screen_edit_delete_account">Konto löschen</string>
-    <string name="screen_edit_section_labels">Kontoinformationen</string>
-    <string name="screen_edit_section_labels_name">Name</string>
-    <string name="screen_edit_section_labels_note">Notiz</string>
+    <string name="screen_edit_section_details">Kontoinformationen</string>
+    <string name="screen_edit_section_details_name">Name</string>
+    <string name="screen_edit_section_details_note">Notiz</string>
     <string name="screen_edit_section_parameters">Erweiterte Optionen</string>
     <string name="screen_edit_section_parameters_algorithm">Algorithmus</string>
     <string name="screen_edit_section_parameters_counter">Zähler</string>
@@ -95,7 +95,7 @@
     <string name="screen_main_no_matching_were_found">Es wurden keine passenden Konten gefunden</string>
     <string name="screen_main_search">Suche</string>
     <string name="otp_card_style_grid">Gitter</string>
-    <string name="screen_edit_section_labels_issuer">Aussteller</string>
+    <string name="screen_edit_section_details_issuer">Aussteller</string>
     <string name="screen_edit_section_parameters_secret">Geheimnis</string>
     <string name="screen_edit_section_parameters_type">Art</string>
     <string name="screen_main_greeting">Tippe auf das Symbol \"Hinzufügen\" in der unteren Ecke, um ein Konto hinzuzufügen. In den Einstellungen können ebenso Konten von anderen Identifizierungs-Apps importiert werden.</string>

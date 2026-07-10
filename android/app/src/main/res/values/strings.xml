@@ -41,10 +41,10 @@
     <string name="screen_add_code_enter_manually">Enter manually</string>
     <string name="screen_edit_delete">Delete</string>
     <string name="screen_edit_delete_account">Delete Account</string>
-    <string name="screen_edit_section_labels">Labels</string>
-    <string name="screen_edit_section_labels_issuer">Issuer</string>
-    <string name="screen_edit_section_labels_name">Name</string>
-    <string name="screen_edit_section_labels_note">Note</string>
+    <string name="screen_edit_section_details">Details</string>
+    <string name="screen_edit_section_details_issuer">Issuer</string>
+    <string name="screen_edit_section_details_name">Name</string>
+    <string name="screen_edit_section_details_note">Note</string>
     <string name="screen_edit_section_parameters">Parameters</string>
     <string name="screen_edit_section_parameters_algorithm">Algorithm</string>
     <string name="screen_edit_section_parameters_counter">Counter</string>
