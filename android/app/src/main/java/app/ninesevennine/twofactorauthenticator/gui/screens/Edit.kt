@@ -409,7 +409,8 @@ fun Edit(navController: NavController) {
                         pluralStringResource(R.plurals.common_button_tap_n_times_to_confirm, 6 - deleteButtonTapsCount, 6 - deleteButtonTapsCount)
                     } else {
                         stringResource(R.string.screen_edit_delete)
-                    }
+                    },
+                    hazardColors = true
                 ) {
                     if (deleteButtonTapsCount < 5) {
                         deleteButtonTapsCount++

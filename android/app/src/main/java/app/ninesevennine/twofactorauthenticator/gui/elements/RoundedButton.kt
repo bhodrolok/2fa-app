@@ -34,6 +34,7 @@ import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 fun RoundedButton(
     modifier: Modifier,
     text: String,
+    hazardColors: Boolean = false,
     onClick: () -> Unit = {}
 ) {
     val haptic = LocalHapticFeedback.current
@@ -45,16 +46,20 @@ fun RoundedButton(
 
     val shape = RoundedCornerShape(24.dp)
 
+    val surface = if (hazardColors) Theme.colors.rSurface else Theme.colors.surface
+    val border = if (hazardColors) Theme.colors.rBorder else Theme.colors.border
+    val primary = if (hazardColors) Theme.colors.rPrimary else Theme.colors.primary
+
     Box(
         modifier = modifier
             .graphicsLayer(scaleX = scale, scaleY = scale)
             .height(48.dp)
             .clip(shape)
-            .background(Theme.colors.surface)
-            .border(1.dp, Theme.colors.border, shape)
+            .background(surface)
+            .border(1.dp, border, shape)
             .clickable(
                 interactionSource = interactionSource,
-                indication = ripple(color = Theme.colors.primary),
+                indication = ripple(color = primary),
                 onClick = {
                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     view.playSoundEffect(SoundEffectConstants.CLICK)
@@ -67,7 +72,7 @@ fun RoundedButton(
     ) {
         Text(
             text = text,
-            color = Theme.colors.primary,
+            color = primary,
             fontSize = 14.sp,
             fontWeight = FontWeight.W700,
             fontFamily = InterVariable,
