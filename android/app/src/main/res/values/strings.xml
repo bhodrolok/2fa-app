@@ -40,6 +40,8 @@
     <string name="otp_card_style_normal">Normal</string>
     <string name="screen_add_code_enter_manually">Enter manually</string>
     <string name="screen_edit_delete">Delete</string>
+    <string name="screen_edit_delete_title">Delete this account?</string>
+    <string name="screen_edit_delete_body">Are you sure you want to delete this account? This action is irreversible.</string>
     <string name="screen_edit_delete_account">Delete Account</string>
     <string name="screen_edit_section_details">Details</string>
     <string name="screen_edit_section_details_issuer">Issuer</string>

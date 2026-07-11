@@ -2,6 +2,7 @@ package app.ninesevennine.twofactorauthenticator.gui.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -9,6 +10,10 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +28,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,12 +40,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -121,9 +127,9 @@ fun Edit(navController: NavController) {
     var digitsError by remember { mutableStateOf(account.digits !in 4..10) }
 
     var updateCount by remember { mutableIntStateOf(0) }
-    var deleteButtonTapsCount by remember { mutableIntStateOf(0) }
 
     var showColorPicker by remember { mutableStateOf(false) }
+    var showDeletePrompt by remember { mutableStateOf(false) }
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
@@ -405,32 +411,10 @@ fun Edit(navController: NavController) {
 
                 RoundedButton(
                     modifier = Modifier.fillMaxWidth().padding(horizontal  = 16.dp),
-                    text = if (deleteButtonTapsCount > 0) {
-                        pluralStringResource(R.plurals.common_button_tap_n_times_to_confirm, 6 - deleteButtonTapsCount, 6 - deleteButtonTapsCount)
-                    } else {
-                        stringResource(R.string.screen_edit_delete)
-                    },
+                    text = stringResource(R.string.screen_edit_delete),
                     hazardColors = true
                 ) {
-                    if (deleteButtonTapsCount < 5) {
-                        deleteButtonTapsCount++
-                        return@RoundedButton
-                    }
-
-                    scope.launch(Dispatchers.IO) {
-                        Entry.rustInterface.deleteAccount(account.id)
-                        Entry.rustInterface.setEditAccountNone()
-
-                        if (!AccountManagement.saveAccounts(context)) {
-                            return@launch
-                        }
-
-                        Logger.i(TAG, "successfully deleted an account")
-
-                        withContext(Dispatchers.Main) {
-                            navController.popBackStack(MainRoute, false)
-                        }
-                    }
+                    showDeletePrompt = true
                 }
 
                 Spacer(modifier = Modifier.height(bottomInset + 80.dp))
@@ -486,5 +470,119 @@ fun Edit(navController: NavController) {
                 }
             }
         )
+    }
+
+    AnimatedVisibility(
+        visible = showDeletePrompt,
+        enter = fadeIn(animationSpec = tween(200)),
+        exit = fadeOut(animationSpec = tween(200))
+    ) {
+        DeletePrompt(
+            onDelete = {
+                scope.launch(Dispatchers.IO) {
+                    Entry.rustInterface.deleteAccount(account.id)
+                    Entry.rustInterface.setEditAccountNone()
+
+                    if (!AccountManagement.saveAccounts(context)) {
+                        return@launch
+                    }
+
+                    Logger.i(TAG, "successfully deleted an account")
+
+                    withContext(Dispatchers.Main) {
+                        navController.popBackStack(MainRoute, false)
+                    }
+                }
+            },
+            onCancel = {
+                showDeletePrompt = false
+            }
+        )
+    }
+}
+
+@Composable
+fun AnimatedVisibilityScope.DeletePrompt(
+    onDelete: () -> (Unit),
+    onCancel: () -> (Unit)
+) {
+    val backgroundInteractionSource = remember { MutableInteractionSource() }
+
+    val shape = RoundedCornerShape(24.dp)
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.5f))
+            .clickable(
+                interactionSource = backgroundInteractionSource,
+                indication = null,
+                onClick = onCancel
+            )
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .animateEnterExit(
+                    enter = scaleIn(
+                        animationSpec = tween(200),
+                        initialScale = 0.9f
+                    ),
+                    exit = scaleOut(
+                        animationSpec = tween(200),
+                        targetScale = 0.9f
+                    )
+                )
+                .widthIn(max = 512.dp)
+                .fillMaxWidth()
+                .clip(shape)
+                .background(Theme.colors.surface, shape)
+                .border(1.dp, Theme.colors.border, shape)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = {}
+                )
+                .padding(24.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.screen_edit_delete_title),
+                modifier = Modifier.fillMaxWidth(),
+                color = Theme.colors.primary,
+                fontSize = 18.sp,
+                fontFamily = InterVariable,
+                fontWeight = FontWeight.W700
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(R.string.screen_edit_delete_body),
+                modifier = Modifier.fillMaxWidth(),
+                color = Theme.colors.primary,
+                fontSize = 14.sp,
+                fontFamily = InterVariable,
+                fontWeight = FontWeight.Normal
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            RoundedButton(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.screen_edit_delete),
+                hazardColors = true,
+                onClick = onDelete
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            RoundedButton(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.common_button_cancel),
+                hazardColors = false,
+                onClick = onCancel
+            )
+        }
     }
 }
