@@ -8,11 +8,11 @@ crate-type = ["cdylib"]
 
 [dependencies]
 aegis = { version = "0.9.12", default-features = false, features = ["std", "pure-rust"] }
-aes-gcm = "0.10.3"
+aes-gcm = "0.11.0"
 argon2 = "0.5.3"
-chacha20poly1305 = "0.10.1"
+chacha20poly1305 = "0.11.0"
 data-encoding = "2.11.0"
-getrandom = "0.4.2"
+getrandom = "0.4.3"
 hkdf = "0.13.0"
 hmac = "0.13.0"
 jni = "0.22.4"
@@ -24,5 +24,5 @@ sha1 = "0.11.0"
 sha2 = "0.11.0"
 sha3 = "0.11.0"
 url = "2.5.8"
-zeroize = { version = "1.8.2", features = ["derive"] }
+zeroize = { version = "1.9.0", features = ["derive"] }
 zxcvbn = "3.1.1"

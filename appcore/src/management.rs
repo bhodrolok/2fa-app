@@ -514,17 +514,19 @@ impl Client {
         key: &[u8; XCHACHA20_KEY_SIZE],
         nonce: &[u8; XCHACHA20_NONCE_SIZE],
     ) -> i32 {
-        use chacha20poly1305::{KeyInit, aead::AeadMut};
+        use chacha20poly1305::{KeyInit, aead::Aead};
 
         let ciphertext = match data_encoding::BASE64.decode(db.as_bytes()) {
             Ok(ct) => ct,
             Err(_) => return IMPORT_ERROR_INVALID_FILE,
         };
 
-        let mut cipher = chacha20poly1305::XChaCha20Poly1305::new(key.into());
-        let nonce = chacha20poly1305::XNonce::from_slice(nonce);
+        let cipher = chacha20poly1305::XChaCha20Poly1305::new(key.into());
+        let Ok(nonce) = chacha20poly1305::XNonce::try_from(nonce.as_slice()) else {
+            return IMPORT_ERROR_INVALID_FILE;
+        };
 
-        let plaintext_bytes = match cipher.decrypt(nonce, ciphertext.as_ref()) {
+        let plaintext_bytes = match cipher.decrypt(&nonce, ciphertext.as_ref()) {
             Ok(pt) => pt,
             Err(_) => return IMPORT_ERROR_INCORRECT_PASSPHRASE,
         };

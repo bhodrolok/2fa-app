@@ -12,7 +12,7 @@ java {
 
 android {
     namespace = "app.ninesevennine.twofactorauthenticator"
-    compileSdk = 36
+    compileSdk = 37
 
     buildToolsVersion = libs.versions.sdk.get()
     ndkVersion = libs.versions.ndk.get()
@@ -20,7 +20,7 @@ android {
     defaultConfig {
         applicationId = "app.ninesevennine.twofactorauthenticator"
         minSdk = 34
-        targetSdk = 36
+        targetSdk = 37
 
         // major
         // minor (000)

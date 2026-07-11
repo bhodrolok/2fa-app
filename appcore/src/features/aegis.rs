@@ -63,7 +63,7 @@ impl Client {
         let cipher = Aes256Gcm::new_from_slice(&master_key).unwrap();
         let mut db_ct = cipher
             .encrypt(
-                aes_gcm::Nonce::from_slice(&db_nonce),
+                &aes_gcm::Nonce::try_from(db_nonce.as_slice()).unwrap(),
                 db_plaintext.as_bytes(),
             )
             .unwrap();
@@ -88,7 +88,10 @@ impl Client {
 
         let key_cipher = Aes256Gcm::new_from_slice(&derived_key).unwrap();
         let mut key_ct = key_cipher
-            .encrypt(aes_gcm::Nonce::from_slice(&key_nonce), master_key.as_ref())
+            .encrypt(
+                &aes_gcm::Nonce::try_from(key_nonce.as_slice()).unwrap(),
+                master_key.as_ref(),
+            )
             .unwrap();
 
         let key_tag = key_ct.split_off(key_ct.len() - 16);
@@ -244,9 +247,12 @@ impl Client {
             let Ok(cipher) = Aes256Gcm::new_from_slice(&derived_key) else {
                 continue;
             };
-            let nonce = aes_gcm::Nonce::from_slice(&key_nonce);
 
-            if let Ok(decrypted) = cipher.decrypt(nonce, ciphertext_with_tag.as_ref()) {
+            let Ok(nonce) = aes_gcm::Nonce::try_from(key_nonce.as_slice()) else {
+                continue;
+            };
+
+            if let Ok(decrypted) = cipher.decrypt(&nonce, ciphertext_with_tag.as_ref()) {
                 master_key = Some(decrypted);
                 break;
             }
@@ -263,9 +269,12 @@ impl Client {
         let Ok(cipher) = Aes256Gcm::new_from_slice(&master_key) else {
             return false;
         };
-        let nonce = aes_gcm::Nonce::from_slice(&db_nonce);
 
-        let Ok(decrypted) = cipher.decrypt(nonce, ciphertext_with_tag.as_ref()) else {
+        let Ok(nonce) = aes_gcm::Nonce::try_from(db_nonce.as_slice()) else {
+            return false;
+        };
+
+        let Ok(decrypted) = cipher.decrypt(&nonce, ciphertext_with_tag.as_ref()) else {
             return false;
         };
         let Ok(db_str) = String::from_utf8(decrypted) else {
