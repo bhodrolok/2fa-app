@@ -332,6 +332,12 @@ fun Settings(navController: NavController) {
                     ) {
                         navController.navigate(ImportAegisRoute)
                     }
+
+                    SectionButton(
+                        primaryText = stringResource(R.string.screen_settings_management_import_from_external)
+                    ) {
+                        navController.navigate(ImportFromExternalRoute)
+                    }
                 }
 
                 SectionGroup(

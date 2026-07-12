@@ -26,6 +26,7 @@
     <string name="common_title_import">Import</string>
     <string name="common_title_passphrase">Passphrase</string>
     <string name="common_title_show">Show</string>
+    <string name="common_title_from">From</string>
     <string name="common_unlock_passphrase_description">Choose a memorable passphrase to unlock the app. You can use words, spaces and symbols.</string>
     <string name="element_strength_indicator_good">Good</string>
     <string name="element_strength_indicator_strong">Strong</string>
@@ -78,6 +79,7 @@
     <string name="screen_settings_management">Management</string>
     <string name="screen_settings_management_export_to_aegis">Export to Aegis</string>
     <string name="screen_settings_management_import_from_aegis">Import from Aegis</string>
+    <string name="screen_settings_management_import_from_external">Import from External</string>
     <string name="screen_settings_appearance">Appearance</string>
     <string name="screen_settings_appearance_card_style">Card Style</string>
     <string name="screen_settings_appearance_icon_packs">Icon Packs</string>
