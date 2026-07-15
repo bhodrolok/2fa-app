@@ -1,3 +1,17 @@
+pub fn uuid_to_u64(uuid: &str) -> Option<u64> {
+    if uuid.len() < 36 {
+        return None;
+    }
+
+    match (
+        u64::from_str_radix(&uuid[0..8], 16),
+        u64::from_str_radix(&uuid[28..36], 16),
+    ) {
+        (Ok(high), Ok(low)) => Some((high << 32) | low),
+        _ => None,
+    }
+}
+
 pub fn uuid_to_id(uuid: &str) -> Option<u64> {
     let hex_str: String = uuid.chars().filter(|c| *c != '-').collect();
     let bytes = data_encoding::HEXLOWER_PERMISSIVE

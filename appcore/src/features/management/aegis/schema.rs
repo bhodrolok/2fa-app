@@ -1,0 +1,72 @@
+use serde::Deserialize;
+use serde_json::Value;
+
+#[derive(Debug, Deserialize)]
+pub struct Vault {
+    pub version: u32,
+    pub header: Header,
+    pub db: Value,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Header {
+    pub slots: Option<Vec<Slot>>,
+    pub params: Option<Params>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Slot {
+    #[serde(rename = "type")]
+    pub slot_type: u32,
+    pub uuid: String,
+    pub key: String,
+    pub key_params: Params,
+    pub n: u32,
+    pub r: u32,
+    pub p: u32,
+    pub salt: String,
+    pub repaired: bool,
+    pub is_backup: bool,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Params {
+    pub nonce: String,
+    pub tag: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Database {
+    pub version: u32,
+    pub entries: Vec<Entry>,
+    pub groups: Vec<Group>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Group {
+    pub uuid: String,
+    pub name: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Entry {
+    #[serde(rename = "type")]
+    pub entry_type: String,
+    pub uuid: String,
+    pub name: String,
+    pub issuer: String,
+    pub note: String,
+    pub favorite: bool,
+    pub icon: Option<String>,
+    pub group: Option<String>,
+    pub info: EntryInfo,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct EntryInfo {
+    pub secret: String,
+    pub algo: String,
+    pub digits: u32,
+    pub period: Option<u32>,
+    pub counter: Option<u64>,
+}

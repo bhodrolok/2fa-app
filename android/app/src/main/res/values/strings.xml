@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="common_button_ok">Ok</string>
     <string name="common_button_cancel">Cancel</string>
     <string name="common_button_continue">Continue</string>
     <string name="common_button_change">Change</string>
@@ -115,6 +116,10 @@
     <string name="theme_option_dark">Dark</string>
     <string name="theme_option_light">Light</string>
     <string name="theme_option_pitch_black">Pitch Black</string>
+    <string name="import_error_title_invalid_format">Invalid format</string>
+    <string name="import_error_body_invalid_format">We couldn\'t process this file. It appears to be corrupted, incomplete, or not a supported format.</string>
+    <string name="import_error_title_unsupported_version">Unsupported version</string>
+    <string name="import_error_body_unsupported_version">We couldn\'t process this file. It appears to be from a newer or outdated version."</string>
     <plurals name="common_button_tap_n_times_to_confirm">
         <item quantity="one">Tap %d more time to confirm</item>
         <item quantity="other">Tap %d more times to confirm</item>

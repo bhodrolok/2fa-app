@@ -11,6 +11,7 @@ pub struct Client {
     pub unlock_passphrase_hash: [u8; CLIENT_UNLOCK_PASSPHRASE_HASH_LEN],
     pub edit: Option<Account>,
     pub accounts: Vec<Account>,
+    pub hostages: Vec<Account>,
 }
 
 impl Client {
@@ -247,6 +248,7 @@ impl Default for Client {
             unlock_passphrase_hash: [0u8; CLIENT_UNLOCK_PASSPHRASE_HASH_LEN],
             edit: None,
             accounts: Vec::new(),
+            hostages: Vec::new(),
         }
     }
 }
