@@ -16,16 +16,14 @@ use crate::{
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_features_1management_1ente_1import_1into_1hostages(
     mut unowned_env: EnvUnowned,
     _class: JClass,
-    json: JString,
-    passphrase: JString,
+    txt: JString,
 ) -> jint {
     let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
         let mut accounts: Vec<Account> = Vec::new();
 
-        let json: String = json.to_string();
-        let passphrase: String = passphrase.to_string();
+        let json: String = txt.to_string();
 
-        match import::v1(&mut accounts, &json, &passphrase) {
+        match import::plaintxt(&mut accounts, &json) {
             ImportResult::Success => {
                 let count = accounts.len() as jint;
 

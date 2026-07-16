@@ -115,7 +115,7 @@ fun ImportFromExternal(navController: NavController) {
                                 Entry.rustInterface.features_management_aegis_import_into_hostages(fileData, "")
                             }
                             ExternalProvider.ENTE -> {
-                                Entry.rustInterface.features_management_ente_import_into_hostages(fileData, "")
+                                Entry.rustInterface.features_management_ente_import_into_hostages(fileData)
                             }
                             ExternalProvider.PROTON -> {
                                 Entry.rustInterface.features_management_proton_import_into_hostages(fileData, "")
@@ -171,9 +171,6 @@ fun ImportFromExternal(navController: NavController) {
                     }
                     ExternalProvider.AEGIS -> {
                         Entry.rustInterface.features_management_aegis_import_into_hostages(importData, passphrase)
-                    }
-                    ExternalProvider.ENTE -> {
-                        Entry.rustInterface.features_management_ente_import_into_hostages(importData, passphrase)
                     }
                     ExternalProvider.PROTON -> {
                         Entry.rustInterface.features_management_proton_import_into_hostages(importData, passphrase)
@@ -299,9 +296,8 @@ fun ImportFromExternal(navController: NavController) {
                             Signals.suppressLockOnExit = true
                             openDocumentLauncher.launch(arrayOf(
                                 "application/json",
-                                "text/json",
-                                "text/plain",
-                                "application/octet-stream"
+                                "application/octet-stream",
+                                "text/plain"
                             ))
                         }
 
@@ -316,7 +312,6 @@ fun ImportFromExternal(navController: NavController) {
                             openDocumentLauncher.launch(arrayOf(
                                 "application/json",
                                 "text/json",
-                                "text/plain",
                                 "application/octet-stream"
                             ))
                         }
@@ -324,14 +319,12 @@ fun ImportFromExternal(navController: NavController) {
                         SectionButton(
                             painter = painterResource(R.drawable.ente_auth),
                             primaryText = "Ente Auth",
-                            secondaryText = ".json"
+                            secondaryText = ".txt"
                         ) {
                             selectedProvider = ExternalProvider.ENTE
 
                             Signals.suppressLockOnExit = true
                             openDocumentLauncher.launch(arrayOf(
-                                "application/json",
-                                "text/json",
                                 "text/plain",
                                 "application/octet-stream"
                             ))
@@ -348,7 +341,6 @@ fun ImportFromExternal(navController: NavController) {
                             openDocumentLauncher.launch(arrayOf(
                                 "application/json",
                                 "text/json",
-                                "text/plain",
                                 "application/octet-stream"
                             ))
                         }
