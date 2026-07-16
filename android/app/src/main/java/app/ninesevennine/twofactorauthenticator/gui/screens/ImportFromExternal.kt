@@ -69,7 +69,8 @@ private const val TAG = "ImportFromExternal"
 private enum class ExternalProvider {
     NONE,
     AEGIS,
-    ENTE
+    ENTE,
+    PROTON
 }
 
 @Composable
@@ -111,6 +112,9 @@ fun ImportFromExternal(navController: NavController) {
                             }
                             ExternalProvider.ENTE -> {
                                 Entry.rustInterface.features_management_ente_import_into_hostages(fileData, "")
+                            }
+                            ExternalProvider.PROTON -> {
+                                Entry.rustInterface.features_management_proton_import_into_hostages(fileData, "")
                             }
                             else -> ImportResult.INVALID_FORMAT.value
                         }
@@ -163,6 +167,9 @@ fun ImportFromExternal(navController: NavController) {
                     }
                     ExternalProvider.ENTE -> {
                         Entry.rustInterface.features_management_ente_import_into_hostages(importData, passphrase)
+                    }
+                    ExternalProvider.PROTON -> {
+                        Entry.rustInterface.features_management_proton_import_into_hostages(importData, passphrase)
                     }
                     else -> ImportResult.INVALID_FORMAT.value
                 }
@@ -320,7 +327,15 @@ fun ImportFromExternal(navController: NavController) {
                             primaryText = "Proton Authenticator",
                             secondaryText = ".json"
                         ) {
+                            selectedProvider = ExternalProvider.PROTON
 
+                            Signals.suppressLockOnExit = true
+                            openDocumentLauncher.launch(arrayOf(
+                                "application/json",
+                                "text/json",
+                                "text/plain",
+                                "application/octet-stream"
+                            ))
                         }
 
                         SectionButton(
