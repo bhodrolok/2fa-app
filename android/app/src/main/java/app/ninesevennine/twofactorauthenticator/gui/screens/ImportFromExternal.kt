@@ -66,6 +66,12 @@ object ImportFromExternalRoute
 
 private const val TAG = "ImportFromExternal"
 
+private enum class ExternalProvider {
+    NONE,
+    AEGIS,
+    ENTE
+}
+
 @Composable
 fun ImportFromExternal(navController: NavController) {
     val context = LocalContext.current
@@ -77,6 +83,7 @@ fun ImportFromExternal(navController: NavController) {
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
 
+    var selectedProvider by remember { mutableStateOf(ExternalProvider.NONE) }
     var importData by remember { mutableStateOf("") }
     var importResult by remember { mutableIntStateOf(0) }
     var showInfoPrompt by remember { mutableStateOf(false) }
@@ -98,7 +105,15 @@ fun ImportFromExternal(navController: NavController) {
                     }
 
                     if (fileData != null) {
-                        val result = Entry.rustInterface.features_management_aegis_import_into_hostages(fileData, "")
+                        val result = when (selectedProvider) {
+                            ExternalProvider.AEGIS -> {
+                                Entry.rustInterface.features_management_aegis_import_into_hostages(fileData, "")
+                            }
+                            ExternalProvider.ENTE -> {
+                                Entry.rustInterface.features_management_ente_import_into_hostages(fileData, "")
+                            }
+                            else -> ImportResult.INVALID_FORMAT.value
+                        }
 
                         withContext(Dispatchers.Main) {
                             importResult = result
@@ -112,7 +127,7 @@ fun ImportFromExternal(navController: NavController) {
                                     showInfoPrompt = true
                                 }
                             } else {
-                                Logger.i(TAG, "successfully imported $importResult account(s) into hostages")
+                                Logger.i(TAG, "successfully imported $result account(s) into hostages")
                             }
                         }
                     }
@@ -142,7 +157,15 @@ fun ImportFromExternal(navController: NavController) {
 
         scope.launch(Dispatchers.IO) {
             try {
-                val result = Entry.rustInterface.features_management_aegis_import_into_hostages(importData, passphrase)
+                val result = when (selectedProvider) {
+                    ExternalProvider.AEGIS -> {
+                        Entry.rustInterface.features_management_aegis_import_into_hostages(importData, passphrase)
+                    }
+                    ExternalProvider.ENTE -> {
+                        Entry.rustInterface.features_management_ente_import_into_hostages(importData, passphrase)
+                    }
+                    else -> ImportResult.INVALID_FORMAT.value
+                }
 
                 withContext(Dispatchers.Main) {
                     importResult = result
@@ -265,6 +288,8 @@ fun ImportFromExternal(navController: NavController) {
                             primaryText = "Aegis",
                             secondaryText = ".json"
                         ) {
+                            selectedProvider = ExternalProvider.AEGIS
+
                             Signals.suppressLockOnExit = true
                             openDocumentLauncher.launch(arrayOf(
                                 "application/json",
@@ -279,7 +304,15 @@ fun ImportFromExternal(navController: NavController) {
                             primaryText = "Ente Auth",
                             secondaryText = ".json"
                         ) {
+                            selectedProvider = ExternalProvider.ENTE
 
+                            Signals.suppressLockOnExit = true
+                            openDocumentLauncher.launch(arrayOf(
+                                "application/json",
+                                "text/json",
+                                "text/plain",
+                                "application/octet-stream"
+                            ))
                         }
 
                         SectionButton(
