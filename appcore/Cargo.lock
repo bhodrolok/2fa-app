@@ -84,6 +84,7 @@ dependencies = [
  "hkdf",
  "hmac",
  "jni",
+ "pbkdf2",
  "percent-encoding",
  "resvg",
  "scrypt",

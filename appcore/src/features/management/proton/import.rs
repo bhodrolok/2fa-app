@@ -28,7 +28,7 @@ pub fn v1(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> ImportRe
 
     let entries: Vec<Entry> = match format.entries {
         Some(e) => e,
-        None => {
+        _ => {
             let salt_b64 = match &format.salt {
                 Some(s) => s,
                 None => return ImportResult::InvalidFormat,
@@ -113,7 +113,7 @@ pub fn v1(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> ImportRe
             }
 
             match decrypted_format.entries {
-                Some(entries) => entries,
+                Some(e) => e,
                 None => return ImportResult::InvalidFormat,
             }
         }
@@ -123,6 +123,7 @@ pub fn v1(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> ImportRe
         if let Some(mut account) = otpauth::parse(&entry.content.uri) {
             if let Some(id) = uuid_to_u64(&entry.id) {
                 account.id = id;
+                account.name = entry.content.name;
                 account.note = entry.note.unwrap_or_default();
                 accounts.push(account);
             }

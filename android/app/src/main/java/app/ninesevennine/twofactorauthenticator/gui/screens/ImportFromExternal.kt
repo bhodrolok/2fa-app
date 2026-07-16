@@ -68,6 +68,7 @@ private const val TAG = "ImportFromExternal"
 
 private enum class ExternalProvider {
     NONE,
+    _2FAS,
     AEGIS,
     ENTE,
     PROTON
@@ -107,6 +108,9 @@ fun ImportFromExternal(navController: NavController) {
 
                     if (fileData != null) {
                         val result = when (selectedProvider) {
+                            ExternalProvider._2FAS -> {
+                                Entry.rustInterface.features_management_2fas_import_into_hostages(fileData, "")
+                            }
                             ExternalProvider.AEGIS -> {
                                 Entry.rustInterface.features_management_aegis_import_into_hostages(fileData, "")
                             }
@@ -162,6 +166,9 @@ fun ImportFromExternal(navController: NavController) {
         scope.launch(Dispatchers.IO) {
             try {
                 val result = when (selectedProvider) {
+                    ExternalProvider._2FAS -> {
+                        Entry.rustInterface.features_management_2fas_import_into_hostages(importData, passphrase)
+                    }
                     ExternalProvider.AEGIS -> {
                         Entry.rustInterface.features_management_aegis_import_into_hostages(importData, passphrase)
                     }
@@ -287,7 +294,15 @@ fun ImportFromExternal(navController: NavController) {
                             primaryText = "2FAS Auth",
                             secondaryText = ".2fas"
                         ) {
+                            selectedProvider = ExternalProvider._2FAS
 
+                            Signals.suppressLockOnExit = true
+                            openDocumentLauncher.launch(arrayOf(
+                                "application/json",
+                                "text/json",
+                                "text/plain",
+                                "application/octet-stream"
+                            ))
                         }
 
                         SectionButton(

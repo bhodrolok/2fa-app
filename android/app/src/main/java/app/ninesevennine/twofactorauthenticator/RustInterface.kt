@@ -7,9 +7,10 @@ class RustInterface {
         const val LIBRARY_NAME = "appcore"
     }
 
-    external fun features_management_aegis_import_into_hostages(json:String, passphrase: String): Int
-    external fun features_management_ente_import_into_hostages(json:String, passphrase: String): Int
-    external fun features_management_proton_import_into_hostages(json:String, passphrase: String): Int
+    external fun features_management_2fas_import_into_hostages(json: String, passphrase: String): Int
+    external fun features_management_aegis_import_into_hostages(json: String, passphrase: String): Int
+    external fun features_management_ente_import_into_hostages(json: String, passphrase: String): Int
+    external fun features_management_proton_import_into_hostages(json: String, passphrase: String): Int
     external fun features_zxcvbn_f32(passphrase: String): Float
 
     external fun clientUnload()
