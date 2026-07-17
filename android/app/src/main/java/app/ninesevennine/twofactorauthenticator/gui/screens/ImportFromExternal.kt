@@ -68,9 +68,9 @@ private const val TAG = "ImportFromExternal"
 
 private enum class ExternalProvider {
     NONE,
+    PLAIN,
     _2FAS,
     AEGIS,
-    ENTE,
     PROTON
 }
 
@@ -108,14 +108,14 @@ fun ImportFromExternal(navController: NavController) {
 
                     if (fileData != null) {
                         val result = when (selectedProvider) {
+                            ExternalProvider.PLAIN -> {
+                                Entry.rustInterface.features_management_plain_import_into_hostages(fileData)
+                            }
                             ExternalProvider._2FAS -> {
                                 Entry.rustInterface.features_management_2fas_import_into_hostages(fileData, "")
                             }
                             ExternalProvider.AEGIS -> {
                                 Entry.rustInterface.features_management_aegis_import_into_hostages(fileData, "")
-                            }
-                            ExternalProvider.ENTE -> {
-                                Entry.rustInterface.features_management_ente_import_into_hostages(fileData)
                             }
                             ExternalProvider.PROTON -> {
                                 Entry.rustInterface.features_management_proton_import_into_hostages(fileData, "")
@@ -287,6 +287,21 @@ fun ImportFromExternal(navController: NavController) {
                         title = stringResource(R.string.common_title_from)
                     ) {
                         SectionButton(
+                            painter = painterResource(R.drawable.mi_file_copy),
+                            tint = Theme.colors.primary,
+                            primaryText = "Plain",
+                            secondaryText = ".txt"
+                        ) {
+                            selectedProvider = ExternalProvider.PLAIN
+
+                            Signals.suppressLockOnExit = true
+                            openDocumentLauncher.launch(arrayOf(
+                                "text/plain",
+                                "application/octet-stream"
+                            ))
+                        }
+
+                        SectionButton(
                             painter = painterResource(R.drawable._2fas),
                             primaryText = "2FAS Auth",
                             secondaryText = ".2fas"
@@ -312,20 +327,6 @@ fun ImportFromExternal(navController: NavController) {
                             openDocumentLauncher.launch(arrayOf(
                                 "application/json",
                                 "text/json",
-                                "application/octet-stream"
-                            ))
-                        }
-
-                        SectionButton(
-                            painter = painterResource(R.drawable.ente_auth),
-                            primaryText = "Ente Auth",
-                            secondaryText = ".txt"
-                        ) {
-                            selectedProvider = ExternalProvider.ENTE
-
-                            Signals.suppressLockOnExit = true
-                            openDocumentLauncher.launch(arrayOf(
-                                "text/plain",
                                 "application/octet-stream"
                             ))
                         }

@@ -7,13 +7,13 @@ use jni::{
 use crate::{
     CLIENT,
     features::{
-        management::{ente::import, result::ImportResult},
+        management::{plain::import, result::ImportResult},
         otpauth::Account,
     },
 };
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_features_1management_1ente_1import_1into_1hostages(
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_features_1management_1plain_1import_1into_1hostages(
     mut unowned_env: EnvUnowned,
     _class: JClass,
     txt: JString,
@@ -23,7 +23,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
         let json: String = txt.to_string();
 
-        match import::plaintxt(&mut accounts, &json) {
+        match import::v1(&mut accounts, &json) {
             ImportResult::Success => {
                 let count = accounts.len() as jint;
 

@@ -3,8 +3,7 @@ use crate::features::{
     otpauth::{self, Account},
 };
 
-// Ente encrypted exports use a non-standard XChaCha20-Poly1305 implementation and won't be supported.
-pub fn plaintxt(accounts: &mut Vec<Account>, txt: &str) -> ImportResult {
+pub fn v1(accounts: &mut Vec<Account>, txt: &str) -> ImportResult {
     for line in txt.lines() {
         let line = line.trim();
 
