@@ -125,6 +125,7 @@ pub fn v1(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> ImportRe
                 account.id = id;
                 account.name = entry.content.name;
                 account.note = entry.note.unwrap_or_default();
+                account.color = 0xFFFFFFFF;
                 accounts.push(account);
             }
         }

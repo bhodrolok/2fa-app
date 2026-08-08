@@ -107,6 +107,9 @@ fun ImportFromExternal(navController: NavController) {
                     }
 
                     if (fileData != null) {
+
+                        Entry.rustInterface.management_zeroize_hostages()
+
                         val result = when (selectedProvider) {
                             ExternalProvider.PLAIN -> {
                                 Entry.rustInterface.features_management_plain_import_into_hostages(fileData)
@@ -136,6 +139,9 @@ fun ImportFromExternal(navController: NavController) {
                                 }
                             } else {
                                 Logger.i(TAG, "successfully imported $result account(s) into hostages")
+
+                                Entry.rustInterface.management_merge_hostages_into_accounts()
+                                Entry.rustInterface.management_zeroize_hostages()
                             }
                         }
                     }
@@ -187,7 +193,9 @@ fun ImportFromExternal(navController: NavController) {
                         }
                     } else {
                         Logger.i(TAG, "successfully imported $result account(s) into hostages")
-                        // Go to hostage screen
+
+                        Entry.rustInterface.management_merge_hostages_into_accounts()
+                        Entry.rustInterface.management_zeroize_hostages()
                     }
                 }
             } catch (e: Exception) {

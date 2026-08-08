@@ -13,6 +13,9 @@ class RustInterface {
     external fun features_management_proton_import_into_hostages(json: String, passphrase: String): Int
     external fun features_zxcvbn_f32(passphrase: String): Float
 
+    external fun management_zeroize_hostages()
+    external fun management_merge_hostages_into_accounts()
+
     external fun clientUnload()
     external fun setUnlockPassphraseHash(hash: ByteArray)
     external fun changeUnlockPassphraseHash(salt: ByteArray, passphrase: String)

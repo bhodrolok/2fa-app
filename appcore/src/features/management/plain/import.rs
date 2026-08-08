@@ -11,7 +11,8 @@ pub fn v1(accounts: &mut Vec<Account>, txt: &str) -> ImportResult {
             continue;
         }
 
-        if let Some(account) = otpauth::parse(line) {
+        if let Some(mut account) = otpauth::parse(line) {
+            account.color = 0xFFFFFFFF;
             accounts.push(account);
         }
     }

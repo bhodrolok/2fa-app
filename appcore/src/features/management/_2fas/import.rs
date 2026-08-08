@@ -89,7 +89,8 @@ pub fn v4(accouts: &mut Vec<Account>, json: &str, passphrase: &str) -> ImportRes
     };
 
     for service in services {
-        if let Some(account) = otpauth::parse(&service.otp.link) {
+        if let Some(mut account) = otpauth::parse(&service.otp.link) {
+            account.color = 0xFFFFFFFF;
             accouts.push(account);
         }
     }
