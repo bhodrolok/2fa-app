@@ -289,7 +289,7 @@ fun ImportFromExternal(navController: NavController) {
                         SectionButton(
                             painter = painterResource(R.drawable.mi_file_copy),
                             tint = Theme.colors.primary,
-                            primaryText = "Plain",
+                            primaryText = stringResource(R.string.common_title_plaintext),
                             secondaryText = ".txt"
                         ) {
                             selectedProvider = ExternalProvider.PLAIN

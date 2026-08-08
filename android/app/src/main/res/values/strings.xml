@@ -28,6 +28,7 @@
     <string name="common_title_passphrase">Passphrase</string>
     <string name="common_title_show">Show</string>
     <string name="common_title_from">From</string>
+    <string name="common_title_plaintext">Plain</string>
     <string name="common_unlock_passphrase_description">Choose a memorable passphrase to unlock the app. You can use words, spaces and symbols.</string>
     <string name="element_strength_indicator_good">Good</string>
     <string name="element_strength_indicator_strong">Strong</string>
