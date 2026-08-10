@@ -9,7 +9,7 @@ use crate::{
             aegis::schema::{Database, Vault},
             result::ImportResult,
         },
-        otpauth::Account,
+        old_otpauth::Account,
     },
     utils::{
         convert::uuid_to_id,

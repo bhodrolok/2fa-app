@@ -32,6 +32,8 @@ import app.ninesevennine.twofactorauthenticator.gui.screens.Export
 import app.ninesevennine.twofactorauthenticator.gui.screens.ExportAegis
 import app.ninesevennine.twofactorauthenticator.gui.screens.ExportAegisRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.ExportRoute
+import app.ninesevennine.twofactorauthenticator.gui.screens.ExportToExternal
+import app.ninesevennine.twofactorauthenticator.gui.screens.ExportToExternalRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Greeting
 import app.ninesevennine.twofactorauthenticator.gui.screens.GreetingRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Import
@@ -117,6 +119,7 @@ class Main : FragmentActivity() {
                     composable<ImportRoute> { Import(navController) }
                     composable<ExportAegisRoute> { ExportAegis(navController) }
                     composable<ImportAegisRoute> { ImportAegis(navController) }
+                    composable<ExportToExternalRoute> { ExportToExternal(navController) }
                     composable<ImportFromExternalRoute> { ImportFromExternal(navController) }
                     composable<EditRoute> { Edit(navController) }
                     composable<AddCodeRoute> { AddCode(navController) }

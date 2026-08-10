@@ -1,6 +1,6 @@
 use crate::{
     client::Client,
-    features::otpauth::Account,
+    features::old_otpauth::Account,
     utils::{
         self,
         types::{Algorithm, CodeType},

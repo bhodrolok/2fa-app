@@ -8,7 +8,7 @@ use crate::{
     CLIENT,
     features::{
         management::{_2fas::import, result::ImportResult},
-        otpauth::Account,
+        old_otpauth::Account,
     },
 };
 

@@ -141,13 +141,13 @@ fun ImportFromExternal(navController: NavController) {
                                 Logger.i(TAG, "successfully imported $result account(s) into hostages")
 
                                 Entry.rustInterface.management_merge_hostages_into_accounts()
-                                Entry.rustInterface.management_zeroize_hostages()
                             }
                         }
                     }
                 } catch (e: Exception) {
                     Logger.e(TAG, "openDocumentLauncher", e)
                 } finally {
+                    Entry.rustInterface.management_zeroize_hostages()
                     withContext(Dispatchers.Main) {
                         isLoading = false
                     }

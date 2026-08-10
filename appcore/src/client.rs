@@ -1,6 +1,6 @@
 use zeroize::Zeroize;
 
-use crate::features::otpauth::{self, Account, AccountTruncated};
+use crate::features::old_otpauth::{self, Account, AccountTruncated};
 use crate::features::{hotp, steam};
 use crate::utils;
 use crate::utils::types::{Algorithm, CodeType};
@@ -68,7 +68,7 @@ impl Client {
     }
 
     pub fn set_edit_account_from_otpauth(&mut self, url: &str) -> bool {
-        if let Some(account) = otpauth::parse(url) {
+        if let Some(account) = old_otpauth::parse(url) {
             self.edit = Some(account);
             true
         } else {

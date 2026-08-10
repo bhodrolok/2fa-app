@@ -1,6 +1,7 @@
 pub mod aegis;
 pub mod hotp;
 pub mod management;
+pub mod old_otpauth;
 pub mod otpauth;
 pub mod passphrase;
 pub mod steam;

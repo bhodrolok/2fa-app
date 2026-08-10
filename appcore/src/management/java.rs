@@ -20,6 +20,22 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_management_1copy_1accounts_1into_1hostages(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+) {
+    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
+        let mut client = CLIENT.lock().unwrap();
+
+        client.hostages = client.accounts.clone();
+
+        Ok(())
+    });
+
+    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
+}
+
+#[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_management_1merge_1hostages_1into_1accounts(
     mut unowned_env: EnvUnowned,
     _class: JClass,

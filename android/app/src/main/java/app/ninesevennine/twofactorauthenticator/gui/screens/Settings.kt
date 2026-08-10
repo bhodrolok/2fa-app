@@ -334,6 +334,12 @@ fun Settings(navController: NavController) {
                     }
 
                     SectionButton(
+                        primaryText = stringResource(R.string.screen_settings_management_export_to_external)
+                    ) {
+                        navController.navigate(ExportToExternalRoute)
+                    }
+
+                    SectionButton(
                         primaryText = stringResource(R.string.screen_settings_management_import_from_external)
                     ) {
                         navController.navigate(ImportFromExternalRoute)
