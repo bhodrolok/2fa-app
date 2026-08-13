@@ -17,7 +17,7 @@ use crate::{
     },
 };
 
-pub fn v3(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> ImportResult {
+pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> ImportResult {
     let vault: Vault = match serde_json::from_str(json) {
         Ok(v) => v,
         Err(_) => return ImportResult::InvalidFormat,

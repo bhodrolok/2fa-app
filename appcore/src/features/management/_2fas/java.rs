@@ -7,7 +7,7 @@ use jni::{
 use crate::{
     CLIENT,
     features::{
-        management::{_2fas::import, result::ImportResult},
+        management::{_2fas::import::import, result::ImportResult},
         old_otpauth::Account,
     },
 };
@@ -25,7 +25,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let json: String = json.to_string();
         let passphrase: String = passphrase.to_string();
 
-        match import::v4(&mut accounts, &json, &passphrase) {
+        match import(&mut accounts, &json, &passphrase) {
             ImportResult::Success => {
                 let count = accounts.len() as jint;
 

@@ -7,7 +7,7 @@ use jni::{
 use crate::{
     CLIENT,
     features::{
-        management::{aegis::import, result::ImportResult},
+        management::{aegis::import::import, result::ImportResult},
         old_otpauth::Account,
     },
 };
@@ -25,7 +25,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let json: String = json.to_string();
         let passphrase: String = passphrase.to_string();
 
-        match import::v3(&mut accounts, &json, &passphrase) {
+        match import(&mut accounts, &json, &passphrase) {
             ImportResult::Success => {
                 let count = accounts.len() as jint;
 

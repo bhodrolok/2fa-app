@@ -1,6 +1,6 @@
 use crate::{
+    _client::CLIENT_UNLOCK_PASSPHRASE_HASH_LEN,
     CLIENT,
-    client::CLIENT_UNLOCK_PASSPHRASE_HASH_LEN,
     features::{self},
     utils::types::{Algorithm, CodeType},
 };

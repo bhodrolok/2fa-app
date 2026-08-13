@@ -1,5 +1,5 @@
 use crate::{
-    client::Client,
+    _client::Client,
     features::old_otpauth::Account,
     utils::{
         self,

@@ -8,7 +8,7 @@ use crate::{
     CLIENT,
     features::{
         management::{
-            plain::{export, import},
+            plain::{export::export, import::import},
             result::ImportResult,
         },
         old_otpauth::Account,
@@ -23,10 +23,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
         let client = CLIENT.lock().unwrap();
 
-        Ok(env
-            .new_string(export::v1(&client.hostages))
-            .unwrap()
-            .into_raw())
+        Ok(env.new_string(export(&client.hostages)).unwrap().into_raw())
     });
 
     outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
@@ -43,7 +40,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
         let txt: String = txt.to_string();
 
-        match import::v1(&mut accounts, &txt) {
+        match import(&mut accounts, &txt) {
             ImportResult::Success => {
                 let count = accounts.len() as jint;
 

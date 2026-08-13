@@ -7,15 +7,15 @@ class RustInterface {
         const val LIBRARY_NAME = "appcore"
     }
 
+    external fun client_zeroize_hostages()
+
     external fun features_management_plain_export_hostages(): String
     external fun features_management_plain_import_into_hostages(txt: String): Int
-
     external fun features_management_2fas_import_into_hostages(json: String, passphrase: String): Int
     external fun features_management_aegis_import_into_hostages(json: String, passphrase: String): Int
     external fun features_management_proton_import_into_hostages(json: String, passphrase: String): Int
     external fun features_zxcvbn_f32(passphrase: String): Float
 
-    external fun management_zeroize_hostages()
     external fun management_copy_accounts_into_hostages()
     external fun management_merge_hostages_into_accounts()
 

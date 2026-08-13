@@ -69,7 +69,7 @@ fun ExportToExternal(navController: NavController) {
 
         scope.launch(Dispatchers.IO) {
             try {
-                Entry.rustInterface.management_zeroize_hostages()
+                Entry.rustInterface.client_zeroize_hostages()
                 Entry.rustInterface.management_copy_accounts_into_hostages()
 
                 val txt = Entry.rustInterface.features_management_plain_export_hostages()
@@ -80,7 +80,7 @@ fun ExportToExternal(navController: NavController) {
             } catch (e: Exception) {
                 Logger.e(TAG, "createDocumentForPlain", e)
             } finally {
-                Entry.rustInterface.management_zeroize_hostages()
+                Entry.rustInterface.client_zeroize_hostages()
                 withContext(Dispatchers.Main) {
                     isLoading = false
                 }

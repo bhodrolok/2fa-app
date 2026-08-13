@@ -16,7 +16,7 @@ use crate::{
     utils::convert::uuid_to_u64,
 };
 
-pub fn v1(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> ImportResult {
+pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> ImportResult {
     let format: Format = match serde_json::from_str(json) {
         Ok(f) => f,
         Err(_) => return ImportResult::InvalidFormat,

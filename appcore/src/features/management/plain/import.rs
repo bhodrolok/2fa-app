@@ -3,7 +3,7 @@ use crate::features::{
     old_otpauth::{self, Account},
 };
 
-pub fn v1(accounts: &mut Vec<Account>, txt: &str) -> ImportResult {
+pub fn import(accounts: &mut Vec<Account>, txt: &str) -> ImportResult {
     for line in txt.lines() {
         let line = line.trim();
 

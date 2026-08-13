@@ -5,7 +5,7 @@ use crate::{
     utils::types::{Algorithm, CodeType},
 };
 
-pub fn v1(account: &Account) -> String {
+pub fn serialize(account: &Account) -> String {
     let code_type = match account.code_type {
         CodeType::HOTP => "hotp",
         CodeType::TOTP | CodeType::STEAM => "totp",

@@ -108,7 +108,7 @@ fun ImportFromExternal(navController: NavController) {
 
                     if (fileData != null) {
 
-                        Entry.rustInterface.management_zeroize_hostages()
+                        Entry.rustInterface.client_zeroize_hostages()
 
                         val result = when (selectedProvider) {
                             ExternalProvider.PLAIN -> {
@@ -147,7 +147,7 @@ fun ImportFromExternal(navController: NavController) {
                 } catch (e: Exception) {
                     Logger.e(TAG, "openDocumentLauncher", e)
                 } finally {
-                    Entry.rustInterface.management_zeroize_hostages()
+                    Entry.rustInterface.client_zeroize_hostages()
                     withContext(Dispatchers.Main) {
                         isLoading = false
                     }
@@ -195,7 +195,7 @@ fun ImportFromExternal(navController: NavController) {
                         Logger.i(TAG, "successfully imported $result account(s) into hostages")
 
                         Entry.rustInterface.management_merge_hostages_into_accounts()
-                        Entry.rustInterface.management_zeroize_hostages()
+                        Entry.rustInterface.client_zeroize_hostages()
                     }
                 }
             } catch (e: Exception) {

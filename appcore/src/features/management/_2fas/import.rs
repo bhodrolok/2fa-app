@@ -14,7 +14,7 @@ use crate::features::{
     old_otpauth::{self, Account},
 };
 
-pub fn v4(accouts: &mut Vec<Account>, json: &str, passphrase: &str) -> ImportResult {
+pub fn import(accouts: &mut Vec<Account>, json: &str, passphrase: &str) -> ImportResult {
     let format: Format = match serde_json::from_str(json) {
         Ok(f) => f,
         Err(_) => return ImportResult::InvalidFormat,

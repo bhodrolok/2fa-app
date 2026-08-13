@@ -1,6 +1,6 @@
-use crate::features::{old_otpauth::Account, otpauth};
+use crate::features::{old_otpauth::Account, otpauth::serialize::serialize};
 
-pub fn v1(accounts: &Vec<Account>) -> String {
+pub fn export(accounts: &Vec<Account>) -> String {
     let mut result = String::new();
 
     for (i, account) in accounts.iter().enumerate() {
@@ -8,7 +8,7 @@ pub fn v1(accounts: &Vec<Account>) -> String {
             result.push('\n');
         }
 
-        result.push_str(&otpauth::serialize::v1(account));
+        result.push_str(&serialize(account));
     }
 
     result
