@@ -14,6 +14,6 @@ pub fn uuid_to_u64(uuid: &str) -> Option<u64> {
 
 pub fn u64_to_uuid(id: u64) -> String {
     let high = (id >> 32) as u32;
-    let low = (id & 0xFFFF_FFFF) as u32;
+    let low = (id & 0xFFFFFFFF) as u32;
     format!("{high:08x}-0000-4000-8000-0000{low:08x}")
 }

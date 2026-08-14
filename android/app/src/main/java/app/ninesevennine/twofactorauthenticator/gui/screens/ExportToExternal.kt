@@ -66,6 +66,11 @@ object ExportToExternalRoute
 
 private const val TAG = "ExportToExternal"
 
+private enum class ExportTarget(val fileName: String) {
+    AEGIS("aegis.json"),
+    PROTON("proton.json")
+}
+
 @Composable
 fun ExportToExternal(navController: NavController) {
     val context = LocalContext.current
@@ -75,6 +80,7 @@ fun ExportToExternal(navController: NavController) {
     val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
 
     var showPassphraseScreen by remember { mutableStateOf(false) }
+    var exportTarget by remember { mutableStateOf(ExportTarget.AEGIS) }
 
     var isLoading by remember { mutableStateOf(false) }
     var passphrase by remember { mutableStateOf("") }
@@ -129,7 +135,10 @@ fun ExportToExternal(navController: NavController) {
                 Entry.rustInterface.client_zeroize_hostages()
                 Entry.rustInterface.management_copy_accounts_into_hostages()
 
-                val json = Entry.rustInterface.features_management_aegis_export_hostages(passphrase)
+                val json = when (exportTarget) {
+                    ExportTarget.AEGIS -> Entry.rustInterface.features_management_aegis_export_hostages(passphrase)
+                    ExportTarget.PROTON -> Entry.rustInterface.features_management_proton_export_hostages(passphrase)
+                }
 
                 val out = context.contentResolver.openOutputStream(uri)
                     ?: throw IOException("openOutputStream returned null for $uri")
@@ -222,7 +231,7 @@ fun ExportToExternal(navController: NavController) {
                                 text = if (isLoading) spinnerText() else stringResource(R.string.common_title_export)
                             ) {
                                 Signals.suppressLockOnExit = true
-                                createDocumentForJson.launch("aegis.json")
+                                createDocumentForJson.launch(exportTarget.fileName)
                             }
                         }
 
@@ -268,6 +277,7 @@ fun ExportToExternal(navController: NavController) {
                                 primaryText = "Aegis",
                                 secondaryText = ".json"
                             ) {
+                                exportTarget = ExportTarget.AEGIS
                                 showPassphraseScreen = true
                             }
 
@@ -276,7 +286,8 @@ fun ExportToExternal(navController: NavController) {
                                 primaryText = "Proton Authenticator",
                                 secondaryText = ".json"
                             ) {
-
+                                exportTarget = ExportTarget.PROTON
+                                showPassphraseScreen = true
                             }
                         }
 

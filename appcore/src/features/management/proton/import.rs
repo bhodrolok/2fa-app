@@ -44,6 +44,10 @@ pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impo
                 Err(_) => return ImportResult::InvalidFormat,
             };
 
+            if salt.len() != 16 {
+                return ImportResult::InvalidFormat;
+            }
+
             let content = match data_encoding::BASE64.decode(content_b64.as_bytes()) {
                 Ok(d) => d,
                 Err(_) => return ImportResult::InvalidFormat,

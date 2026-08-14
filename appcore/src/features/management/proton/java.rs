@@ -1,16 +1,39 @@
 use jni::{
     EnvUnowned,
     objects::{JClass, JString},
-    sys::jint,
+    sys::{jint, jstring},
 };
 
 use crate::{
     CLIENT,
     features::{
-        management::{proton::import::import, result::ImportResult},
+        management::{
+            proton::{export::export, import::import},
+            result::ImportResult,
+        },
         old_otpauth::Account,
     },
 };
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_features_1management_1proton_1export_1hostages(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+    passphrase: JString,
+) -> jstring {
+    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
+        let passphrase: String = passphrase.to_string();
+
+        let client = CLIENT.lock().unwrap();
+
+        Ok(env
+            .new_string(export(&client.hostages, &passphrase))
+            .unwrap()
+            .into_raw())
+    });
+
+    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
+}
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_features_1management_1proton_1import_1into_1hostages(

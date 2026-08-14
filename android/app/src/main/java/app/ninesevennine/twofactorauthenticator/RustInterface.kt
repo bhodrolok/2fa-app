@@ -14,6 +14,8 @@ class RustInterface {
     external fun features_management_aegis_import_into_hostages(json: String, passphrase: String): Int
     external fun features_management_plain_export_hostages(): String
     external fun features_management_plain_import_into_hostages(txt: String): Int
+    external fun features_management_proton_export_hostages(passphrase: String): String
+
     external fun features_management_proton_import_into_hostages(json: String, passphrase: String): Int
     external fun features_zxcvbn_normalized(passphrase: String): Float
 
