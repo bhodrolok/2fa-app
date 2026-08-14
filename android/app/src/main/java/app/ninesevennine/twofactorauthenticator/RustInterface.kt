@@ -9,6 +9,7 @@ class RustInterface {
 
     external fun client_zeroize_hostages()
 
+    external fun features_management_2fas_export_hostages(passphrase: String): String
     external fun features_management_2fas_import_into_hostages(json: String, passphrase: String): Int
     external fun features_management_aegis_export_hostages(passphrase: String): String
     external fun features_management_aegis_import_into_hostages(json: String, passphrase: String): Int

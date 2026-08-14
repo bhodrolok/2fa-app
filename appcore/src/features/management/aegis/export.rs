@@ -25,19 +25,19 @@ pub fn export(accounts: &Vec<Account>, passphrase: &str) -> String {
 
     for account in accounts {
         let (entry_type, period, counter) = match account.code_type {
-            CodeType::TOTP => ("totp".to_string(), Some(account.period), None),
-            CodeType::STEAM => ("steam".to_string(), Some(account.period), None),
-            CodeType::HOTP => ("hotp".to_string(), None, Some(account.counter)),
+            CodeType::TOTP => ("totp", Some(account.period), None),
+            CodeType::STEAM => ("steam", Some(account.period), None),
+            CodeType::HOTP => ("hotp", None, Some(account.counter)),
         };
 
         let algo = match account.algorithm {
-            Algorithm::SHA1 => "SHA1".to_string(),
-            Algorithm::SHA256 => "SHA256".to_string(),
-            Algorithm::SHA512 => "SHA512".to_string(),
+            Algorithm::SHA1 => "SHA1",
+            Algorithm::SHA256 => "SHA256",
+            Algorithm::SHA512 => "SHA512",
         };
 
         entries.push(Entry {
-            entry_type,
+            entry_type: entry_type.to_string(),
             uuid: u64_to_uuid(account.id),
             name: account.name.clone(),
             issuer: account.issuer.clone(),
@@ -49,7 +49,7 @@ pub fn export(accounts: &Vec<Account>, passphrase: &str) -> String {
             groups: Vec::new(),
             info: EntryInfo {
                 secret: data_encoding::BASE32_NOPAD.encode(&account.secret),
-                algo,
+                algo: algo.to_string(),
                 digits: account.digits,
                 period,
                 counter,

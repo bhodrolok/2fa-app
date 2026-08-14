@@ -89,7 +89,11 @@ pub fn import(accouts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impor
     };
 
     for service in services {
-        if let Some(mut account) = old_otpauth::parse(&service.otp.link) {
+        let Some(link) = &service.otp.link else {
+            continue;
+        };
+
+        if let Some(mut account) = old_otpauth::parse(link) {
             account.color = 0xFFFFFFFF;
             accouts.push(account);
         }

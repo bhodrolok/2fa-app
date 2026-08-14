@@ -24,15 +24,15 @@ pub fn export(accounts: &Vec<Account>, passphrase: &str) -> String {
     for account in accounts {
         let entry_type = match account.code_type {
             CodeType::HOTP => continue,
-            CodeType::STEAM => "Steam".to_string(),
-            CodeType::TOTP => "Totp".to_string(),
+            CodeType::STEAM => "Steam",
+            CodeType::TOTP => "Totp",
         };
 
         entries.push(Entry {
             id: u64_to_uuid(account.id),
             content: Content {
                 uri: serialize(account),
-                entry_type,
+                entry_type: entry_type.to_string(),
                 name: account.name.clone(),
             },
             note: if account.note.is_empty() {

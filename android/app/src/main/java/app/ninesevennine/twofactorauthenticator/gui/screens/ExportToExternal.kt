@@ -67,6 +67,7 @@ object ExportToExternalRoute
 private const val TAG = "ExportToExternal"
 
 private enum class ExportTarget(val fileName: String) {
+    _2FAS("2fas.2fas"),
     AEGIS("aegis.json"),
     PROTON("proton.json")
 }
@@ -120,6 +121,41 @@ fun ExportToExternal(navController: NavController) {
         }
     }
 
+    val createDocumentForOctet = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/octet-stream")
+    ) { uri ->
+        if (uri == null) {
+            isLoading = false
+            return@rememberLauncherForActivityResult
+        }
+
+        isLoading = true
+
+        scope.launch(Dispatchers.IO) {
+            try {
+                Entry.rustInterface.client_zeroize_hostages()
+                Entry.rustInterface.management_copy_accounts_into_hostages()
+
+                val json = Entry.rustInterface.features_management_2fas_export_hostages(passphrase)
+
+                val out = context.contentResolver.openOutputStream(uri)
+                    ?: throw IOException("openOutputStream returned null for $uri")
+                out.use { it.write(json.toByteArray()) }
+            } catch (e: Exception) {
+                Logger.e(TAG, "createDocumentForOctet", e)
+            } finally {
+                Entry.rustInterface.client_zeroize_hostages()
+                withContext(Dispatchers.Main) {
+                    passphrase = ""
+                    confirmPassphrase = ""
+                    passphraseStrength = 0f
+                    showPassphraseScreen = false
+                    isLoading = false
+                }
+            }
+        }
+    }
+
     val createDocumentForJson = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/json")
     ) { uri ->
@@ -138,6 +174,7 @@ fun ExportToExternal(navController: NavController) {
                 val json = when (exportTarget) {
                     ExportTarget.AEGIS -> Entry.rustInterface.features_management_aegis_export_hostages(passphrase)
                     ExportTarget.PROTON -> Entry.rustInterface.features_management_proton_export_hostages(passphrase)
+                    else -> ""
                 }
 
                 val out = context.contentResolver.openOutputStream(uri)
@@ -231,7 +268,10 @@ fun ExportToExternal(navController: NavController) {
                                 text = if (isLoading) spinnerText() else stringResource(R.string.common_title_export)
                             ) {
                                 Signals.suppressLockOnExit = true
-                                createDocumentForJson.launch(exportTarget.fileName)
+                                when (exportTarget) {
+                                    ExportTarget._2FAS -> createDocumentForOctet.launch(exportTarget.fileName)
+                                    else -> createDocumentForJson.launch(exportTarget.fileName)
+                                }
                             }
                         }
 
@@ -269,7 +309,8 @@ fun ExportToExternal(navController: NavController) {
                                 primaryText = "2FAS Auth",
                                 secondaryText = ".2fas"
                             ) {
-
+                                exportTarget = ExportTarget._2FAS
+                                showPassphraseScreen = true
                             }
 
                             SectionButton(
