@@ -316,24 +316,6 @@ fun Settings(navController: NavController) {
                     }
 
                     SectionButton(
-                        painter = painterResource(R.drawable.aegis),
-                        tint = Theme.colors.primary,
-                        primaryText = stringResource(R.string.screen_settings_management_export_to_aegis),
-                        secondaryText = ".json"
-                    ) {
-                        navController.navigate(ExportAegisRoute)
-                    }
-
-                    SectionButton(
-                        painter = painterResource(R.drawable.aegis),
-                        tint = Theme.colors.primary,
-                        primaryText = stringResource(R.string.screen_settings_management_import_from_aegis),
-                        secondaryText = ".json"
-                    ) {
-                        navController.navigate(ImportAegisRoute)
-                    }
-
-                    SectionButton(
                         primaryText = stringResource(R.string.screen_settings_management_export_to_external)
                     ) {
                         navController.navigate(ExportToExternalRoute)

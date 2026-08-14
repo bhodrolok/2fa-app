@@ -12,7 +12,7 @@ use crate::{
         old_otpauth::Account,
     },
     utils::{
-        convert::uuid_to_id,
+        convert::uuid_to_u64,
         types::{Algorithm, CodeType},
     },
 };
@@ -176,7 +176,7 @@ pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impo
             _ => continue,
         };
 
-        let id = match uuid_to_id(&entry.uuid) {
+        let id = match uuid_to_u64(&entry.uuid) {
             Some(id) => id,
             None => continue,
         };

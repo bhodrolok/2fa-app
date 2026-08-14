@@ -1,4 +1,3 @@
-pub mod aegis;
 pub mod hotp;
 pub mod management;
 pub mod old_otpauth;

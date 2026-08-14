@@ -9,12 +9,13 @@ class RustInterface {
 
     external fun client_zeroize_hostages()
 
+    external fun features_management_2fas_import_into_hostages(json: String, passphrase: String): Int
+    external fun features_management_aegis_export_hostages(passphrase: String): String
+    external fun features_management_aegis_import_into_hostages(json: String, passphrase: String): Int
     external fun features_management_plain_export_hostages(): String
     external fun features_management_plain_import_into_hostages(txt: String): Int
-    external fun features_management_2fas_import_into_hostages(json: String, passphrase: String): Int
-    external fun features_management_aegis_import_into_hostages(json: String, passphrase: String): Int
     external fun features_management_proton_import_into_hostages(json: String, passphrase: String): Int
-    external fun features_zxcvbn_f32(passphrase: String): Float
+    external fun features_zxcvbn_normalized(passphrase: String): Float
 
     external fun management_copy_accounts_into_hostages()
     external fun management_merge_hostages_into_accounts()
@@ -52,10 +53,8 @@ class RustInterface {
 
     external fun exportAccountsUsingUnlockPassphraseHash(salt: ByteArray): String
     external fun exportAccounts(passphrase: String): String
-    external fun exportAccountsAegis(passphrase: String): String
     external fun importAccountsUsingUnlockPassphraseHash(data: String): Int
     external fun importAccounts(passphrase: String, data: String): Int
-    external fun importAccountsAegis(passphrase: String, data: String): Boolean
 
     external fun svgToBitmap(data: ByteArray, width: Int, height: Int): Bitmap?
 

@@ -5,7 +5,7 @@ use jni::{
 use zxcvbn::zxcvbn;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_features_1zxcvbn_1f32(
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_features_1zxcvbn_1normalized(
     mut unowned_env: EnvUnowned,
     _class: JClass,
     passphrase: JString,

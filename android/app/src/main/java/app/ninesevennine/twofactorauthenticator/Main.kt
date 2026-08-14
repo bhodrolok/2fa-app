@@ -22,23 +22,19 @@ import app.ninesevennine.twofactorauthenticator.features.UseIncognitoKeyboard
 import app.ninesevennine.twofactorauthenticator.features.setScreenSecure
 import app.ninesevennine.twofactorauthenticator.gui.screens.AddCode
 import app.ninesevennine.twofactorauthenticator.gui.screens.AddCodeRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.ChangePassphrase
-import app.ninesevennine.twofactorauthenticator.gui.screens.ChangePassphraseRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.BiometricUnlock
 import app.ninesevennine.twofactorauthenticator.gui.screens.BiometricUnlockRoute
+import app.ninesevennine.twofactorauthenticator.gui.screens.ChangePassphrase
+import app.ninesevennine.twofactorauthenticator.gui.screens.ChangePassphraseRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Edit
 import app.ninesevennine.twofactorauthenticator.gui.screens.EditRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Export
-import app.ninesevennine.twofactorauthenticator.gui.screens.ExportAegis
-import app.ninesevennine.twofactorauthenticator.gui.screens.ExportAegisRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.ExportRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.ExportToExternal
 import app.ninesevennine.twofactorauthenticator.gui.screens.ExportToExternalRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Greeting
 import app.ninesevennine.twofactorauthenticator.gui.screens.GreetingRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Import
-import app.ninesevennine.twofactorauthenticator.gui.screens.ImportAegis
-import app.ninesevennine.twofactorauthenticator.gui.screens.ImportAegisRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.ImportFromExternal
 import app.ninesevennine.twofactorauthenticator.gui.screens.ImportFromExternalRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.ImportRoute
@@ -117,8 +113,6 @@ class Main : FragmentActivity() {
                     composable<ChangePassphraseRoute> { ChangePassphrase(navController) }
                     composable<ExportRoute> { Export(navController) }
                     composable<ImportRoute> { Import(navController) }
-                    composable<ExportAegisRoute> { ExportAegis(navController) }
-                    composable<ImportAegisRoute> { ImportAegis(navController) }
                     composable<ExportToExternalRoute> { ExportToExternal(navController) }
                     composable<ImportFromExternalRoute> { ImportFromExternal(navController) }
                     composable<EditRoute> { Edit(navController) }

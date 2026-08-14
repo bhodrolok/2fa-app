@@ -714,24 +714,6 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_exportAccountsAegis(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    passphrase: JString,
-) -> jstring {
-    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
-        let passphrase: String = passphrase.to_string();
-        let client = CLIENT.lock().unwrap();
-        Ok(env
-            .new_string(client.export_accounts_aegis(&passphrase))
-            .unwrap()
-            .into_raw())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
-}
-
-#[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_importAccountsUsingUnlockPassphraseHash(
     mut unowned_env: EnvUnowned,
     _class: JClass,
@@ -762,28 +744,6 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let mut client = CLIENT.lock().unwrap();
 
         Ok(client.import_accounts(&passphrase, &data))
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_importAccountsAegis(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    passphrase: JString,
-    data: JString,
-) -> jboolean {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let passphrase: String = passphrase.to_string();
-        let data: String = data.to_string();
-
-        let mut client = CLIENT.lock().unwrap();
-        if client.import_accounts_aegis(&passphrase, &data) {
-            Ok(JNI_TRUE)
-        } else {
-            Ok(JNI_FALSE)
-        }
     });
 
     outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
