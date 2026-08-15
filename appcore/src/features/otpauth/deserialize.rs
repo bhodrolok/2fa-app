@@ -8,12 +8,16 @@ use crate::{
 // https://www.ietf.org/archive/id/draft-andesco-otpauth-uri-00.html
 pub fn deserialize(uri: &str) -> Option<Account> {
     // 3. uri format
-    let rest = uri.trim().strip_prefix("otpauth://")?;
-    let (path, query) = rest.split_once('?')?;
-    let (otp_type, label) = path.split_once('/')?;
+    let (scheme, rest) = uri.trim().split_once("://")?;
+    if !scheme.eq_ignore_ascii_case("otpauth") {
+        return None;
+    }
+
+    let (path, query) = rest.split_once('?').unwrap_or((rest, ""));
+    let (otp_type, label) = path.split_once('/').unwrap_or((path, ""));
 
     // 3.2. otp-type
-    let mut code_type = match otp_type {
+    let mut code_type = match otp_type.to_ascii_lowercase().as_str() {
         "hotp" => CodeType::HOTP,
         "totp" => CodeType::TOTP,
         _ => return None,
@@ -22,16 +26,16 @@ pub fn deserialize(uri: &str) -> Option<Account> {
     // 3.3. label
     let label = percent_decode_str(label).decode_utf8().ok()?.into_owned();
     let (mut issuer, mut name) = match label.split_once(':') {
-        Some((issuer, name)) => (issuer.to_string(), name.to_string()),
+        Some((issuer, name)) => (issuer.trim().to_string(), name.trim().to_string()),
         None if label == "?" => (String::new(), String::new()),
-        None => (String::new(), label),
+        None => (String::new(), label.trim().to_string()),
     };
 
     // 3.4. parameters
-    let mut id = 0;
+    let mut id = getrandom::u64().ok()?;
     let mut _timestamp = 0; // Will be added later.
     let mut note = String::new();
-    let mut secret = None;
+    let mut secret = Vec::new();
     let mut algorithm = Algorithm::SHA1;
     let mut counter = 0;
     let mut period = 30;
@@ -39,16 +43,25 @@ pub fn deserialize(uri: &str) -> Option<Account> {
     let mut color = 0xFF000000;
 
     for parameter in query.split('&') {
-        let (key, value) = parameter.split_once('=')?;
+        let (key, value) = parameter.split_once('=').unwrap_or((parameter, ""));
 
-        match key {
+        match key.to_ascii_lowercase().as_str() {
             "id" => id = value.parse().ok()?,
             "timestamp" => _timestamp = value.parse().ok()?,
-            "issuer" => issuer = percent_decode_str(value).decode_utf8().ok()?.into_owned(),
+            "issuer" => {
+                issuer = percent_decode_str(value)
+                    .decode_utf8()
+                    .ok()?
+                    .trim()
+                    .to_string()
+            }
             "note" => note = percent_decode_str(value).decode_utf8().ok()?.into_owned(),
-            "secret" => secret = data_encoding::BASE32_NOPAD.decode(value.as_bytes()).ok(),
+            "secret" => {
+                let value = value.replace(['=', ' ', '-'], "").to_ascii_uppercase();
+                secret = data_encoding::BASE32_NOPAD.decode(value.as_bytes()).ok()?;
+            }
             "algorithm" => {
-                algorithm = match value {
+                algorithm = match value.to_ascii_uppercase().replace('-', "").as_str() {
                     "SHA1" => Algorithm::SHA1,
                     "SHA256" => Algorithm::SHA256,
                     "SHA512" => Algorithm::SHA512,
@@ -59,8 +72,11 @@ pub fn deserialize(uri: &str) -> Option<Account> {
             "period" => period = value.parse().ok()?,
             "digits" => digits = value.parse().ok()?,
             "color" => {
-                let bytes = data_encoding::HEXLOWER.decode(value.as_bytes()).ok()?;
-                color = u32::from_be_bytes(bytes.try_into().ok()?);
+                if let Ok(bytes) = data_encoding::HEXLOWER_PERMISSIVE.decode(value.as_bytes())
+                    && let Ok(bytes) = bytes.try_into()
+                {
+                    color = u32::from_be_bytes(bytes);
+                }
             }
             _ => {}
         }
@@ -75,8 +91,6 @@ pub fn deserialize(uri: &str) -> Option<Account> {
         digits = 5;
         period = 30;
     }
-
-    let secret = secret?;
 
     if secret.is_empty() || !(4..=10).contains(&digits) || period < 10 {
         return None;
