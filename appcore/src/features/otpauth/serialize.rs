@@ -79,7 +79,11 @@ pub fn serialize(account: &Account) -> String {
     }
 
     // 3.4.7 additonal parameters
-    parameters.push(format!("id={}", account.id));
+    parameters.push(format!(
+        "id={}",
+        data_encoding::HEXLOWER.encode(&account.id.to_be_bytes())
+    ));
+
     parameters.push(format!("timestamp={}", 0)); // Will be added later.
 
     if !account.note.is_empty() {

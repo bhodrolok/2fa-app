@@ -46,7 +46,12 @@ pub fn deserialize(uri: &str) -> Option<Account> {
         let (key, value) = parameter.split_once('=').unwrap_or((parameter, ""));
 
         match key.to_ascii_lowercase().as_str() {
-            "id" => id = value.parse().ok()?,
+            "id" => {
+                let bytes = data_encoding::HEXLOWER_PERMISSIVE
+                    .decode(value.as_bytes())
+                    .ok()?;
+                id = u64::from_be_bytes(bytes.try_into().ok()?);
+            }
             "timestamp" => _timestamp = value.parse().ok()?,
             "issuer" => {
                 issuer = percent_decode_str(value)
