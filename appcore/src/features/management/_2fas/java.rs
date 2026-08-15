@@ -6,12 +6,10 @@ use jni::{
 
 use crate::{
     CLIENT,
-    features::{
-        management::{
-            _2fas::{export::export, import::import},
-            result::ImportResult,
-        },
-        old_otpauth::Account,
+    account::Account,
+    features::management::{
+        _2fas::{export::export, import::import},
+        result::ImportResult,
     },
 };
 

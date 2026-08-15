@@ -1,8 +1,8 @@
 use percent_encoding::{NON_ALPHANUMERIC, utf8_percent_encode};
 
 use crate::{
-    features::old_otpauth::Account,
-    utils::types::{Algorithm, CodeType},
+    account::Account,
+    features::otp::{algorithm::Algorithm, otptype::CodeType},
 };
 
 // https://www.ietf.org/archive/id/draft-andesco-otpauth-uri-00.html

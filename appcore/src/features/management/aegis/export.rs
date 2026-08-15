@@ -6,17 +6,15 @@ use hmac::KeyInit;
 use serde_json::Value;
 
 use crate::{
+    account::Account,
     features::{
         management::aegis::schema::{Database, Entry, EntryInfo, Header, Params, Slot, Vault},
-        old_otpauth::Account,
+        otp::{algorithm::Algorithm, otptype::CodeType},
     },
-    utils::{
-        convert::u64_to_uuid,
-        types::{Algorithm, CodeType},
-    },
+    utils::convert::u64_to_uuid,
 };
 
-pub fn export(accounts: &Vec<Account>, passphrase: &str) -> String {
+pub fn export(accounts: &[Account], passphrase: &str) -> String {
     if passphrase.is_empty() {
         return String::new();
     }

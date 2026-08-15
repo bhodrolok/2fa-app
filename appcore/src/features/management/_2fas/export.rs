@@ -9,15 +9,15 @@ use pbkdf2::pbkdf2_hmac;
 use sha2::Sha256;
 
 use crate::{
+    account::Account,
     features::{
         management::_2fas::schema::{Format, Icon, IconCollection, IconLabel, Order, Otp, Service},
-        old_otpauth::Account,
+        otp::{algorithm::Algorithm, otptype::CodeType},
         otpauth::serialize::serialize,
     },
-    utils::types::{Algorithm, CodeType},
 };
 
-pub fn export(accounts: &Vec<Account>, passphrase: &str) -> String {
+pub fn export(accounts: &[Account], passphrase: &str) -> String {
     if passphrase.is_empty() {
         return String::new();
     }

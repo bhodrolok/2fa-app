@@ -1,5 +1,6 @@
-use crate::features::{
-    management::result::ImportResult, old_otpauth::Account, otpauth::deserialize::deserialize,
+use crate::{
+    account::Account,
+    features::{management::result::ImportResult, otpauth::deserialize::deserialize},
 };
 
 pub fn import(accounts: &mut Vec<Account>, txt: &str) -> ImportResult {

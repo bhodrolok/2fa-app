@@ -1,4 +1,4 @@
-use crate::{features::hotp, utils::types::Algorithm};
+use crate::features::{hotp, otp::algorithm::Algorithm};
 
 pub fn totp(
     secret: &[u8],

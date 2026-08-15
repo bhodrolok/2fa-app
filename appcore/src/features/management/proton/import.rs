@@ -6,12 +6,12 @@ use argon2::Argon2;
 use hmac::KeyInit;
 
 use crate::{
+    account::Account,
     features::{
         management::{
             proton::schema::{Entry, Format},
             result::ImportResult,
         },
-        old_otpauth::Account,
         otpauth::deserialize::deserialize,
     },
     utils::convert::uuid_to_u64,

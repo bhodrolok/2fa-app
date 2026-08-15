@@ -2,7 +2,7 @@ use hmac::{Hmac, KeyInit, Mac};
 use sha1::Sha1;
 use sha2::{Sha256, Sha512};
 
-use crate::utils::types::Algorithm;
+use crate::features::otp::algorithm::Algorithm;
 
 pub fn generate(secret: &[u8], algorithm: Algorithm, digits: u32, counter: u64) -> String {
     assert!((4..=10).contains(&digits), "hotp invalid digits={}", digits);

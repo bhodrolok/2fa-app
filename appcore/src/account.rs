@@ -1,5 +1,6 @@
-use crate::utils::types::{Algorithm, CodeType};
 use zeroize::Zeroize;
+
+use crate::features::otp::{algorithm::Algorithm, otptype::CodeType};
 
 #[derive(Clone, Zeroize)]
 pub struct Account {

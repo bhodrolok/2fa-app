@@ -6,13 +6,15 @@ use hmac::KeyInit;
 use pbkdf2::pbkdf2_hmac;
 use sha2::Sha256;
 
-use crate::features::{
-    management::{
-        _2fas::schema::{Format, Service},
-        result::ImportResult,
+use crate::{
+    account::Account,
+    features::{
+        management::{
+            _2fas::schema::{Format, Service},
+            result::ImportResult,
+        },
+        otpauth::deserialize::deserialize,
     },
-    old_otpauth::Account,
-    otpauth::deserialize::deserialize,
 };
 
 pub fn import(accouts: &mut Vec<Account>, json: &str, passphrase: &str) -> ImportResult {

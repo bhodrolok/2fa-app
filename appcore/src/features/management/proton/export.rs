@@ -6,15 +6,16 @@ use argon2::Argon2;
 use hmac::KeyInit;
 
 use crate::{
+    account::Account,
     features::{
         management::proton::schema::{Content, Entry, Format},
-        old_otpauth::Account,
+        otp::otptype::CodeType,
         otpauth::serialize::serialize,
     },
-    utils::{convert::u64_to_uuid, types::CodeType},
+    utils::convert::u64_to_uuid,
 };
 
-pub fn export(accounts: &Vec<Account>, passphrase: &str) -> String {
+pub fn export(accounts: &[Account], passphrase: &str) -> String {
     if passphrase.is_empty() {
         return String::new();
     }

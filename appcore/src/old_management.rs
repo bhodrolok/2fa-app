@@ -1,10 +1,8 @@
 use crate::{
     _client::Client,
-    features::old_otpauth::Account,
-    utils::{
-        self,
-        types::{Algorithm, CodeType},
-    },
+    account::Account,
+    features::otp::{algorithm::Algorithm, otptype::CodeType},
+    utils::{self},
 };
 
 pub const XCHACHA20_KEY_SIZE: usize = 32;

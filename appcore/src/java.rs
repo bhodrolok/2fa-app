@@ -1,8 +1,10 @@
 use crate::{
     _client::CLIENT_UNLOCK_PASSPHRASE_HASH_LEN,
     CLIENT,
-    features::{self},
-    utils::types::{Algorithm, CodeType},
+    features::{
+        self,
+        otp::{algorithm::Algorithm, otptype::CodeType},
+    },
 };
 use jni::{
     EnvUnowned,

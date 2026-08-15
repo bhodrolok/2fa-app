@@ -1,9 +1,10 @@
 use zeroize::Zeroize;
 
-use crate::features::old_otpauth::{Account, AccountTruncated};
+use crate::account::{Account, AccountTruncated};
+use crate::features::otp::algorithm::Algorithm;
+use crate::features::otp::otptype::CodeType;
 use crate::features::{hotp, otpauth, steam};
 use crate::utils;
-use crate::utils::types::{Algorithm, CodeType};
 
 pub const CLIENT_UNLOCK_PASSPHRASE_HASH_LEN: usize = 64;
 

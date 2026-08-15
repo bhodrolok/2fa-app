@@ -4,17 +4,15 @@ use aes_gcm::{
 };
 
 use crate::{
+    account::Account,
     features::{
         management::{
             aegis::schema::{Database, Vault},
             result::ImportResult,
         },
-        old_otpauth::Account,
+        otp::{algorithm::Algorithm, otptype::CodeType},
     },
-    utils::{
-        convert::uuid_to_u64,
-        types::{Algorithm, CodeType},
-    },
+    utils::convert::uuid_to_u64,
 };
 
 pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> ImportResult {
