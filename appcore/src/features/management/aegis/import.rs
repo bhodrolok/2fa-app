@@ -10,7 +10,7 @@ use crate::{
             aegis::schema::{Database, Vault},
             result::ImportResult,
         },
-        otp::{algorithm::Algorithm, otptype::CodeType},
+        otp::{algorithm::Algorithm, r#type::CodeType},
     },
     utils::convert::uuid_to_u64,
 };

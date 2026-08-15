@@ -12,7 +12,7 @@ use crate::{
     account::Account,
     features::{
         management::_2fas::schema::{Format, Icon, IconCollection, IconLabel, Order, Otp, Service},
-        otp::{algorithm::Algorithm, otptype::CodeType},
+        otp::{algorithm::Algorithm, r#type::CodeType},
         otpauth::serialize::serialize,
     },
 };

@@ -3,7 +3,7 @@ use crate::{
     CLIENT,
     features::{
         self,
-        otp::{algorithm::Algorithm, otptype::CodeType},
+        otp::{algorithm::Algorithm, r#type::CodeType},
     },
 };
 use jni::{

@@ -1,7 +1,7 @@
 use crate::{
     _client::Client,
     account::Account,
-    features::otp::{algorithm::Algorithm, otptype::CodeType},
+    features::otp::{algorithm::Algorithm, r#type::CodeType},
     utils::{self},
 };
 

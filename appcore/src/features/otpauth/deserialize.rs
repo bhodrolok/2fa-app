@@ -2,7 +2,7 @@ use percent_encoding::percent_decode_str;
 
 use crate::{
     account::Account,
-    features::otp::{algorithm::Algorithm, otptype::CodeType},
+    features::otp::{algorithm::Algorithm, r#type::CodeType},
 };
 
 // https://www.ietf.org/archive/id/draft-andesco-otpauth-uri-00.html

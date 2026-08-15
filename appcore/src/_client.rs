@@ -2,7 +2,7 @@ use zeroize::Zeroize;
 
 use crate::account::{Account, AccountTruncated};
 use crate::features::otp::algorithm::Algorithm;
-use crate::features::otp::otptype::CodeType;
+use crate::features::otp::r#type::CodeType;
 use crate::features::{hotp, otpauth, steam};
 use crate::utils;
 

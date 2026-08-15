@@ -9,7 +9,7 @@ use crate::{
     account::Account,
     features::{
         management::proton::schema::{Content, Entry, Format},
-        otp::otptype::CodeType,
+        otp::r#type::CodeType,
         otpauth::serialize::serialize,
     },
     utils::convert::u64_to_uuid,

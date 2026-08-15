@@ -9,7 +9,7 @@ use crate::{
     account::Account,
     features::{
         management::aegis::schema::{Database, Entry, EntryInfo, Header, Params, Slot, Vault},
-        otp::{algorithm::Algorithm, otptype::CodeType},
+        otp::{algorithm::Algorithm, r#type::CodeType},
     },
     utils::convert::u64_to_uuid,
 };
