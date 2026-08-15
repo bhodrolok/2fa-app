@@ -1,6 +1,5 @@
 use crate::features::{
-    management::result::ImportResult,
-    old_otpauth::{self, Account},
+    management::result::ImportResult, old_otpauth::Account, otpauth::deserialize::deserialize,
 };
 
 pub fn import(accounts: &mut Vec<Account>, txt: &str) -> ImportResult {
@@ -11,7 +10,7 @@ pub fn import(accounts: &mut Vec<Account>, txt: &str) -> ImportResult {
             continue;
         }
 
-        if let Some(mut account) = old_otpauth::parse(line) {
+        if let Some(mut account) = deserialize(line) {
             account.color = 0xFFFFFFFF;
             accounts.push(account);
         }

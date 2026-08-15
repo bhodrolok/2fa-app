@@ -11,7 +11,8 @@ use crate::features::{
         _2fas::schema::{Format, Service},
         result::ImportResult,
     },
-    old_otpauth::{self, Account},
+    old_otpauth::Account,
+    otpauth::deserialize::deserialize,
 };
 
 pub fn import(accouts: &mut Vec<Account>, json: &str, passphrase: &str) -> ImportResult {
@@ -93,7 +94,7 @@ pub fn import(accouts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impor
             continue;
         };
 
-        if let Some(mut account) = old_otpauth::parse(link) {
+        if let Some(mut account) = deserialize(link) {
             account.color = 0xFFFFFFFF;
             accouts.push(account);
         }

@@ -11,7 +11,8 @@ use crate::{
             proton::schema::{Entry, Format},
             result::ImportResult,
         },
-        old_otpauth::{self, Account},
+        old_otpauth::Account,
+        otpauth::deserialize::deserialize,
     },
     utils::convert::uuid_to_u64,
 };
@@ -124,7 +125,7 @@ pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impo
     };
 
     for entry in entries {
-        if let Some(mut account) = old_otpauth::parse(&entry.content.uri) {
+        if let Some(mut account) = deserialize(&entry.content.uri) {
             if let Some(id) = uuid_to_u64(&entry.id) {
                 account.id = id;
                 account.name = entry.content.name;

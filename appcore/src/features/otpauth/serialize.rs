@@ -13,15 +13,24 @@ pub fn serialize(account: &Account) -> String {
         CodeType::TOTP | CodeType::STEAM => "totp",
     };
 
+    let (issuer, digits, period) = match account.code_type {
+        CodeType::STEAM => ("Steam", 5, 30),
+        _ => (
+            account.issuer.as_str(),
+            account.digits.clamp(4, 10),
+            account.period.max(10),
+        ),
+    };
+
     // 3.3. label
-    let label = match (!account.name.is_empty(), !account.issuer.is_empty()) {
+    let label = match (!account.name.is_empty(), !issuer.is_empty()) {
         (true, true) => format!(
             "{}%3A{}",
-            utf8_percent_encode(&account.issuer.replace(':', "-"), NON_ALPHANUMERIC),
+            utf8_percent_encode(&issuer.replace(':', "-"), NON_ALPHANUMERIC),
             utf8_percent_encode(&account.name.replace(':', "-"), NON_ALPHANUMERIC)
         ),
         (false, true) => {
-            utf8_percent_encode(&account.issuer.replace(':', "-"), NON_ALPHANUMERIC).to_string()
+            utf8_percent_encode(&issuer.replace(':', "-"), NON_ALPHANUMERIC).to_string()
         }
         (true, false) => {
             utf8_percent_encode(&account.name.replace(':', "-"), NON_ALPHANUMERIC).to_string()
@@ -39,10 +48,10 @@ pub fn serialize(account: &Account) -> String {
     ));
 
     // 3.4.2. issuer
-    if !account.issuer.is_empty() {
+    if !issuer.is_empty() {
         parameters.push(format!(
             "issuer={}",
-            utf8_percent_encode(&account.issuer, NON_ALPHANUMERIC)
+            utf8_percent_encode(issuer, NON_ALPHANUMERIC)
         ));
     }
 
@@ -54,14 +63,14 @@ pub fn serialize(account: &Account) -> String {
     }
 
     // 3.4.4. digits
-    if account.digits != 6 {
+    if digits != 6 {
         // We support digits from 4 to 10.
-        parameters.push(format!("digits={}", account.digits));
+        parameters.push(format!("digits={}", digits));
     }
 
     // 3.4.5 period
-    if account.code_type != CodeType::HOTP && account.period != 30 {
-        parameters.push(format!("period={}", account.period));
+    if account.code_type != CodeType::HOTP && period != 30 {
+        parameters.push(format!("period={}", period));
     }
 
     // 3.4.6. counter
