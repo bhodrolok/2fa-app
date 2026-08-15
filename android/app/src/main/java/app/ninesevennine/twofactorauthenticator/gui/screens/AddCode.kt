@@ -45,10 +45,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.QRCodeScanner
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
+import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.utils.ZXing
 import kotlinx.coroutines.Dispatchers
@@ -114,7 +114,7 @@ fun AddCode(navController: NavController) {
                     }
                 }
 
-                if (otpUrl != null && Entry.rustInterface.setEditAccountFromOtpAuth(otpUrl)) {
+                if (otpUrl != null && rustInterface.setEditAccountFromOtpAuth(otpUrl)) {
                     Signals.checkEditAccountSome = true
 
                     withContext(Dispatchers.Main) {
@@ -131,7 +131,7 @@ fun AddCode(navController: NavController) {
 
             isProcessing = true
             scope.launch {
-                if (Entry.rustInterface.setEditAccountFromOtpAuth(text)) {
+                if (rustInterface.setEditAccountFromOtpAuth(text)) {
                     Signals.checkEditAccountSome = true
                     
                     navController.navigate(EditRoute)
@@ -190,7 +190,7 @@ fun AddCode(navController: NavController) {
                             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                             view.playSoundEffect(SoundEffectConstants.CLICK)
 
-                            Entry.rustInterface.setEditAccountEmpty()
+                            rustInterface.setEditAccountEmpty()
                             navController.navigate(EditRoute)
                         }
                     )

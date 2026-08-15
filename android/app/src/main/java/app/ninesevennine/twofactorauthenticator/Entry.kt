@@ -1,35 +1,27 @@
 package app.ninesevennine.twofactorauthenticator
 
 import android.app.Application
+import android.util.Log
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Logger
-import app.ninesevennine.twofactorauthenticator.utils.PrivateApi
 
 private const val TAG = "Entry"
 
+private lateinit var rustInterfaceInstance: RustInterface
+val rustInterface: RustInterface
+    get() = rustInterfaceInstance
+
 class Entry : Application() {
-    companion object {
-        lateinit var rustInterface: RustInterface
-            private set
-    }
-
-
     override fun onCreate() {
         super.onCreate()
 
         Logger.init(this)
-        Logger.i(TAG, BuildConfig.APPLICATION_ID)
-        Logger.i(TAG, BuildConfig.BUILD_TYPE)
-        Logger.i(TAG, "${BuildConfig.VERSION_CODE} | ${BuildConfig.VERSION_NAME}")
-        Logger.i(TAG, PrivateApi.getSystemProperty("ro.build.fingerprint"))
 
-        runCatching {
+        try {
             System.loadLibrary(RustInterface.LIBRARY_NAME)
-        }.onSuccess {
-            rustInterface = RustInterface()
-            Logger.i(TAG, "${RustInterface.LIBRARY_NAME} loaded")
-        }.onFailure { e ->
-            Logger.e(TAG, "failed to load ${RustInterface.LIBRARY_NAME}", e)
+            rustInterfaceInstance = RustInterface()
+        } catch (e: Throwable) {
+            Log.e(TAG, "Unable to load ${RustInterface.LIBRARY_NAME}", e)
             throw e
         }
 

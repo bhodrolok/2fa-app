@@ -42,7 +42,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
@@ -52,6 +51,7 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.SectionGroup
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
+import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import kotlinx.coroutines.Dispatchers
@@ -102,10 +102,10 @@ fun ExportToExternal(navController: NavController) {
 
         scope.launch(Dispatchers.IO) {
             try {
-                Entry.rustInterface.client_zeroize_hostages()
-                Entry.rustInterface.management_copy_accounts_into_hostages()
+                rustInterface.client_zeroize_hostages()
+                rustInterface.management_copy_accounts_into_hostages()
 
-                val txt = Entry.rustInterface.features_management_plain_export_hostages()
+                val txt = rustInterface.features_management_plain_export_hostages()
 
                 val out = context.contentResolver.openOutputStream(uri)
                     ?: throw IOException("openOutputStream returned null for $uri")
@@ -113,7 +113,7 @@ fun ExportToExternal(navController: NavController) {
             } catch (e: Exception) {
                 Logger.e(TAG, "createDocumentForPlain", e)
             } finally {
-                Entry.rustInterface.client_zeroize_hostages()
+                rustInterface.client_zeroize_hostages()
                 withContext(Dispatchers.Main) {
                     isLoading = false
                 }
@@ -133,10 +133,10 @@ fun ExportToExternal(navController: NavController) {
 
         scope.launch(Dispatchers.IO) {
             try {
-                Entry.rustInterface.client_zeroize_hostages()
-                Entry.rustInterface.management_copy_accounts_into_hostages()
+                rustInterface.client_zeroize_hostages()
+                rustInterface.management_copy_accounts_into_hostages()
 
-                val json = Entry.rustInterface.features_management_2fas_export_hostages(passphrase)
+                val json = rustInterface.features_management_2fas_export_hostages(passphrase)
 
                 val out = context.contentResolver.openOutputStream(uri)
                     ?: throw IOException("openOutputStream returned null for $uri")
@@ -144,7 +144,7 @@ fun ExportToExternal(navController: NavController) {
             } catch (e: Exception) {
                 Logger.e(TAG, "createDocumentForOctet", e)
             } finally {
-                Entry.rustInterface.client_zeroize_hostages()
+                rustInterface.client_zeroize_hostages()
                 withContext(Dispatchers.Main) {
                     passphrase = ""
                     confirmPassphrase = ""
@@ -168,12 +168,12 @@ fun ExportToExternal(navController: NavController) {
 
         scope.launch(Dispatchers.IO) {
             try {
-                Entry.rustInterface.client_zeroize_hostages()
-                Entry.rustInterface.management_copy_accounts_into_hostages()
+                rustInterface.client_zeroize_hostages()
+                rustInterface.management_copy_accounts_into_hostages()
 
                 val json = when (exportTarget) {
-                    ExportTarget.AEGIS -> Entry.rustInterface.features_management_aegis_export_hostages(passphrase)
-                    ExportTarget.PROTON -> Entry.rustInterface.features_management_proton_export_hostages(passphrase)
+                    ExportTarget.AEGIS -> rustInterface.features_management_aegis_export_hostages(passphrase)
+                    ExportTarget.PROTON -> rustInterface.features_management_proton_export_hostages(passphrase)
                     else -> ""
                 }
 
@@ -183,7 +183,7 @@ fun ExportToExternal(navController: NavController) {
             } catch (e: Exception) {
                 Logger.e(TAG, "createDocumentForJson", e)
             } finally {
-                Entry.rustInterface.client_zeroize_hostages()
+                rustInterface.client_zeroize_hostages()
                 withContext(Dispatchers.Main) {
                     passphrase = ""
                     confirmPassphrase = ""
@@ -240,7 +240,7 @@ fun ExportToExternal(navController: NavController) {
                             onValueChange = {
                                 if (!isLoading) {
                                     passphrase = it
-                                    passphraseStrength = Entry.rustInterface.features_zxcvbn_normalized(it)
+                                    passphraseStrength = rustInterface.features_zxcvbn_normalized(it)
                                 }
                             }
                         )

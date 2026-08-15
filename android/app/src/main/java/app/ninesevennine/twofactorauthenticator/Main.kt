@@ -79,7 +79,7 @@ class Main : FragmentActivity() {
             val navController = rememberNavController()
 
             LaunchedEffect(Signals.authenticate) {
-                if (Config.hasCompletedSetup && Entry.rustInterface.isClientUnlockPassphraseHashEmpty() && navController.currentBackStackEntry?.destination?.hasRoute<GreetingRoute>() != true) {
+                if (Config.hasCompletedSetup && rustInterface.isClientUnlockPassphraseHashEmpty() && navController.currentBackStackEntry?.destination?.hasRoute<GreetingRoute>() != true) {
                     navController.navigate(GreetingRoute) {
                         popUpTo(0) { inclusive = true }
                         anim { enter = 0; exit = 0; popEnter = 0; popExit = 0 }
@@ -127,7 +127,7 @@ class Main : FragmentActivity() {
 
         setScreenSecure(this, Config.isUsingScreenSecurity)
 
-        if (Entry.rustInterface.isClientUnlockPassphraseHashEmpty()) Signals.authenticate++
+        if (rustInterface.isClientUnlockPassphraseHashEmpty()) Signals.authenticate++
     }
 
     override fun onStop() {
@@ -135,7 +135,7 @@ class Main : FragmentActivity() {
 
         if (Config.hasCompletedSetup && !isChangingConfigurations && Config.isUsingLockOnExit) {
             if (!Signals.suppressLockOnExit) {
-                Entry.rustInterface.clientUnload()
+                rustInterface.clientUnload()
                 Signals.authenticate++
             }
         }
@@ -159,7 +159,7 @@ class Main : FragmentActivity() {
             Intent.ACTION_VIEW -> {
                 data?.let { uri ->
                     if (uri.scheme == "otpauth") {
-                        if (Entry.rustInterface.setEditAccountFromOtpAuth(data.toString())) {
+                        if (rustInterface.setEditAccountFromOtpAuth(data.toString())) {
                             Signals.checkEditAccountSome = true
                         }
                     }
@@ -170,7 +170,7 @@ class Main : FragmentActivity() {
                     intent.getParcelableExtra(Intent.EXTRA_STREAM, android.net.Uri::class.java)?.let { uri ->
                         lifecycleScope.launch(Dispatchers.IO) {
                             val otpUrl = ZXing.decodeQRFromImage(uri, contentResolver)
-                            if (otpUrl != null && Entry.rustInterface.setEditAccountFromOtpAuth(otpUrl)) {
+                            if (otpUrl != null && rustInterface.setEditAccountFromOtpAuth(otpUrl)) {
                                 Signals.checkEditAccountSome = true
                             }
                         }

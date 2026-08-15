@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.BuildConfig
-import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
@@ -53,6 +52,7 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
+import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Logger
@@ -155,7 +155,7 @@ fun Greeting(navController: NavController) {
 
         scope.launch(Dispatchers.IO) {
             val salt = Base64.decode(Config.unlockPassphraseSalt, Base64.DEFAULT)
-            Entry.rustInterface.changeUnlockPassphraseHash(salt, passphrase)
+            rustInterface.changeUnlockPassphraseHash(salt, passphrase)
 
             val result = AccountManagement.loadAccounts(context)
 

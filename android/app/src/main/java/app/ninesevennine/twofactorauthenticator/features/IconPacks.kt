@@ -3,7 +3,7 @@ package app.ninesevennine.twofactorauthenticator.features
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.compose.ui.graphics.Color
-import app.ninesevennine.twofactorauthenticator.Entry
+import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.ColorPicker
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Logger
@@ -75,7 +75,7 @@ object IconPacks {
 
         return try {
             val svgBytes = svgFile.readBytes()
-            val bitmap = Entry.rustInterface.svgToBitmap(svgBytes, sizePx, sizePx) 
+            val bitmap = rustInterface.svgToBitmap(svgBytes, sizePx, sizePx)
             IconPackResult(bitmap, icon.color)
         } catch (_: Exception) {
             Logger.e(TAG, "Failed to load bitmap for $issuer")

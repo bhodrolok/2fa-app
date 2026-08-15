@@ -39,7 +39,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
@@ -48,6 +47,7 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
+import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import kotlinx.coroutines.Dispatchers
@@ -157,7 +157,7 @@ fun Export(navController: NavController) {
                     onValueChange = {
                         if (!isLoading) {
                             passphrase = it
-                            passphraseStrength = Entry.rustInterface.estimatePassphraseStrength(it)
+                            passphraseStrength = rustInterface.estimatePassphraseStrength(it)
                         }
                     }
                 )
@@ -191,7 +191,7 @@ fun Export(navController: NavController) {
                         scope.launch(Dispatchers.IO) {
                             Logger.i(TAG, "exporting accounts")
 
-                            val data = Entry.rustInterface.exportAccounts(passphrase)
+                            val data = rustInterface.exportAccounts(passphrase)
 
                             withContext(Dispatchers.Main) {
                                 Signals.suppressLockOnExit = true

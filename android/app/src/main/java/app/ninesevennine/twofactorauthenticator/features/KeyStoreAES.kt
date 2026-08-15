@@ -6,7 +6,7 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import app.ninesevennine.twofactorauthenticator.Entry
+import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.AtomicFileSystem
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import java.security.KeyStore
@@ -170,7 +170,7 @@ object KeyStoreAES {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 try {
                     val authenticatedCipher = result.cryptoObject?.cipher ?: cipher
-                    val data = authenticatedCipher.iv + authenticatedCipher.doFinal(Entry.rustInterface.getUnlockPassphraseHash())
+                    val data = authenticatedCipher.iv + authenticatedCipher.doFinal(rustInterface.getUnlockPassphraseHash())
 
                     val file = currentActivity.noBackupFilesDir.resolve(UNLOCK_PASSPHRASE_HASH_FILE)
                     AtomicFileSystem.write(file, data)
@@ -236,7 +236,7 @@ object KeyStoreAES {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 try {
                     val authenticatedCipher = result.cryptoObject?.cipher ?: cipher
-                    Entry.rustInterface.setUnlockPassphraseHash(authenticatedCipher.doFinal(ciphertext))
+                    rustInterface.setUnlockPassphraseHash(authenticatedCipher.doFinal(ciphertext))
 
                     Logger.i(TAG, "unlock passphrase hash loaded")
                     onSuccess()

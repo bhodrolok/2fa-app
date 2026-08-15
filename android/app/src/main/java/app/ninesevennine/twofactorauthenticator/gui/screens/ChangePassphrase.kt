@@ -38,7 +38,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
@@ -48,6 +47,7 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
+import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Logger
@@ -139,7 +139,7 @@ fun ChangePassphrase(navController: NavController) {
                     onValueChange = {
                         if (!isLoading) {
                             passphrase = it
-                            passphraseStrength = Entry.rustInterface.estimatePassphraseStrength(it)
+                            passphraseStrength = rustInterface.estimatePassphraseStrength(it)
                         }
                     }
                 )
@@ -171,15 +171,15 @@ fun ChangePassphrase(navController: NavController) {
                         isLoading = true
 
                         scope.launch(Dispatchers.IO) {
-                            val oldUnlockPassphraseHash = Entry.rustInterface.getUnlockPassphraseHash()
+                            val oldUnlockPassphraseHash = rustInterface.getUnlockPassphraseHash()
                             val oldUnlockPassphraseSalt = Config.unlockPassphraseSalt
 
                             val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
-                            Entry.rustInterface.changeUnlockPassphraseHash(salt, passphrase)
+                            rustInterface.changeUnlockPassphraseHash(salt, passphrase)
                             Config.unlockPassphraseSalt = Base64.encodeToString(salt, Base64.NO_WRAP)
 
                             if (!AccountManagement.saveAccounts(context)) {
-                                Entry.rustInterface.setUnlockPassphraseHash(oldUnlockPassphraseHash)
+                                rustInterface.setUnlockPassphraseHash(oldUnlockPassphraseHash)
                                 Config.unlockPassphraseSalt = oldUnlockPassphraseSalt
                                 isLoading = false
                                 return@launch

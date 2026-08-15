@@ -75,12 +75,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.OtpCardMinimalistic
 import app.ninesevennine.twofactorauthenticator.gui.elements.OtpCardNormal
+import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Signals
@@ -98,7 +98,7 @@ object MainRoute
 @Composable
 fun Main(navController: NavController) {
     LaunchedEffect(Signals.checkEditAccountSome) {
-        if (Entry.rustInterface.isEditAccountSome() && !Entry.rustInterface.isClientUnlockPassphraseHashEmpty()) {
+        if (rustInterface.isEditAccountSome() && !rustInterface.isClientUnlockPassphraseHashEmpty()) {
             navController.navigate(EditRoute)
         }
     }
@@ -109,7 +109,7 @@ fun Main(navController: NavController) {
     var query by remember { mutableStateOf("") }
 
     val accounts = remember(query) {
-        mutableStateListOf(*Entry.rustInterface.getAccountsTruncatedFiltered(query))
+        mutableStateListOf(*rustInterface.getAccountsTruncatedFiltered(query))
     }
 
     val configuration = LocalConfiguration.current
@@ -127,7 +127,7 @@ fun Main(navController: NavController) {
         onMove = { from, to ->
             if (query.isEmpty()) {
                 accounts.add(to.index, accounts.removeAt(from.index))
-                Entry.rustInterface.reorderAccount(from.index, to.index)
+                rustInterface.reorderAccount(from.index, to.index)
             }
         }
     )
@@ -277,7 +277,7 @@ fun Main(navController: NavController) {
                 navController.navigate(AddCodeRoute)
             },
             onAddLong = {
-                Entry.rustInterface.setEditAccountEmpty()
+                rustInterface.setEditAccountEmpty()
                 navController.navigate(EditRoute)
             }
         )
@@ -295,7 +295,7 @@ fun Main(navController: NavController) {
                 navController.navigate(AddCodeRoute)
             },
             onAddLong = {
-                Entry.rustInterface.setEditAccountEmpty()
+                rustInterface.setEditAccountEmpty()
                 navController.navigate(EditRoute)
             }
         )

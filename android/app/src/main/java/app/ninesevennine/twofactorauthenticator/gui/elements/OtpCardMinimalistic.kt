@@ -51,17 +51,17 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.AccountTruncated
 import app.ninesevennine.twofactorauthenticator.CodeType
-import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
-import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.OtpCard
 import app.ninesevennine.twofactorauthenticator.gui.screens.EditRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.OtpCardStyle
+import app.ninesevennine.twofactorauthenticator.rustInterface
+import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
 import app.ninesevennine.twofactorauthenticator.utils.Clipboard
+import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Time
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -109,7 +109,7 @@ fun OtpCardMinimalistic(
 
     val rawCode = remember(counter, isShowingNextCode, isCodeRevealed, updateCount) {
         if (isCodeRevealed) {
-            Entry.rustInterface.getAccountCode(account.id, counter, isShowingNextCode)
+            rustInterface.getAccountCode(account.id, counter, isShowingNextCode)
                 .ifEmpty { "?".repeat(account.digits) }
         } else {
             "•".repeat(account.digits)
@@ -165,8 +165,7 @@ fun OtpCardMinimalistic(
                         if (codeScopeJob?.isActive == true) {
                             codeScopeJob?.cancel()
 
-                            val code = Entry
-                                .rustInterface
+                            val code = rustInterface
                                 .getAccountCode(account.id, counter, isShowingNextCode)
                                 .ifEmpty { "?".repeat(account.digits.coerceIn(4, 10)) }
 
@@ -294,7 +293,7 @@ fun OtpCardMinimalistic(
 
                                     counterCumulativeRotation += 360f
 
-                                    val newCounter = Entry.rustInterface.incrementAccountCounterAndGet(account.id)
+                                    val newCounter = rustInterface.incrementAccountCounterAndGet(account.id)
                                     counter = newCounter
                                     onCounterChange(newCounter)
 
@@ -320,7 +319,7 @@ fun OtpCardMinimalistic(
                                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                 view.playSoundEffect(SoundEffectConstants.CLICK)
 
-                                Entry.rustInterface.copyAccountIntoEditAccount(account.id)
+                                rustInterface.copyAccountIntoEditAccount(account.id)
                                 navController.navigate(EditRoute)
                             }
                         ),

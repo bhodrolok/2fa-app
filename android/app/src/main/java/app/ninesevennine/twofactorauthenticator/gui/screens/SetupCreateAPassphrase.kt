@@ -38,7 +38,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
@@ -46,6 +45,7 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
+import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import kotlinx.coroutines.Dispatchers
@@ -129,7 +129,7 @@ fun SetupCreateAPassphrase(navController: NavController) {
                     onValueChange = {
                         if (!isLoading) {
                             passphrase = it
-                            passphraseStrength = Entry.rustInterface.estimatePassphraseStrength(it)
+                            passphraseStrength = rustInterface.estimatePassphraseStrength(it)
                         }
                     }
                 )
@@ -162,7 +162,7 @@ fun SetupCreateAPassphrase(navController: NavController) {
 
                         scope.launch(Dispatchers.IO) {
                             val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
-                            Entry.rustInterface.changeUnlockPassphraseHash(salt, passphrase)
+                            rustInterface.changeUnlockPassphraseHash(salt, passphrase)
 
                             Config.unlockPassphraseSalt = Base64.encodeToString(salt, Base64.NO_WRAP)
                             Config.save(context)

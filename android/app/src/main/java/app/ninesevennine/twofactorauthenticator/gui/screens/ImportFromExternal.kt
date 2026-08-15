@@ -42,7 +42,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import app.ninesevennine.twofactorauthenticator.Entry
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.management.ImportResult
@@ -54,6 +53,7 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.SectionButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionGroup
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
+import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import kotlinx.coroutines.Dispatchers
@@ -108,20 +108,20 @@ fun ImportFromExternal(navController: NavController) {
 
                     if (fileData != null) {
 
-                        Entry.rustInterface.client_zeroize_hostages()
+                        rustInterface.client_zeroize_hostages()
 
                         val result = when (selectedProvider) {
                             ExternalProvider.PLAIN -> {
-                                Entry.rustInterface.features_management_plain_import_into_hostages(fileData)
+                                rustInterface.features_management_plain_import_into_hostages(fileData)
                             }
                             ExternalProvider._2FAS -> {
-                                Entry.rustInterface.features_management_2fas_import_into_hostages(fileData, "")
+                                rustInterface.features_management_2fas_import_into_hostages(fileData, "")
                             }
                             ExternalProvider.AEGIS -> {
-                                Entry.rustInterface.features_management_aegis_import_into_hostages(fileData, "")
+                                rustInterface.features_management_aegis_import_into_hostages(fileData, "")
                             }
                             ExternalProvider.PROTON -> {
-                                Entry.rustInterface.features_management_proton_import_into_hostages(fileData, "")
+                                rustInterface.features_management_proton_import_into_hostages(fileData, "")
                             }
                             else -> ImportResult.INVALID_FORMAT.value
                         }
@@ -140,14 +140,14 @@ fun ImportFromExternal(navController: NavController) {
                             } else {
                                 Logger.i(TAG, "successfully imported $result account(s) into hostages")
 
-                                Entry.rustInterface.management_merge_hostages_into_accounts()
+                                rustInterface.management_merge_hostages_into_accounts()
                             }
                         }
                     }
                 } catch (e: Exception) {
                     Logger.e(TAG, "openDocumentLauncher", e)
                 } finally {
-                    Entry.rustInterface.client_zeroize_hostages()
+                    rustInterface.client_zeroize_hostages()
                     withContext(Dispatchers.Main) {
                         isLoading = false
                     }
@@ -173,13 +173,13 @@ fun ImportFromExternal(navController: NavController) {
             try {
                 val result = when (selectedProvider) {
                     ExternalProvider._2FAS -> {
-                        Entry.rustInterface.features_management_2fas_import_into_hostages(importData, passphrase)
+                        rustInterface.features_management_2fas_import_into_hostages(importData, passphrase)
                     }
                     ExternalProvider.AEGIS -> {
-                        Entry.rustInterface.features_management_aegis_import_into_hostages(importData, passphrase)
+                        rustInterface.features_management_aegis_import_into_hostages(importData, passphrase)
                     }
                     ExternalProvider.PROTON -> {
-                        Entry.rustInterface.features_management_proton_import_into_hostages(importData, passphrase)
+                        rustInterface.features_management_proton_import_into_hostages(importData, passphrase)
                     }
                     else -> ImportResult.INVALID_FORMAT.value
                 }
@@ -194,8 +194,8 @@ fun ImportFromExternal(navController: NavController) {
                     } else {
                         Logger.i(TAG, "successfully imported $result account(s) into hostages")
 
-                        Entry.rustInterface.management_merge_hostages_into_accounts()
-                        Entry.rustInterface.client_zeroize_hostages()
+                        rustInterface.management_merge_hostages_into_accounts()
+                        rustInterface.client_zeroize_hostages()
                     }
                 }
             } catch (e: Exception) {

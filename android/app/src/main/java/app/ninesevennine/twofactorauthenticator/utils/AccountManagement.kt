@@ -2,7 +2,7 @@ package app.ninesevennine.twofactorauthenticator.utils
 
 import android.content.Context
 import android.util.Base64
-import app.ninesevennine.twofactorauthenticator.Entry
+import app.ninesevennine.twofactorauthenticator.rustInterface
 
 object AccountManagement {
     private const val TAG = "AccountManagement"
@@ -17,12 +17,12 @@ object AccountManagement {
 
     fun saveAccounts(context: Context): Boolean {
         return try {
-            if (Entry.rustInterface.isClientUnlockPassphraseHashEmpty()) {
+            if (rustInterface.isClientUnlockPassphraseHashEmpty()) {
                 throw Exception("unlock passphrase hash is empty")
             }
 
             val salt = Base64.decode(Config.unlockPassphraseSalt, Base64.DEFAULT)
-            val data = Entry.rustInterface.exportAccountsUsingUnlockPassphraseHash(salt)
+            val data = rustInterface.exportAccountsUsingUnlockPassphraseHash(salt)
 
             val file = context.dataDir.resolve(ACCOUNTS_FILE)
             AtomicFileSystem.write(file, data.toByteArray(Charsets.UTF_8))
@@ -39,7 +39,7 @@ object AccountManagement {
             val file = context.dataDir.resolve(ACCOUNTS_FILE)
             val data = AtomicFileSystem.read(file)
 
-            Entry.rustInterface.importAccountsUsingUnlockPassphraseHash(data.toString(Charsets.UTF_8))
+            rustInterface.importAccountsUsingUnlockPassphraseHash(data.toString(Charsets.UTF_8))
         } catch (e: Exception) {
             Logger.e(TAG, "failed to load accounts", e)
             IMPORT_ERROR_UNKNOWN
