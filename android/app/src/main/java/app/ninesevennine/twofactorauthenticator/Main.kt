@@ -50,11 +50,6 @@ import app.ninesevennine.twofactorauthenticator.gui.screens.SelectTheme
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectThemeRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Settings
 import app.ninesevennine.twofactorauthenticator.gui.screens.SettingsRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupBiometricUnlock
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupBiometricUnlockRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupCreateAPassphrase
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStarted
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStartedRoute
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.utils.ZXing
@@ -92,16 +87,13 @@ class Main : FragmentActivity() {
             UseIncognitoKeyboard {
                 NavHost(
                     navController = navController,
-                    startDestination = if (Config.hasCompletedSetup) GreetingRoute else SetupGetStartedRoute,
+                    startDestination = MainRoute,
                     modifier = Modifier.fillMaxSize().background(Theme.colors.background),
                     enterTransition = { slideInHorizontally(initialOffsetX = { it }) },
                     exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) },
                     popEnterTransition = { slideInHorizontally(initialOffsetX = { -it }) },
                     popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) }
                 ) {
-                    composable<SetupGetStartedRoute> { SetupGetStarted(navController) }
-                    composable<SetupCreateAPassphrase> { SetupCreateAPassphrase(navController) }
-                    composable<SetupBiometricUnlockRoute> { SetupBiometricUnlock(navController) }
                     composable<MainRoute> { Main(navController) }
                     composable<GreetingRoute> { Greeting(navController) }
                     composable<SettingsRoute> { Settings(navController) }
