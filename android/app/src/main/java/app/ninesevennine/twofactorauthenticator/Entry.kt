@@ -21,6 +21,9 @@ class Entry : Application() {
             throw e
         }
 
+        rustInterface.client_application_directory_set(dataDir.absolutePath)
+        rustInterface.management_save_test()
+
         Config.load(this)
     }
 }

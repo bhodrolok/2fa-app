@@ -9,6 +9,7 @@ use crate::utils;
 pub const CLIENT_UNLOCK_PASSPHRASE_HASH_LEN: usize = 64;
 
 pub struct Client {
+    pub application_directory: String,
     pub unlock_passphrase_hash: [u8; CLIENT_UNLOCK_PASSPHRASE_HASH_LEN],
     pub edit: Option<Account>,
     pub accounts: Vec<Account>,
@@ -246,6 +247,7 @@ impl Client {
 impl Default for Client {
     fn default() -> Self {
         Self {
+            application_directory: String::new(),
             unlock_passphrase_hash: [0u8; CLIENT_UNLOCK_PASSPHRASE_HASH_LEN],
             edit: None,
             accounts: Vec::new(),

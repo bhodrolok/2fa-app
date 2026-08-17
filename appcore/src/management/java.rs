@@ -1,6 +1,33 @@
-use jni::{EnvUnowned, objects::JClass};
+use jni::{EnvUnowned, objects::JClass, strings::JNIString};
+use std::{fs::File, io::Write, path::PathBuf};
 
 use crate::CLIENT;
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_management_1save_1test(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+) {
+    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
+        let path = {
+            let client = CLIENT.lock().unwrap();
+            PathBuf::from(&client.application_directory).join("test.txt")
+        };
+
+        let result = (|| -> std::io::Result<()> {
+            let mut file = File::create(&path)?;
+            file.write_all(b"Hello from Rust!\n")?;
+            file.sync_all()
+        })();
+
+        if let Err(e) = result {
+            env.fatal_error(&JNIString::from(e.to_string()));
+        }
+
+        Ok(())
+    });
+    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
+}
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_management_1copy_1accounts_1into_1hostages(
