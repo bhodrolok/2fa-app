@@ -16,7 +16,7 @@ class RustInterface {
     external fun features_edit_color_set(argb: Int)
     external fun features_edit_color_hue_set(hue: Float)
     external fun features_edit_color_saturation_set(saturation: Float)
-    external fun features_edit_color_set(argb: String): Boolean
+    external fun features_edit_color_set(argb: String)
     external fun features_edit_name_set(name: String)
     external fun features_edit_issuer_set(issuer: String)
     external fun features_edit_note_set(note: String)

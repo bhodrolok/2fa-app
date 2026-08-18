@@ -223,6 +223,7 @@ fun Edit(navController: NavController) {
                                 text = stringResource(R.string.screen_edit_section_color_preset),
                                 onClick = {
                                     rustInterface.features_edit_color_set(iconResult.color.toArgb())
+                                    color = rustInterface.features_edit_color_get()
                                 }
                             )
                         }

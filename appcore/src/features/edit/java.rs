@@ -167,13 +167,13 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     mut unowned_env: EnvUnowned,
     _class: JClass,
     argb: JString,
-) -> jboolean {
+) {
     let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
         let argb = argb.to_string();
 
         let color = match u32::from_str_radix(argb.trim().trim_start_matches('#'), 16) {
             Ok(c) => c & 0x00FFFFFF,
-            Err(_) => return Ok(false),
+            Err(_) => return Ok(()),
         };
 
         let (h, s, _) = argb_to_hsl(color);
@@ -185,10 +185,10 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
             account.color = color;
         }
 
-        Ok(true)
+        Ok(())
     });
 
-    outcome.resolve::<ThrowRuntimeExAndDefault>()
+    outcome.resolve::<ThrowRuntimeExAndDefault>();
 }
 
 #[unsafe(no_mangle)]
