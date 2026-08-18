@@ -1,10 +1,7 @@
 use crate::{
     _client::CLIENT_UNLOCK_PASSPHRASE_HASH_LEN,
     CLIENT,
-    features::{
-        self,
-        otp::{algorithm::Algorithm, r#type::CodeType},
-    },
+    features::{self, otp::r#type::CodeType},
 };
 use jni::{
     EnvUnowned,
@@ -128,21 +125,6 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setEditAccountNone(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-) {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let mut client = CLIENT.lock().unwrap();
-        client.edit = None;
-
-        Ok(())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
-}
-
-#[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setEditAccountFromOtpAuth(
     mut unowned_env: EnvUnowned,
     _class: JClass,
@@ -163,21 +145,6 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_copyEditAccountIntoAccounts(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-) {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let mut client = CLIENT.lock().unwrap();
-        client.copy_edit_account_into_accounts();
-
-        Ok(())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
-}
-
-#[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_copyAccountIntoEditAccount(
     mut unowned_env: EnvUnowned,
     _class: JClass,
@@ -186,229 +153,6 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
         let mut client = CLIENT.lock().unwrap();
         client.copy_account_into_edit_account(id as u64);
-
-        Ok(())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setEditAccountName(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    name: JString,
-) {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let name: String = name.to_string();
-        let mut client = CLIENT.lock().unwrap();
-
-        if let Some(ref mut account) = client.edit {
-            account.name = name;
-        }
-
-        Ok(())
-    });
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setEditAccountIssuer(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    issuer: JString,
-) {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let issuer: String = issuer.to_string();
-        let mut client = CLIENT.lock().unwrap();
-
-        if let Some(ref mut account) = client.edit {
-            account.issuer = issuer;
-        }
-
-        Ok(())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setEditAccountNote(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    note: JString,
-) {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let note: String = note.to_string();
-        let mut client = CLIENT.lock().unwrap();
-
-        if let Some(ref mut account) = client.edit {
-            account.note = note;
-        }
-
-        Ok(())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setEditAccountSecretBase32NoPad(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    secret_base32_nopad: JString,
-) -> jboolean {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let secret_base32_nopad: String = secret_base32_nopad.to_string();
-        let secret_vec = match data_encoding::BASE32_NOPAD.decode(secret_base32_nopad.as_bytes()) {
-            Ok(v) => v,
-            Err(_) => return Ok(JNI_FALSE),
-        };
-
-        let mut client = CLIENT.lock().unwrap();
-        if let Some(ref mut account) = client.edit {
-            account.secret = secret_vec;
-        }
-
-        Ok(JNI_TRUE)
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setEditAccountCodeType(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    code_type_enum: JObject,
-) {
-    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
-        let value = env
-            .call_method(
-                &code_type_enum,
-                jni::jni_str!("ordinal"),
-                jni::jni_sig!("()I"),
-                &[],
-            )
-            .unwrap()
-            .i()
-            .unwrap();
-
-        let mut client = CLIENT.lock().unwrap();
-        if let Some(ref mut account) = client.edit {
-            account.code_type = match value {
-                0 => CodeType::HOTP,
-                1 => CodeType::TOTP,
-                2 => CodeType::STEAM,
-                _ => return Ok(()),
-            };
-        }
-
-        Ok(())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setEditAccountAlgorithm(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    algorithm_enum: JObject,
-) {
-    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
-        let value = env
-            .call_method(
-                &algorithm_enum,
-                jni::jni_str!("ordinal"),
-                jni::jni_sig!("()I"),
-                &[],
-            )
-            .unwrap()
-            .i()
-            .unwrap();
-
-        let mut client = CLIENT.lock().unwrap();
-        if let Some(ref mut account) = client.edit {
-            account.algorithm = match value {
-                0 => Algorithm::SHA1,
-                1 => Algorithm::SHA256,
-                2 => Algorithm::SHA512,
-                _ => return Ok(()),
-            };
-        }
-
-        Ok(())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setEditAccountCounter(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    counter: jlong,
-) {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let mut client = CLIENT.lock().unwrap();
-        if let Some(ref mut account) = client.edit {
-            account.counter = counter as u64;
-        }
-
-        Ok(())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setEditAccountPeriod(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    period: jlong,
-) {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let mut client = CLIENT.lock().unwrap();
-        if let Some(ref mut account) = client.edit {
-            account.period = period as u64;
-        }
-
-        Ok(())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setEditAccountDigits(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    digits: jint,
-) {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let mut client = CLIENT.lock().unwrap();
-        if let Some(ref mut account) = client.edit {
-            account.digits = digits as u32;
-        }
-
-        Ok(())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setEditAccountColor(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    color: jint,
-) {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let mut client = CLIENT.lock().unwrap();
-        if let Some(ref mut account) = client.edit {
-            account.color = color as u32;
-        }
 
         Ok(())
     });
@@ -428,96 +172,6 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         } else {
             Ok(JNI_FALSE)
         }
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_getEditAccountWithSecretBase32NoPad(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-) -> jobject {
-    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
-        let client = CLIENT.lock().unwrap();
-
-        let Some(ref account) = client.edit else {
-            return Ok(std::ptr::null_mut());
-        };
-
-        let code_type_class = env.find_class(jni::jni_str!(
-            "app/ninesevennine/twofactorauthenticator/CodeType"
-        )).unwrap();
-        let code_type_obj = env
-            .get_static_field(
-                code_type_class,
-                match account.code_type {
-                    CodeType::HOTP => jni::jni_str!("HOTP"),
-                    CodeType::TOTP => jni::jni_str!("TOTP"),
-                    CodeType::STEAM => jni::jni_str!("STEAM"),
-                },
-                jni::jni_sig!("Lapp/ninesevennine/twofactorauthenticator/CodeType;"),
-            ).unwrap()
-            .l().unwrap();
-
-        let algorithm_class = env.find_class(jni::jni_str!(
-            "app/ninesevennine/twofactorauthenticator/Algorithm"
-        )).unwrap();
-        let algorithm_obj = env
-            .get_static_field(
-                algorithm_class,
-                match account.algorithm {
-                    Algorithm::SHA1 => jni::jni_str!("SHA1"),
-                    Algorithm::SHA256 => jni::jni_str!("SHA256"),
-                    Algorithm::SHA512 => jni::jni_str!("SHA512"),
-                },
-                jni::jni_sig!("Lapp/ninesevennine/twofactorauthenticator/Algorithm;"),
-            ).unwrap()
-            .l().unwrap();
-
-        let id_val = jni::objects::JValue::Long(account.id as jlong);
-
-        let name_jstr = env.new_string(&account.name).unwrap();
-        let name_val = jni::objects::JValue::Object(&name_jstr);
-
-        let issuer_jstr = env.new_string(&account.issuer).unwrap();
-        let issuer_val = jni::objects::JValue::Object(&issuer_jstr);
-
-        let note_jstr = env.new_string(&account.note).unwrap();
-        let note_val = jni::objects::JValue::Object(&note_jstr);
-
-        let secret_base32 = data_encoding::BASE32_NOPAD.encode(&account.secret);
-        let secret_jstr = env.new_string(secret_base32).unwrap();
-        let secret_val = jni::objects::JValue::Object(&secret_jstr);
-
-        let code_type_val = jni::objects::JValue::Object(&code_type_obj);
-        let algorithm_val = jni::objects::JValue::Object(&algorithm_obj);
-
-        let counter_val = jni::objects::JValue::Long(account.counter as jlong);
-        let period_val = jni::objects::JValue::Long(account.period as jlong);
-        let digits_val = jni::objects::JValue::Int(account.digits as jint);
-        let color_val = jni::objects::JValue::Int(account.color as jint);
-
-        let account_obj = env
-            .new_object(
-                jni::jni_str!("app/ninesevennine/twofactorauthenticator/AccountWithSecretBase32NoPad"),
-                jni::jni_sig!("(JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lapp/ninesevennine/twofactorauthenticator/CodeType;Lapp/ninesevennine/twofactorauthenticator/Algorithm;JJII)V"),
-                &[
-                    id_val,
-                    name_val,
-                    issuer_val,
-                    note_val,
-                    secret_val,
-                    code_type_val,
-                    algorithm_val,
-                    counter_val,
-                    period_val,
-                    digits_val,
-                    color_val,
-                ],
-            ).unwrap();
-
-        Ok(account_obj.into_raw())
     });
 
     outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
@@ -624,22 +278,6 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
         let mut client = CLIENT.lock().unwrap();
         client.reorder_account(from_index as usize, to_index as usize);
-
-        Ok(())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_deleteAccount(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    id: jlong,
-) {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let mut client = CLIENT.lock().unwrap();
-        client.delete_account(id as u64);
 
         Ok(())
     });

@@ -84,8 +84,6 @@ pub fn serialize(account: &Account) -> String {
         data_encoding::HEXLOWER.encode(&account.id.to_be_bytes())
     ));
 
-    parameters.push(format!("timestamp={}", 0)); // Will be added later.
-
     if !account.note.is_empty() {
         parameters.push(format!(
             "note={}",

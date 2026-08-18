@@ -34,20 +34,20 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.ColorUtils
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
-import app.ninesevennine.twofactorauthenticator.utils.ColorPicker
 
 @Composable
 fun SectionSaturationSlider(
-    color: Color,
+    color: Int,
     onSaturationChanged: (Float) -> Unit
 ) {
     val density = LocalDensity.current
 
     val hsl = remember(color) {
-        ColorPicker.colorToHsl(color)
+        FloatArray(3).also { ColorUtils.colorToHSL(color, it) }
     }
 
     val hue = hsl[0]
@@ -61,8 +61,8 @@ fun SectionSaturationSlider(
 
     val saturationColors = remember(hue, lightness) {
         listOf(
-            ColorPicker.hslToColor(hue, 0f, lightness),
-            ColorPicker.hslToColor(hue, 1f, lightness)
+            Color(ColorUtils.HSLToColor(floatArrayOf(hue, 0f, lightness))),
+            Color(ColorUtils.HSLToColor(floatArrayOf(hue, 1f, lightness))),
         )
     }
 

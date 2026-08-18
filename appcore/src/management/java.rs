@@ -1,14 +1,58 @@
-use jni::{EnvUnowned, objects::JClass, strings::JNIString};
+use jni::{
+    EnvUnowned,
+    errors::{Error, ThrowRuntimeExAndDefault},
+    objects::JClass,
+    strings::JNIString,
+};
 use std::{fs::File, io::Write, path::PathBuf};
 
 use crate::CLIENT;
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_management_1edit_1none(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+) {
+    let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
+        let mut client = CLIENT.lock().unwrap();
+
+        client.edit = None;
+
+        Ok(())
+    });
+
+    outcome.resolve::<ThrowRuntimeExAndDefault>();
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_management_1move_1edit_1into_1accounts(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+) {
+    let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
+        let mut client = CLIENT.lock().unwrap();
+
+        let Some(account) = client.edit.take() else {
+            return Ok(());
+        };
+
+        match client.accounts.iter().position(|a| a.id == account.id) {
+            Some(i) => client.accounts[i] = account,
+            None => client.accounts.push(account),
+        }
+
+        Ok(())
+    });
+
+    outcome.resolve::<ThrowRuntimeExAndDefault>();
+}
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_management_1save_1test(
     mut unowned_env: EnvUnowned,
     _class: JClass,
 ) {
-    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
+    let outcome = unowned_env.with_env(|env| -> Result<_, Error> {
         let path = {
             let client = CLIENT.lock().unwrap();
             PathBuf::from(&client.application_directory).join("test.txt")
@@ -26,7 +70,8 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
         Ok(())
     });
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
+
+    outcome.resolve::<ThrowRuntimeExAndDefault>();
 }
 
 #[unsafe(no_mangle)]
@@ -34,7 +79,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     mut unowned_env: EnvUnowned,
     _class: JClass,
 ) {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
+    let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
         let mut client = CLIENT.lock().unwrap();
 
         client.hostages = client.accounts.clone();
@@ -42,7 +87,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         Ok(())
     });
 
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
+    outcome.resolve::<ThrowRuntimeExAndDefault>();
 }
 
 #[unsafe(no_mangle)]
@@ -50,7 +95,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     mut unowned_env: EnvUnowned,
     _class: JClass,
 ) {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
+    let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
         let mut client = CLIENT.lock().unwrap();
 
         let hostages = client.hostages.clone();
@@ -72,5 +117,5 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         Ok(())
     });
 
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
+    outcome.resolve::<ThrowRuntimeExAndDefault>();
 }

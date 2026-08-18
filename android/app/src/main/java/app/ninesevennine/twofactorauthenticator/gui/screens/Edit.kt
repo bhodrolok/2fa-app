@@ -43,9 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -70,11 +68,7 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.SectionHueSlider
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionSaturationSlider
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionTextBox
 import app.ninesevennine.twofactorauthenticator.rustInterface
-import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
 import app.ninesevennine.twofactorauthenticator.utils.Clipboard
-import app.ninesevennine.twofactorauthenticator.utils.ColorPicker
-import app.ninesevennine.twofactorauthenticator.utils.Config
-import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.utils.Time
 import kotlinx.coroutines.Dispatchers
@@ -85,48 +79,34 @@ import kotlinx.serialization.Serializable
 @Serializable
 object EditRoute
 
-private const val TAG = "Edit"
-
 @Composable
 fun Edit(navController: NavController) {
     val context = LocalContext.current
-    val haptic = LocalHapticFeedback.current
-
     val scope = rememberCoroutineScope()
 
-    val account = remember { rustInterface.getEditAccountWithSecretBase32NoPad()!! }
+    val account = remember { rustInterface.features_edit_get() }
 
     var name by remember { mutableStateOf(account.name) }
     var issuer by remember { mutableStateOf(account.issuer) }
     var note by remember { mutableStateOf(account.note) }
-    var secretBase32NoPad by remember { mutableStateOf(account.secretBase32NoPad) }
-    var codeType by remember { mutableStateOf(account.codeType) }
-    var algorithm by remember { mutableStateOf(account.algorithm) }
+    var secret by remember { mutableStateOf(account.secret) }
+    var codeType by remember { mutableStateOf(CodeType.entries.getOrElse(account.codeType) { CodeType.HOTP }) }
+    var algorithm by remember { mutableStateOf(Algorithm.entries.getOrElse(account.algorithm) { Algorithm.SHA1 }) }
     var counter by remember { mutableStateOf(account.counter.toString()) }
     var period by remember { mutableStateOf(account.period.toString()) }
     var digits by remember { mutableStateOf(account.digits.toString()) }
-    var color by remember { mutableStateOf(Color(account.color)) }
+    var color by remember { mutableIntStateOf(account.color) }
 
     val iconResult = remember(issuer) {
         IconPacks.get(context, issuer)
     }
 
-    if (color == Color.Black) {
-        color = if (Config.isUsingIconPacksDontSuggestColors) {
-            Color.White
-        } else {
-            iconResult.color ?: Color.White
-        }
+    var secretError by remember { mutableStateOf(secret.isEmpty()) }
+    var counterError by remember { mutableStateOf(false) }
+    var periodError by remember { mutableStateOf(false) }
+    var digitsError by remember { mutableStateOf(false) }
 
-        rustInterface.setEditAccountColor(color.toArgb())
-    }
-
-    var secretError by remember { mutableStateOf(secretBase32NoPad.isEmpty()) }
-    var counterError by remember { mutableStateOf(account.counter < 0) }
-    var periodError by remember { mutableStateOf(account.period < 10) }
-    var digitsError by remember { mutableStateOf(account.digits !in 4..10) }
-
-    var updateCount by remember { mutableIntStateOf(0) }
+    var update by remember { mutableIntStateOf(0) }
 
     var showColorPicker by remember { mutableStateOf(false) }
     var showDeletePrompt by remember { mutableStateOf(false) }
@@ -138,7 +118,7 @@ fun Edit(navController: NavController) {
 
     BackHandler {
         Signals.checkEditAccountSome = false
-        rustInterface.setEditAccountNone()
+        rustInterface.management_edit_none()
         navController.popBackStack(MainRoute, false)
     }
 
@@ -179,9 +159,9 @@ fun Edit(navController: NavController) {
                             counter.toLongOrNull()?.coerceAtLeast(0) ?: 0,
                             period.toLongOrNull()?.coerceAtLeast(10) ?: 10,
                             digits.toIntOrNull()?.coerceIn(4, 10) ?: 6,
-                            color.toArgb()
+                            color
                         ),
-                        updateCount,
+                        update,
                         {
                             counter = it.toString()
                         },
@@ -215,30 +195,26 @@ fun Edit(navController: NavController) {
                     ) {
                         Spacer(Modifier.height(8.dp))
 
-                        SectionHueSlider(color) { hue ->
-                            val oldHsl = ColorPicker.colorToHsl(color)
-                            color = ColorPicker.hslToColor(hue, oldHsl[1], 0.5f)
-                            rustInterface.setEditAccountColor(color.toArgb())
+                        SectionHueSlider(color) {
+                            rustInterface.features_edit_color_hue_set(it)
+                            color = rustInterface.features_edit_color_get()
                         }
 
-                        SectionSaturationSlider(color) { saturation ->
-                            val oldHsv = ColorPicker.colorToHsl(color)
-                            color = ColorPicker.hslToColor(oldHsv[0], saturation, 0.5f)
-                            rustInterface.setEditAccountColor(color.toArgb())
+                        SectionSaturationSlider(color) {
+                            rustInterface.features_edit_color_saturation_set(it)
+                            color = rustInterface.features_edit_color_get()
                         }
 
                         SectionDualButtonSmall(
                             leftText = stringResource(R.string.screen_edit_section_color_copy),
                             rightText = stringResource(R.string.screen_edit_section_color_paste),
                             onLeft = {
-                                Clipboard.copy(context, "color", ColorPicker.toRgbHexString(color), false)
+                                Clipboard.copy(context, "color", rustInterface.features_edit_color_get_as_hex(), false)
                             },
                             onRight = {
                                 val text = Clipboard.paste(context) ?: return@SectionDualButtonSmall
-                                val parsed = ColorPicker.fromHexString(text) ?: return@SectionDualButtonSmall
-                                val hsl = ColorPicker.colorToHsl(parsed)
-                                color = ColorPicker.hslToColor(hsl[0], hsl[1], 0.5f).copy(alpha = 1f)
-                                rustInterface.setEditAccountColor(color.toArgb())
+                                rustInterface.features_edit_color_set(text)
+                                color = rustInterface.features_edit_color_get()
                             }
                         )
 
@@ -246,8 +222,7 @@ fun Edit(navController: NavController) {
                             SectionButtonSmall(
                                 text = stringResource(R.string.screen_edit_section_color_preset),
                                 onClick = {
-                                    color = iconResult.color
-                                    rustInterface.setEditAccountColor(color.toArgb())
+                                    rustInterface.features_edit_color_set(iconResult.color.toArgb())
                                 }
                             )
                         }
@@ -266,25 +241,27 @@ fun Edit(navController: NavController) {
                         title = stringResource(R.string.screen_edit_section_details_name),
                         value = name,
                         onValueChange = {
-                            rustInterface.setEditAccountName(it.trim())
+                            rustInterface.features_edit_name_set(it)
                             name = it
                         }
                     )
 
-                    SectionTextBox(
-                        title = stringResource(R.string.screen_edit_section_details_issuer),
-                        value = issuer,
-                        onValueChange = {
-                            rustInterface.setEditAccountIssuer(it.trim())
-                            issuer = it
-                        }
-                    )
+                    if (codeType != CodeType.STEAM) {
+                        SectionTextBox(
+                            title = stringResource(R.string.screen_edit_section_details_issuer),
+                            value = issuer,
+                            onValueChange = {
+                                rustInterface.features_edit_issuer_set(it)
+                                issuer = it
+                            }
+                        )
+                    }
 
                     SectionTextBox(
                         title = stringResource(R.string.screen_edit_section_details_note),
                         value = note,
                         onValueChange = {
-                            rustInterface.setEditAccountNote(it.trim())
+                            rustInterface.features_edit_note_set(it)
                             note = it
                         }
                     )
@@ -300,13 +277,13 @@ fun Edit(navController: NavController) {
 
                     SectionConfidentialTextBox(
                         title = stringResource(R.string.screen_edit_section_parameters_secret),
-                        value = secretBase32NoPad,
+                        value = secret,
                         onValueChange = {
-                            val trimmed = it.trim()
-                            secretBase32NoPad = trimmed
-
-                            secretError = !rustInterface.setEditAccountSecretBase32NoPad(trimmed)
-                            if (!secretError) updateCount++
+                            secretError = !rustInterface.features_edit_secret_set(it)
+                            secret = it
+                            if (!secretError)  {
+                                update++
+                            }
                         },
                         placeholder = "Base32",
                         error = secretError
@@ -317,21 +294,24 @@ fun Edit(navController: NavController) {
                         options = CodeType.entries.toTypedArray(),
                         selectedOption = codeType,
                         onOptionSelected = {
-                            rustInterface.setEditAccountCodeType(it)
+                            rustInterface.features_edit_type_set(it.ordinal)
                             codeType = it
 
                             if (it == CodeType.STEAM) {
+                                rustInterface.features_edit_issuer_set("Steam")
+                                issuer = "Steam"
+
+                                rustInterface.features_edit_algorithm_set(Algorithm.SHA1.ordinal)
+                                algorithm = Algorithm.SHA1
+
+                                periodError = !rustInterface.features_edit_period_set("30")
                                 period = "30"
+
+                                digitsError = !rustInterface.features_edit_digits_set("5")
                                 digits = "5"
-
-                                rustInterface.setEditAccountPeriod(30)
-                                rustInterface.setEditAccountDigits(5)
-
-                                periodError = false
-                                digitsError = false
                             }
 
-                            updateCount++
+                            update++
                         },
                         label = { it.displayName }
                     )
@@ -342,9 +322,9 @@ fun Edit(navController: NavController) {
                             options = Algorithm.entries.toTypedArray(),
                             selectedOption = algorithm,
                             onOptionSelected = {
-                                rustInterface.setEditAccountAlgorithm(it)
+                                rustInterface.features_edit_algorithm_set(it.ordinal)
                                 algorithm = it
-                                updateCount++
+                                update++
                             },
                             label = { it.displayName }
                         )
@@ -354,36 +334,30 @@ fun Edit(navController: NavController) {
                                 title = stringResource(R.string.screen_edit_section_parameters_counter),
                                 value = counter,
                                 onValueChange = {
-                                    val trimmed = it.trim()
-                                    counter = trimmed
-
-                                    counterError = !trimmed.matches(Regex("^0$|^[1-9]\\d*$"))
+                                    counterError = !rustInterface.features_edit_counter_set(it)
+                                    counter = it
                                     if (!counterError) {
-                                        rustInterface.setEditAccountCounter(trimmed.toLong())
-                                        updateCount++
+                                        update++
                                     }
                                 },
                                 placeholder = "0+",
                                 numberField = true,
-                                counterError
+                                error = counterError
                             )
                         } else {
                             SectionTextBox(
                                 title = stringResource(R.string.screen_edit_section_parameters_period),
                                 value = period,
                                 onValueChange = {
-                                    val trimmed = it.trim()
-                                    period = trimmed
-
-                                    periodError = !trimmed.matches(Regex("^[1-9]\\d+$"))
+                                    periodError = !rustInterface.features_edit_period_set(it)
+                                    period = it
                                     if (!periodError) {
-                                        rustInterface.setEditAccountPeriod(trimmed.toLong())
-                                        updateCount++
+                                        update++
                                     }
                                 },
                                 placeholder = "10+",
                                 numberField = true,
-                                periodError
+                                error = periodError
                             )
                         }
 
@@ -391,18 +365,15 @@ fun Edit(navController: NavController) {
                             title = stringResource(R.string.screen_edit_section_parameters_digits),
                             value = digits,
                             onValueChange = {
-                                val trimmed = it.trim()
-                                digits = trimmed
-
-                                digitsError = !trimmed.matches(Regex("^[4-9]$|^10$"))
+                                digitsError = !rustInterface.features_edit_digits_set(it)
+                                digits = it
                                 if (!digitsError) {
-                                    rustInterface.setEditAccountDigits(trimmed.toInt())
-                                    updateCount++
+                                    update++
                                 }
                             },
                             placeholder = "4-10",
                             numberField = true,
-                            digitsError
+                            error = digitsError
                         )
                     }
 
@@ -425,43 +396,32 @@ fun Edit(navController: NavController) {
             title = stringResource(R.string.screen_edit_title),
             onCancel = {
                 Signals.checkEditAccountSome = false
-                rustInterface.setEditAccountNone()
+                rustInterface.management_edit_none()
                 navController.popBackStack(MainRoute, false)
             },
             onDone = {
                 if (secretError || digitsError) {
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     return@EditHeader
                 }
 
                 if (codeType == CodeType.HOTP && counterError) {
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     return@EditHeader
                 }
 
                 if (codeType == CodeType.TOTP && periodError) {
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     return@EditHeader
                 }
 
                 scope.launch(Dispatchers.IO) {
-                    rustInterface.copyEditAccountIntoAccounts()
-                    rustInterface.setEditAccountNone()
+                    rustInterface.management_move_edit_into_accounts()
 
-                    if (!AccountManagement.saveAccounts(context)) {
-                        return@launch
-                    }
+//                    if (!AccountManagement.saveAccounts(context)) {
+//                        return@launch
+//                    }
 
                     if (Signals.checkEditAccountSome) {
                         Signals.checkEditAccountSome = false
                         Signals.accountAdded = true
-
-                        Logger.i(TAG, "successfully added an account")
-                    } else {
-                        Logger.i(TAG, "successfully modified an account")
                     }
 
                     withContext(Dispatchers.Main) {
@@ -480,14 +440,11 @@ fun Edit(navController: NavController) {
         DeletePrompt(
             onDelete = {
                 scope.launch(Dispatchers.IO) {
-                    rustInterface.deleteAccount(account.id)
-                    rustInterface.setEditAccountNone()
+                    rustInterface.features_edit_delete(account.id)
 
-                    if (!AccountManagement.saveAccounts(context)) {
-                        return@launch
-                    }
-
-                    Logger.i(TAG, "successfully deleted an account")
+//                    if (!AccountManagement.saveAccounts(context)) {
+//                        return@launch
+//                    }
 
                     withContext(Dispatchers.Main) {
                         navController.popBackStack(MainRoute, false)

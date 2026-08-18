@@ -78,16 +78,6 @@ impl Client {
         }
     }
 
-    pub fn copy_edit_account_into_accounts(&mut self) {
-        if let Some(edit) = &self.edit {
-            if let Some(existing) = self.accounts.iter_mut().find(|a| a.id == edit.id) {
-                *existing = edit.clone();
-            } else {
-                self.accounts.push(edit.clone());
-            }
-        }
-    }
-
     pub fn copy_account_into_edit_account(&mut self, id: u64) {
         if let Some(account) = self.accounts.iter().find(|a| a.id == id) {
             self.edit = Some(account.clone());
@@ -237,10 +227,6 @@ impl Client {
         } else {
             self.accounts[to_index..=from_index].rotate_right(1);
         }
-    }
-
-    pub fn delete_account(&mut self, id: u64) {
-        self.accounts.retain(|a| a.id != id);
     }
 }
 

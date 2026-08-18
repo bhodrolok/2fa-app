@@ -1,5 +1,6 @@
 package app.ninesevennine.twofactorauthenticator.gui.elements
 
+import android.graphics.Color.colorToHSV
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -25,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -41,13 +41,13 @@ import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 
 @Composable
 fun SectionHueSlider(
-    color: Color,
+    color: Int,
     onHueChanged: (Float) -> Unit
 ) {
     val density = LocalDensity.current
 
     val hsv = remember(color) {
-        FloatArray(3).also { android.graphics.Color.colorToHSV(color.toArgb(), it) }
+        FloatArray(3).also { colorToHSV(color, it) }
     }
 
     val hue = hsv[0]

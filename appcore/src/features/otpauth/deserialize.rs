@@ -33,14 +33,13 @@ pub fn deserialize(uri: &str) -> Option<Account> {
 
     // 3.4. parameters
     let mut id = getrandom::u64().ok()?;
-    let mut _timestamp = 0; // Will be added later.
     let mut note = String::new();
     let mut secret = Vec::new();
     let mut algorithm = Algorithm::SHA1;
     let mut counter = 0;
     let mut period = 30;
     let mut digits = 6;
-    let mut color = 0xFF000000;
+    let mut color = 0xFF808080;
 
     for parameter in query.split('&') {
         let (key, value) = parameter.split_once('=').unwrap_or((parameter, ""));
@@ -52,7 +51,6 @@ pub fn deserialize(uri: &str) -> Option<Account> {
                     .ok()?;
                 id = u64::from_be_bytes(bytes.try_into().ok()?);
             }
-            "timestamp" => _timestamp = value.parse().ok()?,
             "issuer" => {
                 issuer = percent_decode_str(value)
                     .decode_utf8()

@@ -1,3 +1,4 @@
+pub mod edit;
 pub mod hotp;
 pub mod management;
 pub mod otp;
