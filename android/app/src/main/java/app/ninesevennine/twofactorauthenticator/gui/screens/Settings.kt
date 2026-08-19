@@ -152,20 +152,6 @@ fun Settings(navController: NavController) {
                     ) {
                         navController.navigate(SelectIconPacksRoute)
                     }
-
-
-                    SectionButton(
-                        painter = painterResource(R.drawable.mi_vertical_align_top),
-                        tint = Theme.colors.primary,
-                        primaryText = stringResource(R.string.screen_settings_appearance_search_on_top),
-                        enabled = Config.isUsingSearchOnTop
-                    ) {
-                        Config.isUsingSearchOnTop = !Config.isUsingSearchOnTop
-
-                        Logger.i(TAG, "search on top set to ${Config.isUsingSearchOnTop}")
-
-                        Config.save(context)
-                    }
                 }
 
                 SectionGroup(

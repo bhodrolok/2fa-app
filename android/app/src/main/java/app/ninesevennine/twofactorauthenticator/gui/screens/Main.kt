@@ -263,43 +263,23 @@ fun Main(navController: NavController) {
         }
     }
 
-    if (Config.isUsingSearchOnTop) {
-        TopBar(
-            onSearch = {
-                if (query != it) {
-                    query = it
-                }
-            },
-            onSettings = {
-                navController.navigate(SettingsRoute)
-            },
-            onAdd = {
-                navController.navigate(AddCodeRoute)
-            },
-            onAddLong = {
-                rustInterface.setEditAccountEmpty()
-                navController.navigate(EditRoute)
+    TopBar(
+        onSearch = {
+            if (query != it) {
+                query = it
             }
-        )
-    } else {
-        BottomBar(
-            onSearch = {
-                if (query != it) {
-                    query = it
-                }
-            },
-            onSettings = {
-                navController.navigate(SettingsRoute)
-            },
-            onAdd = {
-                navController.navigate(AddCodeRoute)
-            },
-            onAddLong = {
-                rustInterface.setEditAccountEmpty()
-                navController.navigate(EditRoute)
-            }
-        )
-    }
+        },
+        onSettings = {
+            navController.navigate(SettingsRoute)
+        },
+        onAdd = {
+            navController.navigate(AddCodeRoute)
+        },
+        onAddLong = {
+            rustInterface.setEditAccountEmpty()
+            navController.navigate(EditRoute)
+        }
+    )
 }
 
 @Composable
@@ -473,203 +453,6 @@ private fun TopBar(
                     .clip(addShape)
                     .background(color = Theme.colors.surface, shape = addShape)
                     .border(1.dp, Theme.colors.border, addShape)
-                    .combinedClickable(
-                        interactionSource = addInteractionSource,
-                        indication = null,
-                        onClick = {
-                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                            view.playSoundEffect(SoundEffectConstants.CLICK)
-
-                            onAdd()
-                        },
-                        onLongClick = {
-                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                            view.playSoundEffect(SoundEffectConstants.CLICK)
-
-                            onAddLong()
-                        }
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.mi_add_2),
-                    contentDescription = null,
-                    modifier = Modifier.size(26.dp),
-                    tint = Theme.colors.primary
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun BottomBar(
-    onSearch: (String) -> Unit,
-    onSettings: () -> Unit,
-    onAdd: () -> Unit,
-    onAddLong: () -> Unit
-) {
-    val haptic = LocalHapticFeedback.current
-    val view = LocalView.current
-    val focusManager = LocalFocusManager.current
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val layoutDirection = LocalLayoutDirection.current
-
-    var query by remember { mutableStateOf("") }
-    val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(Unit) {
-        if (Config.isUsingFocusSearchOnLaunch && !Signals.suppressFocusRequestOnLaunch) {
-            focusRequester.requestFocus()
-            Signals.suppressFocusRequestOnLaunch = true
-        }
-    }
-
-    val settingsInteractionSource = remember { MutableInteractionSource() }
-    val isSettingsPressed by settingsInteractionSource.collectIsPressedAsState()
-    val settingsScale by animateFloatAsState(if (isSettingsPressed) 0.95f else 1f)
-
-    val addInteractionSource = remember { MutableInteractionSource() }
-    val isAddPressed by addInteractionSource.collectIsPressedAsState()
-    val addScale by animateFloatAsState(if (isAddPressed) 0.95f else 1f)
-
-    val shape = RoundedCornerShape(24.dp)
-
-    val navBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it > 16.dp) it else 16.dp }
-    val keyboardPadding = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
-    val isKeyboardOpen = keyboardPadding + 6.dp > navBarPadding + 48.dp
-
-    val bottomPadding = if (isKeyboardOpen) keyboardPadding + 4.dp else WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
-    val horizontalPadding = if (isKeyboardOpen) {
-        WindowInsets.displayCutout.asPaddingValues().let {
-            PaddingValues(
-                start = it.calculateLeftPadding(layoutDirection) + 4.dp,
-                end = it.calculateRightPadding(layoutDirection) + 4.dp
-            )
-        }
-    } else {
-        PaddingValues(horizontal = 16.dp)
-    }
-
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.BottomCenter
-    ) {
-        Row(
-            modifier = Modifier
-                .widthIn(max = if (!isKeyboardOpen) 512.dp else 10000.dp)
-                .padding(bottom = bottomPadding)
-                .then(
-                    if(isKeyboardOpen) {
-                        Modifier.padding(horizontalPadding)
-                    } else {
-                        Modifier.padding(horizontal = 16.dp)
-                    }
-                )
-        ) {
-            BasicTextField(
-                value = query,
-                onValueChange = {
-                    query = it
-                    onSearch(it.trim())
-                },
-                modifier = Modifier
-                    .height(48.dp)
-                    .weight(1f)
-                    .clip(shape)
-                    .background(color = Theme.colors.surface, shape = shape)
-                    .border(1.dp, Theme.colors.border, shape)
-                    .focusRequester(focusRequester),
-                singleLine = true,
-                textStyle = TextStyle(
-                    fontFamily = InterVariable,
-                    fontWeight = FontWeight.W700,
-                    fontSize = 14.sp,
-                    color = Theme.colors.primary
-                ),
-                cursorBrush = SolidColor(Theme.colors.primary),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(
-                    onSearch = {
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-
-                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                        view.playSoundEffect(SoundEffectConstants.CLICK)
-                    }
-                ),
-                decorationBox = { innerTextField ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.mi_search),
-                            contentDescription = null,
-                            modifier = Modifier.size(26.dp),
-                            tint = Theme.colors.primary
-                        )
-
-                        Box(
-                            modifier = Modifier
-                                .padding(start = 6.dp)
-                                .weight(1f)
-                        ) {
-                            if (query.isEmpty()) {
-                                Text(
-                                    text = stringResource(R.string.screen_main_search),
-                                    fontFamily = InterVariable,
-                                    fontWeight = FontWeight.W500,
-                                    fontSize = 14.sp,
-                                    color = Theme.colors.primary
-                                )
-                            }
-                            innerTextField()
-                        }
-                    }
-                }
-            )
-
-            Spacer(modifier = Modifier.width(6.dp))
-
-            Box(
-                modifier = Modifier
-                    .graphicsLayer(scaleX = settingsScale, scaleY = settingsScale)
-                    .size(48.dp)
-                    .clip(shape)
-                    .background(color = Theme.colors.surface, shape = shape)
-                    .border(1.dp, Theme.colors.border, shape)
-                    .clickable(
-                        interactionSource = settingsInteractionSource,
-                        indication = ripple(color = Theme.colors.primary),
-                        onClick = {
-                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                            view.playSoundEffect(SoundEffectConstants.CLICK)
-
-                            onSettings()
-                        }
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.mi_settings),
-                    contentDescription = null,
-                    modifier = Modifier.size(26.dp),
-                    tint = Theme.colors.primary
-                )
-            }
-
-            Spacer(modifier = Modifier.width(6.dp))
-
-            Box(
-                modifier = Modifier
-                    .graphicsLayer(scaleX = addScale, scaleY = addScale)
-                    .size(48.dp)
-                    .clip(shape)
-                    .background(color = Theme.colors.surface, shape = shape)
-                    .border(1.dp, Theme.colors.border, shape)
                     .combinedClickable(
                         interactionSource = addInteractionSource,
                         indication = null,
