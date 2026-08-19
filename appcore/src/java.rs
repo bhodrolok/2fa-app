@@ -1,12 +1,12 @@
 use crate::{
     _client::CLIENT_UNLOCK_PASSPHRASE_HASH_LEN,
     CLIENT,
-    features::{self, otp::r#type::CodeType},
+    features::{self},
 };
 use jni::{
     EnvUnowned,
-    objects::{JByteArray, JClass, JIntArray, JObject, JString, JValue},
-    sys::{JNI_FALSE, JNI_TRUE, jboolean, jbyteArray, jint, jlong, jobject, jobjectArray, jstring},
+    objects::{JByteArray, JClass, JIntArray, JString, JValue},
+    sys::{JNI_FALSE, JNI_TRUE, jboolean, jbyteArray, jint, jobject, jstring},
 };
 
 #[unsafe(no_mangle)]
@@ -145,22 +145,6 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_copyAccountIntoEditAccount(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    id: jlong,
-) {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let mut client = CLIENT.lock().unwrap();
-        client.copy_account_into_edit_account(id as u64);
-
-        Ok(())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
-}
-
-#[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_isEditAccountSome(
     mut unowned_env: EnvUnowned,
     _class: JClass,
@@ -172,143 +156,6 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         } else {
             Ok(JNI_FALSE)
         }
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_getAccountsTruncatedFiltered(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    query: JString,
-) -> jobjectArray {
-    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
-        let query: String = query.to_string();
-
-        let client = CLIENT.lock().unwrap();
-        let accounts = client.get_accounts_truncated_filtered(&query);
-
-        let account_class = env.find_class(jni::jni_str!(
-            "app/ninesevennine/twofactorauthenticator/AccountTruncated"
-        )).unwrap();
-        let code_type_class = env.find_class(jni::jni_str!(
-            "app/ninesevennine/twofactorauthenticator/CodeType"
-        )).unwrap();
-
-        let output = env.new_object_array(accounts.len() as jint, &account_class, JObject::null()).unwrap();
-
-        for (i, account) in accounts.iter().enumerate() {
-            let code_type_obj = env
-                .get_static_field(
-                    &code_type_class,
-                    match account.code_type {
-                        CodeType::HOTP => jni::jni_str!("HOTP"),
-                        CodeType::TOTP => jni::jni_str!("TOTP"),
-                        CodeType::STEAM => jni::jni_str!("STEAM"),
-                    },
-                    jni::jni_sig!("Lapp/ninesevennine/twofactorauthenticator/CodeType;"),
-                ).unwrap()
-                .l().unwrap();
-
-            let id_val = jni::objects::JValue::Long(account.id as jlong);
-            let name_jstr = env.new_string(&account.name).unwrap();
-            let name_val = jni::objects::JValue::Object(&name_jstr);
-
-            let issuer_jstr = env.new_string(&account.issuer).unwrap();
-            let issuer_val = jni::objects::JValue::Object(&issuer_jstr);
-
-            let code_type_val = jni::objects::JValue::Object(&code_type_obj);
-
-            let counter_val = jni::objects::JValue::Long(account.counter as jlong);
-            let period_val = jni::objects::JValue::Long(account.period as jlong);
-            let digits_val = jni::objects::JValue::Int(account.digits as jint);
-            let color_val = jni::objects::JValue::Int(account.color as jint);
-
-            let account_obj = env
-                .new_object(
-                    &account_class,
-                    jni::jni_sig!("(JLjava/lang/String;Ljava/lang/String;Lapp/ninesevennine/twofactorauthenticator/CodeType;JJII)V"),
-                    &[
-                        id_val,
-                        name_val,
-                        issuer_val,
-                        code_type_val,
-                        counter_val,
-                        period_val,
-                        digits_val,
-                        color_val,
-                    ],
-                ).unwrap();
-
-            output.set_element(env, i, account_obj).unwrap();
-        }
-
-        Ok(output.into_raw())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_getAccountCode(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    id: jlong,
-    counter: jlong,
-    show_next: jboolean,
-) -> jstring {
-    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
-        let client = CLIENT.lock().unwrap();
-        let code = client.get_account_code(id as u64, counter as u64, show_next);
-
-        Ok(env.new_string(code).unwrap().into_raw())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_reorderAccount(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    from_index: jint,
-    to_index: jint,
-) {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let mut client = CLIENT.lock().unwrap();
-        client.reorder_account(from_index as usize, to_index as usize);
-
-        Ok(())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_incrementAccountCounterAndGet(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    id: jlong,
-) -> jlong {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let mut client = CLIENT.lock().unwrap();
-
-        if let Some(ref mut account) = client.edit {
-            if account.id == id as u64 {
-                account.counter = account.counter.wrapping_add(1);
-                return Ok(account.counter as jlong);
-            }
-        }
-
-        for account in &mut client.accounts {
-            if account.id == id as u64 {
-                account.counter = account.counter.wrapping_add(1);
-                return Ok(account.counter as jlong);
-            }
-        }
-
-        Ok(0)
     });
 
     outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()

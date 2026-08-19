@@ -1,9 +1,9 @@
 use zeroize::Zeroize;
 
-use crate::account::{Account, AccountTruncated};
+use crate::account::Account;
 use crate::features::otp::algorithm::Algorithm;
 use crate::features::otp::r#type::CodeType;
-use crate::features::{hotp, otpauth, steam};
+use crate::features::otpauth;
 use crate::utils;
 
 pub const CLIENT_UNLOCK_PASSPHRASE_HASH_LEN: usize = 64;
@@ -75,157 +75,6 @@ impl Client {
             true
         } else {
             false
-        }
-    }
-
-    pub fn copy_account_into_edit_account(&mut self, id: u64) {
-        if let Some(account) = self.accounts.iter().find(|a| a.id == id) {
-            self.edit = Some(account.clone());
-        }
-    }
-
-    fn truncate_account(account: &Account) -> AccountTruncated {
-        AccountTruncated {
-            id: account.id,
-            name: account.name.clone(),
-            issuer: account.issuer.clone(),
-            code_type: account.code_type,
-            counter: account.counter,
-            period: account.period,
-            digits: account.digits,
-            color: account.color,
-        }
-    }
-
-    pub fn get_accounts_truncated_filtered(&self, query: &str) -> Vec<AccountTruncated> {
-        if query.is_empty() {
-            return self.accounts.iter().map(Self::truncate_account).collect();
-        }
-
-        let query_lower = query.to_lowercase();
-
-        let query_chars: Vec<char> = query_lower.chars().collect();
-        let query_ngrams: Vec<(char, char)> =
-            query_chars.windows(2).map(|w| (w[0], w[1])).collect();
-
-        let ngram_overlap_score = |target: &str| -> f32 {
-            let target_ngrams: Vec<(char, char)> = target
-                .chars()
-                .collect::<Vec<char>>()
-                .windows(2)
-                .map(|w| (w[0], w[1]))
-                .collect();
-
-            if query_ngrams.is_empty() || target_ngrams.is_empty() {
-                return 0.0;
-            }
-
-            let common_count = query_ngrams
-                .iter()
-                .filter(|bg| target_ngrams.contains(bg))
-                .count();
-
-            (2 * common_count) as f32 / (query_ngrams.len() + target_ngrams.len()) as f32
-        };
-
-        let threshold: f32 = match query_lower.len() {
-            0..=3 => 0.3,
-            4..=6 => 0.5,
-            _ => 0.6,
-        };
-
-        let mut filtered: Vec<(&Account, f32)> = self
-            .accounts
-            .iter()
-            .filter_map(|account| {
-                let name_lower = account.name.to_lowercase();
-                let issuer_lower = account.issuer.to_lowercase();
-                let note_lower = account.note.to_lowercase();
-
-                let mut name_score = ngram_overlap_score(&name_lower);
-                let mut issuer_score = ngram_overlap_score(&issuer_lower);
-                let note_score = if note_lower.contains(&query_lower) {
-                    1.0
-                } else {
-                    0.0
-                };
-
-                if name_lower.contains(&query_lower) {
-                    name_score = name_score.max(1.0);
-                }
-
-                if issuer_lower.contains(&query_lower) {
-                    issuer_score = issuer_score.max(1.0);
-                }
-
-                let best_score = name_score.max(issuer_score).max(note_score);
-
-                if best_score >= threshold {
-                    Some((account, best_score))
-                } else {
-                    None
-                }
-            })
-            .collect();
-
-        filtered
-            .sort_unstable_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
-
-        filtered
-            .into_iter()
-            .map(|(account, _)| Self::truncate_account(account))
-            .collect()
-    }
-
-    pub fn get_account_code(&self, id: u64, counter: u64, show_next: bool) -> String {
-        let account = match &self.edit {
-            Some(edit_account) if edit_account.id == id => edit_account,
-            _ => match self.accounts.iter().find(|a| a.id == id) {
-                Some(account) => account,
-                None => return String::new(),
-            },
-        };
-
-        if account.secret.is_empty() || !(4..=10).contains(&account.digits) {
-            return String::new();
-        }
-
-        if matches!(account.code_type, CodeType::TOTP | CodeType::STEAM) && account.period < 10 {
-            return String::new();
-        }
-
-        let final_counter = if show_next { counter + 1 } else { counter };
-
-        match account.code_type {
-            CodeType::TOTP => hotp::generate(
-                &account.secret,
-                account.algorithm,
-                account.digits,
-                final_counter,
-            ),
-            CodeType::HOTP => hotp::generate(
-                &account.secret,
-                account.algorithm,
-                account.digits,
-                account.counter,
-            ),
-            CodeType::STEAM => steam::generate(&account.secret, final_counter * account.period),
-        }
-    }
-
-    pub fn reorder_account(&mut self, from_index: usize, to_index: usize) {
-        if from_index >= self.accounts.len() || to_index >= self.accounts.len() {
-            return;
-        }
-
-        if from_index == to_index {
-            return;
-        }
-
-        if from_index < to_index {
-            self.accounts[from_index..=to_index].rotate_left(1);
-        } else {
-            self.accounts[to_index..=from_index].rotate_right(1);
         }
     }
 }

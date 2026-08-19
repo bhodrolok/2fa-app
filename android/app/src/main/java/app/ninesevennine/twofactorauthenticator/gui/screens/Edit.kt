@@ -49,7 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import app.ninesevennine.twofactorauthenticator.AccountTruncated
+import app.ninesevennine.twofactorauthenticator.AccountShort
 import app.ninesevennine.twofactorauthenticator.Algorithm
 import app.ninesevennine.twofactorauthenticator.CodeType
 import app.ninesevennine.twofactorauthenticator.R
@@ -101,6 +101,7 @@ fun Edit(navController: NavController) {
         IconPacks.get(context, issuer)
     }
 
+    var nameError by remember { mutableStateOf(false) }
     var secretError by remember { mutableStateOf(secret.isEmpty()) }
     var counterError by remember { mutableStateOf(false) }
     var periodError by remember { mutableStateOf(false) }
@@ -151,14 +152,13 @@ fun Edit(navController: NavController) {
                 ) {
                     OtpCardNormal(
                         navController,
-                        AccountTruncated(
+                        AccountShort(
                             account.id,
                             name,
                             issuer,
-                            codeType,
+                            codeType.ordinal,
                             counter.toLongOrNull()?.coerceAtLeast(0) ?: 0,
                             period.toLongOrNull()?.coerceAtLeast(10) ?: 10,
-                            digits.toIntOrNull()?.coerceIn(4, 10) ?: 6,
                             color
                         ),
                         update,
@@ -242,9 +242,10 @@ fun Edit(navController: NavController) {
                         title = stringResource(R.string.screen_edit_section_details_name),
                         value = name,
                         onValueChange = {
-                            rustInterface.features_edit_name_set(it)
+                            nameError = !rustInterface.features_edit_name_set(it)
                             name = it
-                        }
+                        },
+                        error = nameError
                     )
 
                     if (codeType != CodeType.STEAM) {
@@ -401,7 +402,7 @@ fun Edit(navController: NavController) {
                 navController.popBackStack(MainRoute, false)
             },
             onDone = {
-                if (secretError || digitsError) {
+                if (nameError || secretError || digitsError) {
                     return@EditHeader
                 }
 

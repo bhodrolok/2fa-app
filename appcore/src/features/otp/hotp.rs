@@ -5,7 +5,6 @@ use sha2::{Sha256, Sha512};
 use crate::features::otp::algorithm::Algorithm;
 
 pub fn generate(secret: &[u8], algorithm: Algorithm, digits: u32, counter: u64) -> String {
-    assert!((4..=10).contains(&digits), "hotp invalid digits={}", digits);
     let counter_bytes = counter.to_be_bytes();
 
     let mut buf = [0u8; 64];

@@ -92,6 +92,10 @@ pub fn deserialize(uri: &str) -> Option<Account> {
         }
     }
 
+    if name == issuer {
+        name.clear();
+    }
+
     if code_type == CodeType::TOTP && issuer.eq_ignore_ascii_case("Steam") {
         code_type = CodeType::STEAM;
         algorithm = Algorithm::SHA1;

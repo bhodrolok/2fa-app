@@ -196,20 +196,27 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     mut unowned_env: EnvUnowned,
     _class: JClass,
     name: JString,
-) {
+) -> jboolean {
     let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
         let name = name.to_string();
+        let name = name.trim();
 
         let mut client = CLIENT.lock().unwrap();
 
-        if let Some(account) = &mut client.edit {
-            account.name = name.trim().to_string();
+        let Some(account) = &mut client.edit else {
+            return Ok(false);
+        };
+
+        if !name.is_empty() && name == account.issuer {
+            return Ok(false);
         }
 
-        Ok(())
+        account.name = name.to_string();
+
+        Ok(true)
     });
 
-    outcome.resolve::<ThrowRuntimeExAndDefault>();
+    outcome.resolve::<ThrowRuntimeExAndDefault>()
 }
 
 #[unsafe(no_mangle)]

@@ -59,7 +59,6 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -81,7 +80,6 @@ import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.OtpCardMinimalistic
 import app.ninesevennine.twofactorauthenticator.gui.elements.OtpCardNormal
 import app.ninesevennine.twofactorauthenticator.rustInterface
-import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.utils.Time
@@ -103,13 +101,12 @@ fun Main(navController: NavController) {
         }
     }
 
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     var query by remember { mutableStateOf("") }
 
     val accounts = remember(query) {
-        mutableStateListOf(*rustInterface.getAccountsTruncatedFiltered(query))
+        mutableStateListOf(*rustInterface.features_main_search(query))
     }
 
     val configuration = LocalConfiguration.current
@@ -127,7 +124,7 @@ fun Main(navController: NavController) {
         onMove = { from, to ->
             if (query.isEmpty()) {
                 accounts.add(to.index, accounts.removeAt(from.index))
-                rustInterface.reorderAccount(from.index, to.index)
+                rustInterface.features_main_reorder(from.index.toLong(), to.index.toLong())
             }
         }
     )
@@ -180,7 +177,7 @@ fun Main(navController: NavController) {
                                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
 
                                         scope.launch(Dispatchers.IO) {
-                                            AccountManagement.saveAccounts(context)
+                                            rustInterface.management_accounts_save()
                                         }
                                     }
                                 )
@@ -265,9 +262,7 @@ fun Main(navController: NavController) {
 
     TopBar(
         onSearch = {
-            if (query != it) {
-                query = it
-            }
+            query = it
         },
         onSettings = {
             navController.navigate(SettingsRoute)
@@ -276,7 +271,7 @@ fun Main(navController: NavController) {
             navController.navigate(AddCodeRoute)
         },
         onAddLong = {
-            rustInterface.setEditAccountEmpty()
+            rustInterface.management_edit_default()
             navController.navigate(EditRoute)
         }
     )
@@ -348,7 +343,7 @@ private fun TopBar(
                 value = query,
                 onValueChange = {
                     query = it
-                    onSearch(it.trim())
+                    onSearch(it)
                 },
                 modifier = Modifier
                     .height(48.dp)

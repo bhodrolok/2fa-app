@@ -1,9 +1,8 @@
 pub mod edit;
-pub mod hotp;
+pub mod main;
 pub mod management;
 pub mod otp;
 pub mod otpauth;
 pub mod passphrase;
-pub mod steam;
-pub mod totp;
+pub mod search;
 pub mod zxcvbn;

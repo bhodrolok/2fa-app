@@ -4,7 +4,11 @@ use jni::{
     objects::JClass,
 };
 
-use crate::CLIENT;
+use crate::{
+    CLIENT,
+    account::Account,
+    features::otp::{algorithm::Algorithm, r#type::CodeType},
+};
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_management_1edit_1none(
@@ -23,21 +27,26 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_management_1import_1edit_1into_1accounts(
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_management_1edit_1default(
     mut unowned_env: EnvUnowned,
     _class: JClass,
 ) {
     let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
         let mut client = CLIENT.lock().unwrap();
 
-        let Some(account) = client.edit.take() else {
-            return Ok(());
-        };
-
-        match client.accounts.iter().position(|a| a.id == account.id) {
-            Some(i) => client.accounts[i] = account,
-            None => client.accounts.push(account),
-        }
+        client.edit = Some(Account {
+            id: getrandom::u64().unwrap(),
+            name: String::new(),
+            issuer: String::new(),
+            note: String::new(),
+            secret: Vec::new(),
+            code_type: CodeType::TOTP,
+            algorithm: Algorithm::SHA1,
+            counter: 0,
+            period: 30,
+            digits: 6,
+            color: 0xFF808080,
+        });
 
         Ok(())
     });
