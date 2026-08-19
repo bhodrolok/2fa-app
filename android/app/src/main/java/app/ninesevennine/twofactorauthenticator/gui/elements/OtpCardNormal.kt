@@ -25,7 +25,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -88,30 +87,30 @@ fun OtpCardNormal(
 
     val scope = rememberCoroutineScope()
 
-    val colors = when (Theme.currentOption(context)) {
-        ThemeOption.LIGHT -> OtpCard.lightFromColor(Color(account.color))
-        ThemeOption.DARK -> OtpCard.darkFromColor(Color(account.color))
-        else -> OtpCard.pitchBlack
+    val themeOption = Theme.currentOption(context)
+    val isPitchBlack = Theme.themeOption == ThemeOption.PITCH_BLACK
+
+    val colors = remember(themeOption, account.color) {
+        when (themeOption) {
+            ThemeOption.LIGHT -> OtpCard.lightFromColor(Color(account.color))
+            ThemeOption.DARK -> OtpCard.darkFromColor(Color(account.color))
+            else -> OtpCard.pitchBlack
+        }
     }
+
+    val accent = if (isPitchBlack) colors.text else colors.surface
+    val onAccent = if (isPitchBlack) colors.text else colors.background
 
     var isCodeRevealed by remember { mutableStateOf(!Config.isUsingTapToRevealCodes) }
 
-    var counter by remember { mutableLongStateOf(account.counter) }
-    var remainingSeconds by remember { mutableLongStateOf(account.period) }
+    val isHotp = account.codeType == CodeType.HOTP.ordinal
+    var hotpCounter by remember(account.counter) { mutableLongStateOf(account.counter) }
+
+    val counter = if (isHotp) hotpCounter else Time.epochSeconds / account.period
+    val remainingSeconds = if (isHotp) 0L else account.period - (Time.epochSeconds % account.period)
 
     var showNextForCounter by remember { mutableLongStateOf(-1) }
     val isShowingNextCode = showNextForCounter == counter
-
-    if (account.codeType != CodeType.HOTP.ordinal) {
-        LaunchedEffect(Time.epochSeconds, account.period) {
-            counter = Time.epochSeconds / account.period
-            remainingSeconds = account.period - (Time.epochSeconds % account.period)
-        }
-    } else {
-        LaunchedEffect(account.counter) {
-            counter = account.counter
-        }
-    }
 
     val rawCode = remember(counter, isShowingNextCode, isCodeRevealed, updateCount) {
         rustInterface.features_otp_generate(account.id, counter, isShowingNextCode, isCodeRevealed)
@@ -125,14 +124,23 @@ fun OtpCardNormal(
         }
     }
 
-    val iconResult = remember(account.issuer) {
-        IconPacks.get(context, account.issuer)
+    val iconBitmap = remember(account.issuer) {
+        IconPacks.get(context, account.issuer).bitmap?.asImageBitmap()
+    }
+
+    val iconPacksStyle = Config.UsingIconPacksStyle
+
+    val fallbackInitial = remember(account.issuer, account.name) {
+        when {
+            account.issuer.isNotEmpty() -> account.issuer.first().uppercase()
+            account.name.isNotEmpty() -> account.name.first().uppercase()
+            else -> "?"
+        }
     }
 
     val codeInteractionSource = remember { MutableInteractionSource() }
     val isCodePressed by codeInteractionSource.collectIsPressedAsState()
     val codeScale by animateFloatAsState(if (isCodePressed) 0.95f else 1f)
-    val codeScope = rememberCoroutineScope()
     var codeScopeJob by remember { mutableStateOf<Job?>(null) }
 
     val periodInteractionSource = remember { MutableInteractionSource() }
@@ -153,7 +161,8 @@ fun OtpCardNormal(
     val isEditPressed by editInteractionSource.collectIsPressedAsState()
     val editScale by animateFloatAsState(if (isEditPressed) 0.85f else 1f)
 
-    val shape = RoundedCornerShape(24.dp)
+    val shape = remember { RoundedCornerShape(24.dp) }
+    val codeShape = remember { RoundedCornerShape(18.dp) }
 
     Box(
         Modifier
@@ -174,7 +183,7 @@ fun OtpCardNormal(
 
                             Clipboard.copy(context, "OTP", code, Config.isUsingSecureClipboard)
                         } else {
-                            codeScopeJob = codeScope.launch {
+                            codeScopeJob = scope.launch {
                                 try {
                                     delay(200.milliseconds)
                                     if (Config.isUsingTapToRevealCodes) {
@@ -215,22 +224,17 @@ fun OtpCardNormal(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        if (iconResult.bitmap != null) {
+                        if (iconBitmap != null) {
                             Canvas(Modifier.size(52.dp)) {
-                                when (Config.UsingIconPacksStyle) {
+                                when (iconPacksStyle) {
                                     IconPacksStyle.TEXTURED.value -> {
-                                        drawImage(
-                                            image = iconResult.bitmap.asImageBitmap()
-                                        )
+                                        drawImage(image = iconBitmap)
                                     }
 
                                     IconPacksStyle.TINTED.value -> {
                                         drawImage(
-                                            image = iconResult.bitmap.asImageBitmap(),
-                                            colorFilter = ColorFilter.tint(
-                                                if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface,
-                                                BlendMode.Modulate
-                                            )
+                                            image = iconBitmap,
+                                            colorFilter = ColorFilter.tint(accent, BlendMode.Modulate)
                                         )
                                     }
 
@@ -239,20 +243,12 @@ fun OtpCardNormal(
                             }
                         } else {
                             Canvas(Modifier.size(52.dp)) {
-                                drawCircle(
-                                    color = colors.surface
-                                )
+                                drawCircle(color = colors.surface)
                             }
 
                             Text(
-                                text = if (account.issuer.isNotEmpty()) {
-                                    account.issuer.first().uppercase()
-                                } else if (account.name.isNotEmpty()) {
-                                    account.name.first().uppercase()
-                                } else {
-                                    "?"
-                                },
-                                color = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.background,
+                                text = fallbackInitial,
+                                color = onAccent,
                                 fontSize = 26.sp,
                                 fontWeight = FontWeight.W700,
                                 fontFamily = InterVariable,
@@ -292,7 +288,7 @@ fun OtpCardNormal(
                         }
                     }
 
-                    if (account.codeType == CodeType.TOTP.ordinal || account.codeType == CodeType.STEAM.ordinal) {
+                    if (!isHotp) {
                         Row(
                             Modifier
                                 .graphicsLayer(scaleX = periodScale, scaleY = periodScale)
@@ -309,16 +305,12 @@ fun OtpCardNormal(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Canvas(Modifier.size(26.dp)) {
-                                drawCircle(
-                                    color = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface,
-                                    style = Stroke(width = 3f)
-                                )
+                                drawCircle(color = accent, style = Stroke(width = 3f))
 
-                                val sweepAngle = -(remainingSeconds.toFloat() / account.period.toFloat()) * 360f
                                 drawArc(
-                                    color = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface,
+                                    color = accent,
                                     startAngle = -90f,
-                                    sweepAngle = sweepAngle,
+                                    sweepAngle = -(remainingSeconds.toFloat() / account.period.toFloat()) * 360f,
                                     useCenter = true
                                 )
                             }
@@ -328,7 +320,7 @@ fun OtpCardNormal(
 
                                 Text(
                                     text = "+1",
-                                    color = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface,
+                                    color = accent,
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.W900,
                                     fontFamily = InterVariable
@@ -351,8 +343,8 @@ fun OtpCardNormal(
 
                                         counterCumulativeRotation += 360f
 
-                                        counter = rustInterface.features_otp_counter_increment(account.id)
-                                        onCounterChange(counter)
+                                        hotpCounter = rustInterface.features_otp_counter_increment(account.id)
+                                        onCounterChange(hotpCounter)
 
                                         if (!isEditing) {
                                             scope.launch(Dispatchers.IO) {
@@ -361,12 +353,12 @@ fun OtpCardNormal(
                                         }
                                     }
                                 ),
-                            tint = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface
+                            tint = accent
                         )
                     }
 
                     if (isEditing) {
-                        if (Theme.themeOption != ThemeOption.PITCH_BLACK) {
+                        if (!isPitchBlack) {
                             Spacer(Modifier.widthIn(8.dp))
 
                             Box(
@@ -417,7 +409,7 @@ fun OtpCardNormal(
                                 painter = painterResource(R.drawable.mi_edit),
                                 contentDescription = null,
                                 modifier = Modifier.size(29.dp),
-                                tint = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface
+                                tint = accent
                             )
                         }
                     }
@@ -430,14 +422,14 @@ fun OtpCardNormal(
                 Modifier
                     .fillMaxWidth()
                     .height(68.dp)
-                    .clip(RoundedCornerShape(18.dp))
+                    .clip(codeShape)
                     .background(colors.surface),
                 Alignment.Center
             ) {
                 Text(
                     text = displayedCode,
                     modifier = Modifier.graphicsLayer(scaleX = codeScale, scaleY = codeScale),
-                    color = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.background,
+                    color = onAccent,
                     fontSize = 42.sp,
                     fontWeight = FontWeight.W700,
                     fontFamily = InterVariable,

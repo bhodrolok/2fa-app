@@ -82,30 +82,30 @@ fun OtpCardMinimalistic(
 
     val scope = rememberCoroutineScope()
 
-    val colors = when (Theme.currentOption(context)) {
-        ThemeOption.LIGHT -> OtpCard.lightFromColor(Color(account.color))
-        ThemeOption.DARK -> OtpCard.darkFromColor(Color(account.color))
-        else -> OtpCard.pitchBlack
+    val themeOption = Theme.currentOption(context)
+    val isPitchBlack = Theme.themeOption == ThemeOption.PITCH_BLACK
+    val isCompact = Config.UsingOtpCardStyle == OtpCardStyle.COMPACT.value
+
+    val colors = remember(themeOption, account.color) {
+        when (themeOption) {
+            ThemeOption.LIGHT -> OtpCard.lightFromColor(Color(account.color))
+            ThemeOption.DARK -> OtpCard.darkFromColor(Color(account.color))
+            else -> OtpCard.pitchBlack
+        }
     }
+
+    val accent = if (isPitchBlack) colors.text else colors.surface
 
     var isCodeRevealed by remember { mutableStateOf(!Config.isUsingTapToRevealCodes) }
 
-    var counter by remember { mutableLongStateOf(account.counter) }
-    var remainingSeconds by remember { mutableLongStateOf(account.period) }
+    val isHotp = account.codeType == CodeType.HOTP.ordinal
+    var hotpCounter by remember(account.counter) { mutableLongStateOf(account.counter) }
+
+    val counter = if (isHotp) hotpCounter else Time.epochSeconds / account.period
+    val remainingSeconds = if (isHotp) 0L else account.period - (Time.epochSeconds % account.period)
 
     var showNextForCounter by remember { mutableLongStateOf(-1) }
     val isShowingNextCode = showNextForCounter == counter
-
-    if (account.codeType != CodeType.HOTP.ordinal) {
-        LaunchedEffect(Time.epochSeconds, account.period) {
-            counter = Time.epochSeconds / account.period
-            remainingSeconds = account.period - (Time.epochSeconds % account.period)
-        }
-    } else {
-        LaunchedEffect(account.counter) {
-            counter = account.counter
-        }
-    }
 
     val rawCode = remember(counter, isShowingNextCode, isCodeRevealed, updateCount) {
         rustInterface.features_otp_generate(account.id, counter, isShowingNextCode, isCodeRevealed)
@@ -122,7 +122,6 @@ fun OtpCardMinimalistic(
     val codeInteractionSource = remember { MutableInteractionSource() }
     val isCodePressed by codeInteractionSource.collectIsPressedAsState()
     val codeScale by animateFloatAsState(if (isCodePressed) 0.95f else 1f)
-    val codeScope = rememberCoroutineScope()
     var codeScopeJob by remember { mutableStateOf<Job?>(null) }
 
     val periodInteractionSource = remember { MutableInteractionSource() }
@@ -143,7 +142,7 @@ fun OtpCardMinimalistic(
     val isEditPressed by editInteractionSource.collectIsPressedAsState()
     val editScale by animateFloatAsState(if (isEditPressed) 0.85f else 1f)
 
-    val shape = RoundedCornerShape(16.dp)
+    val shape = remember { RoundedCornerShape(16.dp) }
 
     Box(
         Modifier
@@ -164,7 +163,7 @@ fun OtpCardMinimalistic(
 
                             Clipboard.copy(context, "OTP", code, Config.isUsingSecureClipboard)
                         } else {
-                            codeScopeJob = codeScope.launch {
+                            codeScopeJob = scope.launch {
                                 try {
                                     delay(200.milliseconds)
                                     if (Config.isUsingTapToRevealCodes) {
@@ -227,7 +226,7 @@ fun OtpCardMinimalistic(
 
                 Spacer(Modifier.widthIn(6.dp))
 
-                if (account.codeType == CodeType.TOTP.ordinal || account.codeType == CodeType.STEAM.ordinal) {
+                if (!isHotp) {
                     Row(
                         Modifier
                             .graphicsLayer(scaleX = periodScale, scaleY = periodScale)
@@ -244,16 +243,12 @@ fun OtpCardMinimalistic(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Canvas(Modifier.size(24.dp)) {
-                            drawCircle(
-                                color = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface,
-                                style = Stroke(width = 2.75f)
-                            )
+                            drawCircle(color = accent, style = Stroke(width = 2.75f))
 
-                            val sweepAngle = -(remainingSeconds.toFloat() / account.period.toFloat()) * 360f
                             drawArc(
-                                color = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface,
+                                color = accent,
                                 startAngle = -90f,
-                                sweepAngle = sweepAngle,
+                                sweepAngle = -(remainingSeconds.toFloat() / account.period.toFloat()) * 360f,
                                 useCenter = true
                             )
                         }
@@ -263,7 +258,7 @@ fun OtpCardMinimalistic(
 
                             Text(
                                 text = "+1",
-                                color = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface,
+                                color = accent,
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.W900,
                                 fontFamily = InterVariable
@@ -286,15 +281,15 @@ fun OtpCardMinimalistic(
 
                                     counterCumulativeRotation += 360f
 
-                                    counter = rustInterface.features_otp_counter_increment(account.id)
-                                    onCounterChange(counter)
+                                    hotpCounter = rustInterface.features_otp_counter_increment(account.id)
+                                    onCounterChange(hotpCounter)
 
                                     scope.launch(Dispatchers.IO) {
                                         rustInterface.management_accounts_save()
                                     }
                                 }
                             ),
-                        tint = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface
+                        tint = accent
                     )
                 }
 
@@ -321,7 +316,7 @@ fun OtpCardMinimalistic(
                         painter = painterResource(R.drawable.mi_edit),
                         contentDescription = null,
                         modifier = Modifier.size(26.dp),
-                        tint = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface
+                        tint = accent
                     )
                 }
             }
@@ -329,14 +324,15 @@ fun OtpCardMinimalistic(
             Spacer(Modifier.height(6.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth().height(58.dp).padding(start = if (Config.UsingOtpCardStyle == OtpCardStyle.COMPACT.value) 8.dp else 0.dp),
-                horizontalArrangement = if (Config.UsingOtpCardStyle == OtpCardStyle.COMPACT.value) Arrangement.Start else Arrangement.Center,
+                modifier = Modifier.fillMaxWidth().height(58.dp)
+                    .padding(start = if (isCompact) 8.dp else 0.dp),
+                horizontalArrangement = if (isCompact) Arrangement.Start else Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = displayedCode,
                     modifier = Modifier.graphicsLayer(scaleX = codeScale, scaleY = codeScale),
-                    color = if (Theme.themeOption == ThemeOption.PITCH_BLACK) colors.text else colors.surface,
+                    color = accent,
                     fontSize = 27.sp,
                     fontWeight = FontWeight.W700,
                     fontFamily = InterVariable,
