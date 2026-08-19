@@ -3,10 +3,6 @@ package app.ninesevennine.twofactorauthenticator
 import android.graphics.Bitmap
 
 class RustInterface {
-    companion object {
-        const val LIBRARY_NAME = "appcore"
-    }
-
     external fun client_application_directory_set(applicationDirectory: String)
     external fun client_zeroize_hostages()
 
@@ -39,9 +35,10 @@ class RustInterface {
     external fun features_management_proton_import_into_hostages(json: String, passphrase: String): Int
     external fun features_zxcvbn_normalized(passphrase: String): Float
 
+    external fun management_accounts_load()
+    external fun management_accounts_save()
     external fun management_edit_none()
-    external fun management_move_edit_into_accounts()
-    external fun management_save_test()
+    external fun management_import_edit_into_accounts()
     external fun management_copy_accounts_into_hostages()
     external fun management_merge_hostages_into_accounts()
 

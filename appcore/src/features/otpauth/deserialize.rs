@@ -51,6 +51,13 @@ pub fn deserialize(uri: &str) -> Option<Account> {
                     .ok()?;
                 id = u64::from_be_bytes(bytes.try_into().ok()?);
             }
+            "name" => {
+                name = percent_decode_str(value)
+                    .decode_utf8()
+                    .ok()?
+                    .trim()
+                    .to_string()
+            }
             "issuer" => {
                 issuer = percent_decode_str(value)
                     .decode_utf8()
@@ -85,14 +92,11 @@ pub fn deserialize(uri: &str) -> Option<Account> {
         }
     }
 
-    if name == issuer {
-        name.clear();
-    }
-
     if code_type == CodeType::TOTP && issuer.eq_ignore_ascii_case("Steam") {
         code_type = CodeType::STEAM;
-        digits = 5;
+        algorithm = Algorithm::SHA1;
         period = 30;
+        digits = 5;
     }
 
     if secret.is_empty() || !(4..=10).contains(&digits) || period < 10 {

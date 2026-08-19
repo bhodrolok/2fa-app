@@ -414,11 +414,8 @@ fun Edit(navController: NavController) {
                 }
 
                 scope.launch(Dispatchers.IO) {
-                    rustInterface.management_move_edit_into_accounts()
-
-//                    if (!AccountManagement.saveAccounts(context)) {
-//                        return@launch
-//                    }
+                    rustInterface.management_import_edit_into_accounts()
+                    rustInterface.management_accounts_save()
 
                     if (Signals.checkEditAccountSome) {
                         Signals.checkEditAccountSome = false
@@ -442,10 +439,7 @@ fun Edit(navController: NavController) {
             onDelete = {
                 scope.launch(Dispatchers.IO) {
                     rustInterface.features_edit_delete(account.id)
-
-//                    if (!AccountManagement.saveAccounts(context)) {
-//                        return@launch
-//                    }
+                    rustInterface.management_accounts_save()
 
                     withContext(Dispatchers.Main) {
                         navController.popBackStack(MainRoute, false)

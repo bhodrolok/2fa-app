@@ -1,12 +1,7 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Format {
     pub version: u64,
-    pub content: Content,
-}
-
-#[derive(Debug, Serialize)]
-pub struct Content {
-    pub accounts: Vec<String>,
+    pub content: Vec<String>,
 }

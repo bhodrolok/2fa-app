@@ -1,4 +1,4 @@
-pub fn argb_to_hsl(argb: u32) -> (f32, f32, f32) {
+pub fn rgb_to_hsl(argb: u32) -> (f32, f32, f32) {
     let r = ((argb >> 16) & 0xFF) as f32 / 255.0;
     let g = ((argb >> 8) & 0xFF) as f32 / 255.0;
     let b = (argb & 0xFF) as f32 / 255.0;

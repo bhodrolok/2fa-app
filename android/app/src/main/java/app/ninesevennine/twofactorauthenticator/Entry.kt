@@ -15,15 +15,14 @@ class Entry : Application() {
         Logger.init(this)
 
         try {
-            System.loadLibrary(RustInterface.LIBRARY_NAME)
+            System.loadLibrary("appcore")
             rustInterfaceInstance = RustInterface()
         } catch (e: Throwable) {
             throw e
         }
 
         rustInterface.client_application_directory_set(dataDir.absolutePath)
-        rustInterface.management_save_test()
-
+        rustInterface.management_accounts_load()
         Config.load(this)
     }
 }

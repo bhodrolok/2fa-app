@@ -84,6 +84,13 @@ pub fn serialize(account: &Account) -> String {
         data_encoding::HEXLOWER.encode(&account.id.to_be_bytes())
     ));
 
+    if !account.name.is_empty() {
+        parameters.push(format!(
+            "name={}",
+            utf8_percent_encode(&account.name, NON_ALPHANUMERIC)
+        ));
+    }
+
     if !account.note.is_empty() {
         parameters.push(format!(
             "note={}",

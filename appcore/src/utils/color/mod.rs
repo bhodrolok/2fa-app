@@ -1,2 +1,2 @@
-pub mod argb_to_hsl;
-pub mod hsl_to_argb;
+pub mod hsl_to_rgb;
+pub mod rgb_to_hsl;

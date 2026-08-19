@@ -9,7 +9,7 @@ use jni::{
 use crate::{
     CLIENT,
     features::otp::{algorithm::Algorithm, r#type::CodeType},
-    utils::color::{argb_to_hsl::argb_to_hsl, hsl_to_argb::hsl_to_argb},
+    utils::color::{hsl_to_rgb::hsl_to_rgb, rgb_to_hsl::rgb_to_hsl},
 };
 
 #[unsafe(no_mangle)]
@@ -109,8 +109,8 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let mut client = CLIENT.lock().unwrap();
 
         if let Some(account) = &mut client.edit {
-            let (h, s, _) = argb_to_hsl(argb as u32);
-            let color = hsl_to_argb(h, s, 0.5);
+            let (h, s, _) = rgb_to_hsl(argb as u32);
+            let color = hsl_to_rgb(h, s, 0.5);
             account.color = color as u32;
         }
 
@@ -130,8 +130,8 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let mut client = CLIENT.lock().unwrap();
 
         if let Some(account) = &mut client.edit {
-            let (_, s, _) = argb_to_hsl(account.color);
-            let color = hsl_to_argb(hue, s, 0.5);
+            let (_, s, _) = rgb_to_hsl(account.color);
+            let color = hsl_to_rgb(hue, s, 0.5);
             account.color = color;
         }
 
@@ -151,8 +151,8 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let mut client = CLIENT.lock().unwrap();
 
         if let Some(account) = &mut client.edit {
-            let (h, _, _) = argb_to_hsl(account.color);
-            let color = hsl_to_argb(h, saturation, 0.5);
+            let (h, _, _) = rgb_to_hsl(account.color);
+            let color = hsl_to_rgb(h, saturation, 0.5);
             account.color = color;
         }
 
@@ -176,8 +176,8 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
             Err(_) => return Ok(()),
         };
 
-        let (h, s, _) = argb_to_hsl(color);
-        let color = hsl_to_argb(h, s, 0.5);
+        let (h, s, _) = rgb_to_hsl(color);
+        let color = hsl_to_rgb(h, s, 0.5);
 
         let mut client = CLIENT.lock().unwrap();
 
