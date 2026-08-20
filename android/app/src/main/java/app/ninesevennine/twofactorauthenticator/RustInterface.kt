@@ -36,7 +36,9 @@ class RustInterface {
     external fun features_management_proton_import_into_hostages(json: String, passphrase: String): Int
     external fun features_otp_generate(id: Long, counter: Long, next: Boolean, revealed: Boolean): String
     external fun features_otp_counter_increment(id: Long): Long
-    external fun features_otpauth_import_into_hostages(uri: String): Boolean
+    external fun features_otpauth_import_uri_into_hostages(uri: String): Boolean
+    external fun features_otpauth_import_mafile_into_hostages(json: String): Boolean
+    external fun features_otpauth_import_qrcode_into_hostages(width: Int, height: Int, pixels: IntArray): Boolean
     external fun features_zxcvbn_normalized(passphrase: String): Float
 
     external fun management_accounts_load()

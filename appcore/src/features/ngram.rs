@@ -1,6 +1,6 @@
 use crate::account::Account;
 
-pub fn ngram(accounts: &[Account], query: &str) -> Vec<Account> {
+pub fn search(accounts: &[Account], query: &str) -> Vec<Account> {
     let query = query.trim().to_lowercase();
 
     if query.is_empty() {

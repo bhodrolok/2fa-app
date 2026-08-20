@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 
 object Signals {
     var authenticate by mutableIntStateOf(0)
-    var accountAdded by mutableStateOf(false)
+    var checkHostages by mutableStateOf(false)
     var suppressLockOnExit = false
     var suppressFocusRequestOnLaunch = false
 }

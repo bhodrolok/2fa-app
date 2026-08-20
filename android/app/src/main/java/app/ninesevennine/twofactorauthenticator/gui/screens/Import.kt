@@ -135,7 +135,7 @@ fun Import(navController: NavController) {
 
                 Logger.i(TAG, "successfully imported $result account(s)")
 
-                Signals.accountAdded = true
+                Signals.checkHostages = true
 
                 withContext(Dispatchers.Main) {
                     navController.popBackStack(MainRoute, false)

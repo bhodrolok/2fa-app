@@ -1,6 +1,8 @@
 package app.ninesevennine.twofactorauthenticator.gui.screens
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.view.SoundEffectConstants
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -47,15 +49,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.QRCodeScanner
+import app.ninesevennine.twofactorauthenticator.features.otpauth.importQRCodeIntoHostages
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.Signals
-import app.ninesevennine.twofactorauthenticator.utils.ZXing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
-import org.json.JSONObject
 
 
 @Serializable
@@ -97,26 +98,33 @@ fun AddCode(navController: NavController) {
             )
 
             pickScope.launch(Dispatchers.IO) {
-                val otpUrl = when {
-                    // QR images
+                val imported = when {
                     context.contentResolver.getType(it)?.startsWith("image/") == true -> {
-                        ZXing.decodeQRFromImage(it, context.contentResolver)
+                        val bitmap = context.contentResolver.openInputStream(it)?.use { stream ->
+                            BitmapFactory.decodeStream(stream, null, BitmapFactory.Options().apply {
+                                inPreferredConfig = Bitmap.Config.ARGB_8888
+                            })
+                        }
+
+                        if (bitmap == null) false
+                        else importQRCodeIntoHostages(bitmap).also { bitmap.recycle() }
                     }
 
                     // .maFile
                     else -> {
-                        runCatching {
+                        val json = runCatching {
                             context.contentResolver.openInputStream(it)?.use { stream ->
-                                val jsonContent = stream.readBytes().decodeToString()
-                                JSONObject(jsonContent).optString("uri")
+                                stream.readBytes().decodeToString()
                             }
-                        }.getOrNull()?.takeIf { url -> url.isNotEmpty() }
+                        }.getOrNull()
+
+                        json != null && rustInterface.features_otpauth_import_mafile_into_hostages(json)
                     }
                 }
 
-                if (otpUrl != null && rustInterface.features_otpauth_import_into_hostages(otpUrl)) {
+                if (imported) {
                     withContext(Dispatchers.Main) {
-                        Signals.accountAdded = true
+                        Signals.checkHostages = true
                         navController.popBackStack()
                     }
                 }
@@ -131,8 +139,8 @@ fun AddCode(navController: NavController) {
             isProcessing = true
 
             scope.launch(Dispatchers.Main) {
-                if (rustInterface.features_otpauth_import_into_hostages(uri)) {
-                    Signals.accountAdded = true
+                if (rustInterface.features_otpauth_import_uri_into_hostages(uri)) {
+                    Signals.checkHostages = true
                     navController.popBackStack()
                 } else {
                     isProcessing = false

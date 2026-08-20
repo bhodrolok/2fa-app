@@ -1,6 +1,9 @@
 package app.ninesevennine.twofactorauthenticator
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -19,6 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.UseIncognitoKeyboard
+import app.ninesevennine.twofactorauthenticator.features.otpauth.importQRCodeIntoHostages
 import app.ninesevennine.twofactorauthenticator.features.setScreenSecure
 import app.ninesevennine.twofactorauthenticator.gui.screens.AddCode
 import app.ninesevennine.twofactorauthenticator.gui.screens.AddCodeRoute
@@ -52,7 +56,6 @@ import app.ninesevennine.twofactorauthenticator.gui.screens.Settings
 import app.ninesevennine.twofactorauthenticator.gui.screens.SettingsRoute
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Signals
-import app.ninesevennine.twofactorauthenticator.utils.ZXing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -144,27 +147,31 @@ class Main : FragmentActivity() {
     private fun handleIntents(intent: Intent) {
         if (Config.isUsingBlockIntents) return
 
-        val action = intent.action
-        val data = intent.data
-
-        when (action) {
+        when (intent.action) {
             Intent.ACTION_VIEW -> {
-                data?.let { uri ->
+                intent.data?.let { uri ->
                     if (uri.scheme == "otpauth") {
-                        if(rustInterface.features_otpauth_import_into_hostages(data.toString())) {
-                            Signals.accountAdded = true
+                        if(rustInterface.features_otpauth_import_uri_into_hostages(uri.toString())) {
+                            Signals.checkHostages = true
                         }
                     }
                 }
             }
             Intent.ACTION_SEND -> {
                 if (intent.type?.startsWith("image/") == true) {
-                    intent.getParcelableExtra(Intent.EXTRA_STREAM, android.net.Uri::class.java)?.let { uri ->
+                    intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)?.let { uri ->
                         lifecycleScope.launch(Dispatchers.IO) {
-                            val otpUrl = ZXing.decodeQRFromImage(uri, contentResolver)
-                            if (otpUrl != null && rustInterface.features_otpauth_import_into_hostages(otpUrl)) {
-                                Signals.accountAdded = true
+                            val bitmap = contentResolver.openInputStream(uri)?.use {
+                                BitmapFactory.decodeStream(it, null, BitmapFactory.Options().apply {
+                                    inPreferredConfig = Bitmap.Config.ARGB_8888
+                                })
+                            } ?: return@launch
+
+                            if (importQRCodeIntoHostages(bitmap)) {
+                                Signals.checkHostages = true
                             }
+
+                            bitmap.recycle()
                         }
                     }
                 }

@@ -5,7 +5,7 @@ use jni::{
     sys::{jint, jlong, jobjectArray},
 };
 
-use crate::{CLIENT, features::search};
+use crate::{CLIENT, features::ngram};
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_features_1main_1search(
@@ -18,7 +18,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
         let accounts = {
             let client = CLIENT.lock().unwrap();
-            search::ngram(&client.accounts, &query)
+            ngram::search(&client.accounts, &query)
         };
 
         let account_class = env.find_class(jni::jni_str!(

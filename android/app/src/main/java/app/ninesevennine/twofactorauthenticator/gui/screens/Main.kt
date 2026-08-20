@@ -130,8 +130,8 @@ fun Main(navController: NavController) {
         }
     }
 
-    LaunchedEffect(Signals.accountAdded) {
-        if (Signals.accountAdded) {
+    LaunchedEffect(Signals.checkHostages) {
+        if (Signals.checkHostages) {
             withContext(Dispatchers.IO) {
                 rustInterface.management_import_hostages_into_accounts()
                 rustInterface.management_accounts_save()
@@ -144,7 +144,7 @@ fun Main(navController: NavController) {
                 lazyGridState.scrollToItem(accounts.lastIndex)
             }
 
-            Signals.accountAdded = false
+            Signals.checkHostages = false
         }
     }
 
