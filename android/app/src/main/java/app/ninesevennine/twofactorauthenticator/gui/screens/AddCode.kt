@@ -114,11 +114,10 @@ fun AddCode(navController: NavController) {
                     }
                 }
 
-                if (otpUrl != null && rustInterface.setEditAccountFromOtpAuth(otpUrl)) {
-                    Signals.checkEditAccountSome = true
-
+                if (otpUrl != null && rustInterface.features_otpauth_import_into_hostages(otpUrl)) {
                     withContext(Dispatchers.Main) {
-                        navController.navigate(EditRoute)
+                        Signals.accountAdded = true
+                        navController.popBackStack()
                     }
                 }
             }
@@ -126,19 +125,20 @@ fun AddCode(navController: NavController) {
     }
 
     QRCodeScanner.View(
-        onQRCodeScanned = { text ->
+        onQRCodeScanned = { uri ->
             if (isProcessing) return@View
 
             isProcessing = true
-            scope.launch {
-                if (rustInterface.setEditAccountFromOtpAuth(text)) {
-                    Signals.checkEditAccountSome = true
-                    
-                    navController.navigate(EditRoute)
+
+            scope.launch(Dispatchers.Main) {
+                if (rustInterface.features_otpauth_import_into_hostages(uri)) {
+                    Signals.accountAdded = true
+                    navController.popBackStack()
                 } else {
                     isProcessing = false
                 }
             }
+
         }
     )
 
@@ -190,7 +190,7 @@ fun AddCode(navController: NavController) {
                             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                             view.playSoundEffect(SoundEffectConstants.CLICK)
 
-                            rustInterface.setEditAccountEmpty()
+                            rustInterface.management_edit_default()
                             navController.navigate(EditRoute)
                         }
                     )

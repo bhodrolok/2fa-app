@@ -110,58 +110,6 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setEditAccountEmpty(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-) {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let mut client = CLIENT.lock().unwrap();
-        client.set_edit_account_empty();
-
-        Ok(())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_setEditAccountFromOtpAuth(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    url: JString,
-) -> jboolean {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let url: String = url.to_string();
-        let mut client = CLIENT.lock().unwrap();
-
-        if client.set_edit_account_from_otpauth(&url) {
-            Ok(JNI_TRUE)
-        } else {
-            Ok(JNI_FALSE)
-        }
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_isEditAccountSome(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-) -> jboolean {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let client = CLIENT.lock().unwrap();
-        if client.edit.is_some() {
-            Ok(JNI_TRUE)
-        } else {
-            Ok(JNI_FALSE)
-        }
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
-}
-
-#[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_exportAccountsUsingUnlockPassphraseHash(
     mut unowned_env: EnvUnowned,
     _class: JClass,

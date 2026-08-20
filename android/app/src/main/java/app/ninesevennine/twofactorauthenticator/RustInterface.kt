@@ -36,14 +36,16 @@ class RustInterface {
     external fun features_management_proton_import_into_hostages(json: String, passphrase: String): Int
     external fun features_otp_generate(id: Long, counter: Long, next: Boolean, revealed: Boolean): String
     external fun features_otp_counter_increment(id: Long): Long
+    external fun features_otpauth_import_into_hostages(uri: String): Boolean
     external fun features_zxcvbn_normalized(passphrase: String): Float
 
     external fun management_accounts_load()
     external fun management_accounts_save()
     external fun management_edit_none()
     external fun management_edit_default()
-    external fun management_import_account_into_edit(id: Long)
     external fun management_import_edit_into_accounts()
+    external fun management_import_account_into_edit(id: Long)
+    external fun management_import_hostages_into_accounts()
     external fun management_copy_accounts_into_hostages()
     external fun management_merge_hostages_into_accounts()
 
@@ -53,10 +55,6 @@ class RustInterface {
     external fun getUnlockPassphraseHash(): ByteArray
     external fun isClientUnlockPassphraseHashEmpty(): Boolean
 
-    external fun setEditAccountEmpty()
-    external fun setEditAccountFromOtpAuth(url: String): Boolean
-
-    external fun isEditAccountSome(): Boolean
 
     external fun exportAccountsUsingUnlockPassphraseHash(salt: ByteArray): String
     external fun exportAccounts(passphrase: String): String

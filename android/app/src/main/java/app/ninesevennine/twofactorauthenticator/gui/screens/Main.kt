@@ -85,6 +85,7 @@ import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.utils.Time
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyGridState
@@ -95,12 +96,6 @@ object MainRoute
 
 @Composable
 fun Main(navController: NavController) {
-    LaunchedEffect(Signals.checkEditAccountSome) {
-        if (rustInterface.isEditAccountSome()) {
-            navController.navigate(EditRoute)
-        }
-    }
-
     val scope = rememberCoroutineScope()
 
     var query by remember { mutableStateOf("") }
@@ -136,8 +131,19 @@ fun Main(navController: NavController) {
     }
 
     LaunchedEffect(Signals.accountAdded) {
-        if (Signals.accountAdded && accounts.isNotEmpty()) {
-            lazyGridState.scrollToItem(accounts.lastIndex)
+        if (Signals.accountAdded) {
+            withContext(Dispatchers.IO) {
+                rustInterface.management_import_hostages_into_accounts()
+                rustInterface.management_accounts_save()
+            }
+
+            accounts.clear()
+            accounts.addAll(rustInterface.features_main_search(query))
+
+            if (accounts.isNotEmpty()) {
+                lazyGridState.scrollToItem(accounts.lastIndex)
+            }
+
             Signals.accountAdded = false
         }
     }

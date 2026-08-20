@@ -69,7 +69,6 @@ import app.ninesevennine.twofactorauthenticator.gui.elements.SectionSaturationSl
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionTextBox
 import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.Clipboard
-import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.utils.Time
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -118,7 +117,6 @@ fun Edit(navController: NavController) {
     Time.Track()
 
     BackHandler {
-        Signals.checkEditAccountSome = false
         rustInterface.management_edit_none()
         navController.popBackStack(MainRoute, false)
     }
@@ -397,7 +395,6 @@ fun Edit(navController: NavController) {
         EditHeader(
             title = stringResource(R.string.screen_edit_title),
             onCancel = {
-                Signals.checkEditAccountSome = false
                 rustInterface.management_edit_none()
                 navController.popBackStack(MainRoute, false)
             },
@@ -417,11 +414,6 @@ fun Edit(navController: NavController) {
                 scope.launch(Dispatchers.IO) {
                     rustInterface.management_import_edit_into_accounts()
                     rustInterface.management_accounts_save()
-
-                    if (Signals.checkEditAccountSome) {
-                        Signals.checkEditAccountSome = false
-                        Signals.accountAdded = true
-                    }
 
                     withContext(Dispatchers.Main) {
                         navController.popBackStack(MainRoute, false)

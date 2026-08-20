@@ -1,10 +1,6 @@
 use zeroize::Zeroize;
 
 use crate::account::Account;
-use crate::features::otp::algorithm::Algorithm;
-use crate::features::otp::r#type::CodeType;
-use crate::features::otpauth;
-use crate::utils;
 
 pub const CLIENT_UNLOCK_PASSPHRASE_HASH_LEN: usize = 64;
 
@@ -51,31 +47,6 @@ impl Client {
 
     pub fn get_unlock_passphrase_hash(&self) -> &[u8; CLIENT_UNLOCK_PASSPHRASE_HASH_LEN] {
         &self.unlock_passphrase_hash
-    }
-
-    pub fn set_edit_account_empty(&mut self) {
-        self.edit = Some(Account {
-            id: getrandom::u64().unwrap_or(0),
-            name: String::new(),
-            issuer: String::new(),
-            note: String::new(),
-            secret: Vec::new(),
-            code_type: CodeType::TOTP,
-            algorithm: Algorithm::SHA1,
-            digits: 6,
-            counter: 0,
-            period: 30,
-            color: utils::colors::BLACK,
-        });
-    }
-
-    pub fn set_edit_account_from_otpauth(&mut self, url: &str) -> bool {
-        if let Some(account) = otpauth::deserialize::deserialize(url) {
-            self.edit = Some(account);
-            true
-        } else {
-            false
-        }
     }
 }
 

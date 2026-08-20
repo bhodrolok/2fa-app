@@ -151,8 +151,8 @@ class Main : FragmentActivity() {
             Intent.ACTION_VIEW -> {
                 data?.let { uri ->
                     if (uri.scheme == "otpauth") {
-                        if (rustInterface.setEditAccountFromOtpAuth(data.toString())) {
-                            Signals.checkEditAccountSome = true
+                        if(rustInterface.features_otpauth_import_into_hostages(data.toString())) {
+                            Signals.accountAdded = true
                         }
                     }
                 }
@@ -162,8 +162,8 @@ class Main : FragmentActivity() {
                     intent.getParcelableExtra(Intent.EXTRA_STREAM, android.net.Uri::class.java)?.let { uri ->
                         lifecycleScope.launch(Dispatchers.IO) {
                             val otpUrl = ZXing.decodeQRFromImage(uri, contentResolver)
-                            if (otpUrl != null && rustInterface.setEditAccountFromOtpAuth(otpUrl)) {
-                                Signals.checkEditAccountSome = true
+                            if (otpUrl != null && rustInterface.features_otpauth_import_into_hostages(otpUrl)) {
+                                Signals.accountAdded = true
                             }
                         }
                     }
