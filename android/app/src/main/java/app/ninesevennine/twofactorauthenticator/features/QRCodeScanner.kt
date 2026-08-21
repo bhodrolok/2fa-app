@@ -46,23 +46,16 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
+import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.Logger
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.BinaryBitmap
-import com.google.zxing.DecodeHintType
-import com.google.zxing.MultiFormatReader
-import com.google.zxing.PlanarYUVLuminanceSource
-import com.google.zxing.ReaderException
-import com.google.zxing.common.HybridBinarizer
 import java.util.concurrent.Executors
-import kotlin.experimental.inv
 
 object QRCodeScanner {
     private const val TAG = "QRCodeScanner"
 
     @Composable
     fun View(
-        onQRCodeScanned: (String) -> Unit
+        onOtpAuthImported: () -> Unit
     ) {
         val context = LocalContext.current
 
@@ -84,7 +77,7 @@ object QRCodeScanner {
             contentAlignment = Alignment.Center
         ) {
             if (hasCameraPermission) {
-                CameraPreview(onQRCodeScanned)
+                CameraPreview(onOtpAuthImported)
             } else {
                 Text(
                     text = stringResource(R.string.feature_qr_code_scanner_camera_permission),
@@ -99,7 +92,7 @@ object QRCodeScanner {
     }
 
     @Composable
-    private fun CameraPreview(onQRCodeScanned: (String) -> Unit) {
+    private fun CameraPreview(onOtpAuthImported: () -> Unit) {
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -134,7 +127,7 @@ object QRCodeScanner {
                 .build()
         }
 
-        val analyzer = remember { ZXingQRAnalyzer(scanBoxFraction, onQRCodeScanned) }
+        val analyzer = remember { RustQRAnalyzer(scanBoxFraction, onOtpAuthImported) }
 
         var cameraAvailable by remember { mutableStateOf(true) }
 
@@ -218,23 +211,21 @@ object QRCodeScanner {
         }
     }
 
-    private class ZXingQRAnalyzer(
+    private class RustQRAnalyzer(
         private val scanBoxFraction: Float,
-        private val onQRCodeScanned: (String) -> Unit
+        private val onOtpAuthImported: () -> Unit
     ) : ImageAnalysis.Analyzer {
 
-        private val reader = MultiFormatReader().apply {
-            val hints = mapOf(
-                DecodeHintType.POSSIBLE_FORMATS to listOf(BarcodeFormat.QR_CODE),
-                DecodeHintType.TRY_HARDER to true
-            )
-            setHints(hints)
-        }
-
-        private var croppedImageData = ByteArray(0)
-        private var invertedImageData = ByteArray(0)
+        private var imported = false
+        private var croppedRow = ByteArray(0)
+        private var pixels = IntArray(0)
 
         override fun analyze(image: ImageProxy) {
+            if (imported) {
+                image.close()
+                return
+            }
+
             val plane = image.planes[0]
             val buffer = plane.buffer
             val rowStride = plane.rowStride
@@ -243,43 +234,28 @@ object QRCodeScanner {
             val left = (image.width - boxSize) / 2
             val top = (image.height - boxSize) / 2
 
-            val cropArea = boxSize * boxSize
-            if (croppedImageData.size != cropArea) {
-                croppedImageData = ByteArray(cropArea)
-                invertedImageData = ByteArray(cropArea)
+            if (croppedRow.size != boxSize) {
+                croppedRow = ByteArray(boxSize)
+                pixels = IntArray(boxSize * boxSize)
             }
 
             for (y in 0 until boxSize) {
                 buffer.position((top + y) * rowStride + left)
-                buffer.get(croppedImageData, y * boxSize, boxSize)
+                buffer.get(croppedRow, 0, boxSize)
+
+                val offset = y * boxSize
+                for (x in 0 until boxSize) {
+                    val v = croppedRow[x].toInt() and 0xFF
+                    pixels[offset + x] = (0xFF shl 24) or (v shl 16) or (v shl 8) or v
+                }
             }
 
-            val source = PlanarYUVLuminanceSource(
-                croppedImageData, boxSize, boxSize, 0, 0, boxSize, boxSize, false
-            )
-
-            try {
-                val bitmap = BinaryBitmap(HybridBinarizer(source))
-                reader.decodeWithState(bitmap).text?.let { onQRCodeScanned(it) }
-            } catch (_: ReaderException) {
-                for (i in 0 until cropArea) {
-                    invertedImageData[i] = croppedImageData[i].inv()
-                }
-
-                val invertedSource = PlanarYUVLuminanceSource(
-                    invertedImageData, boxSize, boxSize, 0, 0, boxSize, boxSize, false
-                )
-
-                try {
-                    val invertedBitmap = BinaryBitmap(HybridBinarizer(invertedSource))
-                    reader.decodeWithState(invertedBitmap).text?.let { onQRCodeScanned(it) }
-                } catch (_: ReaderException) {
-
-                }
-            } finally {
-                reader.reset()
-                image.close()
+            if (rustInterface.features_otpauth_import_qrcode_into_hostages(boxSize, boxSize, pixels)) {
+                imported = true
+                onOtpAuthImported()
             }
+
+            image.close()
         }
     }
 }

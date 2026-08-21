@@ -39,7 +39,6 @@ camerax-core = { group = "androidx.camera", name = "camera-core", version = "1.6
 camerax-camera2 = { group = "androidx.camera", name = "camera-camera2", version = "1.6.1"}
 camerax-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version = "1.6.1"}
 camerax-view = { group = "androidx.camera", name = "camera-view", version = "1.6.1"}
-zxing = { group = "com.google.zxing", name = "core", version = "3.5.4" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

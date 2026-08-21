@@ -28,10 +28,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -68,8 +66,6 @@ fun AddCode(navController: NavController) {
     val haptic = LocalHapticFeedback.current
     val view = LocalView.current
     val scope = rememberCoroutineScope()
-
-    var isProcessing by remember { mutableStateOf(false) }
 
     val cancelInteractionSource = remember { MutableInteractionSource() }
     val isCancelPressed by cancelInteractionSource.collectIsPressedAsState()
@@ -133,20 +129,11 @@ fun AddCode(navController: NavController) {
     }
 
     QRCodeScanner.View(
-        onQRCodeScanned = { uri ->
-            if (isProcessing) return@View
-
-            isProcessing = true
-
+        onOtpAuthImported = {
             scope.launch(Dispatchers.Main) {
-                if (rustInterface.features_otpauth_import_uri_into_hostages(uri)) {
-                    Signals.checkHostages = true
-                    navController.popBackStack()
-                } else {
-                    isProcessing = false
-                }
+                Signals.checkHostages = true
+                navController.popBackStack()
             }
-
         }
     )
 
