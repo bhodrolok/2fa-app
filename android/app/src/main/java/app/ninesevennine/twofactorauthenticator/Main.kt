@@ -19,6 +19,7 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.UseIncognitoKeyboard
@@ -34,13 +35,13 @@ import app.ninesevennine.twofactorauthenticator.gui.screens.Edit
 import app.ninesevennine.twofactorauthenticator.gui.screens.EditRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Export
 import app.ninesevennine.twofactorauthenticator.gui.screens.ExportRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.ExportToExternal
-import app.ninesevennine.twofactorauthenticator.gui.screens.ExportToExternalRoute
+import app.ninesevennine.twofactorauthenticator.gui.screens.ExportToAegis
+import app.ninesevennine.twofactorauthenticator.gui.screens.ExportToAegisRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Greeting
 import app.ninesevennine.twofactorauthenticator.gui.screens.GreetingRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Import
-import app.ninesevennine.twofactorauthenticator.gui.screens.ImportFromExternal
-import app.ninesevennine.twofactorauthenticator.gui.screens.ImportFromExternalRoute
+import app.ninesevennine.twofactorauthenticator.gui.screens.ImportFromAegisEncrypted
+import app.ninesevennine.twofactorauthenticator.gui.screens.ImportFromAegisEncryptedRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.ImportRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Main
 import app.ninesevennine.twofactorauthenticator.gui.screens.MainRoute
@@ -108,8 +109,11 @@ class Main : FragmentActivity() {
                     composable<ChangePassphraseRoute> { ChangePassphrase(navController) }
                     composable<ExportRoute> { Export(navController) }
                     composable<ImportRoute> { Import(navController) }
-                    composable<ExportToExternalRoute> { ExportToExternal(navController) }
-                    composable<ImportFromExternalRoute> { ImportFromExternal(navController) }
+                    composable<ExportToAegisRoute> { ExportToAegis(navController) }
+                    composable<ImportFromAegisEncryptedRoute> { backStackEntry ->
+                        val route = backStackEntry.toRoute<ImportFromAegisEncryptedRoute>()
+                        ImportFromAegisEncrypted(navController, route.uri)
+                    }
                     composable<EditRoute> { Edit(navController) }
                     composable<AddCodeRoute> { AddCode(navController) }
                 }

@@ -2,7 +2,7 @@ package app.ninesevennine.twofactorauthenticator.gui.screens
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
@@ -24,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,49 +33,78 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
-import app.ninesevennine.twofactorauthenticator.BuildConfig
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.features.Locale
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
+import app.ninesevennine.twofactorauthenticator.features.management.ImportResult
 import app.ninesevennine.twofactorauthenticator.features.setScreenSecure
-import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
+import app.ninesevennine.twofactorauthenticator.gui.elements.InfoPrompt
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.SectionGroup
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
+import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.Config
-import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.Signals
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import java.io.IOException
 
 @Serializable
 object SettingsRoute
 
-private const val TAG = "Settings"
-
 @Composable
 fun Settings(navController: NavController) {
     val context = LocalContext.current
-
-    var versionNameTapsCount by remember { mutableIntStateOf(0) }
+    val scope = rememberCoroutineScope()
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
 
     val currentThemeOption by remember { mutableStateOf(Theme.currentOption(context)) }
 
-    val internalAppLogLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument("text/plain"),
-    ) { uri: Uri? ->
-        if (uri != null) {
-            try {
-                val logContent = Logger.getFullLog()
-                context.contentResolver.openOutputStream(uri)?.use { outputStream ->
-                    outputStream.write(logContent.toByteArray())
-                }
+    var importResult by remember { mutableIntStateOf(0) }
+    var showImportResultPrompt by remember { mutableStateOf(false) }
+
+    val openDocumentLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri == null) {
+            return@rememberLauncherForActivityResult
+        }
+
+        scope.launch(Dispatchers.IO) {
+            val bytes = try {
+                val input = context.contentResolver.openInputStream(uri)
+                    ?: throw IOException("openInputStream returned null for $uri")
+                input.use { it.readBytes() }
             } catch (e: Exception) {
-                Logger.e("internalAppLogLauncher", "error saving log file ${e.message}")
+                Log.e("Settings", "openDocumentLauncher", e)
+                return@launch
+            }
+
+            val result = rustInterface.features_management_aegis_import_into_hostages(bytes, "")
+            if (result >= ImportResult.SUCCESS.value) {
+                withContext(Dispatchers.Main) {
+                    Signals.checkHostages = true
+                    navController.popBackStack()
+                }
+            } else {
+                if (result == ImportResult.INCORRECT_PASSPHRASE.value) {
+                    withContext(Dispatchers.Main) {
+                        navController.navigate(ImportFromAegisEncryptedRoute(uri.toString()))
+                    }
+
+                    return@launch
+                }
+
+                withContext(Dispatchers.Main) {
+                    importResult = result
+                    showImportResultPrompt = true
+                }
             }
         }
     }
@@ -165,9 +194,6 @@ fun Settings(navController: NavController) {
                         enabled = Config.isUsingTapToRevealCodes
                     ) {
                         Config.isUsingTapToRevealCodes = !Config.isUsingTapToRevealCodes
-
-                        Logger.i(TAG, "tap to reveal codes set to ${Config.isUsingTapToRevealCodes}")
-
                         Config.save(context)
                     }
 
@@ -178,9 +204,6 @@ fun Settings(navController: NavController) {
                         enabled = Config.isUsingDoubleTapToCopyCodes
                     ) {
                         Config.isUsingDoubleTapToCopyCodes = !Config.isUsingDoubleTapToCopyCodes
-
-                        Logger.i(TAG, "double tap to copy codes set to ${Config.isUsingDoubleTapToCopyCodes}")
-
                         Config.save(context)
                     }
 
@@ -191,9 +214,6 @@ fun Settings(navController: NavController) {
                         enabled = Config.isUsingFocusSearchOnLaunch
                     ) {
                         Config.isUsingFocusSearchOnLaunch = !Config.isUsingFocusSearchOnLaunch
-
-                        Logger.i(TAG, "focus search on launch set to ${Config.isUsingFocusSearchOnLaunch}")
-
                         Config.save(context)
                     }
                 }
@@ -228,8 +248,6 @@ fun Settings(navController: NavController) {
                     ) {
                         Config.isUsingScreenSecurity = !Config.isUsingScreenSecurity
 
-                        Logger.i(TAG, "screen security set to ${Config.isUsingScreenSecurity}")
-
                         (context as? Activity)?.let { activity ->
                             setScreenSecure(activity, Config.isUsingScreenSecurity)
                         }
@@ -245,9 +263,6 @@ fun Settings(navController: NavController) {
                         enabled = Config.isUsingSecureClipboard
                     ) {
                         Config.isUsingSecureClipboard = !Config.isUsingSecureClipboard
-
-                        Logger.i(TAG, "secure clipboard set to ${!Config.isUsingSecureClipboard}")
-
                         Config.save(context)
                     }
 
@@ -258,9 +273,6 @@ fun Settings(navController: NavController) {
                         enabled = Config.isUsingLockOnExit
                     ) {
                         Config.isUsingLockOnExit = !Config.isUsingLockOnExit
-
-                        Logger.i(TAG, "lock on exit set to ${!Config.isUsingLockOnExit}")
-
                         Config.save(context)
                     }
 
@@ -272,9 +284,6 @@ fun Settings(navController: NavController) {
                         enabled = Config.isUsingBlockIntents
                     ) {
                         Config.isUsingBlockIntents = !Config.isUsingBlockIntents
-
-                        Logger.i(TAG, "block intents set to ${!Config.isUsingBlockIntents}")
-
                         Config.save(context)
                     }
                 }
@@ -302,15 +311,26 @@ fun Settings(navController: NavController) {
                     }
 
                     SectionButton(
-                        primaryText = stringResource(R.string.screen_settings_management_export_to_external)
+                        painter = painterResource(R.drawable.aegis),
+                        tint = Theme.colors.primary,
+                        primaryText = stringResource(R.string.screen_settings_management_export_to_aegis),
+                        secondaryText = ".json"
                     ) {
-                        navController.navigate(ExportToExternalRoute)
+                        navController.navigate(ExportToAegisRoute)
                     }
 
                     SectionButton(
-                        primaryText = stringResource(R.string.screen_settings_management_import_from_external)
+                        painter = painterResource(R.drawable.aegis),
+                        tint = Theme.colors.primary,
+                        primaryText = stringResource(R.string.screen_settings_management_import_from_aegis),
+                        secondaryText = ".json"
                     ) {
-                        navController.navigate(ImportFromExternalRoute)
+                        Signals.suppressLockOnExit = true
+                        openDocumentLauncher.launch(arrayOf(
+                            "application/json",
+                            "text/json",
+                            "application/octet-stream"
+                        ))
                     }
                 }
 
@@ -349,31 +369,28 @@ fun Settings(navController: NavController) {
                     }
                 }
 
-                RoundedButtonClean(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    text = BuildConfig.VERSION_NAME
-                ) {
-                    if (versionNameTapsCount < 5) {
-                        versionNameTapsCount++
-                        return@RoundedButtonClean
-                    }
-
-                    versionNameTapsCount = 0
-
-                    Signals.suppressLockOnExit = true
-
-                    Config.dump()
-                    Logger.i(TAG, "downloading app log")
-
-                    internalAppLogLauncher.launch("app.log")
-                }
-            }
-
                 Spacer(modifier = Modifier.height(bottomInset + 64.dp))
             }
+        }
 
         StartButtonHeader(title = stringResource(R.string.screen_settings_title)) {
             navController.popBackStack()
         }
     }
+
+    InfoPrompt(
+        visible = showImportResultPrompt,
+        title = when (importResult) {
+            ImportResult.INVALID_FORMAT.value -> stringResource(R.string.import_error_title_invalid_format)
+            ImportResult.UNSUPPORTED_VERSION.value -> stringResource(R.string.import_error_title_unsupported_version)
+            else -> "Unknown"
+        },
+        body = when (importResult) {
+            ImportResult.INVALID_FORMAT.value -> stringResource(R.string.import_error_body_invalid_format)
+            ImportResult.UNSUPPORTED_VERSION.value -> stringResource(R.string.import_error_body_unsupported_version)
+            else -> "Unknown"
+        },
+        buttonText = stringResource(R.string.common_button_ok),
+        onDismiss = { showImportResultPrompt = false }
+    )
 }

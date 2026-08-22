@@ -1,6 +1,7 @@
 use jni::{
     EnvUnowned,
-    objects::{JClass, JString},
+    errors::{Error, ThrowRuntimeExAndDefault},
+    objects::{JByteArray, JClass, JString},
     sys::{jint, jstring},
 };
 
@@ -14,37 +15,42 @@ use crate::{
 };
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_features_1management_1aegis_1export_1hostages(
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_features_1management_1aegis_1export_1accounts(
     mut unowned_env: EnvUnowned,
     _class: JClass,
     passphrase: JString,
 ) -> jstring {
-    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
+    let outcome = unowned_env.with_env(|env| -> Result<_, Error> {
         let passphrase: String = passphrase.to_string();
 
         let client = CLIENT.lock().unwrap();
 
         Ok(env
-            .new_string(export(&client.hostages, &passphrase))
+            .new_string(export(&client.accounts, &passphrase))
             .unwrap()
             .into_raw())
     });
 
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
+    outcome.resolve::<ThrowRuntimeExAndDefault>()
 }
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_features_1management_1aegis_1import_1into_1hostages(
     mut unowned_env: EnvUnowned,
     _class: JClass,
-    json: JString,
+    bytes: JByteArray,
     passphrase: JString,
 ) -> jint {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
+    let outcome = unowned_env.with_env(|env| -> Result<_, Error> {
         let mut accounts: Vec<Account> = Vec::new();
 
-        let json: String = json.to_string();
-        let passphrase: String = passphrase.to_string();
+        let bytes = env.convert_byte_array(&bytes).unwrap();
+        let passphrase = passphrase.to_string();
+
+        let json = match String::from_utf8(bytes) {
+            Ok(s) => s,
+            Err(_) => return Ok(ImportResult::InvalidFormat as jint),
+        };
 
         match import(&mut accounts, &json, &passphrase) {
             ImportResult::Success => {
@@ -60,5 +66,5 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         }
     });
 
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
+    outcome.resolve::<ThrowRuntimeExAndDefault>()
 }
