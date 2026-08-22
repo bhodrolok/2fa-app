@@ -2,7 +2,7 @@ use jni::{
     EnvUnowned,
     errors::{Error, ThrowRuntimeExAndDefault},
     objects::{JByteArray, JClass, JString},
-    sys::{jint, jstring},
+    sys::{jbyteArray, jint},
 };
 
 use crate::{
@@ -19,14 +19,16 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     mut unowned_env: EnvUnowned,
     _class: JClass,
     passphrase: JString,
-) -> jstring {
+) -> jbyteArray {
     let outcome = unowned_env.with_env(|env| -> Result<_, Error> {
         let passphrase: String = passphrase.to_string();
 
         let client = CLIENT.lock().unwrap();
 
+        let json = export(&client.accounts, &passphrase);
+
         Ok(env
-            .new_string(export(&client.accounts, &passphrase))
+            .byte_array_from_slice(json.as_bytes())
             .unwrap()
             .into_raw())
     });

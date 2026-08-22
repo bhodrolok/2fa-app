@@ -97,6 +97,7 @@ fun ImportFromAegisEncrypted(navController: NavController, uri: String) {
             }
 
             val result = rustInterface.features_management_aegis_import_into_hostages(bytes, passphrase)
+
             withContext(Dispatchers.Main) {
                 if (result >= ImportResult.SUCCESS.value) {
                     Signals.checkHostages = true

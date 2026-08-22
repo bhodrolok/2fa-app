@@ -26,7 +26,7 @@ class RustInterface {
     external fun features_main_search(query: String): Array<AccountShort>
     external fun features_main_reorder(from: Long, to: Long)
 
-    external fun features_management_aegis_export_accounts(passphrase: String): String
+    external fun features_management_aegis_export_accounts(passphrase: String): ByteArray
     external fun features_management_aegis_import_into_hostages(bytes: ByteArray, passphrase: String): Int
 
     external fun features_otp_generate(id: Long, counter: Long, next: Boolean, revealed: Boolean): String

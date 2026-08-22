@@ -83,12 +83,12 @@ fun ExportToAegis(navController: NavController) {
         isLoading = true
 
         scope.launch(Dispatchers.IO) {
-            val json = rustInterface.features_management_aegis_export_accounts(passphrase)
+            val bytes = rustInterface.features_management_aegis_export_accounts(passphrase)
 
             try {
                 val out = context.contentResolver.openOutputStream(uri)
                     ?: throw IOException("openOutputStream returned null for $uri")
-                out.use { it.write(json.toByteArray()) }
+                out.use { it.write(bytes) }
             } catch (e: Exception) {
                 Log.e("ExportToAegis", "createDocumentForAegis", e)
             } finally {
