@@ -14,7 +14,7 @@ use crate::{
     CLIENT,
     account::Account,
     features::management::{
-        internal::{export::export, import::import},
+        native::{export::export, import::import},
         result::ImportResult,
     },
 };
@@ -80,7 +80,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
             (
                 PathBuf::from(&client.application_directory),
-                export(&client.accounts),
+                export(&client.accounts, &String::new()),
             )
         };
 

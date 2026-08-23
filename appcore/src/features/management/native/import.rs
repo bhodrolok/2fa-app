@@ -1,7 +1,7 @@
 use crate::{
     account::Account,
     features::{
-        management::{internal::schema::Format, result::ImportResult},
+        management::{native::schema::Format, result::ImportResult},
         otpauth::deserialize::deserialize,
     },
 };
@@ -16,7 +16,15 @@ pub fn import(accounts: &mut Vec<Account>, json: &str) -> ImportResult {
         return ImportResult::UnsupportedVersion;
     }
 
-    for uri in &format.content {
+    let Some(content) = format.content.as_array() else {
+        return ImportResult::InvalidFormat;
+    };
+
+    for uri in content {
+        let Some(uri) = uri.as_str() else {
+            return ImportResult::InvalidFormat;
+        };
+
         if let Some(account) = deserialize(uri) {
             accounts.push(account);
         }

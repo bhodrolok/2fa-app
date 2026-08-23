@@ -1,3 +1,3 @@
 pub mod aegis;
-pub mod internal;
+pub mod native;
 pub mod result;

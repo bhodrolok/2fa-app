@@ -1,6 +1,7 @@
 package app.ninesevennine.twofactorauthenticator.gui.screens
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -70,7 +71,7 @@ fun ExportToAegis(navController: NavController) {
 
     val isPassphraseValid = passphraseStrength > 0.5f
 
-    val createDocumentForAegis = rememberLauncherForActivityResult(
+    val createDocumentLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/json")
     ) { uri ->
         if (uri == null) {
@@ -90,13 +91,17 @@ fun ExportToAegis(navController: NavController) {
                     ?: throw IOException("openOutputStream returned null for $uri")
                 out.use { it.write(bytes) }
             } catch (e: Exception) {
-                Log.e("ExportToAegis", "createDocumentForAegis", e)
+                Log.e("ExportToAegis", "createDocumentLauncher", e)
             } finally {
                 withContext(Dispatchers.Main) {
                     navController.popBackStack()
                 }
             }
         }
+    }
+
+    BackHandler(enabled = isLoading) {
+
     }
 
     Box(
@@ -162,7 +167,7 @@ fun ExportToAegis(navController: NavController) {
                         text = if (isLoading) spinnerText() else stringResource(R.string.common_title_export)
                     ) {
                         Signals.suppressLockOnExit = true
-                        createDocumentForAegis.launch("export.json")
+                        createDocumentLauncher.launch("export.json")
                     }
                 }
 

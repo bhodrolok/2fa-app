@@ -1,5 +1,6 @@
 package app.ninesevennine.twofactorauthenticator.gui.screens
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,7 +23,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -35,71 +35,73 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
-import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
 import app.ninesevennine.twofactorauthenticator.rustInterface
-import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import java.io.IOException
 
 @Serializable
 object ExportRoute
-
-private const val TAG = "Export"
 
 @Composable
 fun Export(navController: NavController) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
+    val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+        .let { if (it < 16.dp) 16.dp else it + 16.dp }
+
+    var isLoading by remember { mutableStateOf(false) }
     var passphrase by remember { mutableStateOf("") }
     var passphraseStrength by remember { mutableFloatStateOf(0f) }
     var confirmPassphrase by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
-    var pendingExportData by remember { mutableStateOf<String?>(null) }
-
-    val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
 
     val isPassphraseValid = passphraseStrength > 0.5f
 
     val createDocumentLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/octet-stream")
     ) { uri ->
-        val data = pendingExportData
-
-        if (uri == null || data == null) {
+        if (uri == null) {
             isLoading = false
             return@rememberLauncherForActivityResult
         }
 
-        scope.launch(Dispatchers.IO) {
-            context.contentResolver.openOutputStream(uri)?.use { output ->
-                output.write(data.toByteArray())
-            }
+        if (isLoading) return@rememberLauncherForActivityResult
 
-            withContext(Dispatchers.Main) {
-                isLoading = false
-                navController.popBackStack()
+        isLoading = true
+
+        scope.launch(Dispatchers.IO) {
+            val bytes = rustInterface.features_management_native_export_accounts(passphrase)
+
+            try {
+                val out = context.contentResolver.openOutputStream(uri)
+                    ?: throw IOException("openOutputStream returned null for $uri")
+                out.use { it.write(bytes) }
+            } catch (e: Exception) {
+                Log.e("Export", "createDocumentLauncher", e)
+            } finally {
+                withContext(Dispatchers.Main) {
+                    navController.popBackStack()
+                }
             }
         }
     }
 
     BackHandler(enabled = isLoading) {
-        // intercept the system back button when loading.
+
     }
 
     Box(
@@ -128,36 +130,15 @@ fun Export(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                Text(
-                    text = stringResource(R.string.common_title_export),
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    color = Theme.colors.primary,
-                    fontSize = 18.sp,
-                    fontFamily = InterVariable,
-                    fontWeight = FontWeight.W700
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = stringResource(R.string.screen_export_description),
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    color = Theme.colors.primary,
-                    fontSize = 14.sp,
-                    fontFamily = InterVariable,
-                    fontWeight = FontWeight.Normal
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
                 ConfidentialTextBox(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     title = stringResource(R.string.common_title_passphrase),
                     value = passphrase,
+                    error = passphrase.isEmpty(),
                     onValueChange = {
                         if (!isLoading) {
                             passphrase = it
-                            passphraseStrength = rustInterface.estimatePassphraseStrength(it)
+                            passphraseStrength = rustInterface.features_zxcvbn_normalized(it)
                         }
                     }
                 )
@@ -181,24 +162,12 @@ fun Export(navController: NavController) {
 
                 AnimatedVisibility(isPassphraseValid && passphrase == confirmPassphrase) {
                     RoundedButton(
-                        modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                        text = if (isLoading) spinnerText() else stringResource(R.string.common_button_continue)
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                        text = if (isLoading) spinnerText() else stringResource(R.string.common_title_export)
                     ) {
-                        if (isLoading) return@RoundedButton
-
-                        isLoading = true
-
-                        scope.launch(Dispatchers.IO) {
-                            Logger.i(TAG, "exporting accounts")
-
-                            val data = rustInterface.exportAccounts(passphrase)
-
-                            withContext(Dispatchers.Main) {
-                                Signals.suppressLockOnExit = true
-                                pendingExportData = data
-                                createDocumentLauncher.launch("export.2fa")
-                            }
-                        }
+                        Signals.suppressLockOnExit = true
+                        createDocumentLauncher.launch("export.2fa")
                     }
                 }
 
@@ -206,7 +175,9 @@ fun Export(navController: NavController) {
             }
         }
 
-        StartButtonHeader("") {
+        StartButtonHeader(title = stringResource(R.string.common_title_export)) {
+            if (isLoading) return@StartButtonHeader
+
             navController.popBackStack()
         }
     }
