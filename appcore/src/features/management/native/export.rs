@@ -39,7 +39,14 @@ pub fn export(accounts: &[Account], passphrase: &str) -> String {
 }
 
 pub fn export_encrypted(accounts: &[Account], salt: &[u8; 16], key: &[u8; 64]) -> String {
-    let content: Vec<String> = accounts.iter().map(serialize).collect();
+    let mut content: Vec<String> = accounts.iter().map(serialize).collect();
+
+    if content.is_empty() {
+        let mut junk = [0u8; 64];
+        getrandom::fill(&mut junk).unwrap();
+        content.push(data_encoding::BASE64.encode(&junk));
+    }
+
     let mut content = serde_json::to_string(&content).unwrap();
 
     let target = content.len().max(4096).next_multiple_of(4096);
