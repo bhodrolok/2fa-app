@@ -32,7 +32,7 @@ pub fn deserialize(uri: &str) -> Option<Account> {
     };
 
     // 3.4. parameters
-    let mut id = getrandom::u64().ok()?;
+    let mut id = getrandom::u64().unwrap();
     let mut note = String::new();
     let mut secret = Vec::new();
     let mut algorithm = Algorithm::SHA1;

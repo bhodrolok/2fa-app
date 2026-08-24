@@ -9,7 +9,10 @@ use crate::{
     CLIENT,
     account::Account,
     features::management::{
-        native::v4::{self, export::export},
+        native::{
+            v3,
+            v4::{self, export::export},
+        },
         result::ImportResult,
     },
 };
@@ -64,7 +67,19 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
                 Ok(count)
             }
-            err => Ok(err as jint),
+            ImportResult::IncorrectPassphrase => Ok(ImportResult::IncorrectPassphrase as jint),
+            _ => match v3::import::import(&mut accounts, &json, &passphrase) {
+                ImportResult::Success => {
+                    let count = accounts.len() as jint;
+
+                    let mut client = CLIENT.lock().unwrap();
+
+                    client.hostages = accounts;
+
+                    Ok(count)
+                }
+                err => Ok(err as jint),
+            },
         }
     });
 
