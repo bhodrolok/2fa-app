@@ -66,6 +66,7 @@ fun Settings(navController: NavController) {
 
     val currentThemeOption by remember { mutableStateOf(Theme.currentOption(context)) }
 
+    var importChoiceNative by remember { mutableStateOf(false) }
     var importResult by remember { mutableIntStateOf(0) }
     var showImportResultPrompt by remember { mutableStateOf(false) }
 
@@ -86,7 +87,11 @@ fun Settings(navController: NavController) {
                 return@launch
             }
 
-            val result = rustInterface.features_management_aegis_import_into_hostages(bytes, "")
+            val result = if (importChoiceNative) {
+                rustInterface.features_management_native_import_into_hostages(bytes, "")
+            } else {
+                rustInterface.features_management_aegis_import_into_hostages(bytes, "")
+            }
 
             if (result >= ImportResult.SUCCESS.value) {
                 withContext(Dispatchers.Main) {
@@ -96,7 +101,11 @@ fun Settings(navController: NavController) {
             } else {
                 if (result == ImportResult.INCORRECT_PASSPHRASE.value) {
                     withContext(Dispatchers.Main) {
-                        navController.navigate(ImportFromAegisEncryptedRoute(uri.toString()))
+                        if (importChoiceNative) {
+                            navController.navigate(ImportEncryptedRoute(uri.toString()))
+                        } else {
+                            navController.navigate(ImportFromAegisEncryptedRoute(uri.toString()))
+                        }
                     }
 
                     return@launch
@@ -308,7 +317,13 @@ fun Settings(navController: NavController) {
                         primaryText = stringResource(R.string.common_title_import),
                         secondaryText = ".2fa"
                     ) {
-                        navController.navigate(ImportRoute)
+                        importChoiceNative = true
+                        Signals.suppressLockOnExit = true
+                        openDocumentLauncher.launch(arrayOf(
+                            "application/json",
+                            "text/json",
+                            "application/octet-stream"
+                        ))
                     }
 
                     SectionButton(
@@ -326,6 +341,7 @@ fun Settings(navController: NavController) {
                         primaryText = stringResource(R.string.screen_settings_management_import_from_aegis),
                         secondaryText = ".json"
                     ) {
+                        importChoiceNative = false
                         Signals.suppressLockOnExit = true
                         openDocumentLauncher.launch(arrayOf(
                             "application/json",

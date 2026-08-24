@@ -1,11 +1,18 @@
 use jni::{
     EnvUnowned,
     errors::{Error, ThrowRuntimeExAndDefault},
-    objects::{JClass, JString},
-    sys::jbyteArray,
+    objects::{JByteArray, JClass, JString},
+    sys::{jbyteArray, jint},
 };
 
-use crate::{CLIENT, features::management::native::export::export};
+use crate::{
+    CLIENT,
+    account::Account,
+    features::management::{
+        native::v4::{self, export::export},
+        result::ImportResult,
+    },
+};
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_features_1management_1native_1export_1accounts(
@@ -24,6 +31,41 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
             .byte_array_from_slice(json.as_bytes())
             .unwrap()
             .into_raw())
+    });
+
+    outcome.resolve::<ThrowRuntimeExAndDefault>()
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_features_1management_1native_1import_1into_1hostages(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+    bytes: JByteArray,
+    passphrase: JString,
+) -> jint {
+    let outcome = unowned_env.with_env(|env| -> Result<_, Error> {
+        let mut accounts: Vec<Account> = Vec::new();
+
+        let bytes = env.convert_byte_array(&bytes).unwrap();
+        let passphrase = passphrase.to_string();
+
+        let json = match String::from_utf8(bytes) {
+            Ok(s) => s,
+            Err(_) => return Ok(ImportResult::InvalidFormat as jint),
+        };
+
+        match v4::import::import(&mut accounts, &json, &passphrase) {
+            ImportResult::Success => {
+                let count = accounts.len() as jint;
+
+                let mut client = CLIENT.lock().unwrap();
+
+                client.hostages = accounts;
+
+                Ok(count)
+            }
+            err => Ok(err as jint),
+        }
     });
 
     outcome.resolve::<ThrowRuntimeExAndDefault>()

@@ -4,10 +4,8 @@ use hkdf::Hkdf;
 use sha3::Digest;
 use sha3::Sha3_512;
 
-use crate::{
-    account::Account,
-    features::{management::native::schema::Format, otpauth::serialize::serialize},
-};
+use crate::features::management::native::v4::schema::Format;
+use crate::{account::Account, features::otpauth::serialize::serialize};
 
 pub fn export(accounts: &[Account], passphrase: &str) -> String {
     if passphrase.is_empty() {

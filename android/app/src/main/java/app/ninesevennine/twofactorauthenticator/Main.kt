@@ -39,10 +39,10 @@ import app.ninesevennine.twofactorauthenticator.gui.screens.ExportToAegis
 import app.ninesevennine.twofactorauthenticator.gui.screens.ExportToAegisRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Greeting
 import app.ninesevennine.twofactorauthenticator.gui.screens.GreetingRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.Import
+import app.ninesevennine.twofactorauthenticator.gui.screens.ImportEncrypted
+import app.ninesevennine.twofactorauthenticator.gui.screens.ImportEncryptedRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.ImportFromAegisEncrypted
 import app.ninesevennine.twofactorauthenticator.gui.screens.ImportFromAegisEncryptedRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.ImportRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Main
 import app.ninesevennine.twofactorauthenticator.gui.screens.MainRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectIconPacks
@@ -108,7 +108,10 @@ class Main : FragmentActivity() {
                     composable<BiometricUnlockRoute> { BiometricUnlock(navController) }
                     composable<ChangePassphraseRoute> { ChangePassphrase(navController) }
                     composable<ExportRoute> { Export(navController) }
-                    composable<ImportRoute> { Import(navController) }
+                    composable<ImportEncryptedRoute> { backStackEntry ->
+                        val route = backStackEntry.toRoute<ImportEncryptedRoute>()
+                        ImportEncrypted(navController, route.uri)
+                    }
                     composable<ExportToAegisRoute> { ExportToAegis(navController) }
                     composable<ImportFromAegisEncryptedRoute> { backStackEntry ->
                         val route = backStackEntry.toRoute<ImportFromAegisEncryptedRoute>()

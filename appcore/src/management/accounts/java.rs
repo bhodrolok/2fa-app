@@ -13,10 +13,7 @@ use std::{
 use crate::{
     CLIENT,
     account::Account,
-    features::management::{
-        native::{export::export, import::import},
-        result::ImportResult,
-    },
+    features::management::{native::v4, result::ImportResult},
 };
 
 #[unsafe(no_mangle)]
@@ -50,7 +47,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
         let mut accounts: Vec<Account> = Vec::new();
 
-        match import(&mut accounts, &json) {
+        match v4::import::import(&mut accounts, &json, &String::new()) {
             ImportResult::Success => {
                 let mut client = CLIENT.lock().unwrap();
 
@@ -80,7 +77,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
             (
                 PathBuf::from(&client.application_directory),
-                export(&client.accounts, &String::new()),
+                v4::export::export(&client.accounts, &String::new()),
             )
         };
 

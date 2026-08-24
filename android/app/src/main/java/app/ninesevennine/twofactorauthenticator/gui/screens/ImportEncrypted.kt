@@ -1,9 +1,7 @@
 package app.ninesevennine.twofactorauthenticator.gui.screens
 
-import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,7 +23,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -42,113 +39,85 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
+import app.ninesevennine.twofactorauthenticator.features.management.ImportResult
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
+import app.ninesevennine.twofactorauthenticator.gui.elements.InfoPrompt
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
 import app.ninesevennine.twofactorauthenticator.rustInterface
-import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
-import app.ninesevennine.twofactorauthenticator.utils.Document
-import app.ninesevennine.twofactorauthenticator.utils.Logger
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import java.io.IOException
 
 @Serializable
-object ImportRoute
+data class ImportEncryptedRoute(val uri: String)
 
-private const val TAG = "Import"
 
 @Composable
-fun Import(navController: NavController) {
+fun ImportEncrypted(navController: NavController, uri: String) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    var passphrase by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
-    var importData by remember { mutableStateOf("") }
-    var importFilename by remember { mutableStateOf("") }
-    var importError by remember { mutableStateOf(false) }
-    var importErrorCode by remember { mutableIntStateOf(0) }
-
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
 
-    val openDocumentLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenDocument()
-    ) { uri: Uri? ->
-        if (uri != null) {
-            try {
-                importFilename = Document.getName(context, uri) ?: "???"
+    var isLoading by remember { mutableStateOf(false) }
+    var passphrase by remember { mutableStateOf("") }
+    var importResult by remember { mutableIntStateOf(0) }
+    var showImportResultPrompt by remember { mutableStateOf(false) }
 
-                context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                    importData = inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
-                }
-            } catch (_: Exception) {
-                navController.popBackStack()
-                return@rememberLauncherForActivityResult
-            }
-        } else {
-            navController.popBackStack()
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        Signals.suppressLockOnExit = true
-        openDocumentLauncher.launch(arrayOf("application/octet-stream", "text/*"))
-    }
-
-    if (importData.isEmpty()) return
-
-    BackHandler(enabled = isLoading) {
-        // intercept the system back button when loading.
-    }
-
-    val performImport = performImport@ {
-        if (isLoading || importData.isEmpty()) return@performImport
+    val importWithPassphrase = importWithPassphrase@{
+        if (isLoading) return@importWithPassphrase
 
         isLoading = true
-        importError = false
 
         focusManager.clearFocus()
         keyboardController?.hide()
 
         scope.launch(Dispatchers.IO) {
-            Logger.i(TAG, "importing accounts")
+            val bytes = try {
+                val input = context.contentResolver.openInputStream(uri.toUri())
+                    ?: throw IOException("openInputStream returned null for $uri")
+                input.use { it.readBytes() }
+            } catch (e: Exception) {
+                Log.e("ImportEncrypted", "importWithPassphrase", e)
+                withContext(Dispatchers.Main) { isLoading = false }
+                return@launch
+            }
 
-            val result = rustInterface.importAccounts(passphrase, importData)
+            val result = rustInterface.features_management_native_import_into_hostages(bytes, passphrase)
 
-            if (result > 0) {
-                if (!AccountManagement.saveAccounts(context)) {
-                    isLoading = false
-                    return@launch
-                }
-
-                Logger.i(TAG, "successfully imported $result account(s)")
-
-                Signals.checkHostages = true
-
-                withContext(Dispatchers.Main) {
+            withContext(Dispatchers.Main) {
+                if (result >= ImportResult.SUCCESS.value) {
+                    Signals.checkHostages = true
                     navController.popBackStack(MainRoute, false)
+                } else {
+                    importResult = result
+
+                    if (result != ImportResult.INCORRECT_PASSPHRASE.value) {
+                        showImportResultPrompt = true
+                    }
+
+                    isLoading = false
                 }
-            } else {
-                Logger.i(TAG, "failed importing accounts")
-                importError = true
-                importErrorCode = result
-                isLoading = false
             }
         }
+    }
 
-        Unit
+    BackHandler(enabled = isLoading) {
+
     }
 
     Box(
@@ -158,7 +127,8 @@ fun Import(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()).imePadding(),
+                .verticalScroll(rememberScrollState())
+                .imePadding(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -177,53 +147,27 @@ fun Import(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                Text(
-                    text = stringResource(R.string.common_title_import),
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    color = Theme.colors.primary,
-                    fontSize = 18.sp,
-                    fontFamily = InterVariable,
-                    fontWeight = FontWeight.W700
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = stringResource(R.string.common_import_description, importFilename),
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    color = Theme.colors.primary,
-                    fontSize = 14.sp,
-                    fontFamily = InterVariable,
-                    fontWeight = FontWeight.Normal
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
                 ConfidentialTextBox(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     title = stringResource(R.string.common_title_passphrase),
                     value = passphrase,
-                    error = passphrase.isEmpty() || importError,
+                    error = passphrase.isEmpty() || importResult < ImportResult.SUCCESS.value,
                     onValueChange = {
                         if (!isLoading) {
                             passphrase = it
                         }
 
-                        importError = false
+                        importResult = ImportResult.SUCCESS.value // Reset
                     },
-                    onDone = performImport
+                    onDone = importWithPassphrase
                 )
 
-                AnimatedVisibility(importError) {
+                AnimatedVisibility(importResult == ImportResult.INCORRECT_PASSPHRASE.value) {
                     Text(
-                        text = when (importErrorCode) {
-                            AccountManagement.IMPORT_ERROR_NO_ACCOUNTS -> stringResource(R.string.common_import_error_no_accounts)
-                            AccountManagement.IMPORT_ERROR_INCORRECT_PASSPHRASE -> stringResource(R.string.common_import_error_incorrect_passphrase)
-                            AccountManagement.IMPORT_ERROR_INCORRECT_VERSION -> stringResource(R.string.common_import_error_incorrect_version)
-                            AccountManagement.IMPORT_ERROR_INVALID_FILE -> stringResource(R.string.common_import_error_invalid)
-                            else -> stringResource(R.string.common_import_error_unknown)
-                        },
-                        modifier = Modifier.fillMaxWidth().padding(start = 20.dp, top = 8.dp, end = 20.dp),
+                        text = stringResource(R.string.common_import_error_incorrect_passphrase),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 20.dp, top = 8.dp, end = 20.dp),
                         color = Theme.colors.veryWeak,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Normal,
@@ -233,18 +177,39 @@ fun Import(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                RoundedButton(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    text = if (isLoading) spinnerText() else stringResource(R.string.common_title_import),
-                    onClick = performImport
-                )
+                AnimatedVisibility(passphrase.isNotEmpty()) {
+                    RoundedButton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        text = if (isLoading) spinnerText() else stringResource(R.string.common_title_import),
+                    ) {
+                        importWithPassphrase()
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(bottomInset + 80.dp))
             }
         }
 
-        StartButtonHeader("") {
+        StartButtonHeader(title = stringResource(R.string.common_title_import)) {
             navController.popBackStack()
         }
     }
+
+    InfoPrompt(
+        visible = showImportResultPrompt,
+        title = when (importResult) {
+            ImportResult.INVALID_FORMAT.value -> stringResource(R.string.import_error_title_invalid_format)
+            ImportResult.UNSUPPORTED_VERSION.value -> stringResource(R.string.import_error_title_unsupported_version)
+            else -> "Unknown"
+        },
+        body = when (importResult) {
+            ImportResult.INVALID_FORMAT.value -> stringResource(R.string.import_error_body_invalid_format)
+            ImportResult.UNSUPPORTED_VERSION.value -> stringResource(R.string.import_error_body_unsupported_version)
+            else -> "Unknown"
+        },
+        buttonText = stringResource(R.string.common_button_ok),
+        onDismiss = { showImportResultPrompt = false }
+    )
 }
