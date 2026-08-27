@@ -47,11 +47,9 @@ E5:B2:8E:A1:E0:51:C2:32:DE:A9:4C:27:C0:59:2E:2C:00:2D:17:C5:CA:81:78:8B:51:30:6D
 
 2fa is free, has no ads, collects nothing, and is made by one person. It is sustained entirely by donations. Funds go toward test devices, developer account and infrastructure fees, and eventually a security audit.
 
-If you value my work then you should definitely consider donating.
-
 **Monero**
 
-<img src="assets/monero.webp" alt="Monero donation address QR code" width="220">
+<img src="assets/monero.webp" alt="Monero donation address QR code" width="180">
 
 `43YaGjafqvwTZKqiE22MwQ1kVKYnG679pUXQnAzkos3WK2uoqJSeu9jRpko4VzKL9tHvFYRWbTUebcDDqkKiwJAL83arU6X`
 
