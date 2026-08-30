@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 
 class RustInterface {
     external fun client_application_directory_set(applicationDirectory: String)
+    external fun client_has_salt_and_key(): Boolean
 
     external fun features_edit_get(): Account
     external fun features_edit_color_get(): Int
@@ -43,9 +44,10 @@ class RustInterface {
 
     external fun management_accounts_load()
     external fun management_accounts_save()
+    external fun management_accounts_save_with_passphrase(passphrase: String)
 
-    external fun management_edit_none()
-    external fun management_edit_default()
+    external fun management_edit_none_set()
+    external fun management_edit_default_set()
 
     external fun management_import_edit_into_accounts()
     external fun management_import_account_into_edit(id: Long)
@@ -64,8 +66,6 @@ class RustInterface {
     external fun importAccounts(passphrase: String, data: String): Int
 
     external fun svgToBitmap(data: ByteArray, width: Int, height: Int): Bitmap?
-
-    external fun estimatePassphraseStrength(passphrase: String): Float
 }
 
 enum class CodeType(val displayName: String) {

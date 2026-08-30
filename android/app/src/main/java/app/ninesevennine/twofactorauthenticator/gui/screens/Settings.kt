@@ -65,6 +65,7 @@ fun Settings(navController: NavController) {
     val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
 
     val currentThemeOption by remember { mutableStateOf(Theme.currentOption(context)) }
+    var hasPassphraseUnlock by remember { mutableStateOf(rustInterface.client_has_salt_and_key()) }
 
     var importChoiceNative by remember { mutableStateOf(false) }
     var importResult by remember { mutableIntStateOf(0) }
@@ -234,12 +235,22 @@ fun Settings(navController: NavController) {
                     modifier = Modifier.padding(16.dp),
                     title = stringResource(R.string.screen_settings_security)
                 ) {
-                    SectionButton(
-                        painter = painterResource(R.drawable.random_alphabet),
-                        tint = Theme.colors.primary,
-                        primaryText = stringResource(R.string.common_title_change_passphrase)
-                    ) {
-                        navController.navigate(ChangePassphraseRoute)
+                    if (hasPassphraseUnlock) {
+                        SectionButton(
+                            painter = painterResource(R.drawable.random_alphabet),
+                            tint = Theme.colors.primary,
+                            primaryText = stringResource(R.string.common_title_change_passphrase)
+                        ) {
+                            navController.navigate(ChangePassphraseRoute)
+                        }
+                    } else {
+                        SectionButton(
+                            painter = painterResource(R.drawable.random_alphabet),
+                            tint = Theme.colors.primary,
+                            primaryText = stringResource(R.string.common_title_set_passphrase)
+                        ) {
+                            navController.navigate(SetPassphraseRoute)
+                        }
                     }
 
                     SectionButton(
@@ -383,7 +394,7 @@ fun Settings(navController: NavController) {
                         primaryText = stringResource(R.string.screen_settings_support_donate),
                         secondaryText = stringResource(R.string.screen_settings_support_donate_secondary)
                     ) {
-                        val intent = Intent(Intent.ACTION_VIEW, "https://979.st/donate/".toUri())
+                        val intent = Intent(Intent.ACTION_VIEW, "https://ko-fi.com/ninesevennine".toUri())
                         context.startActivity(intent)
                     }
                 }

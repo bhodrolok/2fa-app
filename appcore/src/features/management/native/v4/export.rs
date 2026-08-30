@@ -8,7 +8,12 @@ use zeroize::Zeroizing;
 use crate::features::management::native::v4::schema::Format;
 use crate::{account::Account, features::otpauth::serialize::serialize};
 
-pub fn export(accounts: &[Account], passphrase: &str) -> String {
+pub fn export(
+    accounts: &[Account],
+    passphrase: &str,
+    out_salt: &mut [u8; 16],
+    out_key: &mut [u8; 64],
+) -> String {
     if passphrase.is_empty() {
         let json = Format {
             version: 4,
@@ -20,8 +25,7 @@ pub fn export(accounts: &[Account], passphrase: &str) -> String {
         return serde_json::to_string(&json).unwrap();
     }
 
-    let mut salt = [0u8; 16];
-    getrandom::fill(&mut salt).unwrap();
+    getrandom::fill(out_salt).unwrap();
 
     let m_cost = 256 * 1024;
     let t_cost = 4;
@@ -29,12 +33,11 @@ pub fn export(accounts: &[Account], passphrase: &str) -> String {
     let params = Params::new(m_cost, t_cost, p_cost, None).unwrap();
     let argon2id = Argon2::new(Algorithm::Argon2id, Version::V0x13, params);
 
-    let mut key = Zeroizing::new([0u8; 64]);
     argon2id
-        .hash_password_into(passphrase.as_bytes(), &salt, key.as_mut_slice())
+        .hash_password_into(passphrase.as_bytes(), out_salt, out_key)
         .unwrap();
 
-    export_encrypted(accounts, &salt, &key)
+    export_encrypted(accounts, out_salt, out_key)
 }
 
 pub fn export_encrypted(accounts: &[Account], salt: &[u8; 16], key: &[u8; 64]) -> String {

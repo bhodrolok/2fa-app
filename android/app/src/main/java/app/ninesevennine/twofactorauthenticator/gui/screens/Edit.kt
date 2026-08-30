@@ -117,7 +117,7 @@ fun Edit(navController: NavController) {
     Time.Track()
 
     BackHandler {
-        rustInterface.management_edit_none()
+        rustInterface.management_edit_none_set()
         navController.popBackStack(MainRoute, false)
     }
 
@@ -395,7 +395,7 @@ fun Edit(navController: NavController) {
         EditHeader(
             title = stringResource(R.string.screen_edit_title),
             onCancel = {
-                rustInterface.management_edit_none()
+                rustInterface.management_edit_none_set()
                 navController.popBackStack(MainRoute, false)
             },
             onDone = {

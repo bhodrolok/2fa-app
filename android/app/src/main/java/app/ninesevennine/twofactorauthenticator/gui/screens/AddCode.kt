@@ -188,7 +188,7 @@ fun AddCode(navController: NavController) {
                             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                             view.playSoundEffect(SoundEffectConstants.CLICK)
 
-                            rustInterface.management_edit_default()
+                            rustInterface.management_edit_default_set()
                             navController.navigate(EditRoute)
                         }
                     )

@@ -53,6 +53,8 @@ import app.ninesevennine.twofactorauthenticator.gui.screens.SelectOtpCardStyle
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectOtpCardStyleRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectTheme
 import app.ninesevennine.twofactorauthenticator.gui.screens.SelectThemeRoute
+import app.ninesevennine.twofactorauthenticator.gui.screens.SetPassphrase
+import app.ninesevennine.twofactorauthenticator.gui.screens.SetPassphraseRoute
 import app.ninesevennine.twofactorauthenticator.gui.screens.Settings
 import app.ninesevennine.twofactorauthenticator.gui.screens.SettingsRoute
 import app.ninesevennine.twofactorauthenticator.utils.Config
@@ -106,6 +108,7 @@ class Main : FragmentActivity() {
                     composable<SelectOtpCardStyleRoute> { SelectOtpCardStyle(navController) }
                     composable<SelectIconPacksRoute> { SelectIconPacks(navController) }
                     composable<BiometricUnlockRoute> { BiometricUnlock(navController) }
+                    composable<SetPassphraseRoute> { SetPassphrase(navController) }
                     composable<ChangePassphraseRoute> { ChangePassphrase(navController) }
                     composable<ExportRoute> { Export(navController) }
                     composable<ImportEncryptedRoute> { backStackEntry ->

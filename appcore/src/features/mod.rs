@@ -4,5 +4,4 @@ pub mod management;
 pub mod ngram;
 pub mod otp;
 pub mod otpauth;
-pub mod passphrase;
 pub mod zxcvbn;

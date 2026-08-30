@@ -27,9 +27,12 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     let outcome = unowned_env.with_env(|env| -> Result<_, Error> {
         let passphrase = Zeroizing::new(passphrase.to_string());
 
+        let mut salt = Zeroizing::new([0u8; 16]);
+        let mut key = Zeroizing::new([0u8; 64]);
+
         let client = CLIENT.lock().unwrap();
 
-        let json = export(&client.accounts, &passphrase);
+        let json = export(&client.accounts, &passphrase, &mut salt, &mut key);
 
         Ok(env
             .byte_array_from_slice(json.as_bytes())

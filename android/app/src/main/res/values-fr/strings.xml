@@ -97,7 +97,7 @@
     <string name="screen_settings_support_donate">Donation</string>
     <string name="screen_settings_support_donate_secondary">979 à besoin de votre aide pour continuer</string>
     <string name="screen_settings_title">Paramètres</string>
-    <string name="screen_setup_create_a_passphrase_title">Créer une phrase secrète</string>
+    <string name="common_title_set_passphrase">Créer une phrase secrète</string>
     <string name="screen_setup_get_started_button">Commencer</string>
     <string name="screen_setup_get_started_section_step_1">1. Créer une phrase secrète</string>
     <string name="screen_setup_get_started_section_step_2">2. Activer le déverrouillage biométrique</string>

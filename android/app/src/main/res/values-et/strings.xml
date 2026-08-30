@@ -113,5 +113,5 @@
     <string name="common_title_change_passphrase">Muuda salafraasi</string>
     <string name="common_unlock_passphrase_description">Rakenduse lukustuse avamiseks valis hästi meeldejääv salafraas. Võid kasutada sõnu, numbreid, tühikuid ja erimärke.</string>
     <string name="screen_greeting_button_unlock">Ava lukustus</string>
-    <string name="screen_setup_create_a_passphrase_title">Loo salafraas</string>
+    <string name="common_title_set_passphrase">Loo salafraas</string>
 </resources>

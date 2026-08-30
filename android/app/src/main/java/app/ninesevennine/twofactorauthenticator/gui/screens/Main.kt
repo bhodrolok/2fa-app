@@ -277,7 +277,7 @@ fun Main(navController: NavController) {
             navController.navigate(AddCodeRoute)
         },
         onAddLong = {
-            rustInterface.management_edit_default()
+            rustInterface.management_edit_default_set()
             navController.navigate(EditRoute)
         }
     )

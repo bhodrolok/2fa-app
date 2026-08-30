@@ -117,5 +117,5 @@
     <string name="common_title_change_passphrase">Изменить парольную фразу</string>
     <string name="common_unlock_passphrase_description">Выберите запоминающуюся парольную фразу, чтобы разблокировать приложение. Вы можете использовать слова, пробелы и символы.</string>
     <string name="screen_greeting_button_unlock">Разблокировать</string>
-    <string name="screen_setup_create_a_passphrase_title">Создать парольную фразу</string>
+    <string name="common_title_set_passphrase">Создать парольную фразу</string>
 </resources>

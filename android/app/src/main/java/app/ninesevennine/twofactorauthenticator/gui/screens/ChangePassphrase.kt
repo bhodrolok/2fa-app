@@ -1,6 +1,5 @@
 package app.ninesevennine.twofactorauthenticator.gui.screens
 
-import android.util.Base64
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
@@ -31,7 +30,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -44,28 +42,21 @@ import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.gui.InterVariable
 import app.ninesevennine.twofactorauthenticator.gui.elements.ConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButton
+import app.ninesevennine.twofactorauthenticator.gui.elements.RoundedButtonClean
 import app.ninesevennine.twofactorauthenticator.gui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.gui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.gui.elements.spinnerText
 import app.ninesevennine.twofactorauthenticator.rustInterface
-import app.ninesevennine.twofactorauthenticator.utils.AccountManagement
-import app.ninesevennine.twofactorauthenticator.utils.Config
-import app.ninesevennine.twofactorauthenticator.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
-import java.security.SecureRandom
 
 @Serializable
 object ChangePassphraseRoute
 
-private const val TAG = "ChangePassphrase"
-
 @Composable
 fun ChangePassphrase(navController: NavController) {
-    val context = LocalContext.current
-
     var passphrase by remember { mutableStateOf("") }
     var passphraseStrength by remember { mutableFloatStateOf(0f) }
     var confirmPassphrase by remember { mutableStateOf("") }
@@ -74,9 +65,6 @@ fun ChangePassphrase(navController: NavController) {
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
-
-    val promptTitle = stringResource(R.string.common_title_confirm_biometrics)
-    val promptNegative = stringResource(R.string.common_button_cancel)
 
     val isPassphraseValid = passphraseStrength > 0.5f
 
@@ -139,7 +127,7 @@ fun ChangePassphrase(navController: NavController) {
                     onValueChange = {
                         if (!isLoading) {
                             passphrase = it
-                            passphraseStrength = rustInterface.estimatePassphraseStrength(it)
+                            passphraseStrength = rustInterface.features_zxcvbn_normalized(it)
                         }
                     }
                 )
@@ -171,58 +159,12 @@ fun ChangePassphrase(navController: NavController) {
                         isLoading = true
 
                         scope.launch(Dispatchers.IO) {
-                            val oldUnlockPassphraseHash = rustInterface.getUnlockPassphraseHash()
-                            val oldUnlockPassphraseSalt = Config.unlockPassphraseSalt
+                            rustInterface.management_accounts_save_with_passphrase(passphrase)
 
-                            val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
-                            rustInterface.changeUnlockPassphraseHash(salt, passphrase)
-                            Config.unlockPassphraseSalt = Base64.encodeToString(salt, Base64.NO_WRAP)
+                            KeyStoreAES.deleteBiometricKey()
 
-                            if (!AccountManagement.saveAccounts(context)) {
-                                rustInterface.setUnlockPassphraseHash(oldUnlockPassphraseHash)
-                                Config.unlockPassphraseSalt = oldUnlockPassphraseSalt
-                                isLoading = false
-                                return@launch
-                            }
-
-                            Config.save(context)
-
-                            Logger.i(TAG, "successfully changed the unlock passphrase hash")
-
-                            if (Config.isUsingBiometrics) {
-                                if (!KeyStoreAES.isBiometricKeyLoaded() || !KeyStoreAES.isBiometricKeyUsable()) {
-                                    withContext(Dispatchers.Main) {
-                                        navController.popBackStack()
-                                    }
-
-                                    return@launch
-                                }
-
-                                withContext(Dispatchers.Main) {
-                                    KeyStoreAES.saveUnlockPassphraseHash(
-                                        promptTitle = promptTitle,
-                                        promptNegative = promptNegative,
-                                        onSuccess = {
-                                            Logger.i(TAG, "successfully saved the unlock passphrase hash for biometrics")
-
-                                            navController.popBackStack()
-                                        },
-                                        onCancel = {
-                                            Logger.i(TAG, "cancelled saving unlock passphrase hash for biometrics")
-
-                                            navController.popBackStack()
-                                        },
-                                        onError = {
-                                            Logger.e(TAG, "failed saving unlock passphrase hash for biometrics")
-
-                                            navController.popBackStack()
-                                        }
-                                    )
-                                }
-                            } else {
-                                withContext(Dispatchers.Main) {
-                                    navController.popBackStack()
-                                }
+                            withContext(Dispatchers.Main) {
+                                navController.popBackStack()
                             }
                         }
                     }
@@ -236,6 +178,35 @@ fun ChangePassphrase(navController: NavController) {
             if (isLoading) return@StartButtonHeader
 
             navController.popBackStack()
+        }
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        Column(
+            modifier = Modifier.widthIn(max = 512.dp).fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            RoundedButtonClean(
+                modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = bottomInset),
+                text = stringResource(R.string.common_button_remove)
+            ) {
+                if (isLoading) return@RoundedButtonClean
+
+                isLoading = true
+
+                scope.launch(Dispatchers.IO) {
+                    rustInterface.management_accounts_save_with_passphrase("")
+
+                    KeyStoreAES.deleteBiometricKey()
+
+                    withContext(Dispatchers.Main) {
+                        navController.popBackStack()
+                    }
+                }
+            }
         }
     }
 }

@@ -4,6 +4,8 @@
     <string name="common_button_cancel">Cancel</string>
     <string name="common_button_continue">Continue</string>
     <string name="common_button_change">Change</string>
+    <string name="common_button_set">Set</string>
+    <string name="common_button_remove">Remove</string>
     <string name="common_button_skip">Skip</string>
     <string name="common_button_disable">Disable</string>
     <string name="common_button_enable">Enable</string>
@@ -110,7 +112,7 @@
     <string name="screen_settings_support_donate">Donate</string>
     <string name="screen_settings_support_donate_secondary">979 needs your support to continue</string>
     <string name="screen_settings_title">Settings</string>
-    <string name="screen_setup_create_a_passphrase_title">Create a Passphrase</string>
+    <string name="common_title_set_passphrase">Set Passphrase</string>
     <string name="screen_setup_get_started_button">Get Started</string>
     <string name="screen_setup_get_started_section_step_1">1. Create a Passphrase</string>
     <string name="screen_setup_get_started_section_step_2">2. Enable Biometric Unlock</string>

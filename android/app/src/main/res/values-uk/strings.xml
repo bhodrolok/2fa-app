@@ -115,7 +115,7 @@
     <string name="common_title_change_passphrase">Змінити парольну фразу</string>
     <string name="common_unlock_passphrase_description">Виберіть пам’ятну парольну фразу, щоб розблокувати додаток. Ви можете використовувати слова, пробіли та символи.</string>
     <string name="screen_greeting_button_unlock">Розблокувати</string>
-    <string name="screen_setup_create_a_passphrase_title">Створити парольну фразу</string>
+    <string name="common_title_set_passphrase">Створити парольну фразу</string>
     <string name="common_biometric_unlock_description">Замість того, щоб кожного разу вводити парольну фразу, ви можете використовувати біометричні дані для розблокування додатка. Час від часу вам все ж доведеться вводити парольну фразу, і іноді це буде єдиним способом розблокувати додаток.</string>
     <string name="screen_setup_get_started_section_step_1">1. Створіть парольну фразу</string>
 </resources>

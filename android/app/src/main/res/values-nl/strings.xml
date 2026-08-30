@@ -113,5 +113,5 @@
     <string name="common_unlock_passphrase_description">Kies een toegangssleutel om de app te openen. Je kan woorden, spaties en symbolen gebruiken.</string>
     <string name="common_title_change_passphrase">Toegangssleutel wĳzigen</string>
     <string name="screen_greeting_button_unlock">Ontgrendelen</string>
-    <string name="screen_setup_create_a_passphrase_title">Maak een toegangssleutel aan</string>
+    <string name="common_title_set_passphrase">Maak een toegangssleutel aan</string>
 </resources>

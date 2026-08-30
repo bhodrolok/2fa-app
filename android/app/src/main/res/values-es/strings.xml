@@ -115,5 +115,5 @@
     <string name="common_title_change_passphrase">Cambiar frase de contraseña</string>
     <string name="common_unlock_passphrase_description">Elige una frase de acceso fácil de recordar para desbloquear la aplicación. Puedes utilizar palabras, espacios y símbolos.</string>
     <string name="screen_greeting_button_unlock">Desbloquear</string>
-    <string name="screen_setup_create_a_passphrase_title">Crear una frase de contraseña (Passphrase)</string>
+    <string name="common_title_set_passphrase">Crear una frase de contraseña (Passphrase)</string>
 </resources>

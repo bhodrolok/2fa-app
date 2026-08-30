@@ -1,8 +1,4 @@
-use crate::{
-    _client::CLIENT_UNLOCK_PASSPHRASE_HASH_LEN,
-    CLIENT,
-    features::{self},
-};
+use crate::{_client::CLIENT_UNLOCK_PASSPHRASE_HASH_LEN, CLIENT};
 use jni::{
     EnvUnowned,
     objects::{JByteArray, JClass, JIntArray, JString, JValue},
@@ -328,20 +324,6 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         }
 
         Ok(bitmap.into_raw())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_estimatePassphraseStrength(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    passphrase: JString,
-) -> f32 {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let passphrase: String = passphrase.to_string();
-        Ok(features::passphrase::estimate_strength(passphrase.as_str()))
     });
 
     outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()

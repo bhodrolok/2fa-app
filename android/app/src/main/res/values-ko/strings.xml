@@ -111,5 +111,5 @@
     <string name="common_title_change_passphrase">패스프레이즈 변경</string>
     <string name="common_unlock_passphrase_description">앱을 잠금 해제할 패스프레이즈는 기억할 수 있는 것으로 선택하십시오. 단어, 공백 및 특수문자를 사용할 수 있습니다.</string>
     <string name="screen_greeting_button_unlock">잠금 해제</string>
-    <string name="screen_setup_create_a_passphrase_title">패스프레이즈 생성</string>
+    <string name="common_title_set_passphrase">패스프레이즈 생성</string>
 </resources>

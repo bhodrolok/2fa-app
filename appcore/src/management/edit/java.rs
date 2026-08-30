@@ -12,7 +12,7 @@ use crate::{
 };
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_management_1edit_1none(
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_management_1edit_1none_1set(
     mut unowned_env: EnvUnowned,
     _class: JClass,
 ) {
@@ -30,7 +30,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_management_1edit_1default(
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_management_1edit_1default_1set(
     mut unowned_env: EnvUnowned,
     _class: JClass,
 ) {
