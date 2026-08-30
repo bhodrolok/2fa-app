@@ -34,8 +34,8 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
         let client = CLIENT.lock().unwrap();
 
-        let has_key = client.unlock_passphrase_key.iter().any(|&b| b != 0);
-        let has_salt = client.unlock_passphrase_salt.iter().any(|&b| b != 0);
+        let has_key = client.key.iter().any(|&b| b != 0);
+        let has_salt = client.salt.iter().any(|&b| b != 0);
 
         Ok(has_key && has_salt)
     });

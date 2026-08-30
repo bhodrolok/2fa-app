@@ -83,15 +83,11 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
                 env.fatal_error(&JNIString::from("application_directory is empty"))
             }
 
-            let has_key = client.unlock_passphrase_key.iter().any(|&b| b != 0);
-            let has_salt = client.unlock_passphrase_salt.iter().any(|&b| b != 0);
+            let has_key = client.key.iter().any(|&b| b != 0);
+            let has_salt = client.salt.iter().any(|&b| b != 0);
 
             let json = if has_key && has_salt {
-                export_encrypted(
-                    &client.accounts,
-                    &client.unlock_passphrase_salt,
-                    &client.unlock_passphrase_key,
-                )
+                export_encrypted(&client.accounts, &client.salt, &client.key)
             } else {
                 let mut salt = Zeroizing::new([0u8; SALT_LEN]);
                 let mut key = Zeroizing::new([0u8; KEY_LEN]);
@@ -171,12 +167,12 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
         let mut client = CLIENT.lock().unwrap();
 
-        client.unlock_passphrase_salt.zeroize();
-        client.unlock_passphrase_key.zeroize();
+        client.salt.zeroize();
+        client.key.zeroize();
 
         if !passphrase.is_empty() {
-            client.unlock_passphrase_salt = *salt;
-            client.unlock_passphrase_key = *key;
+            client.salt = *salt;
+            client.key = *key;
         }
 
         Ok(())

@@ -32,7 +32,7 @@ impl Client {
         salt.extend_from_slice(&hkdf_salt);
         salt.extend_from_slice(passphrase_salt);
 
-        let hk = Hkdf::<Sha3_512>::new(Some(&salt), &self.unlock_passphrase_key);
+        let hk = Hkdf::<Sha3_512>::new(Some(&salt), &self.key);
         let mut okm = [0u8; AEGIS256_KEY_NONCE_LEN];
         hk.expand(b"979.2fa.v3", &mut okm).unwrap();
 
@@ -241,7 +241,7 @@ impl Client {
             return IMPORT_ERROR_INVALID_FILE;
         }
 
-        let hk = Hkdf::<Sha3_512>::new(Some(&salt), &self.unlock_passphrase_key);
+        let hk = Hkdf::<Sha3_512>::new(Some(&salt), &self.key);
         let mut okm = [0u8; AEGIS256_KEY_NONCE_LEN];
         hk.expand(b"979.2fa.v3", &mut okm).unwrap();
 
