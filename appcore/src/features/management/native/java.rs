@@ -81,7 +81,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
                 Ok(ImportResult::IncorrectPassphrase as jint)
             }
-            _ => match v3::import::import(&mut accounts, &json, &passphrase) {
+            _ => match v3::import::import(&json, &passphrase, &mut accounts) {
                 ImportResult::Success => {
                     let count = accounts.len() as jint;
 

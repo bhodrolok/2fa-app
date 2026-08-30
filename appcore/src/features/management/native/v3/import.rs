@@ -8,20 +8,23 @@ use crate::{
     account::Account,
     features::{
         management::{
-            native::v3::schema::{Entry, Format},
+            native::v3::schema::{
+                AEGIS256_AAD_LEN, AEGIS256_KEY_LEN, AEGIS256_NONCE_LEN, AEGIS256_TAG_LEN,
+                ARGON2ID_M_COST, ARGON2ID_P_COST, ARGON2ID_T_COST, Entry, Format, KEY_LEN, VERSION,
+            },
             result::ImportResult,
         },
         otp::{algorithm::Algorithm, r#type::CodeType},
     },
 };
 
-pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> ImportResult {
+pub fn import(json: &str, passphrase: &str, out_accounts: &mut Vec<Account>) -> ImportResult {
     let format: Format = match serde_json::from_str(json) {
         Ok(f) => f,
         Err(_) => return ImportResult::InvalidFormat,
     };
 
-    if format.version != 3 {
+    if format.version != VERSION {
         return ImportResult::UnsupportedVersion;
     }
 
@@ -39,10 +42,10 @@ pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impo
         _ => return ImportResult::InvalidFormat,
     };
 
-    let params = Params::new(256 * 1024, 4, 2, None).unwrap();
+    let params = Params::new(ARGON2ID_M_COST, ARGON2ID_T_COST, ARGON2ID_P_COST, None).unwrap();
     let argon2id = Argon2::new(argon2::Algorithm::Argon2id, Version::V0x13, params);
 
-    let mut key = Zeroizing::new([0u8; 64]);
+    let mut key = Zeroizing::new([0u8; KEY_LEN]);
     if argon2id
         .hash_password_into(passphrase.as_bytes(), passphrase_salt, key.as_mut_slice())
         .is_err()
@@ -50,15 +53,19 @@ pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impo
         return ImportResult::InvalidFormat;
     }
 
-    import_encrypted(accounts, json, &key)
+    import_encrypted(json, &key, out_accounts)
 }
 
-pub fn import_encrypted(accounts: &mut Vec<Account>, json: &str, key: &[u8; 64]) -> ImportResult {
+pub fn import_encrypted(
+    json: &str,
+    key: &[u8; KEY_LEN],
+    out_accounts: &mut Vec<Account>,
+) -> ImportResult {
     let Ok(format) = serde_json::from_str::<Format>(json) else {
         return ImportResult::InvalidFormat;
     };
 
-    if format.version != 3 {
+    if format.version != VERSION {
         return ImportResult::UnsupportedVersion;
     }
 
@@ -66,11 +73,11 @@ pub fn import_encrypted(accounts: &mut Vec<Account>, json: &str, key: &[u8; 64])
         return ImportResult::InvalidFormat;
     };
 
-    let (key, nonce): ([u8; 32], [u8; 32]) = match salt.len() {
+    let (key, nonce): ([u8; AEGIS256_KEY_LEN], [u8; AEGIS256_NONCE_LEN]) = match salt.len() {
         16 => (key[..32].try_into().unwrap(), key[32..].try_into().unwrap()),
         32 => {
             let hk = Hkdf::<Sha3_512>::new(Some(&salt), &key[..]);
-            let mut okm = Zeroizing::new([0u8; 64]);
+            let mut okm = Zeroizing::new([0u8; AEGIS256_AAD_LEN]);
             hk.expand(b"979.2fa.v3", okm.as_mut_slice()).unwrap();
             (okm[..32].try_into().unwrap(), okm[32..].try_into().unwrap())
         }
@@ -81,14 +88,16 @@ pub fn import_encrypted(accounts: &mut Vec<Account>, json: &str, key: &[u8; 64])
         return ImportResult::InvalidFormat;
     };
 
-    if db.len() < 16 {
+    if db.len() < AEGIS256_TAG_LEN {
         return ImportResult::InvalidFormat;
     }
 
-    let (ciphertext, tag) = db.split_at(db.len() - 16);
-    let tag: [u8; 16] = tag.try_into().unwrap();
+    let (ciphertext, tag) = db.split_at(db.len() - AEGIS256_TAG_LEN);
+    let tag: [u8; AEGIS256_TAG_LEN] = tag.try_into().unwrap();
 
-    let Ok(content) = Aegis256::<16>::new(&key, &nonce).decrypt(ciphertext, &tag, b"") else {
+    let Ok(content) =
+        Aegis256::<AEGIS256_TAG_LEN>::new(&key, &nonce).decrypt(ciphertext, &tag, b"")
+    else {
         return ImportResult::IncorrectPassphrase;
     };
     let content = Zeroizing::new(content);
@@ -164,7 +173,7 @@ pub fn import_encrypted(accounts: &mut Vec<Account>, json: &str, key: &[u8; 64])
             .map(u32::from_be_bytes)
             .unwrap_or(0xFF808080);
 
-        accounts.push(Account {
+        out_accounts.push(Account {
             id,
             name,
             issuer,
