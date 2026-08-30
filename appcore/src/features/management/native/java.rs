@@ -12,7 +12,11 @@ use crate::{
     features::management::{
         native::{
             v3,
-            v4::{self, export::export},
+            v4::{
+                self,
+                export::export,
+                schema::{KEY_LEN, SALT_LEN},
+            },
         },
         result::ImportResult,
     },
@@ -27,8 +31,8 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     let outcome = unowned_env.with_env(|env| -> Result<_, Error> {
         let passphrase = Zeroizing::new(passphrase.to_string());
 
-        let mut salt = Zeroizing::new([0u8; 16]);
-        let mut key = Zeroizing::new([0u8; 64]);
+        let mut salt = Zeroizing::new([0u8; SALT_LEN]);
+        let mut key = Zeroizing::new([0u8; KEY_LEN]);
 
         let client = CLIENT.lock().unwrap();
 
@@ -61,7 +65,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
             Err(_) => return Ok(ImportResult::InvalidFormat as jint),
         });
 
-        match v4::import::import(&mut accounts, &json, &passphrase) {
+        match v4::import::import(&json, &passphrase, &mut accounts) {
             ImportResult::Success => {
                 let count = accounts.len() as jint;
 

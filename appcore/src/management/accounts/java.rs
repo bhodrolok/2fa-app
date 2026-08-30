@@ -18,6 +18,7 @@ use crate::{
         native::v4::{
             self,
             export::{export, export_encrypted},
+            schema::{KEY_LEN, SALT_LEN},
         },
         result::ImportResult,
     },
@@ -53,7 +54,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
         let mut accounts: Vec<Account> = Vec::new();
 
-        match v4::import::import(&mut accounts, &json, &String::new()) {
+        match v4::import::import(&json, &String::new(), &mut accounts) {
             ImportResult::Success => {
                 let mut client = CLIENT.lock().unwrap();
 
@@ -92,8 +93,8 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
                     &client.unlock_passphrase_key,
                 )
             } else {
-                let mut salt = Zeroizing::new([0u8; 16]);
-                let mut key = Zeroizing::new([0u8; 64]);
+                let mut salt = Zeroizing::new([0u8; SALT_LEN]);
+                let mut key = Zeroizing::new([0u8; KEY_LEN]);
                 export(&client.accounts, &String::new(), &mut salt, &mut key)
             };
 
@@ -135,8 +136,8 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     let outcome = unowned_env.with_env(|env| -> Result<_, Error> {
         let passphrase = Zeroizing::new(passphrase.to_string());
 
-        let mut salt = Zeroizing::new([0u8; 16]);
-        let mut key = Zeroizing::new([0u8; 64]);
+        let mut salt = Zeroizing::new([0u8; SALT_LEN]);
+        let mut key = Zeroizing::new([0u8; KEY_LEN]);
 
         let (directory, json) = {
             let client = CLIENT.lock().unwrap();
