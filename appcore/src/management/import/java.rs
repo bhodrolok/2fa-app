@@ -21,7 +21,10 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         };
 
         match client.accounts.iter().position(|a| a.id == account.id) {
-            Some(i) => client.accounts[i] = account,
+            Some(i) => {
+                client.accounts[i].zeroize();
+                client.accounts[i] = account;
+            }
             None => client.accounts.push(account),
         }
 
@@ -42,11 +45,17 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
         let mut client = CLIENT.lock().unwrap();
 
-        client.edit = client
+        let replacement = client
             .accounts
             .iter()
             .find(|account| account.id == id)
             .cloned();
+
+        if let Some(account) = &mut client.edit {
+            account.zeroize();
+        }
+
+        client.edit = replacement;
 
         Ok(())
     });
@@ -68,7 +77,10 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
         for hostage in hostages.drain(..) {
             match accounts.iter_mut().find(|a| a.id == hostage.id) {
-                Some(existing) => *existing = hostage,
+                Some(existing) => {
+                    existing.zeroize();
+                    *existing = hostage;
+                }
                 None => accounts.push(hostage),
             }
         }

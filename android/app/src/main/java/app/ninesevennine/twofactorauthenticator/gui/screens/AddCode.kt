@@ -103,7 +103,10 @@ fun AddCode(navController: NavController) {
                         }
 
                         if (bitmap == null) false
-                        else importQRCodeIntoHostages(bitmap).also { bitmap.recycle() }
+                        else importQRCodeIntoHostages(bitmap).also {
+                            bitmap.eraseColor(0)
+                            bitmap.recycle()
+                        }
                     }
 
                     // .maFile

@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use zeroize::Zeroize;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Vault {
@@ -8,13 +9,13 @@ pub struct Vault {
     pub db: Value,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Zeroize)]
 pub struct Header {
     pub slots: Option<Vec<Slot>>,
     pub params: Option<Params>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Zeroize)]
 pub struct Slot {
     #[serde(rename = "type")]
     pub slot_type: u32,
@@ -29,26 +30,26 @@ pub struct Slot {
     pub is_backup: bool,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Zeroize)]
 pub struct Params {
     pub nonce: String,
     pub tag: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Zeroize)]
 pub struct Database {
     pub version: u32,
     pub entries: Vec<Entry>,
     pub groups: Vec<Group>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Zeroize)]
 pub struct Group {
     pub uuid: String,
     pub name: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Zeroize)]
 pub struct Entry {
     #[serde(rename = "type")]
     pub entry_type: String,
@@ -64,7 +65,7 @@ pub struct Entry {
     pub info: EntryInfo,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Zeroize)]
 pub struct EntryInfo {
     pub secret: String,
     pub algo: String,

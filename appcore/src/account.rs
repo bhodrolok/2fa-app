@@ -28,15 +28,3 @@ pub struct AccountShort {
     pub period: u64,
     pub color: u32,
 }
-
-#[derive(Clone)]
-pub struct AccountTruncated {
-    pub id: u64,
-    pub name: String,
-    pub issuer: String,
-    pub code_type: CodeType,
-    pub counter: u64,
-    pub period: u64,
-    pub digits: u32,
-    pub color: u32,
-}

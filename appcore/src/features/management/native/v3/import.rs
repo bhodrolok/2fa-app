@@ -2,6 +2,7 @@ use aegis::aegis256::Aegis256;
 use argon2::{Argon2, Params, Version};
 use hkdf::Hkdf;
 use sha3::Sha3_512;
+use zeroize::Zeroizing;
 
 use crate::{
     account::Account,
@@ -41,9 +42,9 @@ pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impo
     let params = Params::new(256 * 1024, 4, 2, None).unwrap();
     let argon2id = Argon2::new(argon2::Algorithm::Argon2id, Version::V0x13, params);
 
-    let mut key = [0u8; 64];
+    let mut key = Zeroizing::new([0u8; 64]);
     if argon2id
-        .hash_password_into(passphrase.as_bytes(), passphrase_salt, &mut key)
+        .hash_password_into(passphrase.as_bytes(), passphrase_salt, key.as_mut_slice())
         .is_err()
     {
         return ImportResult::InvalidFormat;
@@ -69,8 +70,8 @@ pub fn import_encrypted(accounts: &mut Vec<Account>, json: &str, key: &[u8; 64])
         16 => (key[..32].try_into().unwrap(), key[32..].try_into().unwrap()),
         32 => {
             let hk = Hkdf::<Sha3_512>::new(Some(&salt), &key[..]);
-            let mut okm = [0u8; 64];
-            hk.expand(b"979.2fa.v3", &mut okm).unwrap();
+            let mut okm = Zeroizing::new([0u8; 64]);
+            hk.expand(b"979.2fa.v3", okm.as_mut_slice()).unwrap();
             (okm[..32].try_into().unwrap(), okm[32..].try_into().unwrap())
         }
         _ => return ImportResult::InvalidFormat,
@@ -90,16 +91,14 @@ pub fn import_encrypted(accounts: &mut Vec<Account>, json: &str, key: &[u8; 64])
     let Ok(content) = Aegis256::<16>::new(&key, &nonce).decrypt(ciphertext, &tag, b"") else {
         return ImportResult::IncorrectPassphrase;
     };
+    let content = Zeroizing::new(content);
 
-    let Ok(entries) = serde_json::from_slice::<Vec<serde_json::Value>>(&content) else {
+    let Ok(entries) = serde_json::from_slice::<Vec<Entry>>(&content) else {
         return ImportResult::InvalidFormat;
     };
+    let entries = Zeroizing::new(entries);
 
-    for entry in entries {
-        let Ok(account) = serde_json::from_value::<Entry>(entry) else {
-            continue;
-        };
-
+    for account in entries.iter() {
         let Some(id) = data_encoding::HEXLOWER_PERMISSIVE
             .decode(account.id.as_bytes())
             .ok()
@@ -132,9 +131,9 @@ pub fn import_encrypted(accounts: &mut Vec<Account>, json: &str, key: &[u8; 64])
                 .unwrap_or_default()
         };
 
-        let mut name = decode_base64_str(account.name);
-        let mut issuer = decode_base64_str(account.issuer);
-        let note = decode_base64_str(account.note);
+        let mut name = decode_base64_str(account.name.clone());
+        let mut issuer = decode_base64_str(account.issuer.clone());
+        let note = decode_base64_str(account.note.clone());
 
         let mut period = account.period.unwrap_or(30);
         let mut digits = account.digits.unwrap_or(6);
@@ -159,6 +158,7 @@ pub fn import_encrypted(accounts: &mut Vec<Account>, json: &str, key: &[u8; 64])
 
         let color = account
             .color
+            .clone()
             .and_then(|c| data_encoding::HEXLOWER_PERMISSIVE.decode(c.as_bytes()).ok())
             .and_then(|b| <[u8; 4]>::try_from(b).ok())
             .map(u32::from_be_bytes)

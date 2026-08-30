@@ -1,4 +1,5 @@
 use percent_encoding::{NON_ALPHANUMERIC, utf8_percent_encode};
+use zeroize::Zeroizing;
 
 use crate::{
     account::Account,
@@ -39,13 +40,11 @@ pub fn serialize(account: &Account) -> String {
     };
 
     // 3.4. parameters
-    let mut parameters = vec![];
+    let mut parameters: Zeroizing<Vec<String>> = Zeroizing::new(vec![]);
 
     // 3.4.1. secret
-    parameters.push(format!(
-        "secret={}",
-        data_encoding::BASE32_NOPAD.encode(&account.secret)
-    ));
+    let secret = Zeroizing::new(data_encoding::BASE32_NOPAD.encode(&account.secret));
+    parameters.push(format!("secret={}", *secret));
 
     // 3.4.2. issuer
     if !issuer.is_empty() {

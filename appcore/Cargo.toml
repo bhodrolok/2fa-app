@@ -8,9 +8,9 @@ crate-type = ["cdylib"]
 
 [dependencies]
 aegis = { version = "0.9.15", default-features = false, features = ["std", "pure-rust"] }
-aes-gcm = "0.11.0"
+aes-gcm = { version = "0.11.0", features = ["zeroize"] }
 argon2 = "0.5.3"
-chacha20poly1305 = "0.11.0"
+chacha20poly1305 = { version = "0.11.0", features = ["zeroize"] }
 data-encoding = "2.11.1"
 getrandom = "0.4.3"
 hkdf = "0.13.0"

@@ -178,6 +178,7 @@ class Main : FragmentActivity() {
                                 Signals.checkHostages = true
                             }
 
+                            bitmap.eraseColor(0)
                             bitmap.recycle()
                         }
                     }

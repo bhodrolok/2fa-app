@@ -3,6 +3,7 @@ use argon2::{Algorithm, Argon2, Params, Version};
 use hkdf::Hkdf;
 use sha3::Digest;
 use sha3::Sha3_512;
+use zeroize::Zeroizing;
 
 use crate::features::management::native::v4::schema::Format;
 use crate::{account::Account, features::otpauth::serialize::serialize};
@@ -28,16 +29,17 @@ pub fn export(accounts: &[Account], passphrase: &str) -> String {
     let params = Params::new(m_cost, t_cost, p_cost, None).unwrap();
     let argon2id = Argon2::new(Algorithm::Argon2id, Version::V0x13, params);
 
-    let mut key = [0u8; 64];
+    let mut key = Zeroizing::new([0u8; 64]);
     argon2id
-        .hash_password_into(passphrase.as_bytes(), &salt, &mut key)
+        .hash_password_into(passphrase.as_bytes(), &salt, key.as_mut_slice())
         .unwrap();
 
     export_encrypted(accounts, &salt, &key)
 }
 
 pub fn export_encrypted(accounts: &[Account], salt: &[u8; 16], key: &[u8; 64]) -> String {
-    let mut content: Vec<String> = accounts.iter().map(serialize).collect();
+    let mut content: Zeroizing<Vec<String>> =
+        Zeroizing::new(accounts.iter().map(serialize).collect());
 
     if content.is_empty() {
         let mut junk = [0u8; 64];
@@ -45,19 +47,20 @@ pub fn export_encrypted(accounts: &[Account], salt: &[u8; 16], key: &[u8; 64]) -
         content.push(data_encoding::BASE64.encode(&junk));
     }
 
-    let mut content = serde_json::to_string(&content).unwrap();
+    let mut content = Zeroizing::new(serde_json::to_string(&*content).unwrap());
 
     let target = content.len().max(4096).next_multiple_of(4096);
-    content.push_str(&" ".repeat(target - content.len()));
+    let padding = " ".repeat(target - content.len());
+    content.push_str(&padding);
 
     let digest = Sha3_512::digest(content.as_bytes());
     let hash: [u8; 16] = digest[..16].try_into().unwrap();
 
     let hk = Hkdf::<Sha3_512>::new(Some(&hash), key);
-    let mut derived = [0u8; 64];
+    let mut derived = Zeroizing::new([0u8; 64]);
     hk.expand(
         b"app.ninesevennine.twofactorauthenticator.export.v4",
-        &mut derived,
+        derived.as_mut_slice(),
     )
     .unwrap();
 

@@ -4,6 +4,7 @@ use jni::{
     objects::{JByteArray, JClass, JString},
     sys::{jbyteArray, jint},
 };
+use zeroize::{Zeroize, Zeroizing};
 
 use crate::{
     CLIENT,
@@ -24,7 +25,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     passphrase: JString,
 ) -> jbyteArray {
     let outcome = unowned_env.with_env(|env| -> Result<_, Error> {
-        let passphrase: String = passphrase.to_string();
+        let passphrase = Zeroizing::new(passphrase.to_string());
 
         let client = CLIENT.lock().unwrap();
 
@@ -49,13 +50,13 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     let outcome = unowned_env.with_env(|env| -> Result<_, Error> {
         let mut accounts: Vec<Account> = Vec::new();
 
-        let bytes = env.convert_byte_array(&bytes).unwrap();
-        let passphrase = passphrase.to_string();
+        let bytes = Zeroizing::new(env.convert_byte_array(&bytes).unwrap());
+        let passphrase = Zeroizing::new(passphrase.to_string());
 
-        let json = match String::from_utf8(bytes) {
-            Ok(s) => s,
+        let json = Zeroizing::new(match std::str::from_utf8(&bytes) {
+            Ok(s) => s.to_string(),
             Err(_) => return Ok(ImportResult::InvalidFormat as jint),
-        };
+        });
 
         match v4::import::import(&mut accounts, &json, &passphrase) {
             ImportResult::Success => {
@@ -63,22 +64,32 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
                 let mut client = CLIENT.lock().unwrap();
 
+                client.hostages.zeroize();
                 client.hostages = accounts;
 
                 Ok(count)
             }
-            ImportResult::IncorrectPassphrase => Ok(ImportResult::IncorrectPassphrase as jint),
+            ImportResult::IncorrectPassphrase => {
+                accounts.zeroize();
+
+                Ok(ImportResult::IncorrectPassphrase as jint)
+            }
             _ => match v3::import::import(&mut accounts, &json, &passphrase) {
                 ImportResult::Success => {
                     let count = accounts.len() as jint;
 
                     let mut client = CLIENT.lock().unwrap();
 
+                    client.hostages.zeroize();
                     client.hostages = accounts;
 
                     Ok(count)
                 }
-                err => Ok(err as jint),
+                err => {
+                    accounts.zeroize();
+
+                    Ok(err as jint)
+                }
             },
         }
     });

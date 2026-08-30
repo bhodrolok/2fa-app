@@ -4,6 +4,7 @@ use aes_gcm::{
 };
 use hmac::KeyInit;
 use serde_json::Value;
+use zeroize::Zeroizing;
 
 use crate::{
     account::Account,
@@ -55,24 +56,24 @@ pub fn export(accounts: &[Account], passphrase: &str) -> String {
         });
     }
 
-    let db = Database {
+    let db = Zeroizing::new(Database {
         version: 3,
         entries,
         groups: Vec::new(),
-    };
+    });
 
-    let db_plaintext = match serde_json::to_vec(&db) {
+    let db_plaintext = Zeroizing::new(match serde_json::to_vec(&*db) {
         Ok(bytes) => bytes,
         Err(_) => return String::new(),
-    };
+    });
 
     let mut salt = [0u8; 32];
-    let mut master_key = [0u8; 32];
+    let mut master_key = Zeroizing::new([0u8; 32]);
     let mut slot_nonce_bytes = [0u8; 12];
     let mut db_nonce_bytes = [0u8; 12];
 
     if getrandom::fill(&mut salt).is_err()
-        || getrandom::fill(&mut master_key).is_err()
+        || getrandom::fill(master_key.as_mut_slice()).is_err()
         || getrandom::fill(&mut slot_nonce_bytes).is_err()
         || getrandom::fill(&mut db_nonce_bytes).is_err()
     {
@@ -89,12 +90,12 @@ pub fn export(accounts: &[Account], passphrase: &str) -> String {
         Err(_) => return String::new(),
     };
 
-    let mut derived_key = [0u8; 32];
+    let mut derived_key = Zeroizing::new([0u8; 32]);
     if scrypt::scrypt(
         passphrase.as_bytes(),
         &salt,
         &scrypt_params,
-        &mut derived_key,
+        derived_key.as_mut_slice(),
     )
     .is_err()
     {

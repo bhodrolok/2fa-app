@@ -5,6 +5,7 @@ use jni::{
     strings::JNIString,
     sys::{jboolean, jfloat, jint, jlong, jobject, jstring},
 };
+use zeroize::{Zeroize, Zeroizing};
 
 use crate::{
     CLIENT,
@@ -31,7 +32,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let issuer = JValue::Object(&issuer_jstr);
         let note_jstr = env.new_string(&account.note)?;
         let note = JValue::Object(&note_jstr);
-        let secret_base32 = data_encoding::BASE32_NOPAD.encode(&account.secret);
+        let secret_base32 = Zeroizing::new(data_encoding::BASE32_NOPAD.encode(&account.secret));
         let secret_jstr = env.new_string(secret_base32)?;
         let secret = JValue::Object(&secret_jstr);
         let code_type = JValue::Int(account.code_type as jint);
@@ -268,19 +269,22 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     secret_base32_nopad: JString,
 ) -> jboolean {
     let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
-        let secret_base32_nopad = secret_base32_nopad.to_string();
+        let secret_base32_nopad = Zeroizing::new(secret_base32_nopad.to_string());
 
-        let secret = match data_encoding::BASE32_NOPAD.decode(secret_base32_nopad.trim().as_bytes())
-        {
-            Ok(s) => s,
-            Err(_) => return Ok(false),
-        };
+        let mut secret =
+            match data_encoding::BASE32_NOPAD.decode(secret_base32_nopad.trim().as_bytes()) {
+                Ok(s) => s,
+                Err(_) => return Ok(false),
+            };
 
         let mut client = CLIENT.lock().unwrap();
 
         if let Some(account) = &mut client.edit {
-            account.secret = secret;
+            account.secret.zeroize();
+            account.secret = std::mem::take(&mut secret);
         }
+
+        secret.zeroize();
 
         Ok(true)
     });
@@ -435,8 +439,18 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
         let mut client = CLIENT.lock().unwrap();
 
-        client.accounts.retain(|a| a.id != id as u64);
-        client.edit = None;
+        client.accounts.retain_mut(|account| {
+            if account.id == id as u64 {
+                account.zeroize();
+                false
+            } else {
+                true
+            }
+        });
+
+        if let Some(mut account) = client.edit.take() {
+            account.zeroize();
+        }
 
         Ok(())
     });

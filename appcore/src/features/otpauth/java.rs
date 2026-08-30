@@ -4,7 +4,7 @@ use jni::{
     objects::{JClass, JIntArray, JString},
     sys::{jboolean, jint},
 };
-use zeroize::Zeroize;
+use zeroize::{Zeroize, Zeroizing};
 
 use crate::{CLIENT, features::otpauth::deserialize::deserialize};
 
@@ -15,7 +15,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     uri: JString,
 ) -> jboolean {
     let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
-        let uri = uri.to_string();
+        let uri = Zeroizing::new(uri.to_string());
 
         if let Some(account) = deserialize(&uri) {
             let mut client = CLIENT.lock().unwrap();
@@ -39,7 +39,8 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     json: JString,
 ) -> jboolean {
     let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
-        let json = json.to_string();
+        let json = Zeroizing::new(json.to_string());
+
         let Ok(json) = serde_json::from_str::<serde_json::Value>(&json) else {
             return Ok(false);
         };
@@ -73,7 +74,8 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 ) -> jboolean {
     let outcome = unowned_env.with_env(|env| -> Result<_, Error> {
         let (width, height) = (width as usize, height as usize);
-        let mut argb = vec![0i32; width * height];
+
+        let mut argb = Zeroizing::new(vec![0i32; width * height]);
         pixels.get_region(env, 0, &mut argb).unwrap();
 
         let mut image = rqrr::PreparedImage::prepare_from_greyscale(width, height, |x, y| {
@@ -85,15 +87,17 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         });
 
         for grid in image.detect_grids() {
-            if let Ok((_, content)) = grid.decode()
-                && let Some(account) = deserialize(&content)
-            {
-                let mut client = CLIENT.lock().unwrap();
+            if let Ok((_, content)) = grid.decode() {
+                let content = Zeroizing::new(content);
 
-                client.hostages.zeroize();
-                client.hostages.push(account);
+                if let Some(account) = deserialize(&content) {
+                    let mut client = CLIENT.lock().unwrap();
 
-                return Ok(true);
+                    client.hostages.zeroize();
+                    client.hostages.push(account);
+
+                    return Ok(true);
+                }
             }
         }
 

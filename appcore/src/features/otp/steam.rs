@@ -1,5 +1,6 @@
 use hmac::{Hmac, KeyInit, Mac};
 use sha1::Sha1;
+use zeroize::Zeroize;
 
 const STEAM_ALPHABET: &[u8] = b"23456789BCDFGHJKMNPQRTVWXY";
 
@@ -22,6 +23,8 @@ pub fn generate(secret: &[u8], timestamp: u64) -> String {
         chars[i] = STEAM_ALPHABET[(code % 26) as usize] as char;
         code /= 26;
     }
+
+    code.zeroize();
 
     chars.iter().collect()
 }

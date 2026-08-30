@@ -1,5 +1,6 @@
 use jni::{
     EnvUnowned,
+    errors::{Error, ThrowRuntimeExAndDefault},
     objects::{JClass, JString},
 };
 
@@ -11,7 +12,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     _class: JClass,
     application_directory: JString,
 ) {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
+    let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
         let application_directory = application_directory.to_string();
 
         let mut client = CLIENT.lock().unwrap();
@@ -20,5 +21,6 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
         Ok(())
     });
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
+
+    outcome.resolve::<ThrowRuntimeExAndDefault>();
 }

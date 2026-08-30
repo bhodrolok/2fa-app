@@ -2,6 +2,7 @@ use aes_gcm::{
     Aes256Gcm, Key, KeyInit,
     aead::{Aead, Nonce},
 };
+use zeroize::Zeroizing;
 
 use crate::{
     account::Account,
@@ -46,12 +47,12 @@ pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impo
                 Err(_) => return ImportResult::InvalidFormat,
             };
 
-            let mut derived_key = [0u8; 32];
+            let mut derived_key = Zeroizing::new([0u8; 32]);
             if scrypt::scrypt(
                 passphrase.as_bytes(),
                 &salt,
                 &scrypt_params,
-                &mut derived_key,
+                derived_key.as_mut_slice(),
             )
             .is_err()
             {
@@ -89,10 +90,12 @@ pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impo
             };
 
             let slot_cipher = Aes256Gcm::new(slot_key);
-            let master_key = match slot_cipher.decrypt(slot_nonce, slot_ciphertext.as_ref()) {
-                Ok(k) => k,
-                Err(_) => return ImportResult::IncorrectPassphrase,
-            };
+            let master_key = Zeroizing::new(
+                match slot_cipher.decrypt(slot_nonce, slot_ciphertext.as_ref()) {
+                    Ok(k) => k,
+                    Err(_) => return ImportResult::IncorrectPassphrase,
+                },
+            );
 
             let header_params = match &vault.header.params {
                 Some(p) => p,
@@ -134,10 +137,11 @@ pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impo
             };
 
             let db_cipher = Aes256Gcm::new(db_key);
-            let decrypted_bytes = match db_cipher.decrypt(db_nonce, db_ciphertext.as_ref()) {
-                Ok(b) => b,
-                Err(_) => return ImportResult::IncorrectPassphrase,
-            };
+            let decrypted_bytes =
+                Zeroizing::new(match db_cipher.decrypt(db_nonce, db_ciphertext.as_ref()) {
+                    Ok(b) => b,
+                    Err(_) => return ImportResult::IncorrectPassphrase,
+                });
 
             match serde_json::from_slice(&decrypted_bytes) {
                 Ok(plain_db) => plain_db,
@@ -150,11 +154,13 @@ pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impo
         },
     };
 
+    let db = Zeroizing::new(db);
+
     if db.version != 3 {
         return ImportResult::UnsupportedVersion;
     }
 
-    for entry in db.entries {
+    for entry in db.entries.iter() {
         let secret = match data_encoding::BASE32_NOPAD.decode(entry.info.secret.as_bytes()) {
             Ok(s) => s,
             Err(_) => continue,
@@ -192,16 +198,16 @@ pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impo
 
         accounts.push(Account {
             id,
-            name: entry.name,
-            issuer: entry.issuer,
-            note: entry.note,
+            name: entry.name.clone(),
+            issuer: entry.issuer.clone(),
+            note: entry.note.clone(),
             secret,
             code_type,
             algorithm,
             counter: entry.info.counter.unwrap_or(0),
             period: period,
             digits: digits,
-            color: 0xFFFFFFFF,
+            color: 0xFF808080,
         });
     }
 

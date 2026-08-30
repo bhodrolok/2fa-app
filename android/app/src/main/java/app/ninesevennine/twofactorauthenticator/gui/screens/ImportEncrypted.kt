@@ -99,6 +99,8 @@ fun ImportEncrypted(navController: NavController, uri: String) {
 
             val result = rustInterface.features_management_native_import_into_hostages(bytes, passphrase)
 
+            bytes.fill(0)
+
             withContext(Dispatchers.Main) {
                 if (result >= ImportResult.SUCCESS.value) {
                     Signals.checkHostages = true

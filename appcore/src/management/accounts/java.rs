@@ -9,6 +9,7 @@ use std::{
     io::{ErrorKind, Write},
     path::PathBuf,
 };
+use zeroize::{Zeroize, Zeroizing};
 
 use crate::{
     CLIENT,
@@ -37,16 +38,15 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
         let path = directory.join("accounts.2fa");
 
-        let json = match read_to_string(&path) {
+        let json = Zeroizing::new(match read_to_string(&path) {
             Ok(json) => json,
             Err(e) => {
                 if e.kind() == ErrorKind::NotFound {
                     return Ok(());
                 }
-
                 env.fatal_error(&JNIString::from(e.to_string()))
             }
-        };
+        });
 
         let mut accounts: Vec<Account> = Vec::new();
 
@@ -54,9 +54,10 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
             ImportResult::Success => {
                 let mut client = CLIENT.lock().unwrap();
 
+                client.accounts.zeroize();
                 client.accounts = accounts;
             }
-            _ => {}
+            _ => accounts.zeroize(),
         }
 
         Ok(())
@@ -80,7 +81,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
             (
                 PathBuf::from(&client.application_directory),
-                export(&client.accounts, &String::new()),
+                Zeroizing::new(export(&client.accounts, &String::new())),
             )
         };
 

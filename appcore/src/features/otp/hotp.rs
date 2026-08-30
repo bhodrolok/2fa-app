@@ -1,6 +1,7 @@
 use hmac::{Hmac, KeyInit, Mac};
 use sha1::Sha1;
 use sha2::{Sha256, Sha512};
+use zeroize::Zeroize;
 
 use crate::features::otp::algorithm::Algorithm;
 
@@ -40,9 +41,10 @@ pub fn generate(secret: &[u8], algorithm: Algorithm, digits: u32, counter: u64) 
         hmac_result[offset + 3],
     ]) & 0x7fffffff;
 
+    buf.zeroize();
+
     let modulus = 10u64.pow(digits);
     let code = (truncated as u64) % modulus;
-
     let width = digits as usize;
     format!("{code:0width$}")
 }

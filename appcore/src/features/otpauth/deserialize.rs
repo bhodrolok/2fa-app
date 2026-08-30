@@ -1,4 +1,5 @@
 use percent_encoding::percent_decode_str;
+use zeroize::{Zeroize, Zeroizing};
 
 use crate::{
     account::Account,
@@ -67,8 +68,9 @@ pub fn deserialize(uri: &str) -> Option<Account> {
             }
             "note" => note = percent_decode_str(value).decode_utf8().ok()?.into_owned(),
             "secret" => {
-                let value = value.replace(['=', ' ', '-'], "").to_ascii_uppercase();
-                secret = data_encoding::BASE32_NOPAD.decode(value.as_bytes()).ok()?;
+                let cleaned = Zeroizing::new(value.replace(['=', ' ', '-'], ""));
+                let upper = Zeroizing::new(cleaned.to_ascii_uppercase());
+                secret = data_encoding::BASE32_NOPAD.decode(upper.as_bytes()).ok()?;
             }
             "algorithm" => {
                 algorithm = match value.to_ascii_uppercase().replace('-', "").as_str() {
@@ -104,6 +106,8 @@ pub fn deserialize(uri: &str) -> Option<Account> {
     }
 
     if secret.is_empty() || !(4..=10).contains(&digits) || period < 10 {
+        secret.zeroize();
+
         return None;
     }
 

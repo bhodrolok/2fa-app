@@ -93,6 +93,8 @@ fun Settings(navController: NavController) {
                 rustInterface.features_management_aegis_import_into_hostages(bytes, "")
             }
 
+            bytes.fill(0)
+
             if (result >= ImportResult.SUCCESS.value) {
                 withContext(Dispatchers.Main) {
                     Signals.checkHostages = true

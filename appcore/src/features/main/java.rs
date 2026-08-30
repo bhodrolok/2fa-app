@@ -54,6 +54,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
         Ok(output.into_raw())
     });
+
     outcome.resolve::<ThrowRuntimeExAndDefault>()
 }
 
