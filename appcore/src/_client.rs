@@ -1,13 +1,16 @@
 use zeroize::Zeroize;
 
-use crate::account::Account;
+use crate::{
+    account::Account,
+    features::management::native::v4::schema::{KEY_LEN, SALT_LEN},
+};
 
 pub const CLIENT_UNLOCK_PASSPHRASE_HASH_LEN: usize = 64;
 
 pub struct Client {
     pub application_directory: String,
-    pub salt: [u8; 16],
-    pub key: [u8; 64],
+    pub salt: [u8; SALT_LEN],
+    pub key: [u8; KEY_LEN],
     pub edit: Option<Account>,
     pub accounts: Vec<Account>,
     pub hostages: Vec<Account>,
