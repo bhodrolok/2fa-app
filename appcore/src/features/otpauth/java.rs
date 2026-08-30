@@ -17,7 +17,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
         let uri = Zeroizing::new(uri.to_string());
 
-        if let Some(account) = deserialize(&uri) {
+        if let Some(account) = deserialize(&uri, true) {
             let mut client = CLIENT.lock().unwrap();
 
             client.hostages.zeroize();
@@ -49,7 +49,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
             return Ok(false);
         };
 
-        let Some(account) = deserialize(uri) else {
+        let Some(account) = deserialize(uri, true) else {
             return Ok(false);
         };
 
@@ -90,7 +90,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
             if let Ok((_, content)) = grid.decode() {
                 let content = Zeroizing::new(content);
 
-                if let Some(account) = deserialize(&content) {
+                if let Some(account) = deserialize(&content, true) {
                     let mut client = CLIENT.lock().unwrap();
 
                     client.hostages.zeroize();

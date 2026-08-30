@@ -31,7 +31,7 @@ pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impo
                 return ImportResult::InvalidFormat;
             };
 
-            if let Some(account) = deserialize(uri) {
+            if let Some(account) = deserialize(uri, false) {
                 accounts.push(account);
             }
         }
@@ -134,7 +134,7 @@ pub fn import_encrypted(accounts: &mut Vec<Account>, json: &str, key: &[u8; 64])
     let uris = Zeroizing::new(uris);
 
     for uri in uris.iter() {
-        if let Some(account) = deserialize(uri) {
+        if let Some(account) = deserialize(uri, false) {
             accounts.push(account);
         }
     }

@@ -7,7 +7,7 @@ use crate::{
 };
 
 // https://www.ietf.org/archive/id/draft-andesco-otpauth-uri-00.html
-pub fn deserialize(uri: &str) -> Option<Account> {
+pub fn deserialize(uri: &str, skip_id: bool) -> Option<Account> {
     // 3. uri format
     let (scheme, rest) = uri.trim().split_once("://")?;
     if !scheme.eq_ignore_ascii_case("otpauth") {
@@ -47,10 +47,12 @@ pub fn deserialize(uri: &str) -> Option<Account> {
 
         match key.to_ascii_lowercase().as_str() {
             "id" => {
-                let bytes = data_encoding::HEXLOWER_PERMISSIVE
-                    .decode(value.as_bytes())
-                    .ok()?;
-                id = u64::from_be_bytes(bytes.try_into().ok()?);
+                if !skip_id {
+                    let bytes = data_encoding::HEXLOWER_PERMISSIVE
+                        .decode(value.as_bytes())
+                        .ok()?;
+                    id = u64::from_be_bytes(bytes.try_into().ok()?);
+                }
             }
             "name" => {
                 name = percent_decode_str(value)
