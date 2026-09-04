@@ -24,7 +24,13 @@ use crate::{
     features::{management::result::ImportResult, otpauth::deserialize::deserialize},
 };
 
-pub fn import(json: &str, passphrase: &str, out_accounts: &mut Vec<Account>) -> ImportResult {
+pub fn import(
+    json: &str,
+    passphrase: &str,
+    out_salt: &mut [u8; SALT_LEN],
+    out_key: &mut [u8; KEY_LEN],
+    out_accounts: &mut Vec<Account>,
+) -> ImportResult {
     let format: Format = match serde_json::from_str(json) {
         Ok(f) => f,
         Err(_) => return ImportResult::InvalidFormat,
@@ -76,12 +82,16 @@ pub fn import(json: &str, passphrase: &str, out_accounts: &mut Vec<Account>) -> 
         return ImportResult::InvalidFormat;
     }
 
-    import_encrypted(json, &key, out_accounts)
+    *out_salt = salt;
+    *out_key = *key;
+
+    import_encrypted(json, &key, out_salt, out_accounts)
 }
 
 pub fn import_encrypted(
     json: &str,
     key: &[u8; KEY_LEN],
+    out_salt: &mut [u8; SALT_LEN],
     out_accounts: &mut Vec<Account>,
 ) -> ImportResult {
     let format: Format = match serde_json::from_str(json) {
@@ -94,6 +104,14 @@ pub fn import_encrypted(
     }
 
     let (Some(salt), Some(hash)) = (&format.salt, &format.hash) else {
+        return ImportResult::InvalidFormat;
+    };
+
+    let Some(salt_bytes) = data_encoding::BASE64
+        .decode(salt.as_bytes())
+        .ok()
+        .and_then(|salt| <[u8; SALT_LEN]>::try_from(salt).ok())
+    else {
         return ImportResult::InvalidFormat;
     };
 
@@ -124,8 +142,8 @@ pub fn import_encrypted(
     let mut derived = Zeroizing::new([0u8; DERIVED_LEN]);
     hk.expand(OKM, derived.as_mut_slice()).unwrap();
 
-    let key: [u8; AEGIS256_KEY_LEN] = derived[..DERIVED_LEN].try_into().unwrap();
-    let nonce: [u8; AEGIS256_NONCE_LEN] = derived[DERIVED_LEN..].try_into().unwrap();
+    let key: [u8; AEGIS256_KEY_LEN] = derived[..AEGIS256_KEY_LEN].try_into().unwrap();
+    let nonce: [u8; AEGIS256_NONCE_LEN] = derived[AEGIS256_KEY_LEN..].try_into().unwrap();
     let header = format!("{}|{}|{}", VERSION, salt, hash);
     let aad: [u8; AEGIS256_AAD_LEN] = Sha3_512::digest(header.as_bytes()).into();
 
@@ -150,6 +168,8 @@ pub fn import_encrypted(
             out_accounts.push(account);
         }
     }
+
+    *out_salt = salt_bytes;
 
     ImportResult::Success
 }

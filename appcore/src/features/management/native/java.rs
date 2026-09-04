@@ -65,7 +65,10 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
             Err(_) => return Ok(ImportResult::InvalidFormat as jint),
         });
 
-        match v4::import::import(&json, &passphrase, &mut accounts) {
+        let mut salt = Zeroizing::new([0u8; SALT_LEN]);
+        let mut key = Zeroizing::new([0u8; KEY_LEN]);
+
+        match v4::import::import(&json, &passphrase, &mut salt, &mut key, &mut accounts) {
             ImportResult::Success => {
                 let count = accounts.len() as jint;
 
@@ -81,7 +84,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
                 Ok(ImportResult::IncorrectPassphrase as jint)
             }
-            _ => match v3::import::import(&json, &passphrase, &mut accounts) {
+            _ => match v3::import::import(&json, &passphrase, &mut salt, &mut key, &mut accounts) {
                 ImportResult::Success => {
                     let count = accounts.len() as jint;
 

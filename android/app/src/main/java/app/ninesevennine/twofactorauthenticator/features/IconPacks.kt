@@ -6,7 +6,6 @@ import androidx.compose.ui.graphics.Color
 import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.ColorPicker
 import app.ninesevennine.twofactorauthenticator.utils.Config
-import app.ninesevennine.twofactorauthenticator.utils.Logger
 import org.json.JSONObject
 import java.io.File
 
@@ -58,7 +57,7 @@ object IconPacks {
             }
             loadedIconsMap = newMap
         } catch (_: Exception) {
-            Logger.e(TAG, "failed to load icons for pack $packId")
+//            Logger.e(TAG, "failed to load icons for pack $packId")
         }
     }
 
@@ -78,7 +77,7 @@ object IconPacks {
             val bitmap = rustInterface.svgToBitmap(svgBytes, sizePx, sizePx)
             IconPackResult(bitmap, icon.color)
         } catch (_: Exception) {
-            Logger.e(TAG, "Failed to load bitmap for $issuer")
+//            Logger.e(TAG, "Failed to load bitmap for $issuer")
             IconPackResult(null, icon.color)
         }
     }
@@ -103,7 +102,7 @@ object IconPacks {
                     secondary = json.optString("secondary", "")
                 )
             } catch (_: Exception) {
-                Logger.e(TAG, "failed to parse metadata.json in ${packDir.name}, deleting")
+//                Logger.e(TAG, "failed to parse metadata.json in ${packDir.name}, deleting")
                 packDir.deleteRecursively()
                 null
             }
@@ -122,6 +121,6 @@ object IconPacks {
         if (Config.activeIconPackId == id) {
             loadedIconsMap = emptyMap()
         }
-        Logger.i(TAG, "deleted pack $id")
+//        Logger.i(TAG, "deleted pack $id")
     }
 }

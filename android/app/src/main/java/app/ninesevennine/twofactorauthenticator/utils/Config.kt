@@ -11,10 +11,9 @@ import app.ninesevennine.twofactorauthenticator.features.Locale
 import app.ninesevennine.twofactorauthenticator.features.LocaleOption
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
-import app.ninesevennine.twofactorauthenticator.gui.screens.OtpCardStyle
+import app.ninesevennine.twofactorauthenticator.ui.screens.OtpCardStyle
 
 object Config {
-    private const val TAG = "Config"
     private const val PREFS_NAME = "config"
     private const val KEY_LOCALE = "locale"
     private const val KEY_THEME = "theme"
@@ -97,25 +96,5 @@ object Config {
             putBoolean("is_using_iconpacks_dont_suggest_colors", isUsingIconPacksDontSuggestColors)
             apply()
         }
-    }
-
-    fun dump() {
-        Logger.i(TAG, "hasCompletedSetup = $hasCompletedSetup")
-        Logger.i(TAG, "unlockPassphraseSalt = $unlockPassphraseSalt")
-        Logger.i(TAG, "automaticBackupsSalt = $automaticBackupsSalt")
-        Logger.i(TAG, "activeIconPackId = $activeIconPackId")
-        Logger.i(TAG, "UsingOtpCardStyle = $UsingOtpCardStyle")
-        Logger.i(TAG, "isUsingSearchOnTop = $isUsingSearchOnTop")
-        Logger.i(TAG, "isUsingTapToRevealCodes = $isUsingTapToRevealCodes")
-        Logger.i(TAG, "isUsingDoubleTapToCopyCodes = $isUsingDoubleTapToCopyCodes")
-        Logger.i(TAG, "isUsingFocusSearchOnLaunch = $isUsingFocusSearchOnLaunch")
-        Logger.i(TAG, "isUsingBiometrics = $isUsingBiometrics")
-        Logger.i(TAG, "isUsingScreenSecurity = $isUsingScreenSecurity")
-        Logger.i(TAG, "isUsingSecureClipboard = $isUsingSecureClipboard")
-        Logger.i(TAG, "isUsingLockOnExit = $isUsingLockOnExit")
-        Logger.i(TAG, "isUsingBlockIntents = $isUsingBlockIntents")
-        Logger.i(TAG, "isUsingAutomaticBackups = $isUsingAutomaticBackups")
-        Logger.i(TAG, "UsingIconPacksStyle = $UsingIconPacksStyle")
-        Logger.i(TAG, "isUsingIconPacksDontSuggestColors = $isUsingIconPacksDontSuggestColors")
     }
 }

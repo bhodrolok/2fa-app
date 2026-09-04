@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 class RustInterface {
     external fun client_application_directory_set(applicationDirectory: String)
     external fun client_has_salt_and_key(): Boolean
+    external fun client_key_set(key: ByteArray)
+    external fun client_key_get(): ByteArray
 
     external fun features_edit_get(): Account
     external fun features_edit_color_get(): Int
@@ -42,9 +44,10 @@ class RustInterface {
 
     external fun features_zxcvbn_normalized(passphrase: String): Float
 
-    external fun management_accounts_load()
+    external fun management_accounts_load(): Int
+    external fun management_accounts_load(passphrase: String): Int
     external fun management_accounts_save()
-    external fun management_accounts_save_with_passphrase(passphrase: String)
+    external fun management_accounts_save(passphrase: String)
 
     external fun management_edit_none_set()
     external fun management_edit_default_set()
@@ -54,17 +57,7 @@ class RustInterface {
     external fun management_import_hostages_into_accounts()
 
     external fun clientUnload()
-    external fun setUnlockPassphraseHash(hash: ByteArray)
-    external fun changeUnlockPassphraseHash(salt: ByteArray, passphrase: String)
-    external fun getUnlockPassphraseHash(): ByteArray
     external fun isClientUnlockPassphraseHashEmpty(): Boolean
-
-
-    external fun exportAccountsUsingUnlockPassphraseHash(salt: ByteArray): String
-    external fun exportAccounts(passphrase: String): String
-    external fun importAccountsUsingUnlockPassphraseHash(data: String): Int
-    external fun importAccounts(passphrase: String, data: String): Int
-
     external fun svgToBitmap(data: ByteArray, width: Int, height: Int): Bitmap?
 }
 

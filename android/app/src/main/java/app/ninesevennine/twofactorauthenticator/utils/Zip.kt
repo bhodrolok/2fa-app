@@ -18,7 +18,7 @@ object Zip {
                 val outputFile = File(destinationDir, entry.name)
 
                 if (!outputFile.canonicalPath.startsWith(canonicalDestination)) {
-                    Logger.i(TAG, "skipping zip entry outside destination: ${entry.name}")
+//                    Logger.i(TAG, "skipping zip entry outside destination: ${entry.name}")
                     zis.closeEntry()
                     entry = zis.nextEntry
                     continue
@@ -34,15 +34,15 @@ object Zip {
                         }
                     } catch (e: ZipException) {
                         if (e.message?.contains("encrypted", ignoreCase = true) == true) {
-                            Logger.i(TAG, "encrypted zip detected, rejecting and cleaning up")
+//                            Logger.i(TAG, "encrypted zip detected, rejecting and cleaning up")
                         } else {
-                            Logger.e(TAG, "failed to extract zip entry: ${entry.name}", e)
+//                            Logger.e(TAG, "failed to extract zip entry: ${entry.name}", e)
                         }
                         destinationDir.deleteRecursively()
 
                         return false
                     } catch (e: Exception) {
-                        Logger.e(TAG, "failed to extract zip entry: ${entry.name}", e)
+//                        Logger.e(TAG, "failed to extract zip entry: ${entry.name}", e)
                         destinationDir.deleteRecursively()
 
                         return false

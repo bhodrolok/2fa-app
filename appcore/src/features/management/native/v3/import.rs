@@ -10,7 +10,8 @@ use crate::{
         management::{
             native::v3::schema::{
                 AEGIS256_AAD_LEN, AEGIS256_KEY_LEN, AEGIS256_NONCE_LEN, AEGIS256_TAG_LEN,
-                ARGON2ID_M_COST, ARGON2ID_P_COST, ARGON2ID_T_COST, Entry, Format, KEY_LEN, VERSION,
+                ARGON2ID_M_COST, ARGON2ID_P_COST, ARGON2ID_T_COST, Entry, Format, KEY_LEN,
+                SALT_LEN, VERSION,
             },
             result::ImportResult,
         },
@@ -18,7 +19,13 @@ use crate::{
     },
 };
 
-pub fn import(json: &str, passphrase: &str, out_accounts: &mut Vec<Account>) -> ImportResult {
+pub fn import(
+    json: &str,
+    passphrase: &str,
+    out_salt: &mut [u8; SALT_LEN],
+    out_key: &mut [u8; KEY_LEN],
+    out_accounts: &mut Vec<Account>,
+) -> ImportResult {
     let format: Format = match serde_json::from_str(json) {
         Ok(f) => f,
         Err(_) => return ImportResult::InvalidFormat,
@@ -53,12 +60,16 @@ pub fn import(json: &str, passphrase: &str, out_accounts: &mut Vec<Account>) -> 
         return ImportResult::InvalidFormat;
     }
 
-    import_encrypted(json, &key, out_accounts)
+    out_salt.copy_from_slice(passphrase_salt);
+    *out_key = *key;
+
+    import_encrypted(json, &key, out_salt, out_accounts)
 }
 
 pub fn import_encrypted(
     json: &str,
     key: &[u8; KEY_LEN],
+    out_salt: &mut [u8; SALT_LEN],
     out_accounts: &mut Vec<Account>,
 ) -> ImportResult {
     let Ok(format) = serde_json::from_str::<Format>(json) else {
@@ -73,13 +84,22 @@ pub fn import_encrypted(
         return ImportResult::InvalidFormat;
     };
 
+    let passphrase_salt = match salt.len() {
+        16 => &salt[..],
+        32 => &salt[16..],
+        _ => return ImportResult::InvalidFormat,
+    };
+
     let (key, nonce): ([u8; AEGIS256_KEY_LEN], [u8; AEGIS256_NONCE_LEN]) = match salt.len() {
         16 => (key[..32].try_into().unwrap(), key[32..].try_into().unwrap()),
         32 => {
             let hk = Hkdf::<Sha3_512>::new(Some(&salt), &key[..]);
             let mut okm = Zeroizing::new([0u8; AEGIS256_AAD_LEN]);
             hk.expand(b"979.2fa.v3", okm.as_mut_slice()).unwrap();
-            (okm[..32].try_into().unwrap(), okm[32..].try_into().unwrap())
+            (
+                okm[..AEGIS256_KEY_LEN].try_into().unwrap(),
+                okm[AEGIS256_KEY_LEN..].try_into().unwrap(),
+            )
         }
         _ => return ImportResult::InvalidFormat,
     };
@@ -106,6 +126,8 @@ pub fn import_encrypted(
         return ImportResult::InvalidFormat;
     };
     let entries = Zeroizing::new(entries);
+
+    out_salt.copy_from_slice(passphrase_salt);
 
     for account in entries.iter() {
         let Some(id) = data_encoding::HEXLOWER_PERMISSIVE

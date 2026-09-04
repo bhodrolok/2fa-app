@@ -35,6 +35,7 @@ pub const VERSION: u64 = 3;
 pub const ARGON2ID_M_COST: u32 = 256 * 1024; // 256 MiB
 pub const ARGON2ID_T_COST: u32 = 4;
 pub const ARGON2ID_P_COST: u32 = 2;
+pub const SALT_LEN: usize = 16;
 pub const KEY_LEN: usize = 64;
 pub const AEGIS256_KEY_LEN: usize = 32;
 pub const AEGIS256_NONCE_LEN: usize = 32;

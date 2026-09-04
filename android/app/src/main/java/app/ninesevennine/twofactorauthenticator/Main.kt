@@ -25,38 +25,38 @@ import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.UseIncognitoKeyboard
 import app.ninesevennine.twofactorauthenticator.features.otpauth.importQRCodeIntoHostages
 import app.ninesevennine.twofactorauthenticator.features.setScreenSecure
-import app.ninesevennine.twofactorauthenticator.gui.screens.AddCode
-import app.ninesevennine.twofactorauthenticator.gui.screens.AddCodeRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.BiometricUnlock
-import app.ninesevennine.twofactorauthenticator.gui.screens.BiometricUnlockRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.ChangePassphrase
-import app.ninesevennine.twofactorauthenticator.gui.screens.ChangePassphraseRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.Edit
-import app.ninesevennine.twofactorauthenticator.gui.screens.EditRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.Export
-import app.ninesevennine.twofactorauthenticator.gui.screens.ExportRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.ExportToAegis
-import app.ninesevennine.twofactorauthenticator.gui.screens.ExportToAegisRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.Greeting
-import app.ninesevennine.twofactorauthenticator.gui.screens.GreetingRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.ImportEncrypted
-import app.ninesevennine.twofactorauthenticator.gui.screens.ImportEncryptedRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.ImportFromAegisEncrypted
-import app.ninesevennine.twofactorauthenticator.gui.screens.ImportFromAegisEncryptedRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.Main
-import app.ninesevennine.twofactorauthenticator.gui.screens.MainRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SelectIconPacks
-import app.ninesevennine.twofactorauthenticator.gui.screens.SelectIconPacksRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SelectLanguage
-import app.ninesevennine.twofactorauthenticator.gui.screens.SelectLanguageRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SelectOtpCardStyle
-import app.ninesevennine.twofactorauthenticator.gui.screens.SelectOtpCardStyleRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SelectTheme
-import app.ninesevennine.twofactorauthenticator.gui.screens.SelectThemeRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetPassphrase
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetPassphraseRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.Settings
-import app.ninesevennine.twofactorauthenticator.gui.screens.SettingsRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.AddCode
+import app.ninesevennine.twofactorauthenticator.ui.screens.AddCodeRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.BiometricUnlock
+import app.ninesevennine.twofactorauthenticator.ui.screens.BiometricUnlockRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.ChangePassphrase
+import app.ninesevennine.twofactorauthenticator.ui.screens.ChangePassphraseRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.Edit
+import app.ninesevennine.twofactorauthenticator.ui.screens.EditRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.Export
+import app.ninesevennine.twofactorauthenticator.ui.screens.ExportRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.ExportToAegis
+import app.ninesevennine.twofactorauthenticator.ui.screens.ExportToAegisRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.Greeting
+import app.ninesevennine.twofactorauthenticator.ui.screens.GreetingRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.ImportEncrypted
+import app.ninesevennine.twofactorauthenticator.ui.screens.ImportEncryptedRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.ImportFromAegisEncrypted
+import app.ninesevennine.twofactorauthenticator.ui.screens.ImportFromAegisEncryptedRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.Main
+import app.ninesevennine.twofactorauthenticator.ui.screens.MainRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.SelectIconPacks
+import app.ninesevennine.twofactorauthenticator.ui.screens.SelectIconPacksRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.SelectLanguage
+import app.ninesevennine.twofactorauthenticator.ui.screens.SelectLanguageRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.SelectOtpCardStyle
+import app.ninesevennine.twofactorauthenticator.ui.screens.SelectOtpCardStyleRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.SelectTheme
+import app.ninesevennine.twofactorauthenticator.ui.screens.SelectThemeRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.SetPassphrase
+import app.ninesevennine.twofactorauthenticator.ui.screens.SetPassphraseRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.Settings
+import app.ninesevennine.twofactorauthenticator.ui.screens.SettingsRoute
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import kotlinx.coroutines.Dispatchers
@@ -93,15 +93,17 @@ class Main : FragmentActivity() {
             UseIncognitoKeyboard {
                 NavHost(
                     navController = navController,
-                    startDestination = MainRoute,
+                    startDestination = if (Signals.requiresAuthentication) GreetingRoute else MainRoute,
                     modifier = Modifier.fillMaxSize().background(Theme.colors.background),
                     enterTransition = { slideInHorizontally(initialOffsetX = { it }) },
                     exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) },
                     popEnterTransition = { slideInHorizontally(initialOffsetX = { -it }) },
-                    popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) }
+                    popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) },
+                    predictivePopEnterTransition = { slideInHorizontally(initialOffsetX = { -it }) },
+                    predictivePopExitTransition = { slideOutHorizontally(targetOffsetX = { it }) }
                 ) {
-                    composable<MainRoute> { Main(navController) }
                     composable<GreetingRoute> { Greeting(navController) }
+                    composable<MainRoute> { Main(navController) }
                     composable<SettingsRoute> { Settings(navController) }
                     composable<SelectLanguageRoute> { SelectLanguage(navController) }
                     composable<SelectThemeRoute> { SelectTheme(navController) }

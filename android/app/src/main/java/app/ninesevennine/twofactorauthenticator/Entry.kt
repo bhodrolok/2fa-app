@@ -1,8 +1,9 @@
 package app.ninesevennine.twofactorauthenticator
 
 import android.app.Application
+import app.ninesevennine.twofactorauthenticator.features.management.ImportResult
 import app.ninesevennine.twofactorauthenticator.utils.Config
-import app.ninesevennine.twofactorauthenticator.utils.Logger
+import app.ninesevennine.twofactorauthenticator.utils.Signals
 
 private lateinit var rustInterfaceInstance: RustInterface
 val rustInterface: RustInterface
@@ -12,8 +13,6 @@ class Entry : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        Logger.init(this)
-
         try {
             System.loadLibrary("appcore")
             rustInterfaceInstance = RustInterface()
@@ -22,7 +21,10 @@ class Entry : Application() {
         }
 
         rustInterface.client_application_directory_set(dataDir.absolutePath)
-        rustInterface.management_accounts_load()
+        if (rustInterface.management_accounts_load() < ImportResult.SUCCESS.value) {
+            Signals.requiresAuthentication = true
+        }
+
         Config.load(this)
     }
 }

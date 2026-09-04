@@ -1,11 +1,12 @@
 use jni::{
     EnvUnowned,
     errors::{Error, ThrowRuntimeExAndDefault},
-    objects::{JClass, JString},
-    sys::jboolean,
+    objects::{JByteArray, JClass, JString},
+    sys::{jboolean, jbyteArray},
 };
+use zeroize::Zeroizing;
 
-use crate::CLIENT;
+use crate::{CLIENT, features::management::native::v4::schema::KEY_LEN};
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_client_1application_1directory_1set(
@@ -38,6 +39,44 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let has_salt = client.salt.iter().any(|&b| b != 0);
 
         Ok(has_key && has_salt)
+    });
+
+    outcome.resolve::<ThrowRuntimeExAndDefault>()
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_client_1key_1set(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+    key: JByteArray,
+) {
+    let outcome = unowned_env.with_env(|env| -> Result<_, Error> {
+        let mut buffer = Zeroizing::new([0i8; KEY_LEN]);
+        key.get_region(env, 0, buffer.as_mut_slice()).unwrap();
+
+        let mut client = CLIENT.lock().unwrap();
+
+        client.key = buffer.map(|b| b as u8);
+
+        Ok(())
+    });
+
+    outcome.resolve::<ThrowRuntimeExAndDefault>();
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_client_1key_1get(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+) -> jbyteArray {
+    let outcome = unowned_env.with_env(|env| -> Result<_, Error> {
+        let client = CLIENT.lock().unwrap();
+
+        let buffer = Zeroizing::new(client.key.map(|b| b as i8));
+        let key = env.new_byte_array(KEY_LEN).unwrap();
+        key.set_region(env, 0, buffer.as_slice()).unwrap();
+
+        Ok(key.into_raw())
     });
 
     outcome.resolve::<ThrowRuntimeExAndDefault>()

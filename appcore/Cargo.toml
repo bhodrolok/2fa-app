@@ -10,7 +10,6 @@ crate-type = ["cdylib"]
 aegis = { version = "0.9.15", default-features = false, features = ["std", "pure-rust"] }
 aes-gcm = { version = "0.11.1", features = ["zeroize"] }
 argon2 = "0.6.0"
-chacha20poly1305 = { version = "0.11.0", features = ["zeroize"] }
 data-encoding = "2.11.1"
 getrandom = "0.4.3"
 hkdf = "0.13.0"

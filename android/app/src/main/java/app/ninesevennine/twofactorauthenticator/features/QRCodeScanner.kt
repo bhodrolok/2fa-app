@@ -2,6 +2,7 @@ package app.ninesevennine.twofactorauthenticator.features
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.util.Log
 import android.util.Size
 import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -45,9 +46,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.gui.InterVariable
+import app.ninesevennine.twofactorauthenticator.ui.InterVariable
 import app.ninesevennine.twofactorauthenticator.rustInterface
-import app.ninesevennine.twofactorauthenticator.utils.Logger
 import java.util.concurrent.Executors
 
 object QRCodeScanner {
@@ -157,7 +157,7 @@ object QRCodeScanner {
 
                     cameraAvailable = true
                 } catch (e: Exception) {
-                    Logger.e(TAG, "failed adding listener", e)
+                    Log.e(TAG, "failed adding listener", e)
                     cameraAvailable = false
                 }
             }, ContextCompat.getMainExecutor(context))
