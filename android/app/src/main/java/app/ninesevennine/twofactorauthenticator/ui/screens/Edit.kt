@@ -428,6 +428,10 @@ fun Edit(navController: NavController) {
                 }
 
                 scope.launch(Dispatchers.IO) {
+                    if (rustInterface.management_edit_is_none()) {
+                        return@launch
+                    }
+
                     rustInterface.management_import_edit_into_accounts()
                     rustInterface.management_accounts_save()
 
