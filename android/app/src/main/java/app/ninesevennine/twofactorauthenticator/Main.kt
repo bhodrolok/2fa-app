@@ -7,6 +7,8 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
@@ -101,7 +103,6 @@ class Main : FragmentActivity() {
                 if (Signals.requiresAuthentication && !rustInterface.client_has_salt_and_key() && navController.currentBackStackEntry?.destination?.hasRoute<GreetingRoute>() != true) {
                     navController.navigate(GreetingRoute) {
                         popUpTo(0) { inclusive = true }
-                        anim { enter = 0; exit = 0; popEnter = 0; popExit = 0 }
                     }
                 }
 
@@ -113,8 +114,14 @@ class Main : FragmentActivity() {
                     navController = navController,
                     startDestination = if (Signals.requiresAuthentication) GreetingRoute else MainRoute,
                     modifier = Modifier.fillMaxSize().background(Theme.colors.background),
-                    enterTransition = { slideInHorizontally(initialOffsetX = { it }) },
-                    exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) },
+                    enterTransition = {
+                        if (targetState.destination.hasRoute<GreetingRoute>()) EnterTransition.None
+                        else slideInHorizontally(initialOffsetX = { it })
+                    },
+                    exitTransition = {
+                        if (targetState.destination.hasRoute<GreetingRoute>()) ExitTransition.None
+                        else slideOutHorizontally(targetOffsetX = { -it })
+                    },
                     popEnterTransition = { slideInHorizontally(initialOffsetX = { -it }) },
                     popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) },
                     predictivePopEnterTransition = { slideInHorizontally(initialOffsetX = { -it }) },

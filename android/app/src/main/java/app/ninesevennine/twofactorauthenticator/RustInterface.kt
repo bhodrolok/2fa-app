@@ -52,6 +52,7 @@ class RustInterface {
     external fun management_accounts_save()
     external fun management_accounts_save(passphrase: String)
 
+    external fun management_edit_is_none(): Boolean
     external fun management_edit_none_set()
     external fun management_edit_default_set()
 

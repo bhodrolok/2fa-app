@@ -2,6 +2,7 @@ use jni::{
     EnvUnowned,
     errors::{Error, ThrowRuntimeExAndDefault},
     objects::JClass,
+    sys::jboolean,
 };
 use zeroize::Zeroize;
 
@@ -10,6 +11,20 @@ use crate::{
     account::Account,
     features::otp::{algorithm::Algorithm, r#type::CodeType},
 };
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_management_1edit_1is_1none(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+) -> jboolean {
+    let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
+        let client = CLIENT.lock().unwrap();
+
+        Ok(client.edit.is_none())
+    });
+
+    outcome.resolve::<ThrowRuntimeExAndDefault>()
+}
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_management_1edit_1none_1set(

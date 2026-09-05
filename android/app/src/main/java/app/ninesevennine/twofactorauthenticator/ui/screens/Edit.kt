@@ -49,12 +49,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import app.ninesevennine.twofactorauthenticator.AccountShort
 import app.ninesevennine.twofactorauthenticator.Algorithm
 import app.ninesevennine.twofactorauthenticator.CodeType
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.features.Theme
+import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.ui.InterVariable
 import app.ninesevennine.twofactorauthenticator.ui.elements.EditHeader
 import app.ninesevennine.twofactorauthenticator.ui.elements.OtpCardNormal
@@ -67,8 +69,8 @@ import app.ninesevennine.twofactorauthenticator.ui.elements.SectionGroup
 import app.ninesevennine.twofactorauthenticator.ui.elements.SectionHueSlider
 import app.ninesevennine.twofactorauthenticator.ui.elements.SectionSaturationSlider
 import app.ninesevennine.twofactorauthenticator.ui.elements.SectionTextBox
-import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.Clipboard
+import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.utils.Time
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -80,6 +82,20 @@ object EditRoute
 
 @Composable
 fun Edit(navController: NavController) {
+    if (rustInterface.management_edit_is_none()) {
+        if (Signals.requiresAuthentication && !rustInterface.client_has_salt_and_key() && navController.currentBackStackEntry?.destination?.hasRoute<GreetingRoute>() != true) {
+            navController.navigate(GreetingRoute) {
+                popUpTo(0) { inclusive = true }
+            }
+        } else {
+            navController.navigate(MainRoute) {
+                popUpTo(0) { inclusive = true }
+            }
+        }
+
+        return
+    }
+
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
