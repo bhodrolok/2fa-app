@@ -90,7 +90,9 @@ class Main : FragmentActivity() {
 
         KeyStoreAES.setActivity(this)
 
-        handleIntents(intent)
+        if (savedInstanceState == null) {
+            handleIntents(intent)
+        }
 
         setContent {
             val navController = rememberNavController()
@@ -187,6 +189,8 @@ class Main : FragmentActivity() {
                         }
                     }
                 }
+
+                intent.data = null
             }
             Intent.ACTION_SEND -> {
                 if (intent.type?.startsWith("image/") == true) {
@@ -206,6 +210,8 @@ class Main : FragmentActivity() {
                             bitmap.recycle()
                         }
                     }
+
+                    intent.removeExtra(Intent.EXTRA_STREAM)
                 }
             }
         }

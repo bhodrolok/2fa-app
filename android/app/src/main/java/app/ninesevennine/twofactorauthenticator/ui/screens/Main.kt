@@ -76,10 +76,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
+import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.ui.InterVariable
 import app.ninesevennine.twofactorauthenticator.ui.elements.OtpCardMinimalistic
 import app.ninesevennine.twofactorauthenticator.ui.elements.OtpCardNormal
-import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.utils.Time
@@ -131,7 +131,7 @@ fun Main(navController: NavController) {
     }
 
     LaunchedEffect(Signals.checkHostages) {
-        if (Signals.checkHostages) {
+        if ((!Signals.requiresAuthentication || rustInterface.client_has_salt_and_key()) && Signals.checkHostages) {
             withContext(Dispatchers.IO) {
                 rustInterface.management_import_hostages_into_accounts()
                 rustInterface.management_accounts_save()
