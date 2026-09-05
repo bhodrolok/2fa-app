@@ -431,6 +431,24 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_features_1edit_1exists_1in_1accounts(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+) -> jboolean {
+    let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
+        let client = CLIENT.lock().unwrap();
+
+        let Some(edit) = &client.edit else {
+            return Ok(false);
+        };
+
+        Ok(client.accounts.iter().any(|account| account.id == edit.id))
+    });
+
+    outcome.resolve::<ThrowRuntimeExAndDefault>()
+}
+
+#[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_features_1edit_1delete(
     mut unowned_env: EnvUnowned,
     _class: JClass,

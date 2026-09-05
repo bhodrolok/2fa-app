@@ -35,6 +35,27 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_management_1import_1edit_1into_1hostages(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+) {
+    let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
+        let mut client = CLIENT.lock().unwrap();
+
+        let Some(account) = client.edit.take() else {
+            return Ok(());
+        };
+
+        client.hostages.zeroize();
+        client.hostages.push(account);
+
+        Ok(())
+    });
+
+    outcome.resolve::<ThrowRuntimeExAndDefault>();
+}
+
+#[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_management_1import_1account_1into_1edit(
     mut unowned_env: EnvUnowned,
     _class: JClass,

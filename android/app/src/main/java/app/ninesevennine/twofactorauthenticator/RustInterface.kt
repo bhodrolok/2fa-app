@@ -27,6 +27,7 @@ class RustInterface {
     external fun features_edit_counter_set(counter: String): Boolean
     external fun features_edit_period_set(period: String): Boolean
     external fun features_edit_digits_set(digits: String): Boolean
+    external fun features_edit_exists_in_accounts(): Boolean
     external fun features_edit_delete(id: Long)
 
     external fun features_main_search(query: String): Array<AccountShort>
@@ -57,6 +58,7 @@ class RustInterface {
     external fun management_edit_default_set()
 
     external fun management_import_edit_into_accounts()
+    external fun management_import_edit_into_hostages()
     external fun management_import_account_into_edit(id: Long)
     external fun management_import_hostages_into_accounts()
 

@@ -432,8 +432,13 @@ fun Edit(navController: NavController) {
                         return@launch
                     }
 
-                    rustInterface.management_import_edit_into_accounts()
-                    rustInterface.management_accounts_save()
+                    if (rustInterface.features_edit_exists_in_accounts()) {
+                        rustInterface.management_import_edit_into_accounts()
+                        rustInterface.management_accounts_save()
+                    } else {
+                        rustInterface.management_import_edit_into_hostages()
+                        Signals.checkHostages = true
+                    }
 
                     withContext(Dispatchers.Main) {
                         navController.popBackStack(MainRoute, false)
