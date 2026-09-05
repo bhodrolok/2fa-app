@@ -255,6 +255,9 @@ object QRCodeScanner {
                 onOtpAuthImported()
             }
 
+            croppedRow.fill(0)
+            pixels.fill(0)
+
             image.close()
         }
     }
