@@ -1,7 +1,7 @@
-use crate::_client::Client;
 use std::sync::{LazyLock, Mutex};
 
-pub mod _client;
+use crate::client::client::Client;
+
 pub mod account;
 pub mod client;
 pub mod features;

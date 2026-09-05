@@ -4,9 +4,40 @@ use jni::{
     objects::{JByteArray, JClass, JString},
     sys::{jboolean, jbyteArray},
 };
-use zeroize::Zeroizing;
+use zeroize::{Zeroize, Zeroizing};
 
 use crate::{CLIENT, features::management::native::v4::schema::KEY_LEN};
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_client_1loaded_1set(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+    value: jboolean,
+) {
+    let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
+        let mut client = CLIENT.lock().unwrap();
+
+        client.loaded = value;
+
+        Ok(())
+    });
+
+    outcome.resolve::<ThrowRuntimeExAndDefault>();
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_client_1loaded_1get(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+) -> jboolean {
+    let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
+        let client = CLIENT.lock().unwrap();
+
+        Ok(client.loaded)
+    });
+
+    outcome.resolve::<ThrowRuntimeExAndDefault>()
+}
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_client_1application_1directory_1set(
@@ -80,4 +111,26 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     });
 
     outcome.resolve::<ThrowRuntimeExAndDefault>()
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_client_1zeroize_1sensitive(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+) {
+    let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
+        let mut client = CLIENT.lock().unwrap();
+
+        client.salt.zeroize();
+        client.key.zeroize();
+        if let Some(mut account) = client.edit.take() {
+            account.zeroize();
+        }
+        client.accounts.zeroize();
+        client.hostages.zeroize();
+
+        Ok(())
+    });
+
+    outcome.resolve::<ThrowRuntimeExAndDefault>();
 }

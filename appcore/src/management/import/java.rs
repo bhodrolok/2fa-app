@@ -6,7 +6,7 @@ use jni::{
 };
 use zeroize::Zeroize;
 
-use crate::{_client::Client, CLIENT};
+use crate::{CLIENT, client::client::Client};
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_management_1import_1edit_1into_1accounts(

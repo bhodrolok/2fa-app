@@ -1,42 +1,28 @@
-use crate::CLIENT;
+use std::ffi::c_void;
+
 use jni::{
     EnvUnowned,
+    errors::{Error, ThrowRuntimeExAndDefault},
     objects::{JByteArray, JClass, JIntArray, JValue},
-    sys::{JNI_FALSE, JNI_TRUE, jboolean, jint, jobject},
+    sys::{jint, jobject},
 };
+use zeroize::Zeroize;
+
+use crate::CLIENT;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_clientUnload(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-) {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let mut client = CLIENT.lock().unwrap();
-        client.unload();
-
-        Ok(())
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>();
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_isClientUnlockPassphraseHashEmpty(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-) -> jboolean {
-    let outcome = unowned_env.with_env(|_env| -> Result<_, jni::errors::Error> {
-        let client = CLIENT.lock().unwrap();
-        let unlock_passphrase_hash = client.get_unlock_passphrase_hash();
-
-        if unlock_passphrase_hash.iter().all(|b| *b == 0) {
-            Ok(JNI_TRUE)
-        } else {
-            Ok(JNI_FALSE)
+pub extern "system" fn JNI_OnUnload(_vm: *mut c_void, _reserved: *mut c_void) {
+    if let Ok(mut client) = CLIENT.lock() {
+        client.loaded = false;
+        client.application_directory.zeroize();
+        client.salt.zeroize();
+        client.key.zeroize();
+        if let Some(mut account) = client.edit.take() {
+            account.zeroize();
         }
-    });
-
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
+        client.accounts.zeroize();
+        client.hostages.zeroize();
+    }
 }
 
 #[unsafe(no_mangle)]
@@ -50,7 +36,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     use resvg::tiny_skia;
     use resvg::usvg;
 
-    let outcome = unowned_env.with_env(|env| -> Result<_, jni::errors::Error> {
+    let outcome = unowned_env.with_env(|env| -> Result<_, Error> {
         if width <= 0 || height <= 0 {
             return Ok(std::ptr::null_mut());
         }
@@ -185,5 +171,5 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         Ok(bitmap.into_raw())
     });
 
-    outcome.resolve::<jni::errors::ThrowRuntimeExAndDefault>()
+    outcome.resolve::<ThrowRuntimeExAndDefault>()
 }

@@ -47,6 +47,7 @@ import app.ninesevennine.twofactorauthenticator.ui.elements.RoundedButtonClean
 import app.ninesevennine.twofactorauthenticator.ui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.ui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.ui.elements.spinnerText
+import app.ninesevennine.twofactorauthenticator.utils.Signals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -201,6 +202,8 @@ fun ChangePassphrase(navController: NavController) {
                     rustInterface.management_accounts_save("")
 
                     KeyStoreAES.deleteBiometricKey()
+
+                    Signals.requiresAuthentication = false
 
                     withContext(Dispatchers.Main) {
                         navController.popBackStack()

@@ -3,10 +3,13 @@ package app.ninesevennine.twofactorauthenticator
 import android.graphics.Bitmap
 
 class RustInterface {
+    external fun client_loaded_set(value: Boolean)
+    external fun client_loaded_get(): Boolean
     external fun client_application_directory_set(applicationDirectory: String)
     external fun client_has_salt_and_key(): Boolean
     external fun client_key_set(key: ByteArray)
     external fun client_key_get(): ByteArray
+    external fun client_zeroize_sensitive()
 
     external fun features_edit_get(): Account
     external fun features_edit_color_get(): Int
@@ -56,8 +59,6 @@ class RustInterface {
     external fun management_import_account_into_edit(id: Long)
     external fun management_import_hostages_into_accounts()
 
-    external fun clientUnload()
-    external fun isClientUnlockPassphraseHashEmpty(): Boolean
     external fun svgToBitmap(data: ByteArray, width: Int, height: Int): Bitmap?
 }
 

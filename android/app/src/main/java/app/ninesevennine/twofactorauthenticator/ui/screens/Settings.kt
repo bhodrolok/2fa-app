@@ -291,14 +291,17 @@ fun Settings(navController: NavController) {
                         Config.save(context)
                     }
 
-                    SectionButton(
-                        painter = painterResource(R.drawable.mi_lock),
-                        tint = Theme.colors.primary,
-                        primaryText = stringResource(R.string.screen_settings_security_lock_on_exit),
-                        enabled = Config.isUsingLockOnExit
-                    ) {
-                        Config.isUsingLockOnExit = !Config.isUsingLockOnExit
-                        Config.save(context)
+                    if (hasPassphraseUnlock) {
+                        SectionButton(
+                            painter = painterResource(R.drawable.mi_lock),
+                            tint = Theme.colors.primary,
+                            primaryText = stringResource(R.string.screen_settings_security_lock_on_exit),
+                            secondaryText = stringResource(R.string.screen_settings_security_lock_on_exit_secondary),
+                            enabled = Config.isUsingLockOnExit
+                        ) {
+                            Config.isUsingLockOnExit = !Config.isUsingLockOnExit
+                            Config.save(context)
+                        }
                     }
 
                     SectionButton(

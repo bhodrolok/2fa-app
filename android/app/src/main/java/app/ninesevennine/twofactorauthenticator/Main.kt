@@ -23,6 +23,7 @@ import androidx.navigation.toRoute
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.UseIncognitoKeyboard
+import app.ninesevennine.twofactorauthenticator.features.management.ImportResult
 import app.ninesevennine.twofactorauthenticator.features.otpauth.importQRCodeIntoHostages
 import app.ninesevennine.twofactorauthenticator.features.setScreenSecure
 import app.ninesevennine.twofactorauthenticator.ui.screens.AddCode
@@ -61,11 +62,26 @@ import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class Main : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        if (!rustInterface.client_loaded_get()) {
+            runBlocking(Dispatchers.IO) {
+                rustInterface.client_application_directory_set(dataDir.absolutePath)
+
+                if (rustInterface.management_accounts_load() < ImportResult.SUCCESS.value) {
+                    Signals.requiresAuthentication = true
+                }
+
+                Config.load(this@Main)
+
+                rustInterface.client_loaded_set(true)
+            }
+        }
 
         Theme.window = window
         Theme.update(this)
@@ -80,7 +96,7 @@ class Main : FragmentActivity() {
             val navController = rememberNavController()
 
             LaunchedEffect(Signals.authenticate) {
-                if (Config.hasCompletedSetup && rustInterface.isClientUnlockPassphraseHashEmpty() && navController.currentBackStackEntry?.destination?.hasRoute<GreetingRoute>() != true) {
+                if (Signals.requiresAuthentication && !rustInterface.client_has_salt_and_key() && navController.currentBackStackEntry?.destination?.hasRoute<GreetingRoute>() != true) {
                     navController.navigate(GreetingRoute) {
                         popUpTo(0) { inclusive = true }
                         anim { enter = 0; exit = 0; popEnter = 0; popExit = 0 }
@@ -134,15 +150,18 @@ class Main : FragmentActivity() {
 
         setScreenSecure(this, Config.isUsingScreenSecurity)
 
-        if (rustInterface.isClientUnlockPassphraseHashEmpty()) Signals.authenticate++
+        if (Signals.requiresAuthentication && !rustInterface.client_has_salt_and_key()) {
+            Signals.authenticate++
+        }
     }
 
     override fun onStop() {
         super.onStop()
 
-        if (Config.hasCompletedSetup && !isChangingConfigurations && Config.isUsingLockOnExit) {
-            if (!Signals.suppressLockOnExit) {
-                rustInterface.clientUnload()
+        if (rustInterface.client_has_salt_and_key()) {
+            if (!isChangingConfigurations && Config.isUsingLockOnExit && !Signals.suppressLockOnExit) {
+                rustInterface.client_zeroize_sensitive()
+                Signals.requiresAuthentication = true
                 Signals.authenticate++
             }
         }

@@ -13,18 +13,7 @@ class Entry : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        try {
-            System.loadLibrary("appcore")
-            rustInterfaceInstance = RustInterface()
-        } catch (e: Throwable) {
-            throw e
-        }
-
-        rustInterface.client_application_directory_set(dataDir.absolutePath)
-        if (rustInterface.management_accounts_load() < ImportResult.SUCCESS.value) {
-            Signals.requiresAuthentication = true
-        }
-
-        Config.load(this)
+        System.loadLibrary("appcore")
+        rustInterfaceInstance = RustInterface()
     }
 }
