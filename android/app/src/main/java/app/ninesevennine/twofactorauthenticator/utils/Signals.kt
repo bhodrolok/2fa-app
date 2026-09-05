@@ -10,5 +10,5 @@ object Signals {
     var authenticate by mutableIntStateOf(0)
     var checkHostages by mutableStateOf(false)
     var suppressLockOnExit = false
-    var suppressFocusRequestOnLaunch = false
+    var suppressFocusSearchOnLaunch = false
 }

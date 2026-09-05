@@ -303,9 +303,9 @@ private fun TopBar(
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
-        if (Config.isUsingFocusSearchOnLaunch && !Signals.suppressFocusRequestOnLaunch) {
+        if (Config.isUsingFocusSearchOnLaunch && !Signals.suppressFocusSearchOnLaunch) {
             focusRequester.requestFocus()
-            Signals.suppressFocusRequestOnLaunch = true
+            Signals.suppressFocusSearchOnLaunch = true
         }
     }
 

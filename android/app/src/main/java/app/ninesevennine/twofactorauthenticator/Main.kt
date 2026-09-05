@@ -193,6 +193,7 @@ class Main : FragmentActivity() {
                     if (uri.scheme == "otpauth") {
                         if(rustInterface.features_otpauth_import_uri_into_hostages(uri.toString())) {
                             Signals.checkHostages = true
+                            Signals.suppressFocusSearchOnLaunch = true
                         }
                     }
                 }
@@ -211,6 +212,7 @@ class Main : FragmentActivity() {
 
                             if (importQRCodeIntoHostages(bitmap)) {
                                 Signals.checkHostages = true
+                                Signals.suppressFocusSearchOnLaunch = true
                             }
 
                             bitmap.eraseColor(0)
