@@ -137,8 +137,10 @@ fun Main(navController: NavController) {
                 rustInterface.management_accounts_save()
             }
 
+            query = ""
+
             accounts.clear()
-            accounts.addAll(rustInterface.features_main_search(query))
+            accounts.addAll(rustInterface.features_main_search(""))
 
             if (accounts.isNotEmpty()) {
                 lazyGridState.scrollToItem(accounts.lastIndex)
@@ -267,6 +269,7 @@ fun Main(navController: NavController) {
     }
 
     TopBar(
+        query,
         onSearch = {
             query = it
         },
@@ -285,6 +288,7 @@ fun Main(navController: NavController) {
 
 @Composable
 private fun TopBar(
+    query: String,
     onSearch: (String) -> Unit,
     onSettings: () -> Unit,
     onAdd: () -> Unit,
@@ -296,7 +300,6 @@ private fun TopBar(
     val keyboardController = LocalSoftwareKeyboardController.current
     val layoutDirection = LocalLayoutDirection.current
 
-    var query by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
@@ -348,7 +351,6 @@ private fun TopBar(
             BasicTextField(
                 value = query,
                 onValueChange = {
-                    query = it
                     onSearch(it)
                 },
                 modifier = Modifier
