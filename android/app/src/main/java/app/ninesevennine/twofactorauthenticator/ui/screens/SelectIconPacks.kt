@@ -185,22 +185,6 @@ fun SelectIconPacks(navController: NavController) {
                     }
                 }
 
-                SectionGroup(
-                    modifier = Modifier.padding(16.dp),
-                    title = stringResource(R.string.screen_select_icon_packs_other)
-                ) {
-                    SectionButton(
-                        painter = painterResource(R.drawable.mi_format_color_reset),
-                        tint = Theme.colors.primary,
-                        primaryText = stringResource(R.string.screen_select_icon_packs_other_dont_suggest_colors),
-                        secondaryText = stringResource(R.string.screen_select_icon_packs_other_dont_suggest_colors_secondary),
-                        enabled = Config.isUsingIconPacksDontSuggestColors
-                    ) {
-                        Config.isUsingIconPacksDontSuggestColors = !Config.isUsingIconPacksDontSuggestColors
-                        Config.save(context)
-                    }
-                }
-
                 RoundedButton(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     text = stringResource(R.string.screen_select_icon_packs_question_1)
