@@ -5,6 +5,7 @@ use aes_gcm::{
 use zeroize::Zeroizing;
 
 use crate::{
+    CLIENT,
     account::Account,
     features::{
         management::{
@@ -207,7 +208,14 @@ pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impo
             counter: entry.info.counter.unwrap_or(0),
             period: period,
             digits: digits,
-            color: 0xFF808080,
+            color: {
+                let client = CLIENT.lock().unwrap();
+
+                match client.map.get(&entry.issuer.to_lowercase()) {
+                    Some((_, color)) => *color,
+                    None => 0xFF808080,
+                }
+            },
         });
     }
 

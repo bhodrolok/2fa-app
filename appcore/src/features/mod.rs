@@ -1,4 +1,5 @@
 pub mod edit;
+pub mod icons;
 pub mod main;
 pub mod management;
 pub mod ngram;

@@ -42,7 +42,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -54,7 +53,6 @@ import app.ninesevennine.twofactorauthenticator.AccountShort
 import app.ninesevennine.twofactorauthenticator.Algorithm
 import app.ninesevennine.twofactorauthenticator.CodeType
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.ui.InterVariable
@@ -112,8 +110,8 @@ fun Edit(navController: NavController) {
     var digits by remember { mutableStateOf(account.digits.toString()) }
     var color by remember { mutableIntStateOf(account.color) }
 
-    val iconResult = remember(issuer) {
-        IconPacks.get(context, issuer)
+    val colorPreset = remember(issuer) {
+        rustInterface.features_icons_map_color_get(issuer)
     }
 
     var nameError by remember { mutableStateOf(false) }
@@ -232,11 +230,11 @@ fun Edit(navController: NavController) {
                             }
                         )
 
-                        if (iconResult.color != null) {
+                        if (colorPreset != 0) {
                             SectionButtonSmall(
                                 text = stringResource(R.string.screen_edit_section_color_preset),
                                 onClick = {
-                                    rustInterface.features_edit_color_set(iconResult.color.toArgb())
+                                    rustInterface.features_edit_color_set(colorPreset)
                                     color = rustInterface.features_edit_color_get()
                                 }
                             )
@@ -398,7 +396,7 @@ fun Edit(navController: NavController) {
 
                 RoundedButton(
                     modifier = Modifier.fillMaxWidth().padding(horizontal  = 16.dp),
-                    text = stringResource(R.string.screen_edit_delete),
+                    text = stringResource(R.string.common_title_delete),
                     hazardColors = true
                 ) {
                     showDeletePrompt = true
@@ -540,7 +538,7 @@ fun AnimatedVisibilityScope.DeletePrompt(
 
             RoundedButton(
                 modifier = Modifier.fillMaxWidth(),
-                text = stringResource(R.string.screen_edit_delete),
+                text = stringResource(R.string.common_title_delete),
                 hazardColors = true,
                 onClick = onDelete
             )

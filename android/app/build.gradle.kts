@@ -74,6 +74,10 @@ android {
         targetCompatibility = javaVersion
     }
 
+    androidResources {
+        noCompress += "zip"
+    }
+
     buildFeatures {
         compose = true
         buildConfig = true

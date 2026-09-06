@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Locale
 import app.ninesevennine.twofactorauthenticator.features.Theme
@@ -66,6 +65,8 @@ fun Settings(navController: NavController) {
     val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
 
     val currentThemeOption by remember { mutableStateOf(Theme.currentOption(context)) }
+    val iconPackSlot by remember { mutableIntStateOf(rustInterface.features_icons_slot_get()) }
+    val iconPackName by remember { mutableStateOf(rustInterface.features_icons_name_get()) }
     val hasPassphraseUnlock by remember { mutableStateOf(rustInterface.client_has_salt_and_key()) }
     val hasBiometricUnlock by remember { mutableStateOf(KeyStoreAES.hasBiometricKey()) }
 
@@ -192,7 +193,15 @@ fun Settings(navController: NavController) {
                         painter = painterResource(R.drawable.mi_package_2),
                         tint = Theme.colors.primary,
                         primaryText = stringResource(R.string.screen_settings_appearance_icon_packs),
-                        secondaryText = IconPacks.getActivePrimary(context)
+                        secondaryText = if (Config.isUsingIconPacks) {
+                            if (iconPackSlot == 0) {
+                                stringResource(R.string.common_title_default)
+                            } else {
+                                iconPackName
+                            }
+                        } else {
+                            null
+                        }
                     ) {
                         navController.navigate(SelectIconPacksRoute)
                     }

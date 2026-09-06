@@ -23,6 +23,8 @@
     <string name="common_title_confirm_biometrics">Confirm Biometrics</string>
     <string name="common_title_confirm_passphrase">Confirm Passphrase</string>
     <string name="common_title_change_passphrase">Change Passphrase</string>
+    <string name="common_title_delete">Delete</string>
+    <string name="common_title_default">Default</string>
     <string name="common_title_export">Export</string>
     <string name="common_title_hide">Hide</string>
     <string name="common_title_import">Import</string>
@@ -44,7 +46,6 @@
     <string name="otp_card_style_grid">Grid</string>
     <string name="otp_card_style_normal">Normal</string>
     <string name="screen_add_code_enter_manually">Enter manually</string>
-    <string name="screen_edit_delete">Delete</string>
     <string name="screen_edit_delete_title">Delete this account?</string>
     <string name="screen_edit_delete_body">Are you sure you want to delete this account? This action is irreversible.</string>
     <string name="screen_edit_delete_account">Delete Account</string>

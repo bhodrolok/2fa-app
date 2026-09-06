@@ -5,8 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import app.ninesevennine.twofactorauthenticator.features.IconPacks
-import app.ninesevennine.twofactorauthenticator.features.IconPacksStyle
 import app.ninesevennine.twofactorauthenticator.features.Locale
 import app.ninesevennine.twofactorauthenticator.features.LocaleOption
 import app.ninesevennine.twofactorauthenticator.features.Theme
@@ -18,7 +16,8 @@ object Config {
     private const val KEY_LOCALE = "locale"
     private const val KEY_THEME = "theme"
 
-    var activeIconPackId by mutableStateOf("")
+    var isUsingTexturedIcons by mutableStateOf(true)
+    var isUsingIconPacks by mutableStateOf(true)
     var UsingOtpCardStyle by mutableIntStateOf(OtpCardStyle.NORMAL.value)
     var isUsingTapToRevealCodes by mutableStateOf(false)
     var isUsingDoubleTapToCopyCodes by mutableStateOf(false)
@@ -27,7 +26,6 @@ object Config {
     var isUsingSecureClipboard by mutableStateOf(false)
     var isUsingLockOnExit by mutableStateOf(false)
     var isUsingBlockIntents by mutableStateOf(false)
-    var UsingIconPacksStyle by mutableIntStateOf(IconPacksStyle.TEXTURED.value)
 
     fun load(context: Context) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -43,7 +41,8 @@ object Config {
         Locale.set(context, locale)
         Theme.set(context, theme)
 
-        activeIconPackId = prefs.getString("active_icon_pack_id", "") ?: ""
+        isUsingTexturedIcons = prefs.getBoolean("is_using_textured_icons", true)
+        isUsingIconPacks = prefs.getBoolean("is_using_icon_packs", true)
         UsingOtpCardStyle = prefs.getInt("using_otp_card_style", OtpCardStyle.NORMAL.value)
         isUsingTapToRevealCodes = prefs.getBoolean("is_using_tap_to_reveal_codes", false)
         isUsingDoubleTapToCopyCodes = prefs.getBoolean("is_using_double_tap_to_copy_codes", false)
@@ -52,9 +51,6 @@ object Config {
         isUsingSecureClipboard = prefs.getBoolean("is_using_secure_clipboard", false)
         isUsingLockOnExit = prefs.getBoolean("is_using_lock_on_exit", false)
         isUsingBlockIntents = prefs.getBoolean("is_using_block_intents", false)
-        UsingIconPacksStyle = prefs.getInt("using_iconpacks_style", IconPacksStyle.TINTED.value)
-
-        IconPacks.load(context, activeIconPackId)
     }
 
     fun save(context: Context) {
@@ -63,7 +59,8 @@ object Config {
         prefs.edit().apply {
             putString(KEY_LOCALE, Locale.localeOption.tag)
             putInt(KEY_THEME, Theme.themeOption.value)
-            putString("active_icon_pack_id", activeIconPackId)
+            putBoolean("is_using_textured_icons", isUsingTexturedIcons)
+            putBoolean("is_using_icon_packs", isUsingIconPacks)
             putInt("using_otp_card_style", UsingOtpCardStyle)
             putBoolean("is_using_tap_to_reveal_codes", isUsingTapToRevealCodes)
             putBoolean("is_using_double_tap_to_copy_codes", isUsingDoubleTapToCopyCodes)
@@ -72,7 +69,6 @@ object Config {
             putBoolean("is_using_secure_clipboard", isUsingSecureClipboard)
             putBoolean("is_using_lock_on_exit", isUsingLockOnExit)
             putBoolean("is_using_block_intents", isUsingBlockIntents)
-            putInt("using_iconpacks_style", UsingIconPacksStyle)
             apply()
         }
     }

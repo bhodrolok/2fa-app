@@ -17,8 +17,13 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
         let uri = Zeroizing::new(uri.to_string());
 
-        if let Some(account) = deserialize(&uri, true) {
+        if let Some(mut account) = deserialize(&uri, true) {
             let mut client = CLIENT.lock().unwrap();
+
+            account.color = match client.map.get(&account.issuer.to_lowercase()) {
+                Some((_, color)) => *color,
+                None => 0xFF808080,
+            };
 
             client.hostages.zeroize();
             client.hostages.push(account);
@@ -49,11 +54,16 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
             return Ok(false);
         };
 
-        let Some(account) = deserialize(uri, true) else {
+        let Some(mut account) = deserialize(uri, true) else {
             return Ok(false);
         };
 
         let mut client = CLIENT.lock().unwrap();
+
+        account.color = match client.map.get(&account.issuer.to_lowercase()) {
+            Some((_, color)) => *color,
+            None => 0xFF808080,
+        };
 
         client.hostages.zeroize();
         client.hostages.push(account);
@@ -90,8 +100,13 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
             if let Ok((_, content)) = grid.decode() {
                 let content = Zeroizing::new(content);
 
-                if let Some(account) = deserialize(&content, true) {
+                if let Some(mut account) = deserialize(&content, true) {
                     let mut client = CLIENT.lock().unwrap();
+
+                    account.color = match client.map.get(&account.issuer.to_lowercase()) {
+                        Some((_, color)) => *color,
+                        None => 0xFF808080,
+                    };
 
                     client.hostages.zeroize();
                     client.hostages.push(account);

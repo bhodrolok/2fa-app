@@ -1,126 +1,103 @@
 package app.ninesevennine.twofactorauthenticator.features
 
 import android.content.Context
-import android.graphics.Bitmap
-import androidx.compose.ui.graphics.Color
-import app.ninesevennine.twofactorauthenticator.rustInterface
-import app.ninesevennine.twofactorauthenticator.utils.ColorPicker
-import app.ninesevennine.twofactorauthenticator.utils.Config
-import org.json.JSONObject
 import java.io.File
-
-enum class IconPacksStyle(val value: Int) {
-    TEXTURED(0),
-    TINTED(1);
-}
+import java.io.IOException
+import java.io.InputStream
+import java.util.zip.ZipInputStream
 
 object IconPacks {
-    private const val TAG = "IconPacks"
-
-    data class PackInfo(val id: String, val primary: String, val secondary: String)
-    data class IconPackEntry(val file: String, val color: Color)
-    data class IconPackResult(val bitmap: Bitmap?, val color: Color?)
-
-    private var loadedIconsMap: Map<String, IconPackEntry> = emptyMap()
-
-    fun load(context: Context, packId: String) {
-        if (packId.isEmpty()) {
-            loadedIconsMap = emptyMap()
-            return
-        }
+    fun extractDipToSlot0(context: Context) {
+        val outDir = File(context.noBackupFilesDir, "icons/0")
 
         try {
-            val metaFile = File(context.noBackupFilesDir, "icons/$packId/metadata.json")
-            val json = JSONObject(metaFile.readText())
-            val iconsArray = json.getJSONArray("icons")
+            outDir.deleteRecursively()
+            outDir.mkdirs()
 
-            val newMap = mutableMapOf<String, IconPackEntry>()
+            ZipInputStream(context.assets.open("dip.zip").buffered()).use { zip ->
+                var entry = zip.nextEntry
 
-            for (i in 0 until iconsArray.length()) {
-                val entry = iconsArray.getJSONObject(i)
-                val issuerArray = entry.getJSONArray("issuer")
-                
-                val iconFile = when (Config.UsingIconPacksStyle) {
-                    IconPacksStyle.TEXTURED.value -> entry.optString("textured", "")
-                    else -> entry.optString("tinted", "")
-                }.takeIf { it.endsWith(".svg") } ?: ""
+                while (entry != null) {
+                    val target = File(outDir, entry.name)
 
-                val iconColor = (entry.optString("color", "").let { 
-                    ColorPicker.fromHexString(it) 
-                } ?: Color.White).copy(alpha = 1f)
+                    if (entry.isDirectory) {
+                        target.mkdirs()
+                    } else {
+                        target.parentFile?.mkdirs()
+                        target.outputStream().buffered().use { zip.copyTo(it) }
+                    }
 
-                val packEntry = IconPackEntry(iconFile, iconColor)
-                
-                for (j in 0 until issuerArray.length()) {
-                    newMap[issuerArray.getString(j).lowercase().trim()] = packEntry
+                    entry = zip.nextEntry
                 }
             }
-            loadedIconsMap = newMap
         } catch (_: Exception) {
-//            Logger.e(TAG, "failed to load icons for pack $packId")
+            outDir.deleteRecursively()
         }
     }
 
-    fun get(context: Context, issuer: String): IconPackResult {
-        val issuerNormalized = issuer.lowercase().trim()
-        val icon = loadedIconsMap[issuerNormalized] ?: return IconPackResult(null, null)
+    private const val MAX_ENTRIES = 32768
+    private const val MAX_TOTAL_BYTES = 32L * 1024 * 1024 // 32 MB
+    private const val MAX_ENTRY_BYTES = 1L * 1024 * 1024 // 1 MB
 
-        if (icon.file.isBlank()) return IconPackResult(null, icon.color)
+    fun extractStreamToSlot1(context: Context, input: InputStream): Boolean {
+        val outDir = File(context.noBackupFilesDir, "icons/1")
+        val root = outDir.canonicalPath + File.separator
 
-        val svgFile = File(context.noBackupFilesDir, "icons/${Config.activeIconPackId}/assets/${icon.file}")
-        if (!svgFile.exists()) return IconPackResult(null, icon.color)
-
-        val sizePx = (52 * context.resources.displayMetrics.density + 0.5f).toInt()
+        var entries = 0
+        var total = 0L
+        val buffer = ByteArray(64 * 1024)
 
         return try {
-            val svgBytes = svgFile.readBytes()
-            val bitmap = rustInterface.svgToBitmap(svgBytes, sizePx, sizePx)
-            IconPackResult(bitmap, icon.color)
+            outDir.deleteRecursively()
+            outDir.mkdirs()
+
+            ZipInputStream(input.buffered()).use { zip ->
+                var entry = zip.nextEntry
+
+                while (entry != null) {
+                    if (++entries > MAX_ENTRIES) throw IOException("too many entries")
+
+                    val target = File(outDir, entry.name)
+
+                    if (!target.canonicalPath.startsWith(root)) {
+                        throw IOException("entry escapes target directory")
+                    }
+
+                    if (entry.isDirectory) {
+                        target.mkdirs()
+                    } else {
+                        target.parentFile?.mkdirs()
+
+                        var written = 0L
+
+                        target.outputStream().buffered().use { out ->
+                            while (true) {
+                                val read = zip.read(buffer)
+                                if (read < 0) break
+
+                                written += read
+                                total += read
+
+                                if (written > MAX_ENTRY_BYTES) throw IOException("entry too large")
+                                if (total > MAX_TOTAL_BYTES) throw IOException("archive too large")
+
+                                out.write(buffer, 0, read)
+                            }
+                        }
+                    }
+
+                    entry = zip.nextEntry
+                }
+            }
+
+            File(outDir, "metadata.json").isFile
         } catch (_: Exception) {
-//            Logger.e(TAG, "Failed to load bitmap for $issuer")
-            IconPackResult(null, icon.color)
+            outDir.deleteRecursively()
+            false
         }
     }
 
-    fun getAvailable(context: Context): List<PackInfo> {
-        val iconsDir = File(context.noBackupFilesDir, "icons")
-        if (!iconsDir.exists()) return emptyList()
-
-        return iconsDir.listFiles()?.filter { it.isDirectory }?.mapNotNull { packDir ->
-            val metaFile = File(packDir, "metadata.json")
-
-            if (!metaFile.exists()) {
-                packDir.deleteRecursively()
-                return@mapNotNull null
-            }
-
-            try {
-                val json = JSONObject(metaFile.readText())
-                PackInfo(
-                    id = packDir.name,
-                    primary = json.getString("primary"),
-                    secondary = json.optString("secondary", "")
-                )
-            } catch (_: Exception) {
-//                Logger.e(TAG, "failed to parse metadata.json in ${packDir.name}, deleting")
-                packDir.deleteRecursively()
-                null
-            }
-        } ?: emptyList()
-    }
-
-    fun getActivePrimary(context: Context): String? {
-        val currentId = Config.activeIconPackId
-        if (currentId.isEmpty()) return null
-        return getAvailable(context).firstOrNull { it.id == currentId }?.primary
-    }
-
-    fun delete(context: Context, id: String) {
-        if (id.isEmpty()) return
-        File(context.noBackupFilesDir, "icons/$id").deleteRecursively()
-        if (Config.activeIconPackId == id) {
-            loadedIconsMap = emptyMap()
-        }
-//        Logger.i(TAG, "deleted pack $id")
+    fun deleteSlot1(context: Context) {
+        File(context.noBackupFilesDir, "icons/1").deleteRecursively()
     }
 }

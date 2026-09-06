@@ -11,6 +11,14 @@ class RustInterface {
     external fun client_key_get(): ByteArray
     external fun client_zeroize_sensitive()
 
+    external fun features_icons_slot0_timestamp_get(): Long
+    external fun features_icons_slot_get(): Int
+    external fun features_icons_name_get(): String
+    external fun features_icons_timestamp_get(): Long
+    external fun features_icons_map_bitmap_get(issuer: String, size: Int): Bitmap?
+    external fun features_icons_map_color_get(issuer: String): Int
+    external fun features_icons_load(skipAndClearMap: Boolean, textured: Boolean): Long
+
     external fun features_edit_get(): Account
     external fun features_edit_color_get(): Int
     external fun features_edit_color_get_as_hex(): String
@@ -61,8 +69,6 @@ class RustInterface {
     external fun management_import_edit_into_hostages()
     external fun management_import_account_into_edit(id: Long)
     external fun management_import_hostages_into_accounts()
-
-    external fun svgToBitmap(data: ByteArray, width: Int, height: Int): Bitmap?
 }
 
 enum class CodeType(val displayName: String) {

@@ -22,6 +22,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.UseIncognitoKeyboard
@@ -80,6 +81,13 @@ class Main : FragmentActivity() {
                 }
 
                 Config.load(this@Main)
+
+                // Update timestamp every time we update dip.zip
+                if (rustInterface.features_icons_slot0_timestamp_get() < 1788700486) {
+                    IconPacks.extractDipToSlot0(this@Main)
+                }
+
+                rustInterface.features_icons_load(skipAndClearMap = !Config.isUsingIconPacks, Config.isUsingTexturedIcons)
 
                 rustInterface.client_loaded_set(true)
             }

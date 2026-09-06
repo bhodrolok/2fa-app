@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -54,14 +55,12 @@ import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.AccountShort
 import app.ninesevennine.twofactorauthenticator.CodeType
 import app.ninesevennine.twofactorauthenticator.R
-import app.ninesevennine.twofactorauthenticator.features.IconPacks
-import app.ninesevennine.twofactorauthenticator.features.IconPacksStyle
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.ThemeOption
+import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.ui.InterVariable
 import app.ninesevennine.twofactorauthenticator.ui.OtpCard
 import app.ninesevennine.twofactorauthenticator.ui.screens.EditRoute
-import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.Clipboard
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Time
@@ -124,11 +123,16 @@ fun OtpCardNormal(
         }
     }
 
-    val iconBitmap = remember(account.issuer) {
-        IconPacks.get(context, account.issuer).bitmap?.asImageBitmap()
+    val bitmapSizePx = with(LocalDensity.current) { 52.dp.roundToPx() }
+
+    val bitmap = remember(account.issuer, bitmapSizePx) {
+        rustInterface.features_icons_map_bitmap_get(
+            issuer = account.issuer,
+            size = bitmapSizePx
+        )?.asImageBitmap()
     }
 
-    val iconPacksStyle = Config.UsingIconPacksStyle
+    val isUsingTexturedIcons = Config.isUsingTexturedIcons
 
     val fallbackInitial = remember(account.issuer, account.name) {
         when {
@@ -224,21 +228,15 @@ fun OtpCardNormal(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        if (iconBitmap != null) {
+                        if (bitmap != null) {
                             Canvas(Modifier.size(52.dp)) {
-                                when (iconPacksStyle) {
-                                    IconPacksStyle.TEXTURED.value -> {
-                                        drawImage(image = iconBitmap)
-                                    }
-
-                                    IconPacksStyle.TINTED.value -> {
-                                        drawImage(
-                                            image = iconBitmap,
-                                            colorFilter = ColorFilter.tint(accent, BlendMode.Modulate)
-                                        )
-                                    }
-
-                                    else -> {}
+                                if (isUsingTexturedIcons) {
+                                    drawImage(image = bitmap)
+                                } else {
+                                    drawImage(
+                                        image = bitmap,
+                                        colorFilter = ColorFilter.tint(accent, BlendMode.Modulate)
+                                    )
                                 }
                             }
                         } else {
