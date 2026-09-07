@@ -17,6 +17,7 @@ pub extern "system" fn JNI_OnUnload(_vm: *mut c_void, _reserved: *mut c_void) {
         client.hostages.zeroize();
 
         // Icons
+        client.slot = 0;
         client.name.clear();
         client.timestamp = 0;
         client.map.clear();
