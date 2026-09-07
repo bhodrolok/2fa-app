@@ -121,7 +121,9 @@ class Main : FragmentActivity() {
                 NavHost(
                     navController = navController,
                     startDestination = if (Signals.requiresAuthentication) GreetingRoute else MainRoute,
-                    modifier = Modifier.fillMaxSize().background(Theme.colors.background),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Theme.colors.background),
                     enterTransition = {
                         if (targetState.destination.hasRoute<GreetingRoute>()) EnterTransition.None
                         else slideInHorizontally(initialOffsetX = { it })
@@ -193,7 +195,12 @@ class Main : FragmentActivity() {
     }
 
     private fun handleIntents(intent: Intent) {
-        if (Config.isUsingBlockIntents) return
+        if (Config.isUsingBlockIntents) {
+            intent.data = null
+            intent.removeExtra(Intent.EXTRA_STREAM)
+
+            return
+        }
 
         when (intent.action) {
             Intent.ACTION_VIEW -> {
@@ -223,13 +230,12 @@ class Main : FragmentActivity() {
                                 Signals.suppressFocusSearchOnLaunch = true
                             }
 
-                            bitmap.eraseColor(0)
                             bitmap.recycle()
                         }
                     }
-
-                    intent.removeExtra(Intent.EXTRA_STREAM)
                 }
+
+                intent.removeExtra(Intent.EXTRA_STREAM)
             }
         }
     }
