@@ -130,7 +130,7 @@ fun Greeting(navController: NavController) {
                 isLoading = false
                 importResult = result
             } else {
-                if (biometricKeyRecreationRequired) {
+                if (biometricKeyRecreationRequired && KeyStoreAES.hasBiometricKey()) {
                     KeyStoreAES.deleteBiometricKey()
 
                     if (!KeyStoreAES.generateBiometricKey() || !KeyStoreAES.loadBiometricKey() || !KeyStoreAES.isBiometricKeyUsable()) {
