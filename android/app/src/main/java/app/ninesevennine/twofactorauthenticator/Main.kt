@@ -178,9 +178,10 @@ class Main : FragmentActivity() {
         super.onStop()
 
         if (rustInterface.client_has_salt_and_key()) {
+            Signals.requiresAuthentication = true
+
             if (!isChangingConfigurations && Config.isUsingLockOnExit && !Signals.suppressLockOnExit) {
                 rustInterface.client_zeroize_sensitive()
-                Signals.requiresAuthentication = true
                 Signals.authenticate++
             }
         }
