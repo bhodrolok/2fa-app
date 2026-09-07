@@ -3,54 +3,72 @@ package app.ninesevennine.twofactorauthenticator
 import android.graphics.Bitmap
 
 class RustInterface {
-    companion object {
-        const val LIBRARY_NAME = "appcore"
-    }
+    external fun client_loaded_set(value: Boolean)
+    external fun client_loaded_get(): Boolean
+    external fun client_application_directory_set(applicationDirectory: String)
+    external fun client_has_salt_and_key(): Boolean
+    external fun client_key_set(key: ByteArray)
+    external fun client_key_get(): ByteArray
+    external fun client_zeroize_sensitive()
 
-    external fun clientUnload()
-    external fun setUnlockPassphraseHash(hash: ByteArray)
-    external fun changeUnlockPassphraseHash(salt: ByteArray, passphrase: String)
-    external fun getUnlockPassphraseHash(): ByteArray
-    external fun setSecret003(secret: ByteArray)
-    external fun isClientSecretEmpty(): Boolean
+    external fun features_icons_slot0_timestamp_get(): Long
+    external fun features_icons_slot_get(): Int
+    external fun features_icons_name_get(): String
+    external fun features_icons_timestamp_get(): Long
+    external fun features_icons_map_bitmap_get(issuer: String, size: Int): Bitmap?
+    external fun features_icons_map_color_get(issuer: String): Int
+    external fun features_icons_load(skipAndClearMap: Boolean, textured: Boolean): Long
 
-    external fun setEditAccountEmpty()
-    external fun setEditAccountNone()
-    external fun setEditAccountFromOtpAuth(url: String): Boolean
-    external fun copyEditAccountIntoAccounts()
-    external fun copyAccountIntoEditAccount(id: Long)
-    external fun setEditAccountName(name: String)
-    external fun setEditAccountIssuer(issuer: String)
-    external fun setEditAccountNote(note: String)
-    external fun setEditAccountSecretBase32NoPad(secretBase32NoPad: String): Boolean
-    external fun setEditAccountCodeType(codeType: CodeType)
-    external fun setEditAccountAlgorithm(algorithm: Algorithm)
-    external fun setEditAccountCounter(counter: Long)
-    external fun setEditAccountPeriod(period: Long)
-    external fun setEditAccountDigits(digits: Int)
-    external fun setEditAccountColor(color: Int)
+    external fun features_edit_get(): Account
+    external fun features_edit_color_get(): Int
+    external fun features_edit_color_get_as_hex(): String
+    external fun features_edit_color_set(argb: Int)
+    external fun features_edit_color_hue_set(hue: Float)
+    external fun features_edit_color_saturation_set(saturation: Float)
+    external fun features_edit_color_set(argb: String)
+    external fun features_edit_name_set(name: String): Boolean
+    external fun features_edit_issuer_set(issuer: String)
+    external fun features_edit_note_set(note: String)
+    external fun features_edit_secret_set(secretBase32NoPad: String): Boolean
+    external fun features_edit_type_set(codeType: Int)
+    external fun features_edit_algorithm_set(algorithm: Int)
+    external fun features_edit_counter_set(counter: String): Boolean
+    external fun features_edit_period_set(period: String): Boolean
+    external fun features_edit_digits_set(digits: String): Boolean
+    external fun features_edit_exists_in_accounts(): Boolean
+    external fun features_edit_delete(id: Long)
 
-    external fun isEditAccountSome(): Boolean
-    external fun getEditAccountWithSecretBase32NoPad(): AccountWithSecretBase32NoPad?
-    external fun getAccountsTruncatedFiltered(query: String): Array<AccountTruncated>
+    external fun features_main_search(query: String): Array<AccountShort>
+    external fun features_main_reorder(from: Long, to: Long)
 
-    external fun getAccountCode(id: Long, counter: Long, showNext: Boolean): String
-    external fun reorderAccount(fromIndex: Int, toIndex: Int)
-    external fun deleteAccount(id: Long)
-    external fun incrementAccountCounterAndGet(id: Long): Long
+    external fun features_management_aegis_export_accounts(passphrase: String): ByteArray
+    external fun features_management_aegis_import_into_hostages(bytes: ByteArray, passphrase: String): Int
+    external fun features_management_native_export_accounts(passphrase: String): ByteArray
+    external fun features_management_native_import_into_hostages(bytes: ByteArray, passphrase: String): Int
 
-    external fun exportAccountsUsingUnlockPassphraseHash(salt: ByteArray): String
-    external fun exportAccounts(passphrase: String): String
-    external fun exportAccountsAegis(passphrase: String): String
-    external fun importAccountsUsingKey003(data: String): Int
-    external fun importAccountsUsingAutomaticBackupsKey003(passphrase: String, data: String): Int
-    external fun importAccountsUsingUnlockPassphraseHash(data: String): Int
-    external fun importAccounts(passphrase: String, data: String): Int
-    external fun importAccountsAegis(passphrase: String, data: String): Boolean
 
-    external fun svgToBitmap(data: ByteArray, width: Int, height: Int): Bitmap?
+    external fun features_otp_generate(id: Long, counter: Long, next: Boolean, revealed: Boolean): String
+    external fun features_otp_counter_increment(id: Long): Long
 
-    external fun estimatePassphraseStrength(passphrase: String): Float
+    external fun features_otpauth_import_uri_into_hostages(uri: String): Boolean
+    external fun features_otpauth_import_mafile_into_hostages(json: String): Boolean
+    external fun features_otpauth_import_qrcode_into_hostages(width: Int, height: Int, pixels: IntArray): Boolean
+
+    external fun features_zxcvbn_normalized(passphrase: String): Float
+
+    external fun management_accounts_load(): Int
+    external fun management_accounts_load(passphrase: String): Int
+    external fun management_accounts_save()
+    external fun management_accounts_save(passphrase: String)
+
+    external fun management_edit_is_none(): Boolean
+    external fun management_edit_none_set()
+    external fun management_edit_default_set()
+
+    external fun management_import_edit_into_accounts()
+    external fun management_import_edit_into_hostages()
+    external fun management_import_account_into_edit(id: Long)
+    external fun management_import_hostages_into_accounts()
 }
 
 enum class CodeType(val displayName: String) {
@@ -66,27 +84,26 @@ enum class Algorithm(val displayName: String) {
     SHA512("SHA-512");
 }
 
-data class AccountTruncated(
+data class Account(
     val id: Long,
     val name: String,
     val issuer: String,
-    val codeType: CodeType,
+    val note: String,
+    val secret: String,
+    val codeType: Int,
+    val algorithm: Int,
     val counter: Long,
     val period: Long,
     val digits: Int,
     val color: Int
 )
 
-data class AccountWithSecretBase32NoPad(
+data class AccountShort(
     val id: Long,
     val name: String,
     val issuer: String,
-    val note: String,
-    val secretBase32NoPad: String,
-    val codeType: CodeType,
-    val algorithm: Algorithm,
+    val codeType: Int,
     val counter: Long,
     val period: Long,
-    val digits: Int,
     val color: Int
 )

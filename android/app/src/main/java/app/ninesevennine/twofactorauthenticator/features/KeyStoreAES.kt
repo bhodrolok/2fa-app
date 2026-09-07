@@ -6,9 +6,7 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import app.ninesevennine.twofactorauthenticator.Entry
-import app.ninesevennine.twofactorauthenticator.utils.AtomicFileSystem
-import app.ninesevennine.twofactorauthenticator.utils.Logger
+import app.ninesevennine.twofactorauthenticator.rustInterface
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -23,10 +21,9 @@ object KeyStoreAES {
     private const val GCM_IV_LENGTH = 12
     private const val GCM_TAG_LENGTH = 128
 
-    private const val REGULAR_KEY_ALIAS = "regular"
     private const val BIOMETRIC_KEY_ALIAS = "biometric"
-    private const val SECRET_FILENAME = "secret.bin"
-    private const val UNLOCK_PASSPHRASE_HASH_FILE = "unlock_passphrase_hash.bin"
+    private const val BIOMETRIC_KEY_FILE = "biometric_key.bin"
+    private const val OLD_BIOMETRIC_KEY_FILE = "unlock_passphrase_hash.bin"
 
     private val supportedAesKeySizes = listOf(256, 128)
 
@@ -36,7 +33,6 @@ object KeyStoreAES {
         KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
     }
 
-    private var regularKey: SecretKey? = null
     private var biometricKey: SecretKey? = null
 
     fun setActivity(activity: FragmentActivity) {
@@ -51,120 +47,110 @@ object KeyStoreAES {
                 BiometricManager.BIOMETRIC_SUCCESS
     }
 
-    fun isBiometricKeyLoaded(): Boolean {
-        return biometricKey != null
-    }
-
-    // system can still invalidate the key if an update corrupts keystore.
-    private fun generateAesKey(
-        alias: String,
-        keySize: Int,
-        isBiometricKey: Boolean,
-        isStrongBoxBacked: Boolean
-    ) {
+    private fun generateBiometricAESKey(keySize: Int, isStrongBoxBacked: Boolean) {
         val keyGenerator = KeyGenerator.getInstance(
             KeyProperties.KEY_ALGORITHM_AES,
             ANDROID_KEYSTORE
         )
 
         val keySpec = KeyGenParameterSpec.Builder(
-            alias,
+            BIOMETRIC_KEY_ALIAS,
             KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
         )
             .setKeySize(keySize)
             .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
             .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-            .setUnlockedDeviceRequired(isBiometricKey)
-            .setUserAuthenticationRequired(isBiometricKey)
-            .setInvalidatedByBiometricEnrollment(isBiometricKey)
+            .setUnlockedDeviceRequired(true)
+            .setUserAuthenticationRequired(true)
+            .setInvalidatedByBiometricEnrollment(true)
             .setIsStrongBoxBacked(isStrongBoxBacked)
-            .apply {
-                if (isBiometricKey) {
-                    setUserAuthenticationParameters(
-                        0,
-                        KeyProperties.AUTH_BIOMETRIC_STRONG
-                    )
-                }
-            }
+            .setUserAuthenticationParameters(0, KeyProperties.AUTH_BIOMETRIC_STRONG)
             .build()
 
         keyGenerator.init(keySpec)
         keyGenerator.generateKey()
     }
 
-    fun generateKey(isBiometricKey: Boolean): Boolean {
-        val alias = if (isBiometricKey) BIOMETRIC_KEY_ALIAS else REGULAR_KEY_ALIAS
+    fun generateBiometricKey(): Boolean {
+        for (keySize in supportedAesKeySizes) {
+            try {
+                generateBiometricAESKey(keySize, isStrongBoxBacked = true)
 
-        val issuers = listOf(
-            true to "secure element",
-            false to "trusted execution environment"
-        )
-
-        val success = issuers.firstNotNullOfOrNull { (isStrongBoxBacked, issuer) ->
-            supportedAesKeySizes.firstNotNullOfOrNull { keySize ->
-                runCatching {
-                    generateAesKey(alias, keySize, isBiometricKey, isStrongBoxBacked)
-                }.onSuccess {
-                    Logger.i(TAG, "$issuer generated a $keySize bit $alias aes key")
-                }.onFailure {
-                    Logger.i(TAG, "$issuer cannot generate a $keySize bit $alias aes key")
-                }.getOrNull()
+                return true
+            } catch (_: Exception) {
+                // Ignore
             }
         }
 
-        return success != null
+        for (keySize in supportedAesKeySizes) {
+            try {
+                generateBiometricAESKey(keySize, isStrongBoxBacked = false)
+
+                return true
+            } catch (_: Exception) {
+                // Ignore
+            }
+        }
+
+        return false
     }
 
-    fun deleteKey(isBiometricKey: Boolean) {
-        val alias = if (isBiometricKey) BIOMETRIC_KEY_ALIAS else REGULAR_KEY_ALIAS
+    fun hasBiometricKey(): Boolean {
+        if (!keyStore.containsAlias(BIOMETRIC_KEY_ALIAS)) {
+            return false
 
-        runCatching {
-            if (keyStore.containsAlias(alias)) {
-                keyStore.deleteEntry(alias)
+        }
 
-                if (isBiometricKey) biometricKey = null else regularKey = null
-
-                Logger.i(TAG, "successfully deleted $alias key")
-            } else {
-                Logger.i(TAG, "$alias key not found; nothing to delete")
-            }
-        }.onFailure { e ->
-            Logger.e(TAG, "failed to delete $alias key", e)
+        val currentActivity = activity ?: return false
+        return listOf(BIOMETRIC_KEY_FILE, OLD_BIOMETRIC_KEY_FILE).any {
+            currentActivity.noBackupFilesDir.resolve(it).exists()
         }
     }
 
-    fun isKeyUsable(isBiometricKey: Boolean): Boolean {
-        val alias = if (isBiometricKey) BIOMETRIC_KEY_ALIAS else REGULAR_KEY_ALIAS
+    fun deleteBiometricKey() {
+        if (keyStore.containsAlias(BIOMETRIC_KEY_ALIAS)) {
+            keyStore.deleteEntry(BIOMETRIC_KEY_ALIAS)
+        }
+
+        biometricKey = null
+
+        val currentActivity = activity ?: return
+        for (name in listOf(BIOMETRIC_KEY_FILE, OLD_BIOMETRIC_KEY_FILE)) {
+            val file = currentActivity.noBackupFilesDir.resolve(name)
+
+            if (file.exists()) {
+                file.delete()
+            }
+        }
+    }
+
+    fun isBiometricKeyUsable(): Boolean {
+        if (biometricKey == null) {
+            return false
+        }
 
         return try {
-            val key = if (isBiometricKey) biometricKey else regularKey
-            if (key == null) return true
-
             val cipher = Cipher.getInstance(AES_TRANSFORMATION)
-            cipher.init(Cipher.ENCRYPT_MODE, key)
+            cipher.init(Cipher.ENCRYPT_MODE, biometricKey)
 
             true
-        } catch (e: Exception) {
-            Logger.e(TAG, "$alias key is not usable", e)
-            false
+        } catch (_: Exception) {
+            false // Key was most likely invalidated
         }
     }
 
-    fun loadKey(isBiometricKey: Boolean): Boolean {
-        val alias = if (isBiometricKey) BIOMETRIC_KEY_ALIAS else REGULAR_KEY_ALIAS
+    fun loadBiometricKey(): Boolean {
+        if (!keyStore.containsAlias(BIOMETRIC_KEY_ALIAS)) {
+            return false
+        }
 
-        return runCatching {
-            val entry = keyStore.getEntry(alias, null) as KeyStore.SecretKeyEntry
+        val entry = keyStore.getEntry(BIOMETRIC_KEY_ALIAS, null) as KeyStore.SecretKeyEntry
+        biometricKey = entry.secretKey
 
-            if (isBiometricKey) biometricKey = entry.secretKey else regularKey = entry.secretKey
-
-            true
-        }.onFailure { e ->
-            Logger.e(TAG, "failed to load $alias key", e)
-        }.getOrDefault(false)
+        return true
     }
 
-    fun saveUnlockPassphraseHash(
+    fun saveBiometricKey(
         promptTitle: String,
         promptNegative: String,
         onSuccess: () -> Unit,
@@ -180,24 +166,24 @@ object KeyStoreAES {
 
         val callback = object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                val key = rustInterface.client_key_get()
+
                 try {
                     val authenticatedCipher = result.cryptoObject?.cipher ?: cipher
-                    val data = authenticatedCipher.iv + authenticatedCipher.doFinal(Entry.rustInterface.getUnlockPassphraseHash())
+                    val data = authenticatedCipher.iv + authenticatedCipher.doFinal(key)
 
-                    val file = currentActivity.noBackupFilesDir.resolve(UNLOCK_PASSPHRASE_HASH_FILE)
-                    AtomicFileSystem.write(file, data)
+                    val file = currentActivity.noBackupFilesDir.resolve(BIOMETRIC_KEY_FILE)
+                    file.writeBytes(data)
 
-                    Logger.i(TAG, "unlock passphrase hash saved")
                     onSuccess()
-                } catch (e: Exception) {
-                    Logger.w(TAG, "failed to save unlock passphrase hash", e)
+                } catch (_: Exception) {
                     onError()
+                } finally {
+                    key.fill(0)
                 }
             }
 
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                Logger.w(TAG, "failed to save unlock passphrase hash with errorCode $errorCode and reason $errString")
-
                 when (errorCode) {
                     BiometricPrompt.ERROR_NEGATIVE_BUTTON,
                     BiometricPrompt.ERROR_USER_CANCELED,
@@ -207,7 +193,7 @@ object KeyStoreAES {
             }
 
             override fun onAuthenticationFailed() {
-                Logger.w(TAG, "failed to save unlock passphrase hash")
+                // Ignore
             }
         }
 
@@ -221,7 +207,7 @@ object KeyStoreAES {
             .authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
     }
 
-    fun loadUnlockPassphraseHash(
+    fun loadBiometricKey(
         promptTitle: String,
         promptNegative: String,
         onSuccess: () -> Unit,
@@ -229,38 +215,46 @@ object KeyStoreAES {
         onError: () -> Unit,
     ) {
         val currentActivity = activity ?: run { onError(); return }
-        val key = biometricKey ?: run { onError(); return }
+        val biometricKey = biometricKey ?: run { onError(); return }
 
-        val file = currentActivity.noBackupFilesDir.resolve(UNLOCK_PASSPHRASE_HASH_FILE)
-        if (!file.exists()) { onError(); return }
+        val newFile = currentActivity.noBackupFilesDir.resolve(BIOMETRIC_KEY_FILE)
+        val oldFile = currentActivity.noBackupFilesDir.resolve(OLD_BIOMETRIC_KEY_FILE)
 
-        val data = try { AtomicFileSystem.read(file) } catch (_: Exception) { onError(); return }
+        val file = when {
+            newFile.exists() -> newFile
+            oldFile.exists() -> oldFile
+            else -> { onError(); return }
+        }
+
+        val data = try { file.readBytes() } catch (_: Exception) { onError(); return }
         if (data.size < GCM_IV_LENGTH) { onError(); return }
 
         val iv = data.copyOfRange(0, GCM_IV_LENGTH)
         val ciphertext = data.copyOfRange(GCM_IV_LENGTH, data.size)
 
         val cipher = Cipher.getInstance(AES_TRANSFORMATION).apply {
-            init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(GCM_TAG_LENGTH, iv))
+            init(Cipher.DECRYPT_MODE, biometricKey, GCMParameterSpec(GCM_TAG_LENGTH, iv))
         }
 
         val callback = object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                var key: ByteArray? = null
+
                 try {
                     val authenticatedCipher = result.cryptoObject?.cipher ?: cipher
-                    Entry.rustInterface.setUnlockPassphraseHash(authenticatedCipher.doFinal(ciphertext))
+                    key = authenticatedCipher.doFinal(ciphertext)
 
-                    Logger.i(TAG, "unlock passphrase hash loaded")
+                    rustInterface.client_key_set(key)
+
                     onSuccess()
-                } catch (e: Exception) {
-                    Logger.w(TAG, "failed to load unlock passphrase hash", e)
+                } catch (_: Exception) {
                     onError()
+                } finally {
+                    key?.fill(0)
                 }
             }
 
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                Logger.w(TAG, "failed to load unlock passphrase hash with errorCode $errorCode and reason $errString")
-
                 when (errorCode) {
                     BiometricPrompt.ERROR_NEGATIVE_BUTTON,
                     BiometricPrompt.ERROR_USER_CANCELED,
@@ -270,7 +264,7 @@ object KeyStoreAES {
             }
 
             override fun onAuthenticationFailed() {
-                Logger.w(TAG, "failed to load unlock passphrase hash")
+                // Ignore
             }
         }
 
@@ -282,55 +276,5 @@ object KeyStoreAES {
 
         BiometricPrompt(currentActivity, ContextCompat.getMainExecutor(currentActivity), callback)
             .authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
-    }
-
-    fun deleteUnlockPassphraseHashFile() {
-        val currentActivity = activity ?: return
-        val file = currentActivity.noBackupFilesDir.resolve(UNLOCK_PASSPHRASE_HASH_FILE)
-
-        try {
-            if (file.exists()) {
-                if (file.delete()) {
-                    Logger.i(TAG, "successfully deleted unlock passphrase hash file")
-                } else {
-                    Logger.w(TAG, "failed to delete unlock passphrase hash file")
-                }
-            }
-        } catch (e: Exception) {
-            Logger.e(TAG, "failed to delete unlock passphrase hash file", e)
-        }
-    }
-
-    fun loadSecret(
-        onSuccess: (ByteArray) -> Unit,
-        onError: () -> Unit
-    ) {
-        val currentActivity = activity ?: run { onError(); return }
-
-        val secretFile = currentActivity.noBackupFilesDir.resolve(SECRET_FILENAME)
-        if (!secretFile.exists()) { onError(); return }
-
-        val encryptedSecret = try {
-            secretFile.readBytes()
-        } catch (e: Exception) {
-            Logger.w(TAG, "failed to read secret", e)
-            onError()
-            return
-        }
-
-        val iv = encryptedSecret.copyOfRange(0, GCM_IV_LENGTH)
-        val ciphertext = encryptedSecret.copyOfRange(GCM_IV_LENGTH, encryptedSecret.size)
-
-        val key = regularKey ?: run { onError(); return }
-
-        try {
-            val cipher = Cipher.getInstance(AES_TRANSFORMATION).apply {
-                init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(GCM_TAG_LENGTH, iv))
-            }
-            onSuccess(cipher.doFinal(ciphertext))
-        } catch (e: Exception) {
-            Logger.w(TAG, "failed to load secret", e)
-            onError()
-        }
     }
 }

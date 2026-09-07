@@ -1,1 +1,1 @@
-A two-factor authenticator built to securely manage your one-time passwords
+The modern privacy and security focused two factor authenticator

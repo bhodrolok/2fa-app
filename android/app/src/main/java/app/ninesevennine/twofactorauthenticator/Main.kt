@@ -1,9 +1,14 @@
 package app.ninesevennine.twofactorauthenticator
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
@@ -16,73 +21,96 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import app.ninesevennine.twofactorauthenticator.features.IconPacks
 import app.ninesevennine.twofactorauthenticator.features.KeyStoreAES
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.UseIncognitoKeyboard
+import app.ninesevennine.twofactorauthenticator.features.management.ImportResult
+import app.ninesevennine.twofactorauthenticator.features.otpauth.importQRCodeIntoHostages
 import app.ninesevennine.twofactorauthenticator.features.setScreenSecure
-import app.ninesevennine.twofactorauthenticator.gui.screens.AddCode
-import app.ninesevennine.twofactorauthenticator.gui.screens.AddCodeRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.ChangePassphrase
-import app.ninesevennine.twofactorauthenticator.gui.screens.ChangePassphraseRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.BiometricUnlock
-import app.ninesevennine.twofactorauthenticator.gui.screens.BiometricUnlockRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.Edit
-import app.ninesevennine.twofactorauthenticator.gui.screens.EditRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.Export
-import app.ninesevennine.twofactorauthenticator.gui.screens.ExportAegis
-import app.ninesevennine.twofactorauthenticator.gui.screens.ExportAegisRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.ExportRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.Greeting
-import app.ninesevennine.twofactorauthenticator.gui.screens.GreetingRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.Import
-import app.ninesevennine.twofactorauthenticator.gui.screens.ImportAegis
-import app.ninesevennine.twofactorauthenticator.gui.screens.ImportAegisRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.ImportRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.Main
-import app.ninesevennine.twofactorauthenticator.gui.screens.MainRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SelectIconPacks
-import app.ninesevennine.twofactorauthenticator.gui.screens.SelectIconPacksRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SelectLanguage
-import app.ninesevennine.twofactorauthenticator.gui.screens.SelectLanguageRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SelectOtpCardStyle
-import app.ninesevennine.twofactorauthenticator.gui.screens.SelectOtpCardStyleRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SelectTheme
-import app.ninesevennine.twofactorauthenticator.gui.screens.SelectThemeRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.Settings
-import app.ninesevennine.twofactorauthenticator.gui.screens.SettingsRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupBiometricUnlock
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupBiometricUnlockRoute
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupCreateAPassphrase
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStarted
-import app.ninesevennine.twofactorauthenticator.gui.screens.SetupGetStartedRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.AddCode
+import app.ninesevennine.twofactorauthenticator.ui.screens.AddCodeRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.BiometricUnlock
+import app.ninesevennine.twofactorauthenticator.ui.screens.BiometricUnlockRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.ChangePassphrase
+import app.ninesevennine.twofactorauthenticator.ui.screens.ChangePassphraseRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.Edit
+import app.ninesevennine.twofactorauthenticator.ui.screens.EditRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.Export
+import app.ninesevennine.twofactorauthenticator.ui.screens.ExportRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.ExportToAegis
+import app.ninesevennine.twofactorauthenticator.ui.screens.ExportToAegisRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.Greeting
+import app.ninesevennine.twofactorauthenticator.ui.screens.GreetingRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.ImportEncrypted
+import app.ninesevennine.twofactorauthenticator.ui.screens.ImportEncryptedRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.ImportFromAegisEncrypted
+import app.ninesevennine.twofactorauthenticator.ui.screens.ImportFromAegisEncryptedRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.Main
+import app.ninesevennine.twofactorauthenticator.ui.screens.MainRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.SelectIconPacks
+import app.ninesevennine.twofactorauthenticator.ui.screens.SelectIconPacksRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.SelectLanguage
+import app.ninesevennine.twofactorauthenticator.ui.screens.SelectLanguageRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.SelectOtpCardStyle
+import app.ninesevennine.twofactorauthenticator.ui.screens.SelectOtpCardStyleRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.SelectTheme
+import app.ninesevennine.twofactorauthenticator.ui.screens.SelectThemeRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.SetPassphrase
+import app.ninesevennine.twofactorauthenticator.ui.screens.SetPassphraseRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.Settings
+import app.ninesevennine.twofactorauthenticator.ui.screens.SettingsRoute
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Signals
-import app.ninesevennine.twofactorauthenticator.utils.ZXing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class Main : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        if (!rustInterface.client_loaded_get()) {
+            runBlocking(Dispatchers.IO) {
+                rustInterface.client_application_directory_set(dataDir.absolutePath)
+
+                if (rustInterface.management_accounts_load() < ImportResult.SUCCESS.value) {
+                    Signals.requiresAuthentication = true
+                }
+
+                Config.load(this@Main)
+
+                // Update timestamp every time we update dip.zip
+                if (rustInterface.features_icons_slot0_timestamp_get() < 1788700486) {
+                    IconPacks.extractDipToSlot0(this@Main)
+                }
+
+                rustInterface.features_icons_load(skipAndClearMap = !Config.isUsingIconPacks, Config.isUsingTexturedIcons)
+
+                rustInterface.client_loaded_set(true)
+            }
+        }
+
         Theme.window = window
         Theme.update(this)
 
-        setScreenSecure(this,Config.isUsingScreenSecurity)
+        setScreenSecure(activity = this, Config.isUsingScreenSecurity)
 
         KeyStoreAES.setActivity(this)
 
-        handleIntents(intent)
+        if (savedInstanceState == null) {
+            handleIntents(intent)
+        }
 
         setContent {
             val navController = rememberNavController()
 
             LaunchedEffect(Signals.authenticate) {
-                if (Config.hasCompletedSetup && Entry.rustInterface.isClientSecretEmpty() && navController.currentBackStackEntry?.destination?.hasRoute<GreetingRoute>() != true) {
+                if (Signals.requiresAuthentication && !rustInterface.client_has_salt_and_key() && navController.currentBackStackEntry?.destination?.hasRoute<GreetingRoute>() != true) {
                     navController.navigate(GreetingRoute) {
                         popUpTo(0) { inclusive = true }
-                        anim { enter = 0; exit = 0; popEnter = 0; popExit = 0 }
                     }
                 }
 
@@ -92,29 +120,43 @@ class Main : FragmentActivity() {
             UseIncognitoKeyboard {
                 NavHost(
                     navController = navController,
-                    startDestination = if (Config.hasCompletedSetup) GreetingRoute else SetupGetStartedRoute,
-                    modifier = Modifier.fillMaxSize().background(Theme.colors.background),
-                    enterTransition = { slideInHorizontally(initialOffsetX = { it }) },
-                    exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) },
+                    startDestination = if (Signals.requiresAuthentication) GreetingRoute else MainRoute,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Theme.colors.background),
+                    enterTransition = {
+                        if (targetState.destination.hasRoute<GreetingRoute>()) EnterTransition.None
+                        else slideInHorizontally(initialOffsetX = { it })
+                    },
+                    exitTransition = {
+                        if (targetState.destination.hasRoute<GreetingRoute>()) ExitTransition.None
+                        else slideOutHorizontally(targetOffsetX = { -it })
+                    },
                     popEnterTransition = { slideInHorizontally(initialOffsetX = { -it }) },
-                    popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) }
+                    popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) },
+                    predictivePopEnterTransition = { slideInHorizontally(initialOffsetX = { -it }) },
+                    predictivePopExitTransition = { slideOutHorizontally(targetOffsetX = { it }) }
                 ) {
-                    composable<SetupGetStartedRoute> { SetupGetStarted(navController) }
-                    composable<SetupCreateAPassphrase> { SetupCreateAPassphrase(navController) }
-                    composable<SetupBiometricUnlockRoute> { SetupBiometricUnlock(navController) }
-                    composable<MainRoute> { Main(navController) }
                     composable<GreetingRoute> { Greeting(navController) }
+                    composable<MainRoute> { Main(navController) }
                     composable<SettingsRoute> { Settings(navController) }
                     composable<SelectLanguageRoute> { SelectLanguage(navController) }
                     composable<SelectThemeRoute> { SelectTheme(navController) }
                     composable<SelectOtpCardStyleRoute> { SelectOtpCardStyle(navController) }
                     composable<SelectIconPacksRoute> { SelectIconPacks(navController) }
                     composable<BiometricUnlockRoute> { BiometricUnlock(navController) }
+                    composable<SetPassphraseRoute> { SetPassphrase(navController) }
                     composable<ChangePassphraseRoute> { ChangePassphrase(navController) }
                     composable<ExportRoute> { Export(navController) }
-                    composable<ImportRoute> { Import(navController) }
-                    composable<ExportAegisRoute> { ExportAegis(navController) }
-                    composable<ImportAegisRoute> { ImportAegis(navController) }
+                    composable<ImportEncryptedRoute> { backStackEntry ->
+                        val route = backStackEntry.toRoute<ImportEncryptedRoute>()
+                        ImportEncrypted(navController, route.uri)
+                    }
+                    composable<ExportToAegisRoute> { ExportToAegis(navController) }
+                    composable<ImportFromAegisEncryptedRoute> { backStackEntry ->
+                        val route = backStackEntry.toRoute<ImportFromAegisEncryptedRoute>()
+                        ImportFromAegisEncrypted(navController, route.uri)
+                    }
                     composable<EditRoute> { Edit(navController) }
                     composable<AddCodeRoute> { AddCode(navController) }
                 }
@@ -127,15 +169,19 @@ class Main : FragmentActivity() {
 
         setScreenSecure(this, Config.isUsingScreenSecurity)
 
-        if (Entry.rustInterface.isClientSecretEmpty()) Signals.authenticate++
+        if (Signals.requiresAuthentication && !rustInterface.client_has_salt_and_key()) {
+            Signals.authenticate++
+        }
     }
 
     override fun onStop() {
         super.onStop()
 
-        if (Config.hasCompletedSetup && !isChangingConfigurations && Config.isUsingLockOnExit) {
-            if (!Signals.suppressLockOnExit) {
-                Entry.rustInterface.clientUnload()
+        if (rustInterface.client_has_salt_and_key()) {
+            Signals.requiresAuthentication = true
+
+            if (!isChangingConfigurations && Config.isUsingLockOnExit && !Signals.suppressLockOnExit) {
+                rustInterface.client_zeroize_sensitive()
                 Signals.authenticate++
             }
         }
@@ -150,32 +196,47 @@ class Main : FragmentActivity() {
     }
 
     private fun handleIntents(intent: Intent) {
-        if (Config.isUsingBlockIntents) return
+        if (Config.isUsingBlockIntents) {
+            intent.data = null
+            intent.removeExtra(Intent.EXTRA_STREAM)
 
-        val action = intent.action
-        val data = intent.data
+            return
+        }
 
-        when (action) {
+        when (intent.action) {
             Intent.ACTION_VIEW -> {
-                data?.let { uri ->
+                intent.data?.let { uri ->
                     if (uri.scheme == "otpauth") {
-                        if (Entry.rustInterface.setEditAccountFromOtpAuth(data.toString())) {
-                            Signals.checkEditAccountSome = true
+                        if(rustInterface.features_otpauth_import_uri_into_hostages(uri.toString())) {
+                            Signals.checkHostages = true
+                            Signals.suppressFocusSearchOnLaunch = true
                         }
                     }
                 }
+
+                intent.data = null
             }
             Intent.ACTION_SEND -> {
                 if (intent.type?.startsWith("image/") == true) {
-                    intent.getParcelableExtra(Intent.EXTRA_STREAM, android.net.Uri::class.java)?.let { uri ->
+                    intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)?.let { uri ->
                         lifecycleScope.launch(Dispatchers.IO) {
-                            val otpUrl = ZXing.decodeQRFromImage(uri, contentResolver)
-                            if (otpUrl != null && Entry.rustInterface.setEditAccountFromOtpAuth(otpUrl)) {
-                                Signals.checkEditAccountSome = true
+                            val bitmap = contentResolver.openInputStream(uri)?.use {
+                                BitmapFactory.decodeStream(it, null, BitmapFactory.Options().apply {
+                                    inPreferredConfig = Bitmap.Config.ARGB_8888
+                                })
+                            } ?: return@launch
+
+                            if (importQRCodeIntoHostages(bitmap)) {
+                                Signals.checkHostages = true
+                                Signals.suppressFocusSearchOnLaunch = true
                             }
+
+                            bitmap.recycle()
                         }
                     }
                 }
+
+                intent.removeExtra(Intent.EXTRA_STREAM)
             }
         }
     }

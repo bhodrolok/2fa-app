@@ -23,7 +23,7 @@
             android:exported="true"
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustNothing"
-            android:enableOnBackInvokedCallback="true">
+            android:enableOnBackInvokedCallback="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -12,22 +12,22 @@ java {
 
 android {
     namespace = "app.ninesevennine.twofactorauthenticator"
-    compileSdk = 36
+    compileSdk = 37
 
     buildToolsVersion = libs.versions.sdk.get()
     ndkVersion = libs.versions.ndk.get()
 
     defaultConfig {
         applicationId = "app.ninesevennine.twofactorauthenticator"
-        minSdk = 34
-        targetSdk = 36
+        minSdk = 35
+        targetSdk = 37
 
         // major
         // minor (000)
         // type (0 alpha, 1 beta, 2 release candidate, 3 release)
         // patch (000)
-        versionCode = 10013004 // M mmm T ppp
-        versionName = "1.1.4"
+        versionCode = 10020001 // M mmm T ppp
+        versionName = "1.2-alpha-1"
 
         ndk {
             abiFilters.addAll(listOf("arm64-v8a"))
@@ -74,6 +74,10 @@ android {
         targetCompatibility = javaVersion
     }
 
+    androidResources {
+        noCompress += "zip"
+    }
+
     buildFeatures {
         compose = true
         buildConfig = true
@@ -115,5 +119,4 @@ dependencies {
     implementation(libs.camerax.camera2)
     implementation(libs.camerax.lifecycle)
     implementation(libs.camerax.view)
-    implementation(libs.zxing)
 }

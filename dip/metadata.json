@@ -1,0 +1,642 @@
+{
+    "name": "default",
+    "timestamp": 1788700486,
+    "icons": [
+        {
+            "issuer": ["addy.io"],
+            "textured": "addyio_textured.svg",
+            "tinted": "addyio.svg",
+            "color": "303fcf"
+        },
+        {
+            "issuer": ["aimware", "aimware.net"],
+            "textured": "aimware_textured.svg",
+            "tinted": "aimware.svg",
+            "color": "d02f2f"
+        },
+        {
+            "issuer": ["amazon"],
+            "textured": "amazon_textured.svg",
+            "tinted": "amazon.svg",
+            "color": "ff9900"
+        },
+        {
+            "issuer": ["account.arena.net", "arena.net"],
+            "textured": "arena.net_textured.svg",
+            "tinted": "arena.net.svg",
+            "color": "e0251f"
+        },
+        {
+            "issuer": ["atlassian"],
+            "textured": "atlassian_textured.svg",
+            "tinted": "atlassian.svg",
+            "color": "196de6"
+        },
+        {
+            "issuer": ["atomic mail"],
+            "textured": "atomicmail_textured.svg",
+            "tinted": "atomicmail.svg",
+            "color": "24db57"
+        },
+        {
+            "issuer": ["amazon web services"],
+            "textured": "aws_textured.svg",
+            "tinted": "aws.svg",
+            "color": "ff9900"
+        },
+        {
+            "issuer": ["azure"],
+            "textured": "azure_textured.svg",
+            "tinted": "azure.svg",
+            "color": "0091ff"
+        },
+        {
+            "issuer": ["battle.net"],
+            "textured": "battlenet_textured.svg",
+            "tinted": "battlenet.svg",
+            "color": "0084ff"
+        },
+        {
+            "issuer": ["binance", "binance.com"],
+            "textured": "binance_textured.svg",
+            "tinted": "binance.svg",
+            "color": "ffbb00"
+        },
+        {
+            "issuer": ["bitbucket"],
+            "textured": "bitbucket_textured.svg",
+            "tinted": "bitbucket.svg",
+            "color": "006eff"
+        },
+        {
+            "issuer": ["bitwarden"],
+            "textured": "bitwarden_textured.svg",
+            "tinted": "bitwarden.svg",
+            "color": "1762e8"
+        },
+        {
+            "issuer": ["blizzard"],
+            "textured": "blizzard_textured.svg",
+            "tinted": "blizzard.svg",
+            "color": "009dff"
+        },
+        {
+            "issuer": ["booking.com"],
+            "textured": "booking_textured.svg",
+            "tinted": "booking.svg",
+            "color": "0065ff"
+        },
+        {
+            "issuer": ["cake wallet"],
+            "textured": "cakewallet_textured.svg",
+            "tinted": "cakewallet.svg",
+            "color": "808080"
+        },
+        {
+            "issuer": ["cherry servers", "cherryservers.com"],
+            "textured": "cherry_servers_textured.svg",
+            "tinted": "cherry_servers.svg",
+            "color": "eb1414"
+        },
+        {
+            "issuer": ["claude"],
+            "textured": "claude_textured.svg",
+            "tinted": "claude.svg",
+            "color": "ff9d00"
+        },
+        {
+            "issuer": ["cloudflare"],
+            "textured": "cloudflare_textured.svg",
+            "tinted": "cloudflare.svg",
+            "color": "ff9d00"
+        },
+        {
+            "issuer": ["codeberg", "codeberg.org (codeberg.org)"],
+            "textured": "codeberg_textured.svg",
+            "tinted": "codeberg.svg",
+            "color": "238ddc"
+        },
+        {
+            "issuer": ["coins.xyz", "coins.ph", "coins.co.th", "au.coins.xyz"],
+            "textured": "coins.xyz_textured.svg",
+            "tinted": "coins.xyz.svg",
+            "color": "0068ff"
+        },
+        {
+            "issuer": ["credly"],
+            "textured": "credly_textured.svg",
+            "tinted": "credly.svg",
+            "color": "ff6a00"
+        },
+        {
+            "issuer": ["cryptpad"],
+            "textured": "cryptpad_textured.svg",
+            "tinted": "cryptpad.svg",
+            "color": "0087ff"
+        },
+        {
+            "issuer": ["digitalocean"],
+            "textured": "digitalocean_textured.svg",
+            "tinted": "digitalocean.svg",
+            "color": "0080ff"
+        },
+        {
+            "issuer": ["discord"],
+            "textured": "discord_textured.svg",
+            "tinted": "discord.svg",
+            "color": "4c55b3"
+        },
+        {
+            "issuer": ["electronic arts"],
+            "textured": "ea_textured.svg",
+            "tinted": "ea.svg",
+            "color": "0a46f5"
+        },
+        {
+            "issuer": ["ente"],
+            "textured": "ente_textured.svg",
+            "tinted": "ente.svg",
+            "color": "0af52f"
+        },
+        {
+            "issuer": ["epic games"],
+            "textured": "epic_games_textured.svg",
+            "tinted": "epic_games.svg",
+            "color": "827d80"
+        },
+        {
+            "issuer": ["facebook"],
+            "textured": "facebook_textured.svg",
+            "tinted": "facebook.svg",
+            "color": "0866ff"
+        },
+        {
+            "issuer": ["faceit"],
+            "textured": "faceit_textured.svg",
+            "tinted": "faceit.svg",
+            "color": "ff5500"
+        },
+        {
+            "issuer": ["fastmail"],
+            "textured": "fastmail_textured.svg",
+            "tinted": "fastmail.svg",
+            "color": "008eff"
+        },
+        {
+            "issuer": ["github"],
+            "textured": "github_textured.svg",
+            "tinted": "github.svg",
+            "color": "6f7e90"
+        },
+        {
+            "issuer": ["gitlab", "gitlab.com"],
+            "textured": "gitlab_textured.svg",
+            "tinted": "gitlab.svg",
+            "color": "fc9403"
+        },
+        {
+            "issuer": ["godaddy"],
+            "textured": "godaddy_textured.svg",
+            "tinted": "godaddy.svg",
+            "color": "00fcff"
+        },
+        {
+            "issuer": ["www.goodcloud.xyz"],
+            "textured": "goodcloud_textured.svg",
+            "tinted": "goodcloud.svg",
+            "color": "3bb6c4"
+        },
+        {
+            "issuer": ["google"],
+            "textured": "google_textured.svg",
+            "tinted": "google.svg",
+            "color": "2d6ed2"
+        },
+        {
+            "issuer": ["hackerone"],
+            "textured": "hackerone_textured.svg",
+            "tinted": "hackerone.svg",
+            "color": "808080"
+        },
+        {
+            "issuer": ["hetzner"],
+            "textured": "hetzner_textured.svg",
+            "tinted": "hetzner.svg",
+            "color": "f10e33"
+        },
+        {
+            "issuer": ["hugging face"],
+            "textured": "huggingface_textured.svg",
+            "tinted": "huggingface.svg",
+            "color": "ffcc00"
+        },
+        {
+            "issuer": ["instagram"],
+            "textured": "instagram_textured.svg",
+            "tinted": "instagram.svg",
+            "color": "ff0069"
+        },
+        {
+            "issuer": ["ionos"],
+            "textured": "ionos_textured.svg",
+            "tinted": "ionos.svg",
+            "color": "5378ac"
+        },
+        {
+            "issuer": ["ivpn"],
+            "textured": "ivpn_textured.svg",
+            "tinted": "ivpn.svg",
+            "color": "ff0000"
+        },
+        {
+            "issuer": ["jetbrains account"],
+            "textured": "jetbrains_textured.svg",
+            "tinted": "jetbrains.svg",
+            "color": "e600ff"
+        },
+        {
+            "issuer": ["kick", "kick.com"],
+            "textured": "kick_textured.svg",
+            "tinted": "kick.svg",
+            "color": "44fc03"
+        },
+        {
+            "issuer": ["koofr"],
+            "textured": "koofr_textured.svg",
+            "tinted": "koofr.svg",
+            "color": "97f807"
+        },
+        {
+            "issuer": ["kucoin"],
+            "textured": "kucoin_textured.svg",
+            "tinted": "kucoin.svg",
+            "color": "00ffb1"
+        },
+        {
+            "issuer": ["lemmy"],
+            "textured": "lemmy_textured.svg",
+            "tinted": "lemmy.svg",
+            "color": "1ce817"
+        },
+        {
+            "issuer": ["linkedin"],
+            "textured": "linkedin_textured.svg",
+            "tinted": "linkedin.svg",
+            "color": "00a6ff"
+        },
+        {
+            "issuer": ["loops"],
+            "textured": "loops_textured.svg",
+            "tinted": "loops.svg",
+            "color": "ffe500"
+        },
+        {
+            "issuer": ["mailbox.org"],
+            "textured": "mailbox.org_textured.svg",
+            "tinted": "mailbox.org.svg",
+            "color": "8fde21"
+        },
+        {
+            "issuer": ["mastodon", "mastodon.social"],
+            "textured": "mastodon_textured.svg",
+            "tinted": "mastodon.svg",
+            "color": "6400ff"
+        },
+        {
+            "issuer": ["meta"],
+            "textured": "meta_textured.svg",
+            "tinted": "meta.svg",
+            "color": "056bfa"
+        },
+        {
+            "issuer": ["mexc"],
+            "textured": "mexc_textured.svg",
+            "tinted": "mexc.svg",
+            "color": "0156fe"
+        },
+        {
+            "issuer": ["microsoft"],
+            "textured": "microsoft_textured.svg",
+            "tinted": "microsoft.svg",
+            "color": "00afff"
+        },
+        {
+            "issuer": ["monero.com"],
+            "textured": "monero.com_textured.svg",
+            "tinted": "monero.com.svg",
+            "color": "808080"
+        },
+        {
+            "issuer": ["mozilla", "firefox"],
+            "textured": "mozilla_textured.svg",
+            "tinted": "mozilla.svg",
+            "color": "00ff3a"
+        },
+        {
+            "issuer": ["namecheap"],
+            "textured": "namecheap_textured.svg",
+            "tinted": "namecheap.svg",
+            "color": "ff6200"
+        },
+        {
+            "issuer": ["netim"],
+            "textured": "netim_textured.svg",
+            "tinted": "netim.svg",
+            "color": "fe6e01"
+        },
+        {
+            "issuer": ["nextcloud", "nextcloud.com", "managed nextcloud"],
+            "textured": "nextcloud_textured.svg",
+            "tinted": "nextcloud.svg",
+            "color": "00a5ff"
+        },
+        {
+            "issuer": ["nextdns"],
+            "textured": "nextdns_textured.svg",
+            "tinted": "nextdns.svg",
+            "color": "007eff"
+        },
+        {
+            "issuer": ["nexus mods"],
+            "textured": "nexus_mods_textured.svg",
+            "tinted": "nexus_mods.svg",
+            "color": "fa7305"
+        },
+        {
+            "issuer": ["nitrado"],
+            "textured": "nitrado_textured.svg",
+            "tinted": "nitrado.svg",
+            "color": "ffc800"
+        },
+        {
+            "issuer": ["njalla"],
+            "textured": "njalla_textured.svg",
+            "tinted": "njalla.svg",
+            "color": "4bb491"
+        },
+        {
+            "issuer": ["npm"],
+            "textured": "npm_textured.svg",
+            "tinted": "npm.svg",
+            "color": "ca3635"
+        },
+        {
+            "issuer": ["nvidia"],
+            "textured": "nvidia_textured.svg",
+            "tinted": "nvidia.svg",
+            "color": "a3ff00"
+        },
+        {
+            "issuer": ["openai"],
+            "textured": "openai_textured.svg",
+            "tinted": "openai.svg",
+            "color": "808080"
+        },
+        {
+            "issuer": ["patreon"],
+            "textured": "patreon_textured.svg",
+            "tinted": "patreon.svg",
+            "color": "f62509"
+        },
+        {
+            "issuer": ["paypal"],
+            "textured": "paypal_textured.svg",
+            "tinted": "paypal.svg",
+            "color": "00afff"
+        },
+        {
+            "issuer": ["plex"],
+            "textured": "plex_textured.svg",
+            "tinted": "plex.svg",
+            "color": "ffbe00"
+        },
+        {
+            "issuer": ["porkbun"],
+            "textured": "porkbun_textured.svg",
+            "tinted": "porkbun.svg",
+            "color": "c63978"
+        },
+        {
+            "issuer": ["posteo", "posteo.de"],
+            "textured": "posteo.de_textured.svg",
+            "tinted": "posteo.de.svg",
+            "color": "98c837"
+        },
+        {
+            "issuer": ["privacy"],
+            "textured": "privacy.com.svg",
+            "tinted": "privacy.com.svg",
+            "color": "808080"
+        },
+        {
+            "issuer": ["proton"],
+            "textured": "proton_textured.svg",
+            "tinted": "proton.svg",
+            "color": "6900ff"
+        },
+        {
+            "issuer": ["protonmail", "proton mail"],
+            "textured": "protonmail_textured.svg",
+            "tinted": "protonmail.svg",
+            "color": "6900ff"
+        },
+        {
+            "issuer": ["pypi"],
+            "textured": "pypi_textured.svg",
+            "tinted": "",
+            "color": "808080"
+        },
+        {
+            "issuer": ["reddit"],
+            "textured": "reddit_textured.svg",
+            "tinted": "reddit.svg",
+            "color": "ff4500"
+        },
+        {
+            "issuer": ["riot games"],
+            "textured": "riotgames_textured.svg",
+            "tinted": "riotgames.svg",
+            "color": "d02f33"
+        },
+        {
+            "issuer": ["rockstar games"],
+            "textured": "rockstar_games_textured.svg",
+            "tinted": "rockstar_games.svg",
+            "color": "ff9700"
+        },
+        {
+            "issuer": ["samsung", "samsung account"],
+            "textured": "samsung_textured.svg",
+            "tinted": "samsung.svg",
+            "color": "008aff"
+        },
+        {
+            "issuer": ["shopify"],
+            "textured": "shopify_textured.svg",
+            "tinted": "shopify.svg",
+            "color": "92bd42"
+        },
+        {
+            "issuer": ["simplelogin"],
+            "textured": "simplelogin_textured.svg",
+            "tinted": "simplelogin.svg",
+            "color": "eb146c"
+        },
+        {
+            "issuer": ["slack"],
+            "textured": "slack_textured.svg",
+            "tinted": "slack.svg",
+            "color": "8c3ac5"
+        },
+        {
+            "issuer": ["stalwart mail"],
+            "textured": "stalwartmail_textured.svg",
+            "tinted": "stalwartmail.svg",
+            "color": "da254e"
+        },
+        {
+            "issuer": ["steam"],
+            "textured": "steam_textured.svg",
+            "tinted": "steam.svg",
+            "color": "3478cb"
+        },
+        {
+            "issuer": ["teamspeak", "myteamspeak"],
+            "textured": "teamspeak_textured.svg",
+            "tinted": "teamspeak.svg",
+            "color": "298dd6"
+        },
+        {
+            "issuer": ["thunderbird", "thundermail"],
+            "textured": "thunderbird_textured.svg",
+            "tinted": "thunderbird.svg",
+            "color": "2561da"
+        },
+        {
+            "issuer": ["tiktok"],
+            "textured": "tiktok_textured.svg",
+            "tinted": "tiktok.svg",
+            "color": "da254e"
+        },
+        {
+            "issuer": ["torguard"],
+            "textured": "torguard_textured.svg",
+            "tinted": "torguard.svg",
+            "color": "00ff41"
+        },
+        {
+            "issuer": ["tradingview"],
+            "textured": "tradingview.svg",
+            "tinted": "tradingview.svg",
+            "color": "808080"
+        },
+        {
+            "issuer": ["tryhackme"],
+            "textured": "tryhackme_textured.svg",
+            "tinted": "tryhackme.svg",
+            "color": "9be817"
+        },
+        {
+            "issuer": ["tuta", "tutanota", "tuta mail"],
+            "textured": "tuta_textured.svg",
+            "tinted": "tuta.svg",
+            "color": "ce3131"
+        },
+        {
+            "issuer": ["twitch"],
+            "textured": "twitch_textured.svg",
+            "tinted": "twitch.svg",
+            "color": "6700ff"
+        },
+        {
+            "issuer": ["uber"],
+            "textured": "uber_textured.svg",
+            "tinted": "uber.svg",
+            "color": "808080"
+        },
+        {
+            "issuer": ["ubisoft"],
+            "textured": "ubisoft_textured.svg",
+            "tinted": "ubisoft.svg",
+            "color": "0072ff"
+        },
+        {
+            "issuer": ["ubuntu one"],
+            "textured": "ubuntu_one_textured.svg",
+            "tinted": "ubuntu_one.svg",
+            "color": "e84d17"
+        },
+        {
+            "issuer": ["unity"],
+            "textured": "unity_textured.svg",
+            "tinted": "unity.svg",
+            "color": "808080"
+        },
+        {
+            "issuer": ["unstoppabledomains"],
+            "textured": "unstoppabledomains.svg",
+            "tinted": "unstoppabledomains.svg",
+            "color": "005cff"
+        },
+        {
+            "issuer": ["uphold"],
+            "textured": "uphold_textured.svg",
+            "tinted": "uphold.svg",
+            "color": "11f708"
+        },
+        {
+            "issuer": ["vaultwarden"],
+            "textured": "vaultwarden_textured.svg",
+            "tinted": "vaultwarden.svg",
+            "color": "1762e8"
+        },
+        {
+            "issuer": ["vercel"],
+            "textured": "vercel_textured.svg",
+            "tinted": "vercel.svg",
+            "color": "808080"
+        },
+        {
+            "issuer": ["weblate", "codeberg translate","hosted weblate"],
+            "textured": "weblate_textured.svg",
+            "tinted": "weblate.svg",
+            "color": "35caaa"
+        },
+        {
+            "issuer": ["wise"],
+            "textured": "wise_textured.svg",
+            "tinted": "wise.svg",
+            "color": "6cdc23"
+        },
+        {
+            "issuer": ["wordpress"],
+            "textured": "wordpress_textured.svg",
+            "tinted": "wordpress.svg",
+            "color": "808080"
+        },
+        {
+            "issuer": ["x", "twitter"],
+            "textured": "x_textured.svg",
+            "tinted": "x.svg",
+            "color": "778288"
+        },
+        {
+            "issuer": ["zendesk"],
+            "textured": "zendesk_textured.svg",
+            "tinted": "zendesk.svg",
+            "color": "b3ed12"
+        },
+        {
+            "issuer": ["zerossl"],
+            "textured": "zerossl_textured.svg",
+            "tinted": "zerossl.svg",
+            "color": "3159ce"
+        },
+        {
+            "issuer": ["zoom"],
+            "textured": "zoom_textured.svg",
+            "tinted": "zoom.svg",
+            "color": "2d8cff"
+        }
+    ]
+}

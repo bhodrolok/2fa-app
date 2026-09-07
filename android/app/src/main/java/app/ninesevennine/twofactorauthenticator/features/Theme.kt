@@ -27,7 +27,10 @@ data class ThemeColors(
     val weak: Color = Color.Unspecified,
     val good: Color = Color.Unspecified,
     val strong: Color = Color.Unspecified,
-    val info: Color = Color.Unspecified
+    val info: Color = Color.Unspecified,
+    val hSurface: Color = Color.Unspecified,
+    val hBorder: Color = Color.Unspecified,
+    val hPrimary: Color = Color.Unspecified,
 )
 
 object Theme {
@@ -55,7 +58,10 @@ object Theme {
         weak = Color(0xFFFBC02D),
         good = Color(0xFF388E3C),
         strong = Color(0xFF1976D2),
-        info = Color(0xFF1976D2)
+        info = Color(0xFF1976D2),
+        hSurface = Color(0xFFD32F2F),
+        hBorder = Color(0xFF7A1010),
+        hPrimary = Color(0xFFFFFFFF)
     )
 
     private val dark = ThemeColors(
@@ -68,7 +74,10 @@ object Theme {
         weak = Color(0xFFFFD740),
         good = Color(0xFF66BB6A),
         strong = Color(0xFF42A5F5),
-        info = Color(0xFF42A5F5)
+        info = Color(0xFF42A5F5),
+        hSurface = Color(0xFFB71C1C),
+        hBorder = Color(0xFFFF5252),
+        hPrimary = Color(0xFFFFFFFF)
     )
 
     private val pitchBlack = ThemeColors(
@@ -81,7 +90,10 @@ object Theme {
         weak = Color(0xFFFFD740),
         good = Color(0xFF66BB6A),
         strong = Color(0xFF42A5F5),
-        info = Color(0xFF42A5F5)
+        info = Color(0xFF42A5F5),
+        hSurface = Color(0xFF7A1010),
+        hBorder = Color(0xFFFF5252),
+        hPrimary = Color(0xFFFFFFFF)
     )
 
     private fun isSystemDark(context: Context): Boolean {
