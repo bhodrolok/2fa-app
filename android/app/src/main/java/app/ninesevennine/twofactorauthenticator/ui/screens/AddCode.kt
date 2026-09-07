@@ -1,6 +1,5 @@
 package app.ninesevennine.twofactorauthenticator.ui.screens
 
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.SoundEffectConstants
@@ -48,8 +47,8 @@ import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.QRCodeScanner
 import app.ninesevennine.twofactorauthenticator.features.otpauth.importQRCodeIntoHostages
-import app.ninesevennine.twofactorauthenticator.ui.InterVariable
 import app.ninesevennine.twofactorauthenticator.rustInterface
+import app.ninesevennine.twofactorauthenticator.ui.InterVariable
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -88,11 +87,6 @@ fun AddCode(navController: NavController) {
         contract = ActivityResultContracts.OpenDocument()
     ) { uri ->
         uri?.let {
-            context.contentResolver.takePersistableUriPermission(
-                it,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
-
             pickScope.launch(Dispatchers.IO) {
                 val imported = when {
                     context.contentResolver.getType(it)?.startsWith("image/") == true -> {
@@ -104,7 +98,6 @@ fun AddCode(navController: NavController) {
 
                         if (bitmap == null) false
                         else importQRCodeIntoHostages(bitmap).also {
-                            bitmap.eraseColor(0)
                             bitmap.recycle()
                         }
                     }
