@@ -1,8 +1,8 @@
-<b>Overview</b>
+**Overview**
 
 2fa is the modern privacy and security focused two factor authenticator. It is very easy to use and delivers exceptional security through modern cryptographic algorithms. The core is written in Rust and the app works fully offline without Google Play Services.
 
-<b>Features</b>
+**Features**
 
 - Support for TOTP, HOTP, and Steam Guard codes via [`.maFile`](https://cs2central.gg/blog/steam-desktop-authenticator-guide).
 - Add accounts via QR codes, OTPAuth links, files, or your gallery.
