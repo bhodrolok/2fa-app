@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="common_button_cancel">Katkesta</string>
-    <string name="common_button_continue">Jätka</string>
     <string name="common_import_error_incorrect_passphrase">Vigane salafraas</string>
-    <string name="common_import_error_incorrect_version">Vigane versioon</string>
-    <string name="common_import_error_invalid">Vigane fail</string>
-    <string name="common_import_error_no_accounts">Pole imporditavaid kasutajakontosid</string>
     <string name="common_title_biometric_unlock">Biomeetriline lukustuse eemaldamine</string>
     <string name="common_title_confirm_biometrics">Kinnita biomeetriline tuvastus</string>
     <string name="common_title_confirm_passphrase">Kinnita salasfraasi</string>
@@ -27,7 +23,6 @@
     <string name="otp_card_style_grid">Ruudustik</string>
     <string name="otp_card_style_normal">Tavaline</string>
     <string name="screen_add_code_enter_manually">Sisesta käsitsi</string>
-    <string name="screen_edit_delete_account">Kustuta kasutajakonto</string>
     <string name="screen_edit_section_details">Üksikasjad</string>
     <string name="screen_edit_section_details_issuer">Väljaandja</string>
     <string name="screen_edit_section_details_name">Nimi</string>
@@ -37,22 +32,15 @@
     <string name="screen_edit_section_parameters_counter">Loendur</string>
     <string name="common_biometric_unlock_description">Selle asemel, et iga kord sisestada salafraasi, võid rakenduse lukustuse avamiseks kasutada ka biomeetrilist tuvastust. Sel puhul pead salafraasi sisestama vahetevahel ning mõnel puhul ilma selle ta avada ei saagi.</string>
     <string name="common_description_biometric_unlock_unsupported">Sellel seadmel ei pruugi biomeetriline lukustuse avamine toimida. Veendu, et oled nutiseadme seadistustes biomeetrilise tuvastuse kasutusele võtnud.</string>
-    <string name="common_import_description">Sa oled importimas kasutajakontosid rakendusest/teenusest „%s“. Sellega kirjutatakse olemasolevad kirjed üle ning lisatakse puuduvad kirjed.</string>
-    <string name="screen_setup_get_started_welcome">Tere tulemast, see on 2fa!</string>
     <string name="theme_option_dark">Tume kujundus</string>
     <string name="theme_option_light">Hele kujundus</string>
     <string name="theme_option_pitch_black">Süsimust kujundus</string>
-    <plurals name="common_button_tap_n_times_to_confirm">
-        <item quantity="one">Kinnitamiseks klõpsa veel %d kord</item>
-        <item quantity="other">Kinnitamiseks klõpsa veel %d korda</item>
-    </plurals>
     <plurals name="screen_main_showing_n_accounts">
         <item quantity="one">Näidatavaid kasutajakontosid: %d</item>
         <item quantity="other">Näidatavaid kasutajakontosid: %d</item>
     </plurals>
     <string name="common_button_disable">Lülita välja</string>
     <string name="common_button_enable">Lülita sisse</string>
-    <string name="common_button_restore">Taasta</string>
     <string name="screen_edit_section_parameters_type">Tüüp</string>
     <string name="screen_edit_section_parameters_secret">Saladus</string>
     <string name="screen_edit_section_color">Värv</string>
@@ -62,10 +50,7 @@
     <string name="screen_edit_section_customization_saturation">Küllastus</string>
     <string name="screen_edit_section_color_preset">Eelseadistused</string>
     <string name="screen_edit_title">Muuda</string>
-    <string name="screen_export_aegis_description">Sa oled loomas Aegisega ühilduvat krüptitud varukoopiat oma kasutajakontodest. See vorming ei sisalda kõiki andmeid ning seda ei peaks kasutama kasutajakontode siia rakendusse tagasi importimiseks.</string>
-    <string name="screen_export_description">Sa oled loomas oma kasutajakontodest krüptitud varukoopiat. Salvesta ta oma kohalikku nutiseadmesse või pilveteenusesse, mida sa usaldad.</string>
     <string name="screen_select_icon_packs_style">Stiil</string>
-    <string name="screen_select_icon_packs_question_1">Kust kohast ma leian ikoonipakke?</string>
     <string name="screen_settings_management">Haldus</string>
     <string name="screen_settings_management_export_to_aegis">Ekspordi Aegisesse</string>
     <string name="screen_settings_management_import_from_aegis">Impordi Aegisest</string>
@@ -73,7 +58,6 @@
     <string name="screen_settings_appearance_card_style">Kaartide stiil</string>
     <string name="screen_settings_appearance_icon_packs">Ikoonipakid</string>
     <string name="screen_settings_appearance_language">Keel</string>
-    <string name="screen_settings_appearance_search_on_top">Otsing ülemises ääres</string>
     <string name="screen_settings_appearance_theme">Kujundus</string>
     <string name="screen_settings_behavior">Käitumine</string>
     <string name="screen_settings_behavior_double_tap_to_copy_codes">Koodide kopeerimiseks topeltklõpsa</string>
@@ -81,18 +65,9 @@
     <string name="screen_settings_behavior_tap_to_reveal_codes">Koodide näitamiseks klõpsa neid</string>
     <string name="screen_settings_security">Turvalisus</string>
     <string name="screen_settings_title">Seadistused</string>
-    <string name="screen_setup_get_started_button">Alusta siit</string>
-    <string name="screen_setup_get_started_section_step_1">1. Loo salafraas</string>
-    <string name="screen_setup_get_started_section_step_2">2. Võta kasutusele biomeetriline lukustuse avamine</string>
-    <string name="screen_setup_get_started_section_title">Seadistamiseks klõpsa valikut „Alusta siit“</string>
     <string name="screen_main_no_matching_were_found">Vastavaid kasutajakontosid ei leidunud</string>
     <string name="screen_main_search">Otsi</string>
-    <string name="screen_select_icon_packs_add">Lisa</string>
     <string name="screen_select_icon_packs_installed">Paigaldatud</string>
-    <string name="screen_select_icon_packs_delete_active">Kustuta aktiivne</string>
-    <string name="screen_select_icon_packs_other">Muu</string>
-    <string name="screen_select_icon_packs_other_dont_suggest_colors">Ära soovita värve</string>
-    <string name="screen_select_icon_packs_other_dont_suggest_colors_secondary">Kasutajakonto lisamisel kasuta vaikimisi valget</string>
     <string name="screen_settings_security_lock_on_exit">Väljumisel lukusta</string>
     <string name="screen_settings_security_screen_security">Ekraani turvalisus</string>
     <string name="screen_settings_security_screen_security_secondary">Blokeeri ekraanitõmmiste ja ekraanisalvestuste tegemine</string>
@@ -102,14 +77,12 @@
     <string name="screen_settings_support">Kasutajatugi</string>
     <string name="screen_settings_support_donate">Toeta rahaliselt</string>
     <string name="screen_settings_support_donate_secondary">979 vajab sinu tuge</string>
-    <string name="common_button_skip">Jäta vahele</string>
     <string name="screen_edit_section_parameters_digits">Numbrid</string>
     <string name="screen_edit_section_parameters_period">Ajavahemik</string>
     <string name="screen_settings_security_block_intents">Blokeeri rakenduste vaheline suhtlus</string>
     <string name="screen_settings_security_block_intents_secondary">Eira tegevusi, mille on käivitanud välised rakendused</string>
     <string name="screen_main_greeting">Kasutajakonto lisamiseks klõpsa ikooni all nurgas. Lisaks võid seadistustest importida muudest kaksiautentimise rakendustest eksporditud kasutajakontosid.</string>
     <string name="common_button_change">Muuda</string>
-    <string name="common_import_error_unknown">Pole teada</string>
     <string name="common_title_change_passphrase">Muuda salafraasi</string>
     <string name="common_unlock_passphrase_description">Rakenduse lukustuse avamiseks valis hästi meeldejääv salafraas. Võid kasutada sõnu, numbreid, tühikuid ja erimärke.</string>
     <string name="screen_greeting_button_unlock">Ava lukustus</string>

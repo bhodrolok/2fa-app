@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="common_button_cancel">Cancelar</string>
-    <string name="common_button_continue">Continuar</string>
-    <string name="common_button_skip">Omitir</string>
     <string name="common_button_disable">Desactivar</string>
     <string name="common_button_enable">Activar</string>
-    <string name="common_button_restore">Restablecer</string>
     <string name="common_button_use_system_default">Predeterminado del sistema</string>
     <string name="common_import_error_incorrect_passphrase">Frase de contraseña incorrecta</string>
-    <string name="common_import_error_incorrect_version">Versión incorrecta</string>
-    <string name="common_import_error_invalid">Archivo no válido</string>
-    <string name="common_import_error_no_accounts">Sin cuentas para importar</string>
     <string name="common_title_biometric_unlock">Desbloqueo biométrico</string>
     <string name="common_title_confirm_biometrics">Confirmación biométrica</string>
     <string name="common_title_confirm_passphrase">Confirmar frase de contraseña</string>
@@ -29,7 +23,6 @@
     <string name="otp_card_style_grid">Mosaico</string>
     <string name="otp_card_style_normal">Normal</string>
     <string name="screen_add_code_enter_manually">Introducir manualmente</string>
-    <string name="screen_edit_delete_account">Eliminar cuenta</string>
     <string name="screen_edit_section_details">Detalles</string>
     <string name="screen_edit_section_details_issuer">Emisor</string>
     <string name="screen_edit_section_details_name">Nombre</string>
@@ -50,13 +43,7 @@
     <string name="screen_edit_title">Editar</string>
     <string name="screen_main_no_matching_were_found">Sin cuentas que coincidan</string>
     <string name="screen_main_search">Buscar</string>
-    <string name="screen_select_icon_packs_add">Añadir</string>
-    <string name="screen_select_icon_packs_delete_active">Eliminar actividad</string>
-    <string name="screen_select_icon_packs_other">Otro</string>
-    <string name="screen_select_icon_packs_other_dont_suggest_colors">Sin recomendar colores</string>
-    <string name="screen_select_icon_packs_other_dont_suggest_colors_secondary">El color predeterminado al agregar una cuenta es el blanco</string>
     <string name="screen_select_icon_packs_style">Estilo</string>
-    <string name="screen_select_icon_packs_question_1">¿Dónde puedo encontrar paquetes de iconos?</string>
     <string name="screen_settings_management">Gestión</string>
     <string name="screen_settings_management_export_to_aegis">Exportar a Aegis</string>
     <string name="screen_settings_management_import_from_aegis">Importar desde Aegis</string>
@@ -64,7 +51,6 @@
     <string name="screen_settings_appearance_card_style">Estilo de la tarjeta</string>
     <string name="screen_settings_appearance_icon_packs">Paquetes de iconos</string>
     <string name="screen_settings_appearance_language">Idioma</string>
-    <string name="screen_settings_appearance_search_on_top">Buscar en la parte superior</string>
     <string name="screen_settings_appearance_theme">Tema</string>
     <string name="screen_settings_behavior">Comportamiento</string>
     <string name="screen_settings_behavior_double_tap_to_copy_codes">Toca dos veces para copiar los códigos</string>
@@ -83,17 +69,9 @@
     <string name="screen_settings_support_donate">Donar</string>
     <string name="screen_settings_support_donate_secondary">979 necesita tu apoyo</string>
     <string name="screen_settings_title">Ajustes</string>
-    <string name="screen_setup_get_started_button">Empezar</string>
-    <string name="screen_setup_get_started_section_title">Pulsa «Empezar» para iniciar la configuración</string>
-    <string name="screen_setup_get_started_welcome">¡Bienvenido a 2fa!</string>
     <string name="theme_option_dark">Oscuro</string>
     <string name="theme_option_light">Claro</string>
     <string name="theme_option_pitch_black">Negro Absoluto</string>
-    <plurals name="common_button_tap_n_times_to_confirm">
-        <item quantity="one">Pulsa %d vez más para confirmar</item>
-        <item quantity="many">Pulsa %d de veces más para confirmar</item>
-        <item quantity="other">Pulsa %d veces más para confirmar</item>
-    </plurals>
     <plurals name="screen_main_showing_n_accounts">
         <item quantity="one">Mostrando %d cuenta</item>
         <item quantity="many">Mostrando %d cuentas</item>
@@ -101,17 +79,11 @@
     </plurals>
     <string name="common_biometric_unlock_description">Desbloquea la aplicación con biometría en lugar de tu contraseña. De forma ocasional se te pedirá la contraseña, siendo a veces el único método de acceso disponible.</string>
     <string name="common_description_biometric_unlock_unsupported">Puede que tu dispositivo no admita el desbloqueo biométrico. Comprueba que lo has configurado correctamente en los ajustes del sistema.</string>
-    <string name="common_import_description">Estás importando cuentas desde «%s». Esto sobrescribirá las cuentas que coincidan y añadirá las que falten.</string>
     <string name="feature_qr_code_scanner_camera_permission">Se necesita permiso para usar la cámara a fin de escanear códigos QR</string>
     <string name="feature_qr_code_scanner_camera_unavailable">Cámara no disponible</string>
-    <string name="screen_export_aegis_description">Estás creando una copia cifrada de tus cuentas compatible con Aegis. Es posible que este formato no contenga todos los datos y no debe utilizarse para volver a importar cuentas a esta aplicación.</string>
-    <string name="screen_export_description">Estás creando una copia cifrada de tus cuentas. Guárdala en tu dispositivo local o en un servicio en la nube de confianza.</string>
     <string name="screen_main_greeting">Pulsa el icono + en la esquina inferior para añadir una cuenta. También puedes importar cuentas de otras apps de autenticación desde Ajustes.</string>
     <string name="screen_select_icon_packs_installed">Instaladas</string>
-    <string name="screen_setup_get_started_section_step_1">1. Crear una frase de contraseña (Passphrase)</string>
-    <string name="screen_setup_get_started_section_step_2">2. Activar el desbloqueo biométrico</string>
     <string name="common_button_change">Cambiar</string>
-    <string name="common_import_error_unknown">Desconocido</string>
     <string name="common_title_change_passphrase">Cambiar frase de contraseña</string>
     <string name="common_unlock_passphrase_description">Elige una frase de contraseña fácil de recordar para desbloquear la app. Puedes utilizar palabras, espacios y símbolos.</string>
     <string name="screen_greeting_button_unlock">Desbloquear</string>

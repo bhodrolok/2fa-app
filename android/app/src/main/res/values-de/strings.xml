@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="common_button_continue">Fortfahren</string>
-    <string name="common_button_skip">Überspringen</string>
     <string name="common_button_disable">Deaktivieren</string>
     <string name="common_button_enable">Aktivieren</string>
-    <string name="common_button_restore">Wiederherstellen</string>
     <string name="common_button_use_system_default">Systemstandard verwenden</string>
     <string name="common_biometric_unlock_description">Anstatt jedes Mal Ihre Passphrase einzugeben, können Sie die App mithilfe biometrischer Daten entsperren. Von Zeit zu Zeit müssen Sie Ihre Passphrase eingeben, und manchmal ist dies die einzige Möglichkeit, die App zu entsperren.</string>
     <string name="common_description_biometric_unlock_unsupported">Die biometrische Entsperrung wird auf diesem Gerät möglicherweise nicht unterstützt. Stellen Sie sicher, dass Sie in Ihren Geräteeinstellungen Biometrie eingerichtet haben.</string>
     <string name="common_import_error_incorrect_passphrase">Falsches Passwort</string>
-    <string name="common_import_error_incorrect_version">Falsche Version</string>
-    <string name="common_import_error_invalid">Ungültige Datei</string>
-    <string name="common_import_error_no_accounts">Keine Konten zum Importieren vorhanden</string>
     <string name="common_title_biometric_unlock">Biometrische Entsperrung</string>
     <string name="common_title_confirm_biometrics">Biometrie bestätigen</string>
     <string name="common_title_confirm_passphrase">Passwort bestätigen</string>
@@ -35,20 +29,14 @@
     <string name="screen_edit_section_color_paste">Einfügen</string>
     <string name="screen_edit_section_customization_saturation">Sättigung</string>
     <string name="screen_edit_title">Bearbeiten</string>
-    <string name="screen_select_icon_packs_add">Hinzufügen</string>
     <string name="screen_select_icon_packs_installed">Installiert</string>
-    <string name="screen_select_icon_packs_other">Sonstiges</string>
-    <string name="screen_select_icon_packs_other_dont_suggest_colors">Farben nicht vorschlagen</string>
-    <string name="screen_select_icon_packs_other_dont_suggest_colors_secondary">Standardmäßig weiß beim Hinzufügen eines Kontos</string>
     <string name="screen_select_icon_packs_style">Stil</string>
-    <string name="screen_select_icon_packs_question_1">Wo kann ich Icon Pakete finden?</string>
     <string name="screen_settings_management_export_to_aegis">Exportiere zu Aegis</string>
     <string name="screen_settings_management_import_from_aegis">Importiere von Aegis</string>
     <string name="screen_settings_appearance">Aussehen</string>
     <string name="screen_settings_appearance_card_style">Karten Stil</string>
     <string name="screen_settings_appearance_icon_packs">Icon Paket</string>
     <string name="screen_settings_appearance_language">Sprache</string>
-    <string name="screen_settings_appearance_search_on_top">Suche oben</string>
     <string name="screen_settings_behavior">Verhalten</string>
     <string name="screen_settings_behavior_double_tap_to_copy_codes">Zum Kopieren der Codes zweimal antippen</string>
     <string name="screen_settings_behavior_focus_search_on_launch">Suche auswählen beim Starten</string>
@@ -64,15 +52,9 @@
     <string name="screen_settings_support_donate">Spenden</string>
     <string name="screen_settings_support_donate_secondary">979 benötigt Ihre Unterstützung, um weiterzumachen</string>
     <string name="screen_settings_title">Einstellungen</string>
-    <string name="screen_setup_get_started_button">Loslegen</string>
-    <string name="screen_setup_get_started_section_step_1">1. Erstelle eine Passphrase</string>
-    <string name="screen_setup_get_started_section_step_2">2. Biometrische Entsperrung aktivieren</string>
-    <string name="screen_setup_get_started_section_title">Klicken Sie auf „Loslegen“, um mit der Einrichtung zu beginnen</string>
-    <string name="screen_setup_get_started_welcome">Willkommen bei 2fa!</string>
     <string name="theme_option_dark">Dunkel</string>
     <string name="theme_option_light">Hell</string>
     <string name="theme_option_pitch_black">Pechschwarz</string>
-    <string name="common_import_description">Sie importieren Konten aus „%s“. Dabei werden übereinstimmende Konten überschrieben und fehlende Konten hinzugefügt.</string>
     <plurals name="screen_main_showing_n_accounts">
         <item quantity="one">%d Konto wird angezeigt</item>
         <item quantity="other">%d Konten werden angezeigt</item>
@@ -80,7 +62,6 @@
     <string name="icon_packs_style_tinted">Getönt</string>
     <string name="otp_card_style_compact">Kompakt</string>
     <string name="screen_add_code_enter_manually">Manuell eingeben</string>
-    <string name="screen_edit_delete_account">Konto löschen</string>
     <string name="screen_edit_section_details">Kontoinformationen</string>
     <string name="screen_edit_section_details_name">Name</string>
     <string name="screen_edit_section_details_note">Notiz</string>
@@ -90,8 +71,6 @@
     <string name="screen_edit_section_parameters_digits">Ziffern</string>
     <string name="screen_edit_section_parameters_period">Zeitraum</string>
     <string name="screen_edit_section_color_preset">Anwendungsvorschlag</string>
-    <string name="screen_export_aegis_description">Sie erstellen eine mit Aegis kompatible, verschlüsselte Kopie Ihrer Konten. Dieses Format enthält möglicherweise nicht alle Daten und sollte nicht zum Zurückimportieren von Konten in diese App verwendet werden.</string>
-    <string name="screen_export_description">Sie erstellen eine verschlüsselte Kopie Ihrer Konten. Speichern Sie diese auf Ihrem lokalen Gerät oder bei einem Cloud-Anbieter Ihres Vertrauens.</string>
     <string name="screen_main_no_matching_were_found">Es wurden keine passenden Konten gefunden</string>
     <string name="screen_main_search">Suche</string>
     <string name="otp_card_style_grid">Gitter</string>
@@ -99,17 +78,11 @@
     <string name="screen_edit_section_parameters_secret">Geheimnis</string>
     <string name="screen_edit_section_parameters_type">Art</string>
     <string name="screen_main_greeting">Tippe auf das Symbol \"Hinzufügen\" in der unteren Ecke, um ein Konto hinzuzufügen. In den Einstellungen können ebenso Konten von anderen Identifizierungs-Apps importiert werden.</string>
-    <string name="screen_select_icon_packs_delete_active">Aktiviertes löschen</string>
     <string name="screen_settings_management">Kontoverwaltung</string>
     <string name="screen_settings_appearance_theme">Thema</string>
     <string name="screen_settings_security_block_intents">Vorhaben blockieren</string>
     <string name="screen_settings_security_block_intents_secondary">Ignoriere Aktionen von externen Apps</string>
-    <plurals name="common_button_tap_n_times_to_confirm">
-        <item quantity="one">Tippe noch %d Mal, um zu bestätigen</item>
-        <item quantity="other">Tippe noch %d Mal, um zu bestätigen</item>
-    </plurals>
     <string name="common_button_change">Ändern</string>
-    <string name="common_import_error_unknown">Unbekannt</string>
     <string name="common_title_change_passphrase">Passphrase ändern</string>
     <string name="common_unlock_passphrase_description">Wähle eine einprägsame Passphrase, um die App zu entsperren. Du kannst Wörter, Leerzeichen und Sonderzeichen verwenden.</string>
     <string name="screen_greeting_button_unlock">Entsperren</string>

@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="common_button_cancel">Отменить</string>
-    <string name="common_button_continue">Продолжить</string>
-    <string name="common_button_skip">Пропустить</string>
     <string name="common_button_disable">Отключить</string>
     <string name="common_button_enable">Включить</string>
-    <string name="common_button_restore">Восстановить</string>
     <string name="common_button_use_system_default">Как в системе</string>
     <string name="common_import_error_incorrect_passphrase">Неверная парольная фраза</string>
-    <string name="common_import_error_incorrect_version">Неверная версия</string>
-    <string name="common_import_error_invalid">Неверный файл</string>
-    <string name="common_import_error_no_accounts">Нет аккаунтов для импорта</string>
     <string name="common_title_biometric_unlock">Биометрическая разблокировка</string>
     <string name="common_title_confirm_biometrics">Подтвердить биометрию</string>
     <string name="common_title_confirm_passphrase">Подтвердите парольную фразу</string>
@@ -31,7 +25,6 @@
     <string name="otp_card_style_grid">Сетка</string>
     <string name="otp_card_style_normal">Обычный</string>
     <string name="screen_add_code_enter_manually">Ввести вручную</string>
-    <string name="screen_edit_delete_account">Удалить аккаунт</string>
     <string name="screen_edit_section_details">Подробности</string>
     <string name="screen_edit_section_details_issuer">Эмитент</string>
     <string name="screen_edit_section_details_name">Имя</string>
@@ -52,13 +45,7 @@
     <string name="screen_edit_title">Изменить</string>
     <string name="screen_main_no_matching_were_found">Совпадающие аккаунты не найдены</string>
     <string name="screen_main_search">Поиск</string>
-    <string name="screen_select_icon_packs_add">Добавить</string>
-    <string name="screen_select_icon_packs_delete_active">Удалить активный</string>
-    <string name="screen_select_icon_packs_other">Другое</string>
-    <string name="screen_select_icon_packs_other_dont_suggest_colors">Не предлагать цвета</string>
-    <string name="screen_select_icon_packs_other_dont_suggest_colors_secondary">По умолчанию белый цвет при добавлении аккаунта</string>
     <string name="screen_select_icon_packs_style">Стиль</string>
-    <string name="screen_select_icon_packs_question_1">Где можно найти наборы значков?</string>
     <string name="screen_settings_management">Управление</string>
     <string name="screen_settings_management_export_to_aegis">Экспорт в Aegis</string>
     <string name="screen_settings_management_import_from_aegis">Импорт из Aegis</string>
@@ -66,7 +53,6 @@
     <string name="screen_settings_appearance_card_style">Стиль карточки</string>
     <string name="screen_settings_appearance_icon_packs">Наборы значков</string>
     <string name="screen_settings_appearance_language">Язык</string>
-    <string name="screen_settings_appearance_search_on_top">Поиск сверху</string>
     <string name="screen_settings_appearance_theme">Тема</string>
     <string name="screen_settings_behavior">Поведение</string>
     <string name="screen_settings_behavior_double_tap_to_copy_codes">Двойное касание копирует коды</string>
@@ -85,19 +71,9 @@
     <string name="screen_settings_support_donate">Поддержка</string>
     <string name="screen_settings_support_donate_secondary">979 нуждается в вашей поддержке</string>
     <string name="screen_settings_title">Настройки</string>
-    <string name="screen_setup_get_started_button">Начать</string>
-    <string name="screen_setup_get_started_section_step_2">2. Включить биометрическую разблокировку</string>
-    <string name="screen_setup_get_started_section_title">Нажмите \"Начать\" для начала настройки</string>
-    <string name="screen_setup_get_started_welcome">Приветствуем вас в 2fa!</string>
     <string name="theme_option_dark">Тёмный</string>
     <string name="theme_option_light">Светлый</string>
     <string name="theme_option_pitch_black">Абсолютно чёрный</string>
-    <plurals name="common_button_tap_n_times_to_confirm">
-        <item quantity="one">Нажмите ещё %d раз для подтверждения</item>
-        <item quantity="few">Нажмите ещё %d раза для подтверждения</item>
-        <item quantity="many">Нажмите ещё %d раз для подтверждения</item>
-        <item quantity="other">Нажмите ещё %d раз для подтверждения</item>
-    </plurals>
     <plurals name="screen_main_showing_n_accounts">
         <item quantity="one">Показан %d аккаунт</item>
         <item quantity="few">Показано %d аккаунта</item>
@@ -106,14 +82,9 @@
     </plurals>
     <string name="common_biometric_unlock_description">Вместо того чтобы каждый раз вводить парольную фразу, вы можете использовать биометрические данные для разблокировки приложения. Время от времени вам все же придется вводить парольную фразу, и иногда это будет единственным способом разблокировать приложение.</string>
     <string name="common_description_biometric_unlock_unsupported">Биометрическая разблокировка может не поддерживаться на этом устройстве. Убедитесь, что у вас настроена биометрия в настройках устройства.</string>
-    <string name="common_import_description">Вы импортируете аккаунты из «%s». Это перезапишет совпадающие аккаунты и добавит все отсутствующие.</string>
-    <string name="screen_export_aegis_description">Вы создаёте зашифрованную копию ваших аккаунтов, совместимую с Aegis. Этот формат может содержать не все данные и не должен использоваться для импорта аккаунтов обратно в это приложение.</string>
-    <string name="screen_export_description">Вы создаёте зашифрованную копию ваших аккаунтов. Сохраните её на своё устройство или в облачный сервис, которому доверяете.</string>
     <string name="screen_main_greeting">Нажмите значок + в нижнем углу, чтобы добавить аккаунт. Также можно импортировать аккаунты из других приложений-аутентификаторов в настройках.</string>
     <string name="screen_select_icon_packs_installed">Установлено</string>
-    <string name="screen_setup_get_started_section_step_1">1. Создайте парольную фразу</string>
     <string name="common_button_change">Изменить</string>
-    <string name="common_import_error_unknown">Неизвестно</string>
     <string name="common_title_change_passphrase">Изменить парольную фразу</string>
     <string name="common_unlock_passphrase_description">Выберите запоминающуюся парольную фразу, чтобы разблокировать приложение. Вы можете использовать слова, пробелы и символы.</string>
     <string name="screen_greeting_button_unlock">Разблокировать</string>

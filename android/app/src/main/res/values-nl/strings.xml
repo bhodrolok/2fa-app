@@ -1,19 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="common_button_cancel">Annuleren</string>
-    <string name="common_button_continue">Doorgaan</string>
-    <string name="common_button_skip">Overslaan</string>
     <string name="common_button_disable">Uitschakelen</string>
     <string name="common_button_enable">Inschakelen</string>
-    <string name="common_button_restore">Herstellen</string>
     <string name="common_button_use_system_default">Systeeminstellingen volgen</string>
     <string name="common_biometric_unlock_description">Biometrisch ontgrendelen kan leiden tot ongeldige sleutels als je je scherm vergrendelt, privéruimtes wĳzigen, je apparaat een systeemupdate installeert of als de app enige tijd niet geopend is. Je kunt toegang herstellen door automatische reservekopieën in te schakelen.</string>
     <string name="common_description_biometric_unlock_unsupported">Biometrisch ontgrendelen wordt mogelijk niet ondersteund door dit apparaat. Zorg dat je deze manier van ontgrendelen hebt ingesteld in de apparaatinstellingen.</string>
-    <string name="common_import_description">Je staat op het punt accounts te importeren uit ‘%s’. Hiermee overschrijf je overeenkomende bestaande accounts.</string>
     <string name="common_import_error_incorrect_passphrase">De toegangssleutel is onjuist</string>
-    <string name="common_import_error_incorrect_version">De versie is onjuist</string>
-    <string name="common_import_error_invalid">Het bestand is ongeldig</string>
-    <string name="common_import_error_no_accounts">Er zijn geen te importeren accounts</string>
     <string name="common_title_biometric_unlock">Biometrisch ontgrendelen</string>
     <string name="common_title_confirm_biometrics">Biometrie bevestigen</string>
     <string name="common_title_confirm_passphrase">Toegangssleutel bevestigen</string>
@@ -34,7 +27,6 @@
     <string name="otp_card_style_grid">Rooster</string>
     <string name="otp_card_style_normal">Normaal</string>
     <string name="screen_add_code_enter_manually">Handmatig invoeren</string>
-    <string name="screen_edit_delete_account">Account verwijderen</string>
     <string name="screen_edit_section_details">Accountinformatie</string>
     <string name="screen_edit_section_details_issuer">Verstrekker</string>
     <string name="screen_edit_section_details_name">Naam</string>
@@ -53,19 +45,11 @@
     <string name="screen_edit_section_customization_saturation">Verzadiging</string>
     <string name="screen_edit_section_color_preset">Suggestie overnemen</string>
     <string name="screen_edit_title">Bewerken</string>
-    <string name="screen_export_aegis_description">Je staat op het punt om een met Aegis compatibele versleutelde kopie van je accounts te maken. Dit formaat kan mogelijk niet alle gegevens verwerken en zou niet moeten worden gebruikt voor latere import.</string>
-    <string name="screen_export_description">Je staat op het punt om een versleutelde kopie van je accounts te maken. Bewaar deze op je lokale apparaat of een clouddienst die je vertrouwt.</string>
     <string name="screen_main_greeting">Druk op het pictogram onderin de hoek om een account toe te voegen. Je kunt in de instellingen ook accounts uit andere apps importeren.</string>
     <string name="screen_main_no_matching_were_found">Er zijn geen overeenkomende accounts aangetroffen</string>
     <string name="screen_main_search">Zoeken</string>
-    <string name="screen_select_icon_packs_add">Toevoegen</string>
     <string name="screen_select_icon_packs_installed">Geïnstalleerd</string>
-    <string name="screen_select_icon_packs_delete_active">Actief pakket verwijderen</string>
-    <string name="screen_select_icon_packs_other">Overig</string>
-    <string name="screen_select_icon_packs_other_dont_suggest_colors">Geen kleuren voorstellen</string>
-    <string name="screen_select_icon_packs_other_dont_suggest_colors_secondary">Gebruik standaard de kleur wit bij het toevoegen van een account</string>
     <string name="screen_select_icon_packs_style">Stijl</string>
-    <string name="screen_select_icon_packs_question_1">Waar kan ik pictogrampakketten vinden?</string>
     <string name="screen_settings_management">Accountbeheer</string>
     <string name="screen_settings_management_export_to_aegis">Exporteren naar Aegis</string>
     <string name="screen_settings_management_import_from_aegis">Importeren uit Aegis</string>
@@ -73,7 +57,6 @@
     <string name="screen_settings_appearance_card_style">Kaartstijl</string>
     <string name="screen_settings_appearance_icon_packs">Pictogrampakketten</string>
     <string name="screen_settings_appearance_language">Taal</string>
-    <string name="screen_settings_appearance_search_on_top">Zoekbalk bovenaan tonen</string>
     <string name="screen_settings_appearance_theme">Thema</string>
     <string name="screen_settings_behavior">Gedrag</string>
     <string name="screen_settings_behavior_double_tap_to_copy_codes">Dubbeltikken om codes te kopiëren</string>
@@ -92,24 +75,14 @@
     <string name="screen_settings_support_donate">Doneren</string>
     <string name="screen_settings_support_donate_secondary">979 heeft ondersteuning nodig</string>
     <string name="screen_settings_title">Instellingen</string>
-    <string name="screen_setup_get_started_button">Aan de slag</string>
-    <string name="screen_setup_get_started_section_step_1">1. Maak een toegangssleutel aan</string>
-    <string name="screen_setup_get_started_section_step_2">2. Schakel biometrisch ontgrendelen in</string>
-    <string name="screen_setup_get_started_section_title">Druk op ‘Aan de slag’ om de instelhulp te starten</string>
-    <string name="screen_setup_get_started_welcome">Welkom in 2fa!</string>
     <string name="theme_option_dark">Donker</string>
     <string name="theme_option_light">Licht</string>
     <string name="theme_option_pitch_black">Pikkedonker</string>
-    <plurals name="common_button_tap_n_times_to_confirm">
-        <item quantity="one">Druk nog %d keer om te bevestigen</item>
-        <item quantity="other">Druk nog %d keer om te bevestigen</item>
-    </plurals>
     <plurals name="screen_main_showing_n_accounts">
         <item quantity="one">Er wordt %d account getoond</item>
         <item quantity="other">Er worden %d accounts getoond</item>
     </plurals>
     <string name="common_button_change">Verander</string>
-    <string name="common_import_error_unknown">Onbekend</string>
     <string name="common_unlock_passphrase_description">Kies een toegangssleutel om de app te openen. Je kan woorden, spaties en symbolen gebruiken.</string>
     <string name="common_title_change_passphrase">Toegangssleutel wĳzigen</string>
     <string name="screen_greeting_button_unlock">Ontgrendelen</string>
