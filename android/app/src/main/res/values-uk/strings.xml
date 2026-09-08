@@ -85,9 +85,9 @@
     <string name="screen_settings_security_secure_clipboard">Безпечний буфер обміну</string>
     <string name="screen_settings_security_secure_clipboard_secondary">Приховати скопійовані коди з пропозицій та попередніх переглядів</string>
     <string name="screen_settings_support">Підтримка</string>
-    <string name="screen_settings_support_codeberg_secondary">Переглянути сирцевий код 2fa</string>
+    <string name="screen_settings_support_codeberg_secondary">Відвідайте сторінку 2fa на Codeberg</string>
     <string name="screen_settings_support_donate">Пожертвувати</string>
-    <string name="screen_settings_support_donate_secondary">979 потребує вашої підтримки, щоб продовжити роботу</string>
+    <string name="screen_settings_support_donate_secondary">979 потребує вашої підтримки</string>
     <string name="screen_settings_title">Налаштування</string>
     <string name="screen_setup_get_started_button">Почати</string>
     <string name="screen_setup_get_started_section_step_2">2. Увімкніть біометричне розблокування</string>
@@ -118,4 +118,19 @@
     <string name="common_title_set_passphrase">Створити парольну фразу</string>
     <string name="common_biometric_unlock_description">Замість того, щоб кожного разу вводити парольну фразу, ви можете використовувати біометричні дані для розблокування додатка. Час від часу вам все ж доведеться вводити парольну фразу, і іноді це буде єдиним способом розблокувати додаток.</string>
     <string name="screen_setup_get_started_section_step_1">1. Створіть парольну фразу</string>
+    <string name="common_button_ok">ОК</string>
+    <string name="common_button_preview">Попередній перегляд</string>
+    <string name="common_description_biometric_unlock_requires_passphrase">Розблокування за біометрією недоступне без парольної фрази. Спочатку налаштуйте її, щоб увімкнути цю функцію.</string>
+    <string name="common_title_delete">Видалити</string>
+    <string name="common_title_default">За замовчуванням</string>
+    <string name="screen_edit_delete_title">Видалити цей обліковий запис?</string>
+    <string name="screen_edit_delete_body">Ви впевнені, що хочете видалити цей обліковий запис? Цю дію неможливо скасувати.</string>
+    <string name="screen_settings_security_lock_on_exit_secondary">Стирати конфіденційну інформацію після виходу</string>
+    <string name="screen_settings_support_codeberg_primary">Сирцевий код</string>
+    <string name="screen_settings_support_translations_primary">Переклади</string>
+    <string name="screen_settings_support_translations_secondary">Допоможіть нам перекласти 2fa іншими мовами</string>
+    <string name="import_error_title_invalid_format">Недійсний формат</string>
+    <string name="import_error_body_invalid_format">Нам не вдалося обробити цей файл. Схоже, він пошкоджений, неповний або не має підтримуваного формату.</string>
+    <string name="import_error_title_unsupported_version">Непідтримувана версія</string>
+    <string name="import_error_body_unsupported_version">Нам не вдалося обробити цей файл. Схоже, він з новішої або застарілої версії.</string>
 </resources>

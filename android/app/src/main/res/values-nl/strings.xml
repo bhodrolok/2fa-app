@@ -114,4 +114,5 @@
     <string name="common_title_change_passphrase">Toegangssleutel wĳzigen</string>
     <string name="screen_greeting_button_unlock">Ontgrendelen</string>
     <string name="common_title_set_passphrase">Maak een toegangssleutel aan</string>
+    <string name="common_button_ok">Oké</string>
 </resources>
