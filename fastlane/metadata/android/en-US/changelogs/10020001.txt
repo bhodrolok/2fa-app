@@ -1,0 +1,72 @@
+Changes since the 1.1.4 release:
+
+- Added version 4 exports with improved security and forensic resistance.
+- Added unauthenticated unlock, which is now the default on fresh installs.
+- Added a confirmation dialog when deleting an account, replacing the previous five-tap gesture.
+- Added support for importing unencrypted Aegis backups (`.json`).
+- Added an error dialog when an import fails, describing the most likely causes.
+- Added a "Translations" button in Settings → Support for contributing to the app's translations.
+
+- Reworked "Icon Packs". They are now bundled by default and updated with each release.
+- Replaced the donation button with a link to our Ko-fi page. Crypto donation addresses are now listed in the repository only.
+
+- Significantly improved zeroization of sensitive data throughout the app.
+- Significantly improved QR scanning performance by switching from ZXing to rqrr.
+- Significantly improved icon pack lookup performance and memory footprint.
+- Improved blocked intents by clearing intent data, which previously remained in memory.
+- Improved SVG rasterization performance and quality.
+- Improved input field validation on the edit screen.
+- Improved clarity of text throughout the app.
+
+- Fixed accounts being repeatedly re-added from an intent after the app's saved instance state was restored.
+- Fixed a crash when returning to the edit screen after the app was killed in the background.
+- Fixed the saturation slider showing an invalid color on the edit screen, which appeared fully white.
+- Fixed an unwanted navigation animation when switching to the Greeting screen.
+
+- Removed support for Android 14.
+- Removed support for version 2 exports.
+- Removed migration code for versions 1.0 and earlier.
+- Removed the logger. The app no longer produces downloadable logs.
+- Removed the setup requirement on first launch.
+- Removed the option to position the search bar at the bottom of the screen.
+
+- Updated `otpauth` handling so the account name can no longer match the issuer.
+- Updated Steam accounts to force the issuer to "Steam". The field is no longer editable.
+- Updated the account-adding process by removing the edit screen confirmation step.
+- Updated "Lock on Exit" so it is hidden when passphrase unlock is not enabled.
+- Updated Icon Packs to be enabled by default.
+- Updated the Icon Packs "Texture" option to be the default.
+- Updated Spanish translations, contributed by @gallegonovato.
+- Updated Russian translations.
+- Updated Ukrainian translations, contributed by @sirkadirov.
+- Updated Estonian translations, contributed by @jrtcdbrg.
+
+- Increment Android `gradle` to `9.7.1`.
+- Increment Android `sdk` to `37.0.0` (Android 17).
+- Increment Android `ndk` to `30.0.16138531`.
+- Increment Android `agp` to `9.4.0`.
+- Increment Android `kotlin` to `2.4.10`.
+- Increment Android `coreKtx` to `1.19.0`.
+- Increment Android `lifecycleRuntimeKtx` to `2.11.0`.
+- Increment Android `composeBom` to `2026.08.00`.
+- Increment Android `navigation-compose` to `2.10.0`.
+- Increment Android `camerax` to `1.6.2`.
+- Increment Rust `rustup` to `1.29.1`.
+- Increment Rust `rustc` to `1.98.1`.
+- Increment Rust `aegis` to `0.9.15`.
+- Increment Rust `aes-gcm` to `0.11.1`.
+- Increment Rust `argon2` to `0.6.0`.
+- Increment Rust `data-encoding` to `2.11.1`.
+- Increment Rust `getrandom` to `0.4.3`.
+- Increment Rust `pbkdf2` to `0.13.0`.
+- Increment Rust `resvg` to `0.48.1`.
+- Increment Rust `serde` to `1.0.229`.
+- Increment Rust `serde_json` to `1.0.151`.
+- Increment Rust `zeroize` to `1.9.0`.
+
+Notes:
+
+- There have been substantial changes under the hood that require significant testing, especially on devices with 6GB of RAM. This is partly because of the Android 17 memory limit changes, but also because emulator behavior does not always match physical hardware. Please stay alert and report anything that seems out of place.
+- Translations require updating, which you can do [here](https://translate.codeberg.org/projects/979/2fa/). Codeberg Translate sometimes doesn't properly label strings that need changing, so please check them all manually.
+- Although Codeberg reports the project as roughly 75% Kotlin and 25% Rust, almost all of the logic is in Rust. The Kotlin is UI only.
+- The FAQ page will be published closer to the stable release.
