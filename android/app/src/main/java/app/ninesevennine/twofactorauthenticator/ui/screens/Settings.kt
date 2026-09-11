@@ -68,7 +68,7 @@ fun Settings(navController: NavController) {
     val iconPackSlot by remember { mutableIntStateOf(rustInterface.features_icons_slot_get()) }
     val iconPackName by remember { mutableStateOf(rustInterface.features_icons_name_get()) }
     val hasPassphraseUnlock by remember { mutableStateOf(rustInterface.client_has_salt_and_key()) }
-    val hasBiometricUnlock by remember { mutableStateOf(KeyStoreAES.hasBiometricKey()) }
+    val hasBiometricUnlock by remember { mutableStateOf(KeyStoreAES.isBiometricAvailable() && KeyStoreAES.hasBiometricKey()) }
 
     var importChoiceNative by remember { mutableStateOf(false) }
     var importResult by remember { mutableIntStateOf(0) }

@@ -155,6 +155,7 @@ fun BiometricUnlock(navController: NavController) {
                             text = stringResource(R.string.common_button_enable)
                         ) {
                             if (isLoading) return@RoundedButton
+                            if (!KeyStoreAES.isBiometricAvailable()) return@RoundedButton
 
                             isLoading = true
 

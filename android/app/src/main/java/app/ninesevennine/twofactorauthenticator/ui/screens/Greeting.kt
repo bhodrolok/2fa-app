@@ -80,7 +80,12 @@ fun Greeting(navController: NavController) {
     val promptNegative = stringResource(R.string.common_button_cancel)
 
     LaunchedEffect(Signals.authenticate) {
-        if (KeyStoreAES.hasBiometricKey() && KeyStoreAES.loadBiometricKey() && KeyStoreAES.isBiometricKeyUsable()) {
+        if (!KeyStoreAES.isBiometricAvailable() || !KeyStoreAES.hasBiometricKey()) {
+            fallbackToPassphrase = true
+            return@LaunchedEffect
+        }
+
+        if (KeyStoreAES.loadBiometricKey() && KeyStoreAES.isBiometricKeyUsable()) {
             KeyStoreAES.loadBiometricKey(
                 promptTitle = promptTitle,
                 promptNegative = promptNegative,
@@ -130,7 +135,7 @@ fun Greeting(navController: NavController) {
                 isLoading = false
                 importResult = result
             } else {
-                if (biometricKeyRecreationRequired && KeyStoreAES.hasBiometricKey()) {
+                if (biometricKeyRecreationRequired) {
                     KeyStoreAES.deleteBiometricKey()
 
                     if (!KeyStoreAES.generateBiometricKey() || !KeyStoreAES.loadBiometricKey() || !KeyStoreAES.isBiometricKeyUsable()) {
