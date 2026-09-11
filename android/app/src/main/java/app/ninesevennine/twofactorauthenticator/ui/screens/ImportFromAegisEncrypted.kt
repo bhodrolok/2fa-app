@@ -44,13 +44,13 @@ import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.features.management.ImportResult
+import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.ui.InterVariable
 import app.ninesevennine.twofactorauthenticator.ui.elements.ConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.ui.elements.InfoPrompt
 import app.ninesevennine.twofactorauthenticator.ui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.ui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.ui.elements.spinnerText
-import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,6 +60,8 @@ import java.io.IOException
 
 @Serializable
 data class ImportFromAegisEncryptedRoute(val uri: String)
+
+private const val TAG = "ImportFromAegisEncrypted"
 
 @Composable
 fun ImportFromAegisEncrypted(navController: NavController, uri: String) {
@@ -91,7 +93,7 @@ fun ImportFromAegisEncrypted(navController: NavController, uri: String) {
                     ?: throw IOException("openInputStream returned null for $uri")
                 input.use { it.readBytes() }
             } catch (e: Exception) {
-                Log.e("ImportFromAegisEncrypted", "importWithPassphrase", e)
+                Log.e(TAG, "importWithPassphrase", e)
                 withContext(Dispatchers.Main) { isLoading = false }
                 return@launch
             }

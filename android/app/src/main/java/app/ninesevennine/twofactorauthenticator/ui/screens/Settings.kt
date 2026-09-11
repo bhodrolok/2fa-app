@@ -57,6 +57,8 @@ import java.io.IOException
 @Serializable
 object SettingsRoute
 
+private const val TAG = "Settings"
+
 @Composable
 fun Settings(navController: NavController) {
     val context = LocalContext.current
@@ -88,7 +90,7 @@ fun Settings(navController: NavController) {
                     ?: throw IOException("openInputStream returned null for $uri")
                 input.use { it.readBytes() }
             } catch (e: Exception) {
-                Log.e("Settings", "openDocumentLauncher", e)
+                Log.e(TAG, "openDocumentLauncher", e)
                 return@launch
             }
 

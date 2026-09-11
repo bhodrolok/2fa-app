@@ -58,7 +58,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 object GreetingRoute
 
-
 @Composable
 fun Greeting(navController: NavController) {
     val scope = rememberCoroutineScope()

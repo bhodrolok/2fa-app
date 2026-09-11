@@ -1,6 +1,7 @@
 package app.ninesevennine.twofactorauthenticator.ui.screens
 
 import android.text.format.DateUtils
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -49,6 +50,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 object SelectIconPacksRoute
 
+private const val TAG = "SelectIconPacks"
+
 @Composable
 fun SelectIconPacks(navController: NavController) {
     val context = LocalContext.current
@@ -73,7 +76,8 @@ fun SelectIconPacks(navController: NavController) {
                 context.contentResolver.openInputStream(uri)?.use {
                     IconPacks.extractStreamToSlot1(context, it)
                 } ?: return@launch
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                Log.e(TAG, "openDocumentLauncher", e)
                 return@launch
             }
 

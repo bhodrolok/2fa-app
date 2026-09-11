@@ -2,6 +2,7 @@ package app.ninesevennine.twofactorauthenticator.features
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import android.util.Log
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
@@ -77,8 +78,8 @@ object KeyStoreAES {
                 generateBiometricAESKey(keySize, isStrongBoxBacked = true)
 
                 return true
-            } catch (_: Exception) {
-                // Ignore
+            } catch (e: Exception) {
+                Log.e(TAG, "generateBiometricKey -> generateBiometricAESKey($keySize, isStrongBoxBacked = true)", e)
             }
         }
 
@@ -87,8 +88,8 @@ object KeyStoreAES {
                 generateBiometricAESKey(keySize, isStrongBoxBacked = false)
 
                 return true
-            } catch (_: Exception) {
-                // Ignore
+            } catch (e: Exception) {
+                Log.e(TAG, "generateBiometricKey -> generateBiometricAESKey($keySize, isStrongBoxBacked = false)", e)
             }
         }
 
@@ -98,7 +99,6 @@ object KeyStoreAES {
     fun hasBiometricKey(): Boolean {
         if (!keyStore.containsAlias(BIOMETRIC_KEY_ALIAS)) {
             return false
-
         }
 
         val currentActivity = activity ?: return false
@@ -134,8 +134,9 @@ object KeyStoreAES {
             cipher.init(Cipher.ENCRYPT_MODE, biometricKey)
 
             true
-        } catch (_: Exception) {
-            false // Key was most likely invalidated
+        } catch (e: Exception) {
+            Log.e(TAG, "isBiometricKeyUsable", e)
+            false
         }
     }
 
@@ -176,7 +177,8 @@ object KeyStoreAES {
                     file.writeBytes(data)
 
                     onSuccess()
-                } catch (_: Exception) {
+                } catch (e: Exception) {
+                    Log.e(TAG, "saveBiometricKey -> onAuthenticationSucceeded", e)
                     onError()
                 } finally {
                     key.fill(0)
@@ -184,6 +186,8 @@ object KeyStoreAES {
             }
 
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                Log.e(TAG, "saveBiometricKey -> onAuthenticationError\n$errorCode\n$errString")
+
                 when (errorCode) {
                     BiometricPrompt.ERROR_NEGATIVE_BUTTON,
                     BiometricPrompt.ERROR_USER_CANCELED,
@@ -247,7 +251,8 @@ object KeyStoreAES {
                     rustInterface.client_key_set(key)
 
                     onSuccess()
-                } catch (_: Exception) {
+                } catch (e: Exception) {
+                    Log.e(TAG, "loadBiometricKey -> onAuthenticationSucceeded", e)
                     onError()
                 } finally {
                     key?.fill(0)
@@ -255,6 +260,8 @@ object KeyStoreAES {
             }
 
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                Log.e(TAG, "loadBiometricKey -> onAuthenticationError\n$errorCode\n$errString")
+
                 when (errorCode) {
                     BiometricPrompt.ERROR_NEGATIVE_BUTTON,
                     BiometricPrompt.ERROR_USER_CANCELED,

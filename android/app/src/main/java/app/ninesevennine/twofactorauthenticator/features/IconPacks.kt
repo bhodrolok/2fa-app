@@ -1,10 +1,13 @@
 package app.ninesevennine.twofactorauthenticator.features
 
 import android.content.Context
+import android.util.Log
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.util.zip.ZipInputStream
+
+private const val TAG = "IconPacks"
 
 object IconPacks {
     fun extractDipToSlot0(context: Context) {
@@ -30,7 +33,8 @@ object IconPacks {
                     entry = zip.nextEntry
                 }
             }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.e(TAG, "extractDipToSlot0", e)
             outDir.deleteRecursively()
         }
     }
@@ -91,7 +95,8 @@ object IconPacks {
             }
 
             File(outDir, "metadata.json").isFile
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.e(TAG, "extractStreamToSlot1", e)
             outDir.deleteRecursively()
             false
         }

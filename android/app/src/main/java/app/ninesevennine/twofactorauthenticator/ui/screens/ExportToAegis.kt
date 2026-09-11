@@ -39,12 +39,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import app.ninesevennine.twofactorauthenticator.R
 import app.ninesevennine.twofactorauthenticator.features.Theme
+import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.ui.elements.ConfidentialTextBox
 import app.ninesevennine.twofactorauthenticator.ui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.ui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.ui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.ui.elements.spinnerText
-import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -54,6 +54,8 @@ import java.io.IOException
 
 @Serializable
 object ExportToAegisRoute
+
+private const val TAG = "ExportToAegis"
 
 @Composable
 fun ExportToAegis(navController: NavController) {
@@ -91,7 +93,7 @@ fun ExportToAegis(navController: NavController) {
                     ?: throw IOException("openOutputStream returned null for $uri")
                 out.use { it.write(bytes) }
             } catch (e: Exception) {
-                Log.e("ExportToAegis", "createDocumentLauncher", e)
+                Log.e(TAG, "createDocumentLauncher", e)
             } finally {
                 withContext(Dispatchers.Main) {
                     navController.popBackStack()

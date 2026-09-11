@@ -55,6 +55,8 @@ import java.io.IOException
 @Serializable
 object ExportRoute
 
+private const val TAG = "Export"
+
 @Composable
 fun Export(navController: NavController) {
     val context = LocalContext.current
@@ -91,7 +93,7 @@ fun Export(navController: NavController) {
                     ?: throw IOException("openOutputStream returned null for $uri")
                 out.use { it.write(bytes) }
             } catch (e: Exception) {
-                Log.e("Export", "createDocumentLauncher", e)
+                Log.e(TAG, "createDocumentLauncher", e)
             } finally {
                 withContext(Dispatchers.Main) {
                     navController.popBackStack()
