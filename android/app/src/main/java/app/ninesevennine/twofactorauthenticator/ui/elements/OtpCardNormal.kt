@@ -64,6 +64,7 @@ import app.ninesevennine.twofactorauthenticator.ui.screens.EditRoute
 import app.ninesevennine.twofactorauthenticator.utils.Clipboard
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Time
+import app.ninesevennine.twofactorauthenticator.utils.navigateOnce
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -398,7 +399,7 @@ fun OtpCardNormal(
                                         view.playSoundEffect(SoundEffectConstants.CLICK)
 
                                         rustInterface.management_import_account_into_edit(account.id)
-                                        navController.navigate(EditRoute)
+                                        navController.navigateOnce(EditRoute)
                                     }
                                 ),
                             Alignment.Center

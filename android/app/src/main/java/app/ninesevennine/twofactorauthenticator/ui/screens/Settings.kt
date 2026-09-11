@@ -47,6 +47,7 @@ import app.ninesevennine.twofactorauthenticator.ui.elements.SectionGroup
 import app.ninesevennine.twofactorauthenticator.ui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Signals
+import app.ninesevennine.twofactorauthenticator.utils.navigateOnce
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -151,7 +152,7 @@ fun Settings(navController: NavController) {
                         secondaryText = Locale.currentEffectiveLocale(context).displayName
 
                     ) {
-                        navController.navigate(SelectLanguageRoute)
+                        navController.navigateOnce(SelectLanguageRoute)
                     }
 
                     SectionButton(
@@ -172,7 +173,7 @@ fun Settings(navController: NavController) {
                             else -> ""
                         }
                     ) {
-                        navController.navigate(SelectThemeRoute)
+                        navController.navigateOnce(SelectThemeRoute)
                     }
 
                     SectionButton(
@@ -186,7 +187,7 @@ fun Settings(navController: NavController) {
                             else -> ""
                         }
                     ) {
-                        navController.navigate(SelectOtpCardStyleRoute)
+                        navController.navigateOnce(SelectOtpCardStyleRoute)
                     }
 
                     SectionButton(
@@ -203,7 +204,7 @@ fun Settings(navController: NavController) {
                             null
                         }
                     ) {
-                        navController.navigate(SelectIconPacksRoute)
+                        navController.navigateOnce(SelectIconPacksRoute)
                     }
                 }
 
@@ -252,7 +253,7 @@ fun Settings(navController: NavController) {
                             tint = Theme.colors.primary,
                             primaryText = stringResource(R.string.common_title_change_passphrase)
                         ) {
-                            navController.navigate(ChangePassphraseRoute)
+                            navController.navigateOnce(ChangePassphraseRoute)
                         }
                     } else {
                         SectionButton(
@@ -260,7 +261,7 @@ fun Settings(navController: NavController) {
                             tint = Theme.colors.primary,
                             primaryText = stringResource(R.string.common_title_set_passphrase)
                         ) {
-                            navController.navigate(SetPassphraseRoute)
+                            navController.navigateOnce(SetPassphraseRoute)
                         }
                     }
 
@@ -270,7 +271,7 @@ fun Settings(navController: NavController) {
                         primaryText = stringResource(R.string.common_title_biometric_unlock),
                         enabled = hasBiometricUnlock
                     ) {
-                        navController.navigate(BiometricUnlockRoute)
+                        navController.navigateOnce(BiometricUnlockRoute)
                     }
 
                     SectionButton(
@@ -335,7 +336,7 @@ fun Settings(navController: NavController) {
                         primaryText = stringResource(R.string.common_title_export),
                         secondaryText = ".2fa"
                     ) {
-                        navController.navigate(ExportRoute)
+                        navController.navigateOnce(ExportRoute)
                     }
 
                     SectionButton(
@@ -359,7 +360,7 @@ fun Settings(navController: NavController) {
                         primaryText = stringResource(R.string.screen_settings_management_export_to_aegis),
                         secondaryText = ".json"
                     ) {
-                        navController.navigate(ExportToAegisRoute)
+                        navController.navigateOnce(ExportToAegisRoute)
                     }
 
                     SectionButton(

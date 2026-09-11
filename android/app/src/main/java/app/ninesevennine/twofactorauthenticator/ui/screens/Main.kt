@@ -83,6 +83,7 @@ import app.ninesevennine.twofactorauthenticator.ui.elements.OtpCardNormal
 import app.ninesevennine.twofactorauthenticator.utils.Config
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.utils.Time
+import app.ninesevennine.twofactorauthenticator.utils.navigateOnce
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -274,14 +275,14 @@ fun Main(navController: NavController) {
             query = it
         },
         onSettings = {
-            navController.navigate(SettingsRoute)
+            navController.navigateOnce(SettingsRoute)
         },
         onAdd = {
-            navController.navigate(AddCodeRoute)
+            navController.navigateOnce(AddCodeRoute)
         },
         onAddLong = {
             rustInterface.management_edit_default_set()
-            navController.navigate(EditRoute)
+            navController.navigateOnce(EditRoute)
         }
     )
 }

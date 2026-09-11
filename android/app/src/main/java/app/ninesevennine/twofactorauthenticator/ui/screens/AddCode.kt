@@ -50,6 +50,7 @@ import app.ninesevennine.twofactorauthenticator.features.otpauth.importQRCodeInt
 import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.ui.InterVariable
 import app.ninesevennine.twofactorauthenticator.utils.Signals
+import app.ninesevennine.twofactorauthenticator.utils.navigateOnce
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -182,7 +183,7 @@ fun AddCode(navController: NavController) {
                             view.playSoundEffect(SoundEffectConstants.CLICK)
 
                             rustInterface.management_edit_default_set()
-                            navController.navigate(EditRoute)
+                            navController.navigateOnce(EditRoute)
                         }
                     )
                     .padding(horizontal = 24.dp),

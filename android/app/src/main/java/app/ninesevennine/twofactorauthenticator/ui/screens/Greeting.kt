@@ -49,6 +49,7 @@ import app.ninesevennine.twofactorauthenticator.ui.elements.InfoPrompt
 import app.ninesevennine.twofactorauthenticator.ui.elements.RoundedButton
 import app.ninesevennine.twofactorauthenticator.ui.elements.spinnerText
 import app.ninesevennine.twofactorauthenticator.utils.Signals
+import app.ninesevennine.twofactorauthenticator.utils.navigateOnce
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -140,7 +141,7 @@ fun Greeting(navController: NavController) {
 
                     if (!KeyStoreAES.generateBiometricKey() || !KeyStoreAES.loadBiometricKey() || !KeyStoreAES.isBiometricKeyUsable()) {
                         withContext(Dispatchers.Main) {
-                            navController.navigate(MainRoute) {
+                            navController.navigateOnce(MainRoute) {
                                 popUpTo(0) { inclusive = true }
                             }
                         }
@@ -171,7 +172,7 @@ fun Greeting(navController: NavController) {
                     }
                 } else {
                     withContext(Dispatchers.Main) {
-                        navController.navigate(MainRoute) {
+                        navController.navigateOnce(MainRoute) {
                             popUpTo(0) { inclusive = true }
                         }
                     }
