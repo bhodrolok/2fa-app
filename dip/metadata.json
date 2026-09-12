@@ -1,6 +1,6 @@
 {
     "name": "default",
-    "timestamp": 1788700486,
+    "timestamp": 1789228906,
     "icons": [
         {
             "issuer": ["addy.io"],
@@ -200,6 +200,12 @@
             "color": "00fcff"
         },
         {
+            "issuer": ["gog", "gog.com"],
+            "textured": "gog_textured.svg",
+            "tinted": "gog.svg",
+            "color": "b644bb"
+        },
+        {
             "issuer": ["www.goodcloud.xyz"],
             "textured": "goodcloud_textured.svg",
             "tinted": "goodcloud.svg",
@@ -257,6 +263,12 @@
             "textured": "kick_textured.svg",
             "tinted": "kick.svg",
             "color": "44fc03"
+        },
+        {
+            "issuer": ["ko-fi"],
+            "textured": "kofi_textured.svg",
+            "tinted": "kofi.svg",
+            "color": "166ae9"
         },
         {
             "issuer": ["koofr"],
@@ -486,6 +498,12 @@
             "color": "8c3ac5"
         },
         {
+            "issuer": ["snapchat"],
+            "textured": "snapchat_textured.svg",
+            "tinted": "snapchat.svg",
+            "color": "fffc00"
+        },
+        {
             "issuer": ["stalwart mail"],
             "textured": "stalwartmail_textured.svg",
             "tinted": "stalwartmail.svg",
@@ -496,6 +514,18 @@
             "textured": "steam_textured.svg",
             "tinted": "steam.svg",
             "color": "3478cb"
+        },
+        {
+            "issuer": ["stoat"],
+            "textured": "stoat_textured.svg",
+            "tinted": "stoat.svg",
+            "color": "725ba4"
+        },
+        {
+            "issuer": ["stripe"],
+            "textured": "stripe_textured.svg",
+            "tinted": "stripe.svg",
+            "color": "6151ae"
         },
         {
             "issuer": ["teamspeak", "myteamspeak"],
