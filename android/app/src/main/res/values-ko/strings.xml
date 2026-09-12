@@ -5,9 +5,9 @@
     <string name="element_strength_indicator_good">좋음</string>
     <string name="screen_edit_section_parameters_secret">시크릿 키</string>
     <string name="common_button_disable">비활성화</string>
-    <string name="screen_edit_section_parameters">고급 설정</string>
+    <string name="screen_edit_section_parameters">패러미터</string>
     <string name="screen_edit_title">편집</string>
-    <string name="screen_edit_section_details">계정 정보</string>
+    <string name="screen_edit_section_details">세부 정보</string>
     <string name="screen_edit_section_color_copy">복사</string>
     <string name="common_button_cancel">취소</string>
     <string name="screen_settings_behavior_double_tap_to_copy_codes">더블 탭하여 코드 복사</string>
@@ -15,8 +15,8 @@
     <string name="common_button_use_system_default">시스템 기본값 사용</string>
     <string name="screen_edit_section_parameters_algorithm">알고리즘</string>
     <string name="screen_settings_support">지원</string>
-    <string name="screen_edit_section_color">사용자 정의</string>
-    <string name="screen_edit_section_color_preset">추천 설정 사용</string>
+    <string name="screen_edit_section_color">색상</string>
+    <string name="screen_edit_section_color_preset">프리셋</string>
     <string name="theme_option_dark">다크</string>
     <string name="common_import_error_incorrect_passphrase">올바르지 않은 패스프레이즈</string>
     <string name="screen_settings_appearance_language">언어</string>
@@ -40,9 +40,9 @@
     <string name="element_strength_indicator_weak">약함</string>
     <string name="element_strength_indicator_very_weak">매우 약함</string>
     <string name="screen_main_greeting">하단 모서리의 추가 아이콘을 탭하여 계정을 추가합니다. 설정에서 다른 인증 앱의 계정을 가져올 수도 있습니다.</string>
-    <string name="screen_settings_support_codeberg_secondary">2fa 소스 코드 확인</string>
+    <string name="screen_settings_support_codeberg_secondary">2fa Codeberg 페이지 방문</string>
     <string name="screen_settings_behavior">행동</string>
-    <string name="screen_settings_support_donate_secondary">979는 지속적인 활동을 위해 여러분의 지원이 필요합니다</string>
+    <string name="screen_settings_support_donate_secondary">979는 여러분의 지원이 필요합니다</string>
     <string name="screen_edit_section_details_note">메모</string>
     <string name="screen_main_no_matching_were_found">일치하는 계정 없음</string>
     <string name="common_title_confirm_passphrase">패스프레이즈 확인</string>
@@ -74,7 +74,7 @@
     <string name="feature_qr_code_scanner_camera_permission">QR 코드 스캔을 위해 카메라 권한이 필요합니다</string>
     <string name="screen_edit_section_color_paste">붙여넣기</string>
     <string name="screen_select_icon_packs_style">스타일</string>
-    <string name="screen_settings_management">계정 관리</string>
+    <string name="screen_settings_management">관리</string>
     <string name="screen_settings_behavior_focus_search_on_launch">앱 시작 시 검색창 포커스</string>
     <plurals name="screen_main_showing_n_accounts">
         <item quantity="other">%d개 계정 표시</item>
@@ -86,4 +86,19 @@
     <string name="common_unlock_passphrase_description">앱을 잠금 해제할 패스프레이즈는 기억할 수 있는 것으로 선택하십시오. 단어, 공백 및 특수문자를 사용할 수 있습니다.</string>
     <string name="screen_greeting_button_unlock">잠금 해제</string>
     <string name="common_title_set_passphrase">패스프레이즈 생성</string>
+    <string name="screen_settings_support_translations_primary">번역</string>
+    <string name="common_title_default">기본값</string>
+    <string name="import_error_body_unsupported_version">이 파일을 처리할 수 없습니다. 이후 버전 또는 오래된 버전인 것 같습니다.</string>
+    <string name="import_error_title_invalid_format">잘못된 형식</string>
+    <string name="common_title_delete">삭제</string>
+    <string name="screen_edit_delete_title">이 계정을 삭제하시겠습니까?</string>
+    <string name="common_button_ok">확인</string>
+    <string name="screen_edit_delete_body">이 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</string>
+    <string name="screen_settings_security_lock_on_exit_secondary">종료시 민감한 메모리 삭제</string>
+    <string name="import_error_body_invalid_format">이 파일을 처리할 수 없습니다. 손상되었거나, 불완전하거나, 지원하지 않는 형식입니다.</string>
+    <string name="common_description_biometric_unlock_requires_passphrase">생체 인식 잠금 해제는 패스프레이즈를 설정해야 사용할 수 있습니다. 설정하여 활성화하십시오.</string>
+    <string name="common_button_preview">미리보기</string>
+    <string name="import_error_title_unsupported_version">지원하지 않는 버전</string>
+    <string name="screen_settings_support_codeberg_primary">소스 코드</string>
+    <string name="screen_settings_support_translations_secondary">2fa를 더 많은 언어로 번역하는 것을 도와주세요</string>
 </resources>
