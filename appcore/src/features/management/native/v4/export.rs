@@ -1,5 +1,6 @@
 use aegis::aegis256::Aegis256;
 use argon2::{Algorithm, Argon2, Params, Version};
+use crypto_common::getrandom;
 use hkdf::Hkdf;
 use sha3::Digest;
 use sha3::Sha3_512;

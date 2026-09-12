@@ -1,3 +1,4 @@
+use crypto_common::getrandom;
 use jni::{
     EnvUnowned,
     errors::{Error, ThrowRuntimeExAndDefault},

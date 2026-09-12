@@ -2,6 +2,7 @@ use aes_gcm::{
     Aes256Gcm, Key,
     aead::{Aead, Nonce},
 };
+use crypto_common::getrandom;
 use hmac::KeyInit;
 use serde_json::Value;
 use zeroize::Zeroizing;
