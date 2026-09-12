@@ -184,7 +184,6 @@
         },
         {
             "issuer": ["github"],
-            "textured": "github_textured.svg",
             "tinted": "github.svg",
             "color": "6f7e90"
         },
@@ -214,7 +213,6 @@
         },
         {
             "issuer": ["hackerone"],
-            "textured": "hackerone_textured.svg",
             "tinted": "hackerone.svg",
             "color": "808080"
         },
@@ -225,7 +223,7 @@
             "color": "f10e33"
         },
         {
-            "issuer": ["hugging face"],
+            "issuer": ["huggingface"],
             "textured": "huggingface_textured.svg",
             "tinted": "huggingface.svg",
             "color": "ffcc00"
@@ -388,7 +386,6 @@
         },
         {
             "issuer": ["openai"],
-            "textured": "openai_textured.svg",
             "tinted": "openai.svg",
             "color": "808080"
         },
@@ -550,7 +547,6 @@
         },
         {
             "issuer": ["uber"],
-            "textured": "uber_textured.svg",
             "tinted": "uber.svg",
             "color": "808080"
         },
@@ -568,7 +564,6 @@
         },
         {
             "issuer": ["unity"],
-            "textured": "unity_textured.svg",
             "tinted": "unity.svg",
             "color": "808080"
         },
@@ -592,7 +587,6 @@
         },
         {
             "issuer": ["vercel"],
-            "textured": "vercel_textured.svg",
             "tinted": "vercel.svg",
             "color": "808080"
         },
@@ -610,19 +604,16 @@
         },
         {
             "issuer": ["wordpress"],
-            "textured": "wordpress_textured.svg",
             "tinted": "wordpress.svg",
             "color": "808080"
         },
         {
             "issuer": ["x", "twitter"],
-            "textured": "x_textured.svg",
             "tinted": "x.svg",
             "color": "778288"
         },
         {
             "issuer": ["zendesk"],
-            "textured": "zendesk_textured.svg",
             "tinted": "zendesk.svg",
             "color": "b3ed12"
         },
