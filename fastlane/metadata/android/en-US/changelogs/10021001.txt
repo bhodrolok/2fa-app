@@ -1,0 +1,42 @@
+Changes since the 1.2-alpha-1 release:
+
+- Added logging for critical paths.
+- Added GOG/gog.com icon.
+- Added Ko-fi icon.
+- Added Snapchat icon.
+- Added Stoat icon.
+- Added Stripe icon.
+
+- Improved zeroization coverage by enabling it on all supported dependencies.
+- Improved `appcore` reproducibility. Linux and macOS builds now match more closely.
+
+- Fixed duplicate navigation.
+- Fixed biometrics incorrectly showing as enabled when the user removed them from the system.
+- Fixed color copy including the alpha channel.
+- Fixed Hugging Face issuer.
+
+- Removed the cloud backups ruleset due to the implementation of unauthenticated unlock.
+- Removed icon packs textured fallback to tinted.
+- Removed Github textured icon.
+- Removed Hackerone textured icon.
+- Removed OpenAI textured icon.
+- Removed Uber textured icon.
+- Removed Unity textured icon.
+- Removed Vercel textured icon.
+- Removed Wordpress textured icon.
+- Removed X textured icon.
+- Removed Zendesk textured icon.
+
+- Updated Spanish translations, contributed by @gallegonovato.
+- Updated German translations, contributed by @barbiehunter.
+- Updated Korean translations, contributed by @lugged9922.
+- Updated Ukrainian translations, contributed by @sirkadirov.
+- Updated `memtag` mode from async to sync.
+
+- Increment Android `ndk` to `30.0.16248370`.
+- Increment Android `composeBom` to `2026.09.00`.
+- Increment Android `navigation-compose` to `2.10.1`.
+
+Notes:
+- Translations require updating, which you can do [here](https://translate.codeberg.org/projects/979/2fa/).
+- The [FAQs](https://979.st/2fa/faq) page is now available.
