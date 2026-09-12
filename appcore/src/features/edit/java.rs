@@ -90,7 +90,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let client = CLIENT.lock().unwrap();
 
         let hex = match &client.edit {
-            Some(account) => format!("#{:08x}", account.color),
+            Some(account) => format!("#{:06x}", account.color & 0x00ff_ffff),
             None => String::new(),
         };
 
