@@ -1,11 +1,13 @@
 package app.ninesevennine.twofactorauthenticator.utils
 
-import androidx.lifecycle.Lifecycle
+import android.annotation.SuppressLint
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavOptionsBuilder
 
+@SuppressLint("RestrictedApi")
 fun NavController.navigateOnce(route: Any, builder: NavOptionsBuilder.() -> Unit = {}) {
-    if (currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
+    if (currentDestination?.hasRoute(route::class) == false) {
         navigate(route) {
             launchSingleTop = true
             builder()
