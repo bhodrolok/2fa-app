@@ -32,3 +32,15 @@
 - Advanced security features such as passphrases, biometric unlock, screen security, secure clipboard, lock on exit, and intent blocking.
 - Highly customizable, with account colors and icon packs, including textured and tinted options.
 - And more!
+
+### Contribute
+
+You can contribute in three major ways. The first is [becoming a translator](https://translate.codeberg.org/projects/979/2fa) for the 2fa project, which directly helps us expand our reach. The second is writing a review or telling people about 2fa. The third, and most valuable, is donating to us through Monero or [Ko-fi.](https://ko-fi.com/ninesevennine)
+
+#### Monero
+
+<img src="assets/monero.png" alt="Monero QR code" width="152" height="152">
+
+```
+43YaGjafqvwTZKqiE22MwQ1kVKYnG679pUXQnAzkos3WK2uoqJSeu9jRpko4VzKL9tHvFYRWbTUebcDDqkKiwJAL83arU6X
+```
