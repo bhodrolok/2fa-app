@@ -179,8 +179,7 @@ fun SelectIconPacks(navController: NavController) {
                 } else {
                     RoundedButton(
                         modifier = Modifier.fillMaxWidth().padding(horizontal  = 16.dp),
-                        text = stringResource(R.string.common_title_delete),
-                        hazardColors = true
+                        text = stringResource(R.string.common_title_delete)
                     ) {
                         scope.launch(Dispatchers.IO) {
                             IconPacks.deleteSlot1(context)
