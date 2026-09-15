@@ -85,9 +85,9 @@
     <string name="screen_select_icon_packs_installed">Instaladas</string>
     <string name="common_button_change">Cambiar</string>
     <string name="common_title_change_passphrase">Cambiar contraseña</string>
-    <string name="common_unlock_passphrase_description">Elige una contraseña fácil de recordar para desbloquear la app. Puedes utilizar palabras, espacios y símbolos.</string>
+    <string name="common_passphrase_unlock_description">Elige una contraseña fácil de recordar para desbloquear la app. Puedes utilizar palabras, espacios y símbolos.</string>
     <string name="screen_greeting_button_unlock">Desbloquear</string>
-    <string name="common_title_set_passphrase">Establecer contraseña</string>
+    <string name="common_title_create_passphrase">Establecer contraseña</string>
     <string name="common_button_preview">Vista previa</string>
     <string name="common_description_biometric_unlock_requires_passphrase">Para usar el desbloqueo biométrico, primero debes configurar una contraseña.</string>
     <string name="common_title_delete">Eliminar</string>

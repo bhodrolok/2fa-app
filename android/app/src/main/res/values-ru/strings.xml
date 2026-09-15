@@ -86,9 +86,9 @@
     <string name="screen_select_icon_packs_installed">Установлено</string>
     <string name="common_button_change">Изменить</string>
     <string name="common_title_change_passphrase">Изменить парольную фразу</string>
-    <string name="common_unlock_passphrase_description">Выберите запоминающуюся парольную фразу, чтобы разблокировать приложение. Вы можете использовать слова, пробелы и символы.</string>
+    <string name="common_passphrase_unlock_description">Выберите запоминающуюся парольную фразу, чтобы разблокировать приложение. Вы можете использовать слова, пробелы и символы.</string>
     <string name="screen_greeting_button_unlock">Разблокировать</string>
-    <string name="common_title_set_passphrase">Создать парольную фразу</string>
+    <string name="common_title_create_passphrase">Создать парольную фразу</string>
     <string name="common_button_ok">Окей</string>
     <string name="common_button_preview">Предварительный просмотр</string>
     <string name="common_description_biometric_unlock_requires_passphrase">Биометрическая разблокировка недоступна без парольной фразы. Сначала установите парольную фразу, чтобы включить эту функцию.</string>

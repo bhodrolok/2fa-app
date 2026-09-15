@@ -83,10 +83,10 @@
         <item quantity="other">Er worden %d accounts getoond</item>
     </plurals>
     <string name="common_button_change">Verander</string>
-    <string name="common_unlock_passphrase_description">Kies een wachtwoordzin die je makkelijk onthoudt om de app te ontgrendelen. Je kunt woorden, spaties en symbolen gebruiken.</string>
+    <string name="common_passphrase_unlock_description">Kies een wachtwoordzin die je makkelijk onthoudt om de app te ontgrendelen. Je kunt woorden, spaties en symbolen gebruiken.</string>
     <string name="common_title_change_passphrase">Wachtwoordzin wijzigen</string>
     <string name="screen_greeting_button_unlock">Ontgrendelen</string>
-    <string name="common_title_set_passphrase">Wachtwoordzin instellen</string>
+    <string name="common_title_create_passphrase">Wachtwoordzin instellen</string>
     <string name="common_button_ok">Oké</string>
     <string name="common_button_preview">Voorbeeld</string>
     <string name="common_description_biometric_unlock_requires_passphrase">Biometrisch ontgrendelen is niet beschikbaar zonder wachtwoordzin. Stel er eerst een in om het in te schakelen.</string>

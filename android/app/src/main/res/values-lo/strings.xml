@@ -61,7 +61,7 @@
     <string name="screen_settings_behavior_tap_to_reveal_codes">ແຕະເພື່ອສະແດງລະຫັດ</string>
     <string name="feature_qr_code_scanner_camera_permission">ຕ້ອງມີການອະນຸຍາດນຳໃຊ້ກ້ອງຖ່າຍຮູບເພື່ອສະແກນລະຫັດ QR</string>
     <string name="screen_select_icon_packs_style">ຮູບແບບ</string>
-    <string name="common_unlock_passphrase_description">ເລືອກວະລີຜ່ານທີ່ຈົດຈຳໄດ້ງ່າຍເພື່ອປົດລັອກແອັບ. ເຈົ້າສາມາດໃຊ້ຄຳສັບ, ຍະຫວ່າງ ແລະ ສັນຍະລັກໄດ້.</string>
+    <string name="common_passphrase_unlock_description">ເລືອກວະລີຜ່ານທີ່ຈົດຈຳໄດ້ງ່າຍເພື່ອປົດລັອກແອັບ. ເຈົ້າສາມາດໃຊ້ຄຳສັບ, ຍະຫວ່າງ ແລະ ສັນຍະລັກໄດ້.</string>
     <string name="screen_settings_behavior_focus_search_on_launch">ເນັ້ນການຄົ້ນຫາເມື່ອເປີດແອັບ</string>
     <plurals name="screen_main_showing_n_accounts">
         <item quantity="other">ກຳລັງສະແດງ %d ບັນຊີ</item>

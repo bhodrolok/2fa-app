@@ -52,10 +52,10 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 
 @Serializable
-object SetPassphraseRoute
+object CreatePassphraseRoute
 
 @Composable
-fun SetPassphrase(navController: NavController) {
+fun CreatePassphrase(navController: NavController) {
     var passphrase by remember { mutableStateOf("") }
     var passphraseStrength by remember { mutableFloatStateOf(0f) }
     var confirmPassphrase by remember { mutableStateOf("") }
@@ -98,7 +98,7 @@ fun SetPassphrase(navController: NavController) {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Text(
-                    text = stringResource(R.string.common_title_set_passphrase),
+                    text = stringResource(R.string.common_title_create_passphrase),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 18.sp,
@@ -109,7 +109,7 @@ fun SetPassphrase(navController: NavController) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = stringResource(R.string.common_unlock_passphrase_description),
+                    text = stringResource(R.string.common_passphrase_unlock_description),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 14.sp,

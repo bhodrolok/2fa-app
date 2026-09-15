@@ -84,9 +84,9 @@
     <string name="screen_main_greeting">Kasutajakonto lisamiseks klõpsa ikooni all nurgas. Lisaks võid seadistustest importida muudest kaksiautentimise rakendustest eksporditud kasutajakontosid.</string>
     <string name="common_button_change">Muuda</string>
     <string name="common_title_change_passphrase">Muuda salafraasi</string>
-    <string name="common_unlock_passphrase_description">Rakenduse lukustuse avamiseks valis hästi meeldejääv salafraas. Võid kasutada sõnu, numbreid, tühikuid ja erimärke.</string>
+    <string name="common_passphrase_unlock_description">Rakenduse lukustuse avamiseks valis hästi meeldejääv salafraas. Võid kasutada sõnu, numbreid, tühikuid ja erimärke.</string>
     <string name="screen_greeting_button_unlock">Ava lukustus</string>
-    <string name="common_title_set_passphrase">Loo salafraas</string>
+    <string name="common_title_create_passphrase">Loo salafraas</string>
     <string name="common_button_ok">Sobib</string>
     <string name="common_button_preview">Eelvaade</string>
     <string name="common_title_delete">Kustuta</string>

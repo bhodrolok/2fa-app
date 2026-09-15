@@ -17,7 +17,7 @@
     <string name="common_title_import">Importer</string>
     <string name="common_title_passphrase">Mot de passe</string>
     <string name="common_title_show">Afficher</string>
-    <string name="common_unlock_passphrase_description">Choisissez un mot de passe facile à retenir pour déverrouiller l\'application. Vous pouvez utiliser des mots, des espaces et des symboles.</string>
+    <string name="common_passphrase_unlock_description">Choisissez un mot de passe facile à retenir pour déverrouiller l\'application. Vous pouvez utiliser des mots, des espaces et des symboles.</string>
     <string name="element_strength_indicator_good">Bon</string>
     <string name="element_strength_indicator_strong">Fort</string>
     <string name="element_strength_indicator_very_weak">Très faible</string>
@@ -79,7 +79,7 @@
     <string name="screen_settings_support_donate">Donation</string>
     <string name="screen_settings_support_donate_secondary">979 a besoin de votre soutien</string>
     <string name="screen_settings_title">Paramètres</string>
-    <string name="common_title_set_passphrase">Définir le mot de passe</string>
+    <string name="common_title_create_passphrase">Définir le mot de passe</string>
     <string name="theme_option_dark">Sombre</string>
     <string name="theme_option_light">Lumineux</string>
     <string name="theme_option_pitch_black">Pure noir</string>

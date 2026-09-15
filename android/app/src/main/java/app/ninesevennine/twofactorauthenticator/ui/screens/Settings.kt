@@ -261,9 +261,9 @@ fun Settings(navController: NavController) {
                         SectionButton(
                             painter = painterResource(R.drawable.random_alphabet),
                             tint = Theme.colors.primary,
-                            primaryText = stringResource(R.string.common_title_set_passphrase)
+                            primaryText = stringResource(R.string.common_title_create_passphrase)
                         ) {
-                            navController.navigateOnce(SetPassphraseRoute)
+                            navController.navigateOnce(CreatePassphraseRoute)
                         }
                     }
 

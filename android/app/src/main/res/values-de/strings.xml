@@ -84,9 +84,9 @@
     <string name="screen_settings_security_block_intents_secondary">Blockiere Aktionen von externen Apps</string>
     <string name="common_button_change">Ändern</string>
     <string name="common_title_change_passphrase">Passwort ändern</string>
-    <string name="common_unlock_passphrase_description">Wählen Sie ein einprägsames Passwort, um die App zu entsperren. Sie können Wörter, Leerzeichen und Symbole verwenden.</string>
+    <string name="common_passphrase_unlock_description">Wählen Sie ein einprägsames Passwort, um die App zu entsperren. Sie können Wörter, Leerzeichen und Symbole verwenden.</string>
     <string name="screen_greeting_button_unlock">Entsperren</string>
-    <string name="common_title_set_passphrase">Passwort festlegen</string>
+    <string name="common_title_create_passphrase">Passwort festlegen</string>
     <string name="screen_settings_support_translations_primary">Übersetzungen</string>
     <string name="common_title_default">Standard</string>
     <string name="import_error_body_unsupported_version">Wir konnten diese Datei nicht verarbeiten. Sie scheint aus einer neueren oder veralteten Version zu stammen.</string>

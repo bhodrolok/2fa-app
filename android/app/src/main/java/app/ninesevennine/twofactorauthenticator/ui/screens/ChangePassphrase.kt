@@ -111,7 +111,7 @@ fun ChangePassphrase(navController: NavController) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = stringResource(R.string.common_unlock_passphrase_description),
+                    text = stringResource(R.string.common_passphrase_unlock_description),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 14.sp,

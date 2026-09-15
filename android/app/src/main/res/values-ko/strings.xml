@@ -83,9 +83,9 @@
     <string name="common_button_change">변경</string>
     <string name="common_biometric_unlock_description">매번 패스프레이즈를 입력하는 대신 생체 인식으로 앱을 잠금 해제할 수 있습니다. 가끔씩 패스프레이즈를 입력해야 하며, 때로는 앱을 잠금 해제하는 유일한 방법으로 제시될 수도 있습니다.</string>
     <string name="common_title_change_passphrase">패스프레이즈 변경</string>
-    <string name="common_unlock_passphrase_description">앱을 잠금 해제할 패스프레이즈는 기억할 수 있는 것으로 선택하십시오. 단어, 공백 및 특수문자를 사용할 수 있습니다.</string>
+    <string name="common_passphrase_unlock_description">앱을 잠금 해제할 패스프레이즈는 기억할 수 있는 것으로 선택하십시오. 단어, 공백 및 특수문자를 사용할 수 있습니다.</string>
     <string name="screen_greeting_button_unlock">잠금 해제</string>
-    <string name="common_title_set_passphrase">패스프레이즈 생성</string>
+    <string name="common_title_create_passphrase">패스프레이즈 생성</string>
     <string name="screen_settings_support_translations_primary">번역</string>
     <string name="common_title_default">기본값</string>
     <string name="import_error_body_unsupported_version">이 파일을 처리할 수 없습니다. 이후 버전 또는 오래된 버전인 것 같습니다.</string>
