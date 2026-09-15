@@ -8,8 +8,8 @@
     <string name="common_button_preview">Preview</string>
     <string name="common_button_use_system_default">Use System Default</string>
     <string name="common_biometric_unlock_description">Instead of entering your passphrase every time, you can use biometrics to unlock the app. Every once in a while you will have to enter your passphrase, and sometimes it will be the only way to unlock the app.</string>
-    <string name="common_description_biometric_unlock_requires_passphrase">Biometric unlock isn\'t available without a passphrase.</string>
-    <string name="common_description_biometric_unlock_unsupported">Biometric unlock may not be supported on this device. Make sure you have biometrics set up in your device settings.</string>
+    <string name="common_description_biometric_unlock_requires_passphrase">Biometric Unlock isn\'t available without a passphrase.</string>
+    <string name="common_description_biometric_unlock_unsupported">Biometric Unlock may not be supported on this device. Make sure you have biometrics set up in your device settings.</string>
     <string name="common_import_error_incorrect_passphrase">Incorrect passphrase</string>
     <string name="common_title_biometric_unlock">Biometric Unlock</string>
     <string name="common_title_confirm_biometrics">Confirm Biometrics</string>
