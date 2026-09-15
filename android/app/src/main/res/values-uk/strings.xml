@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="common_button_cancel">Скасувати</string>
-    <string name="common_button_disable">Вимкнути</string>
+    <string name="common_button_remove">Вимкнути</string>
     <string name="common_button_enable">Ввімкнути</string>
     <string name="common_button_use_system_default">Як у системі</string>
     <string name="common_description_biometric_unlock_unsupported">Біометричне розблокування може не підтримуватися на цьому пристрої. Переконайтеся, що у вас налаштовано біометрію в налаштуваннях пристрою.</string>

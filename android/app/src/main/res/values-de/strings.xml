@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="common_button_disable">Deaktivieren</string>
+    <string name="common_button_remove">Deaktivieren</string>
     <string name="common_button_enable">Aktivieren</string>
     <string name="common_button_use_system_default">Systemstandard verwenden</string>
     <string name="common_biometric_unlock_description">Anstatt jedes Mal Ihr Passwort einzugeben, können Sie die App mithilfe biometrischer Daten entsperren. Von Zeit zu Zeit müssen Sie Ihr Passwort eingeben, und manchmal ist dies die einzige Möglichkeit, die App zu entsperren.</string>

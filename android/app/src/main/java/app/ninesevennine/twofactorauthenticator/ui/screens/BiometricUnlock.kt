@@ -139,7 +139,7 @@ fun BiometricUnlock(navController: NavController) {
                     if (hasBiometricUnlock) {
                         RoundedButton(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                            text = stringResource(R.string.common_button_disable)
+                            text = stringResource(R.string.common_button_remove)
                         ) {
                             scope.launch(Dispatchers.IO) {
                                 KeyStoreAES.deleteBiometricKey()

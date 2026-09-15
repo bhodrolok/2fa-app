@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="common_button_cancel">Annuler</string>
-    <string name="common_button_disable">Désactiver</string>
+    <string name="common_button_remove">Désactiver</string>
     <string name="common_button_enable">Activer</string>
     <string name="common_button_change">Modifier</string>
     <string name="common_button_use_system_default">Utiliser les paramètres système</string>

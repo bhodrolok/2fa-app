@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="common_button_cancel">取消</string>
-    <string name="common_button_disable">禁用</string>
+    <string name="common_button_remove">禁用</string>
     <string name="common_button_enable">启用</string>
     <string name="common_button_use_system_default">使用系统默认设置</string>
     <string name="common_biometric_unlock_description">您可以使用生物识别技术解锁应用程序，而不是每次都输入密码短语。每隔一段时间，您都必须输入密码短语，有时这将是解锁应用程序的唯一方法。</string>

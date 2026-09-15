@@ -4,7 +4,7 @@
     <string name="otp_card_style_compact">ກະທັດຮັດ</string>
     <string name="common_title_show">ສະແດງ</string>
     <string name="element_strength_indicator_good">ດີ</string>
-    <string name="common_button_disable">ປິດໃຊ້ງານ</string>
+    <string name="common_button_remove">ປິດໃຊ້ງານ</string>
     <string name="screen_edit_title">ແກ້ໄຂ</string>
     <string name="common_button_cancel">ຍົກເລີກ</string>
     <string name="screen_settings_behavior_double_tap_to_copy_codes">ແຕະສອງຄັ້ງເພື່ອສຳເນົາລະຫັດ</string>

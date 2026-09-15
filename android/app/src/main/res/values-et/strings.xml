@@ -39,7 +39,7 @@
         <item quantity="one">Näidatavaid kasutajakontosid: %d</item>
         <item quantity="other">Näidatavaid kasutajakontosid: %d</item>
     </plurals>
-    <string name="common_button_disable">Lülita välja</string>
+    <string name="common_button_remove">Lülita välja</string>
     <string name="common_button_enable">Lülita sisse</string>
     <string name="screen_edit_section_parameters_type">Tüüp</string>
     <string name="screen_edit_section_parameters_secret">Saladus</string>

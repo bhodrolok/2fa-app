@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="common_button_cancel">Cancelar</string>
-    <string name="common_button_disable">Desactivar</string>
+    <string name="common_button_remove">Desactivar</string>
     <string name="common_button_enable">Activar</string>
     <string name="common_button_use_system_default">Predeterminado del sistema</string>
     <string name="common_import_error_incorrect_passphrase">Contraseña incorrecta</string>

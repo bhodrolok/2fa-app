@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="common_button_cancel">Annuleren</string>
-    <string name="common_button_disable">Uitschakelen</string>
+    <string name="common_button_remove">Uitschakelen</string>
     <string name="common_button_enable">Inschakelen</string>
     <string name="common_button_use_system_default">Systeeminstellingen volgen</string>
     <string name="common_biometric_unlock_description">In plaats van elke keer je wachtwoordzin in te voeren, kun je biometrie gebruiken om de app te ontgrendelen. Af en toe moet je toch je wachtwoordzin invoeren, en soms is dat de enige manier om de app te ontgrendelen.</string>

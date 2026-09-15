@@ -3,7 +3,7 @@
     <string name="common_button_ok">Ok</string>
     <string name="common_button_cancel">Cancel</string>
     <string name="common_button_change">Change</string>
-    <string name="common_button_disable">Disable</string>
+    <string name="common_button_remove">Remove</string>
     <string name="common_button_enable">Enable</string>
     <string name="common_button_preview">Preview</string>
     <string name="common_button_use_system_default">Use System Default</string>
@@ -23,6 +23,8 @@
     <string name="common_title_passphrase">Passphrase</string>
     <string name="common_title_show">Show</string>
     <string name="common_passphrase_unlock_description">Choose a memorable passphrase to encrypt your accounts. You\'ll use it to unlock the app whenever Biometric Unlock isn\'t available. Your passphrase may include words, spaces and symbols.</string>
+    <string name="change_passphrase_remove_title">Remove Passphrase?</string>
+    <string name="change_passphrase_remove_body">Are you sure you want to remove your passphrase? You\'ll no longer need to enter it to unlock the app, and your accounts will no longer be encrypted.</string>
     <string name="element_strength_indicator_good">Good</string>
     <string name="element_strength_indicator_strong">Strong</string>
     <string name="element_strength_indicator_very_weak">Very weak</string>

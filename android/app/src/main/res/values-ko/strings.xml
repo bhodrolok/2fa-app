@@ -4,7 +4,7 @@
     <string name="common_title_show">보이기</string>
     <string name="element_strength_indicator_good">좋음</string>
     <string name="screen_edit_section_parameters_secret">시크릿 키</string>
-    <string name="common_button_disable">비활성화</string>
+    <string name="common_button_remove">비활성화</string>
     <string name="screen_edit_section_parameters">패러미터</string>
     <string name="screen_edit_title">편집</string>
     <string name="screen_edit_section_details">세부 정보</string>

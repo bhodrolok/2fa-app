@@ -42,8 +42,8 @@ import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.rustInterface
 import app.ninesevennine.twofactorauthenticator.ui.InterVariable
 import app.ninesevennine.twofactorauthenticator.ui.elements.ConfidentialTextBox
+import app.ninesevennine.twofactorauthenticator.ui.elements.HazardPrompt
 import app.ninesevennine.twofactorauthenticator.ui.elements.RoundedButton
-import app.ninesevennine.twofactorauthenticator.ui.elements.RoundedButtonClean
 import app.ninesevennine.twofactorauthenticator.ui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.ui.elements.StrengthIndicator
 import app.ninesevennine.twofactorauthenticator.ui.elements.spinnerText
@@ -58,11 +58,14 @@ object ChangePassphraseRoute
 
 @Composable
 fun ChangePassphrase(navController: NavController) {
+    val scope = rememberCoroutineScope()
+
     var passphrase by remember { mutableStateOf("") }
     var passphraseStrength by remember { mutableFloatStateOf(0f) }
     var confirmPassphrase by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
+
+    var showRemovePrompt by remember { mutableStateOf(false) }
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
@@ -190,26 +193,41 @@ fun ChangePassphrase(navController: NavController) {
             modifier = Modifier.widthIn(max = 512.dp).fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            RoundedButtonClean(
+            RoundedButton(
                 modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = bottomInset),
-                text = stringResource(R.string.common_button_disable)
+                text = stringResource(R.string.common_button_remove),
+                hazardColors = true
             ) {
-                if (isLoading) return@RoundedButtonClean
-
-                isLoading = true
-
-                scope.launch(Dispatchers.IO) {
-                    rustInterface.management_accounts_save("")
-
-                    KeyStoreAES.deleteBiometricKey()
-
-                    Signals.requiresAuthentication = false
-
-                    withContext(Dispatchers.Main) {
-                        navController.popBackStack()
-                    }
-                }
+                showRemovePrompt = true
             }
         }
     }
+
+    HazardPrompt(
+        visible = showRemovePrompt,
+        title = stringResource(R.string.change_passphrase_remove_title),
+        body = stringResource(R.string.change_passphrase_remove_body),
+        confirmText = stringResource(R.string.common_button_remove),
+        cancelText = stringResource(R.string.common_button_cancel),
+        onConfirm = {
+            if (isLoading) return@HazardPrompt
+
+            isLoading = true
+
+            scope.launch(Dispatchers.IO) {
+                rustInterface.management_accounts_save("")
+
+                KeyStoreAES.deleteBiometricKey()
+
+                Signals.requiresAuthentication = false
+
+                withContext(Dispatchers.Main) {
+                    navController.popBackStack()
+                }
+            }
+        },
+        onCancel = {
+            showRemovePrompt = false
+        }
+    )
 }

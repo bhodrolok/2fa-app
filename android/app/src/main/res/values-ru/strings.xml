@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="common_button_cancel">Отменить</string>
-    <string name="common_button_disable">Отключить</string>
+    <string name="common_button_remove">Отключить</string>
     <string name="common_button_enable">Включить</string>
     <string name="common_button_use_system_default">Как в системе</string>
     <string name="common_import_error_incorrect_passphrase">Неверная парольная фраза</string>
