@@ -44,7 +44,6 @@ import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -100,10 +99,8 @@ fun Main(navController: NavController) {
     val scope = rememberCoroutineScope()
 
     var query by remember { mutableStateOf("") }
-
-    val accounts = remember(query) {
-        mutableStateListOf(*rustInterface.features_main_search(query))
-    }
+    var accounts by remember { mutableStateOf(rustInterface.features_main_search(query).toList()) }
+    var showMainGreetingText by remember { mutableStateOf(accounts.isEmpty()) }
 
     val configuration = LocalConfiguration.current
     @SuppressLint("ConfigurationScreenWidthHeight")
@@ -119,35 +116,34 @@ fun Main(navController: NavController) {
         scrollThreshold = 144.dp,
         onMove = { from, to ->
             if (query.isEmpty()) {
-                accounts.add(to.index, accounts.removeAt(from.index))
+                accounts = accounts.toMutableList().apply { add(to.index, removeAt(from.index)) }
                 rustInterface.features_main_reorder(from.index.toLong(), to.index.toLong())
             }
         }
     )
 
-    LaunchedEffect(query) {
-        if (query.isNotBlank() && accounts.isNotEmpty()) {
-            lazyGridState.animateScrollToItem(0)
-        }
-    }
-
-    LaunchedEffect(Signals.checkHostages) {
-        if ((!Signals.requiresAuthentication || rustInterface.client_has_salt_and_key()) && Signals.checkHostages) {
+    LaunchedEffect(query, Signals.checkHostages) {
+        if (Signals.checkHostages && (rustInterface.client_has_salt_and_key() || !Signals.requiresAuthentication)) {
             withContext(Dispatchers.IO) {
                 rustInterface.management_import_hostages_into_accounts()
                 rustInterface.management_accounts_save()
             }
 
             query = ""
-
-            accounts.clear()
-            accounts.addAll(rustInterface.features_main_search(""))
+            accounts = rustInterface.features_main_search(query).toList()
 
             if (accounts.isNotEmpty()) {
                 lazyGridState.scrollToItem(accounts.lastIndex)
             }
 
             Signals.checkHostages = false
+        } else {
+            accounts = rustInterface.features_main_search(query).toList()
+            showMainGreetingText = query.isEmpty() && accounts.isEmpty()
+
+            if (query.isNotBlank() && accounts.isNotEmpty()) {
+                lazyGridState.animateScrollToItem(0)
+            }
         }
     }
 
@@ -243,7 +239,7 @@ fun Main(navController: NavController) {
         }
     }
 
-    if (query.isEmpty() && accounts.isEmpty()) {
+    if (showMainGreetingText) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
