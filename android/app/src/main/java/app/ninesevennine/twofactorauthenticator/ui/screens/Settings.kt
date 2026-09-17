@@ -242,6 +242,8 @@ fun Settings(navController: NavController) {
                     ) {
                         Config.isUsingFocusSearchOnLaunch = !Config.isUsingFocusSearchOnLaunch
                         Config.save(context)
+
+                        Signals.suppressFocusSearchOnLaunch = true
                     }
                 }
 
