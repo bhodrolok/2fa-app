@@ -1,0 +1,26 @@
+Changes since the 1.2-beta-1 release:
+
+- Added hazardous confirmation prompt when removing the app passphrase.
+
+- Fixed an issue where navigation animations blocked navigation after popping screen.
+- Fixed a brief flicker when searching, refreshing or adding accounts if there are no results.
+- Fixed "Focus Search on Launch" focusing when no launch happened.
+- Fixed the capitalization of "Biometric Unlock" in informational text.
+
+- Changed the `SelectIconPacks` delete button so it no longer use hazardous colors.
+- Renamed "Disable" to "Remove."
+
+- Updated Russian translations.
+- Updated Spanish translations.
+- Updated Chinese translations.
+- Updated Estonian translations, thanks to @jrtcdbrg.
+- Updated German translations, thanks to @barbiehunter.
+- Updated Korean translations, thanks to @lugged9922.
+- Updated Ukrainian translations.
+
+- Increment Rust `aegis` to `0.9.16`.
+
+Notes:
+
+- Translations require updating, which you can do [here](https://translate.codeberg.org/projects/979/2fa/).
+- This version has been uploaded to Accrescent and the Google Play Store beta branch.
