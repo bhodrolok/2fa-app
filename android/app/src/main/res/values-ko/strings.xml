@@ -4,7 +4,7 @@
     <string name="common_title_show">보이기</string>
     <string name="element_strength_indicator_good">좋음</string>
     <string name="screen_edit_section_parameters_secret">시크릿 키</string>
-    <string name="common_button_remove">비활성화</string>
+    <string name="common_button_remove">제거</string>
     <string name="screen_edit_section_parameters">패러미터</string>
     <string name="screen_edit_title">편집</string>
     <string name="screen_edit_section_details">세부 정보</string>
@@ -83,7 +83,7 @@
     <string name="common_button_change">변경</string>
     <string name="common_biometric_unlock_description">매번 패스프레이즈를 입력하는 대신 생체 인식으로 앱을 잠금 해제할 수 있습니다. 가끔씩 패스프레이즈를 입력해야 하며, 때로는 앱을 잠금 해제하는 유일한 방법으로 제시될 수도 있습니다.</string>
     <string name="common_title_change_passphrase">패스프레이즈 변경</string>
-    <string name="common_passphrase_unlock_description">앱을 잠금 해제할 패스프레이즈는 기억할 수 있는 것으로 선택하십시오. 단어, 공백 및 특수문자를 사용할 수 있습니다.</string>
+    <string name="common_passphrase_unlock_description">계정을 암호화할 기억하기 쉬운 패스프레이즈를 선택하십시오. 생체 인식 잠금 해제를 사용할 수 없을 때 이 기능으로 앱을 잠금 해제할 수 있습니다. 패스프레이즈에는 단어, 공백 및 특수문자가 포함될 수 있습니다.</string>
     <string name="screen_greeting_button_unlock">잠금 해제</string>
     <string name="common_title_create_passphrase">패스프레이즈 생성</string>
     <string name="screen_settings_support_translations_primary">번역</string>
@@ -101,4 +101,6 @@
     <string name="import_error_title_unsupported_version">지원하지 않는 버전</string>
     <string name="screen_settings_support_codeberg_primary">소스 코드</string>
     <string name="screen_settings_support_translations_secondary">2fa를 더 많은 언어로 번역하는 것을 도와주세요</string>
+    <string name="change_passphrase_remove_title">패스프레이즈를 제거하시겠습니까?</string>
+    <string name="change_passphrase_remove_body">패스프레이즈를 제거하시겠습니까? 앱을 잠금 해제할 때 더 이상 입력할 필요가 없어지며, 계정도 더 이상 암호화되지 않습니다.</string>
 </resources>

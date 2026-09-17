@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="common_button_cancel">取消</string>
-    <string name="common_button_remove">禁用</string>
+    <string name="common_button_remove">移除</string>
     <string name="common_button_enable">启用</string>
     <string name="common_button_use_system_default">使用系统默认设置</string>
     <string name="common_biometric_unlock_description">您可以使用生物识别技术解锁应用程序，而不是每次都输入密码短语。每隔一段时间，您都必须输入密码短语，有时这将是解锁应用程序的唯一方法。</string>
@@ -81,10 +81,10 @@
     </plurals>
     <string name="screen_settings_security_secure_clipboard">安全剪贴板</string>
     <string name="common_title_change_passphrase">更改密码短语</string>
-    <string name="common_passphrase_unlock_description">选择一个方便记忆的密码短语解锁此应用。您可以使用文字、空格和符号。</string>
+    <string name="common_passphrase_unlock_description">选择一个易于记忆的密码短语，用于加密您的账户。每当生物识别解锁不可用时，您将使用它来解锁应用。密码短语可以包含单词、空格和符号。</string>
     <string name="screen_greeting_button_unlock">解锁</string>
     <string name="common_button_change">改变</string>
-    <string name="common_title_create_passphrase">设置密码短语</string>
+    <string name="common_title_create_passphrase">创建密码短语</string>
     <string name="theme_option_pitch_black">漆黑</string>
     <string name="common_button_ok">确定</string>
     <string name="common_button_preview">预览</string>
@@ -101,4 +101,6 @@
     <string name="import_error_body_invalid_format">无法处理此文件。文件可能已损坏、不完整，或格式不受支持。</string>
     <string name="import_error_title_unsupported_version">版本不受支持</string>
     <string name="import_error_body_unsupported_version">无法处理此文件。此文件可能来自较新或过旧的版本。</string>
+    <string name="change_passphrase_remove_title">移除密码短语？</string>
+    <string name="change_passphrase_remove_body">您确定要移除密码短语吗？之后您将无需输入密码短语即可解锁应用，但您的账户也将不再被加密。</string>
 </resources>

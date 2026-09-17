@@ -93,8 +93,8 @@
     <string name="common_description_biometric_unlock_requires_passphrase">Le déverrouillage biométrique n\'est pas disponible sans mot de passe. Définissez-en un d\'abord pour l\'activer.</string>
     <string name="common_title_delete">Supprimer</string>
     <string name="common_title_default">Par défaut</string>
-    <string name="screen_edit_delete_title">Supprimer ce compte ?</string>
-    <string name="screen_edit_delete_body">Êtes-vous sûr de vouloir supprimer ce compte ? Cette action est irréversible.</string>
+    <string name="screen_edit_delete_title">Supprimer ce compte ?</string>
+    <string name="screen_edit_delete_body">Êtes-vous sûr de vouloir supprimer ce compte ? Cette action est irréversible.</string>
     <string name="screen_settings_security_lock_on_exit_secondary">Effacer les données sensibles de la mémoire à la fermeture</string>
     <string name="screen_settings_support_codeberg_primary">Code source</string>
     <string name="screen_settings_support_translations_primary">Traductions</string>

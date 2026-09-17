@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="common_button_cancel">Отменить</string>
-    <string name="common_button_remove">Отключить</string>
+    <string name="common_button_remove">Удалить</string>
     <string name="common_button_enable">Включить</string>
     <string name="common_button_use_system_default">Как в системе</string>
     <string name="common_import_error_incorrect_passphrase">Неверная парольная фраза</string>
@@ -86,7 +86,7 @@
     <string name="screen_select_icon_packs_installed">Установлено</string>
     <string name="common_button_change">Изменить</string>
     <string name="common_title_change_passphrase">Изменить парольную фразу</string>
-    <string name="common_passphrase_unlock_description">Выберите запоминающуюся парольную фразу, чтобы разблокировать приложение. Вы можете использовать слова, пробелы и символы.</string>
+    <string name="common_passphrase_unlock_description">Выберите запоминающуюся парольную фразу для шифрования ваших аккаунтов. Вы будете использовать её для разблокировки приложения в тех случаях, когда биометрическая разблокировка недоступна. Парольная фраза может содержать слова, пробелы и символы.</string>
     <string name="screen_greeting_button_unlock">Разблокировать</string>
     <string name="common_title_create_passphrase">Создать парольную фразу</string>
     <string name="common_button_ok">Окей</string>
@@ -104,4 +104,6 @@
     <string name="import_error_body_invalid_format">Не удалось обработать файл. Возможно, он повреждён, неполон или имеет неподдерживаемый формат.</string>
     <string name="import_error_title_unsupported_version">Неподдерживаемая версия</string>
     <string name="import_error_body_unsupported_version">Не удалось обработать файл. Возможно, он создан в более новой или более старой версии.</string>
+    <string name="change_passphrase_remove_title">Удалить парольную фразу?</string>
+    <string name="change_passphrase_remove_body">Вы уверены, что хотите удалить парольную фразу? Вам больше не нужно будет вводить её для разблокировки приложения, и ваши аккаунты больше не будут зашифрованы.</string>
 </resources>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="common_button_cancel">Скасувати</string>
-    <string name="common_button_remove">Вимкнути</string>
+    <string name="common_button_remove">Видалити</string>
     <string name="common_button_enable">Ввімкнути</string>
     <string name="common_button_use_system_default">Як у системі</string>
     <string name="common_description_biometric_unlock_unsupported">Біометричне розблокування може не підтримуватися на цьому пристрої. Переконайтеся, що у вас налаштовано біометрію в налаштуваннях пристрою.</string>
@@ -85,7 +85,7 @@
     <string name="screen_settings_security_block_intents">Блокувати запити</string>
     <string name="common_button_change">Змінити</string>
     <string name="common_title_change_passphrase">Змінити парольну фразу</string>
-    <string name="common_passphrase_unlock_description">Виберіть пам’ятну парольну фразу, щоб розблокувати додаток. Ви можете використовувати слова, пробіли та символи.</string>
+    <string name="common_passphrase_unlock_description">Виберіть запам\'ятовувану парольну фразу для шифрування ваших облікових записів. Ви використовуватимете її для розблокування додатка щоразу, коли біометричне розблокування недоступне. Парольна фраза може містити слова, пробіли та символи.</string>
     <string name="screen_greeting_button_unlock">Розблокувати</string>
     <string name="common_title_create_passphrase">Створити парольну фразу</string>
     <string name="common_biometric_unlock_description">Замість того, щоб кожного разу вводити парольну фразу, ви можете використовувати біометричні дані для розблокування додатка. Час від часу вам все ж доведеться вводити парольну фразу, і іноді це буде єдиним способом розблокувати додаток.</string>
@@ -104,4 +104,6 @@
     <string name="import_error_body_invalid_format">Нам не вдалося обробити цей файл. Схоже, він пошкоджений, неповний або не має підтримуваного формату.</string>
     <string name="import_error_title_unsupported_version">Непідтримувана версія</string>
     <string name="import_error_body_unsupported_version">Нам не вдалося обробити цей файл. Схоже, він з новішої або застарілої версії.</string>
+    <string name="change_passphrase_remove_title">Видалити парольну фразу?</string>
+    <string name="change_passphrase_remove_body">Ви впевнені, що хочете видалити парольну фразу? Вам більше не потрібно буде вводити її для розблокування додатка, і ваші облікові записи більше не будуть зашифровані.</string>
 </resources>

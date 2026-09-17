@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="common_button_remove">Deaktivieren</string>
+    <string name="common_button_remove">Entfernen</string>
     <string name="common_button_enable">Aktivieren</string>
     <string name="common_button_use_system_default">Systemstandard verwenden</string>
     <string name="common_biometric_unlock_description">Anstatt jedes Mal Ihr Passwort einzugeben, können Sie die App mithilfe biometrischer Daten entsperren. Von Zeit zu Zeit müssen Sie Ihr Passwort eingeben, und manchmal ist dies die einzige Möglichkeit, die App zu entsperren.</string>
@@ -84,7 +84,7 @@
     <string name="screen_settings_security_block_intents_secondary">Blockiere Aktionen von externen Apps</string>
     <string name="common_button_change">Ändern</string>
     <string name="common_title_change_passphrase">Passwort ändern</string>
-    <string name="common_passphrase_unlock_description">Wählen Sie ein einprägsames Passwort, um die App zu entsperren. Sie können Wörter, Leerzeichen und Symbole verwenden.</string>
+    <string name="common_passphrase_unlock_description">Wählen Sie eine einprägsame Passphrase, um Ihre Konten zu verschlüsseln. Sie verwenden diese, um die App zu entsperren, wenn die biometrische Entsperrung nicht verfügbar ist. Ihre Passphrase kann Wörter, Leerzeichen und Symbole enthalten.</string>
     <string name="screen_greeting_button_unlock">Entsperren</string>
     <string name="common_title_create_passphrase">Passwort festlegen</string>
     <string name="screen_settings_support_translations_primary">Übersetzungen</string>
@@ -97,9 +97,11 @@
     <string name="screen_edit_delete_body">Möchten Sie dieses Konto wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.</string>
     <string name="screen_settings_security_lock_on_exit_secondary">Vertrauliche Daten beim Beenden löschen</string>
     <string name="import_error_body_invalid_format">Diese Datei konnte nicht verarbeitet werden. Sie scheint beschädigt oder unvollständig zu sein oder ein nicht unterstütztes Format zu sein.</string>
-    <string name="common_description_biometric_unlock_requires_passphrase">Die biometrische Entsperrung ist ohne Passwort nicht verfügbar. Richten Sie zuerst eines ein, um sie zu aktivieren.</string>
+    <string name="common_description_biometric_unlock_requires_passphrase">Die biometrische Entsperrung ist ohne Passwort nicht verfügbar. Richten Sie zunächst ein Passwort ein, um diese Funktion zu aktivieren.</string>
     <string name="common_button_preview">Vorschau</string>
     <string name="import_error_title_unsupported_version">Nicht unterstützte Version</string>
     <string name="screen_settings_support_codeberg_primary">Quellcode</string>
     <string name="screen_settings_support_translations_secondary">Hilf uns dabei, 2fa in weitere Sprachen zu übersetzen</string>
+    <string name="change_passphrase_remove_title">Passwort entfernen?</string>
+    <string name="change_passphrase_remove_body">Möchten Sie Ihr Passwort wirklich entfernen? Sie müssen sie dann nicht mehr eingeben, um die App zu entsperren, aber Ihre Konten werden nicht mehr verschlüsselt.</string>
 </resources>

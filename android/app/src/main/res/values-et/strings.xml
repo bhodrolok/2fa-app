@@ -39,7 +39,7 @@
         <item quantity="one">Näidatavaid kasutajakontosid: %d</item>
         <item quantity="other">Näidatavaid kasutajakontosid: %d</item>
     </plurals>
-    <string name="common_button_remove">Lülita välja</string>
+    <string name="common_button_remove">Eemalda</string>
     <string name="common_button_enable">Lülita sisse</string>
     <string name="screen_edit_section_parameters_type">Tüüp</string>
     <string name="screen_edit_section_parameters_secret">Saladus</string>
@@ -84,7 +84,7 @@
     <string name="screen_main_greeting">Kasutajakonto lisamiseks klõpsa ikooni all nurgas. Lisaks võid seadistustest importida muudest kaksiautentimise rakendustest eksporditud kasutajakontosid.</string>
     <string name="common_button_change">Muuda</string>
     <string name="common_title_change_passphrase">Muuda salafraasi</string>
-    <string name="common_passphrase_unlock_description">Rakenduse lukustuse avamiseks valis hästi meeldejääv salafraas. Võid kasutada sõnu, numbreid, tühikuid ja erimärke.</string>
+    <string name="common_passphrase_unlock_description">Sinu kasutajakontode krüptimiseks vali hästi meeldejääv salafraas. Sa kasutad seda alati, kui biomeetriline lukustuse avamine pole võimalik. Võid salafraasis kasutada sõnu, numbreid, tühikuid ja erimärke.</string>
     <string name="screen_greeting_button_unlock">Ava lukustus</string>
     <string name="common_title_create_passphrase">Loo salafraas</string>
     <string name="common_button_ok">Sobib</string>
@@ -102,4 +102,6 @@
     <string name="import_error_body_unsupported_version">Selle faili töötlemine ei õnnestunud. See tundub olema kas uuemast või vanemast versioonist.</string>
     <string name="import_error_body_invalid_format">Selle faili töötlemine ei õnnestunud. Ta tundub olema kas vigane, poolik või mittetoetatud vormingus.</string>
     <string name="common_description_biometric_unlock_requires_passphrase">Biomeetriline lukustuse avamine pole saadaval, kui salafraas pole seadistatud. Esmalt palun seadista salafraas ja siis võta biomeetriline lukustuse avamine kasutusele.</string>
+    <string name="change_passphrase_remove_title">Kas eemaldad salafraasi?</string>
+    <string name="change_passphrase_remove_body">Kas oled kindel, et eemaldad oma salafraasi? Sel puhul sa enam ei vaja salafraasi rakenduse avamisel, aga vastavalt ka sinu kasutajakontode andmed pole enam krüptitud.</string>
 </resources>
