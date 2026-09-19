@@ -12,9 +12,16 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.mandatorySystemGestures
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -35,6 +42,8 @@ import app.ninesevennine.twofactorauthenticator.ui.screens.BiometricUnlock
 import app.ninesevennine.twofactorauthenticator.ui.screens.BiometricUnlockRoute
 import app.ninesevennine.twofactorauthenticator.ui.screens.ChangePassphrase
 import app.ninesevennine.twofactorauthenticator.ui.screens.ChangePassphraseRoute
+import app.ninesevennine.twofactorauthenticator.ui.screens.CreatePassphrase
+import app.ninesevennine.twofactorauthenticator.ui.screens.CreatePassphraseRoute
 import app.ninesevennine.twofactorauthenticator.ui.screens.Edit
 import app.ninesevennine.twofactorauthenticator.ui.screens.EditRoute
 import app.ninesevennine.twofactorauthenticator.ui.screens.Export
@@ -57,8 +66,6 @@ import app.ninesevennine.twofactorauthenticator.ui.screens.SelectOtpCardStyle
 import app.ninesevennine.twofactorauthenticator.ui.screens.SelectOtpCardStyleRoute
 import app.ninesevennine.twofactorauthenticator.ui.screens.SelectTheme
 import app.ninesevennine.twofactorauthenticator.ui.screens.SelectThemeRoute
-import app.ninesevennine.twofactorauthenticator.ui.screens.CreatePassphrase
-import app.ninesevennine.twofactorauthenticator.ui.screens.CreatePassphraseRoute
 import app.ninesevennine.twofactorauthenticator.ui.screens.Settings
 import app.ninesevennine.twofactorauthenticator.ui.screens.SettingsRoute
 import app.ninesevennine.twofactorauthenticator.utils.Config
@@ -160,6 +167,19 @@ class Main : FragmentActivity() {
                     composable<EditRoute> { Edit(navController) }
                     composable<AddCodeRoute> { AddCode(navController) }
                 }
+            }
+
+            // Fixes gesture navigation input leakage on One UI.
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .windowInsetsBottomHeight(WindowInsets.mandatorySystemGestures)
+                        .pointerInput(Unit) {}
+                )
             }
         }
     }
