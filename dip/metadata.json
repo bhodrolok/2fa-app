@@ -1,6 +1,6 @@
 {
     "name": "default",
-    "timestamp": 1789228906,
+    "timestamp": 1790017032,
     "icons": [
         {
             "issuer": ["addy.io"],
@@ -235,6 +235,12 @@
             "color": "ffcc00"
         },
         {
+            "issuer": ["infosec.exchange"],
+            "textured": "infosec_textured.svg",
+            "tinted": "infosec.svg",
+            "color": "eb141c"
+        },
+        {
             "issuer": ["instagram"],
             "textured": "instagram_textured.svg",
             "tinted": "instagram.svg",
@@ -353,6 +359,12 @@
             "textured": "netim_textured.svg",
             "tinted": "netim.svg",
             "color": "fe6e01"
+        },
+        {
+            "issuer": ["neverlose.cc"],
+            "textured": "neverlose_textured.svg",
+            "tinted": "neverlose.svg",
+            "color": "00cdff"
         },
         {
             "issuer": ["nextcloud", "nextcloud.com", "managed nextcloud"],
