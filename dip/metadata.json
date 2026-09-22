@@ -1,6 +1,6 @@
 {
     "name": "default",
-    "timestamp": 1790017032,
+    "timestamp": 1790070907,
     "icons": [
         {
             "issuer": ["addy.io"],
@@ -13,6 +13,12 @@
             "textured": "aimware_textured.svg",
             "tinted": "aimware.svg",
             "color": "d02f2f"
+        },
+        {
+            "issuer": ["aliasvault"],
+            "textured": "aliasvault_textured.svg",
+            "tinted": "aliasvault.svg",
+            "color": "e4ac1b"
         },
         {
             "issuer": ["amazon"],
