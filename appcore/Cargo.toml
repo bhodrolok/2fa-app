@@ -7,7 +7,7 @@ edition = "2024"
 crate-type = ["cdylib"]
 
 [dependencies]
-aegis = { version = "0.9.16", features = ["std", "pure-rust"] }
+aegis = { version = "0.9.19", features = ["std", "pure-rust"] }
 aes-gcm = { version = "0.11.1", features = ["zeroize"] }
 argon2 = { version = "0.6.0", features = ["zeroize"] }
 crypto-common = { version = "0.2.2", features = ["zeroize"] }
