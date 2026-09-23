@@ -1,6 +1,6 @@
 {
     "name": "default",
-    "timestamp": 1790070907,
+    "timestamp": 1790182811,
     "icons": [
         {
             "issuer": ["addy.io"],
@@ -289,6 +289,12 @@
             "color": "97f807"
         },
         {
+            "issuer": ["kraken"],
+            "textured": "kraken_textured.svg",
+            "tinted": "kraken.svg",
+            "color": "432ad5"
+        },
+        {
             "issuer": ["kucoin"],
             "textured": "kucoin_textured.svg",
             "tinted": "kucoin.svg",
@@ -334,7 +340,7 @@
             "issuer": ["mexc"],
             "textured": "mexc_textured.svg",
             "tinted": "mexc.svg",
-            "color": "0156fe"
+            "color": "0056ff"
         },
         {
             "issuer": ["microsoft"],
@@ -413,6 +419,12 @@
             "textured": "nvidia_textured.svg",
             "tinted": "nvidia.svg",
             "color": "a3ff00"
+        },
+        {
+            "issuer": ["okx"],
+            "textured": "okx_textured.svg",
+            "tinted": "okx.svg",
+            "color": "bcfe2d"
         },
         {
             "issuer": ["openai"],
