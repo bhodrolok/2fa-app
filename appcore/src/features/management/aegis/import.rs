@@ -2,7 +2,7 @@ use aes_gcm::{
     Aes256Gcm, Key, KeyInit,
     aead::{Aead, Nonce},
 };
-use zeroize::Zeroizing;
+use zeroize::{Zeroize, Zeroizing};
 
 use crate::{
     CLIENT,
@@ -162,7 +162,7 @@ pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impo
     }
 
     for entry in db.entries.iter() {
-        let secret = match data_encoding::BASE32_NOPAD.decode(entry.info.secret.as_bytes()) {
+        let mut secret = match data_encoding::BASE32_NOPAD.decode(entry.info.secret.as_bytes()) {
             Ok(s) => s,
             Err(_) => continue,
         };
@@ -174,7 +174,7 @@ pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impo
             _ => continue,
         };
 
-        let algorithm = match entry.info.algo.to_uppercase().as_str() {
+        let mut algorithm = match entry.info.algo.to_uppercase().as_str() {
             "SHA1" => Algorithm::SHA1,
             "SHA256" => Algorithm::SHA256,
             "SHA512" => Algorithm::SHA512,
@@ -186,21 +186,44 @@ pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impo
             None => continue,
         };
 
-        let period = entry.info.period.unwrap_or(30) as u64;
-        if period < 10 {
+        let mut issuer = entry.issuer.clone();
+        let name = if entry.name == issuer {
+            String::new()
+        } else {
+            entry.name.clone()
+        };
+
+        let mut period = entry.info.period.unwrap_or(30) as u64;
+        let mut digits = entry.info.digits;
+
+        if code_type == CodeType::TOTP && issuer.eq_ignore_ascii_case("Steam") {
+            issuer = "_Steam".to_string();
+        }
+
+        if code_type == CodeType::STEAM {
+            issuer = "Steam".to_string();
+            algorithm = Algorithm::SHA1;
+            period = 30;
+            digits = 5;
+        }
+
+        if secret.is_empty() || !(4..=10).contains(&digits) || period < 10 {
+            secret.zeroize();
             continue;
         }
 
-        let digits = match (code_type, entry.info.digits) {
-            (CodeType::STEAM, _) => 5,
-            (_, 4..=10) => entry.info.digits,
-            _ => continue,
-        };
-
         accounts.push(Account {
             id,
-            name: entry.name.clone(),
-            issuer: entry.issuer.clone(),
+            name,
+            color: {
+                let client = CLIENT.lock().unwrap();
+
+                match client.map.get(&issuer.to_lowercase()) {
+                    Some((_, color)) => *color,
+                    None => 0xFF808080,
+                }
+            },
+            issuer,
             note: entry.note.clone(),
             secret,
             code_type,
@@ -208,14 +231,6 @@ pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impo
             counter: entry.info.counter.unwrap_or(0),
             period: period,
             digits: digits,
-            color: {
-                let client = CLIENT.lock().unwrap();
-
-                match client.map.get(&entry.issuer.to_lowercase()) {
-                    Some((_, color)) => *color,
-                    None => 0xFF808080,
-                }
-            },
         });
     }
 
