@@ -30,7 +30,7 @@ androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 
-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version = "2.10.1"}
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version = "2.10.2"}
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version = "1.11.0" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version = "1.2.0" }
 androidx-biometric = { group = "androidx.biometric", name = "biometric", version = "1.1.0"}
