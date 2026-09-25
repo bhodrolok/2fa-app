@@ -413,7 +413,7 @@ fun Settings(navController: NavController) {
                         primaryText = stringResource(R.string.screen_settings_support_donate),
                         secondaryText = stringResource(R.string.screen_settings_support_donate_secondary)
                     ) {
-                        val intent = Intent(Intent.ACTION_VIEW, "https://979.st/2fa/faq/#in-what-ways-can-i-contribute-to-the-project".toUri())
+                        val intent = Intent(Intent.ACTION_VIEW, "https://ko-fi.com/ninesevennine".toUri())
                         context.startActivity(intent)
                     }
                 }
