@@ -1,11 +1,11 @@
 [versions]
 agp = "9.4.1"
-kotlin = "2.4.20"
+kotlin = "2.4.21"
 sdk = "37.0.0"
 ndk = "30.0.16248370"
 java = "25"
 rustup = "1.29.1"
-rustc = "1.98.1"
+rustc = "1.99.0"
 coreKtx = "1.19.1"
 lifecycleRuntimeKtx = "2.11.0"
 activityCompose = "1.13.0"
