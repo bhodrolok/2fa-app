@@ -142,6 +142,17 @@ fun SelectLanguage(navController: NavController) {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 RoundedRadioButton(
+                    painter = painterResource(R.drawable.flag_japan),
+                    text = LocaleOption.JAPANESE.displayName,
+                    enabled = Locale.currentEffectiveLocale(context) == LocaleOption.JAPANESE
+                ) {
+                    Locale.set(context, LocaleOption.JAPANESE)
+                    Config.save(context)
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                RoundedRadioButton(
                     painter = painterResource(R.drawable.flag_south_korea),
                     text = LocaleOption.KOREAN.displayName,
                     enabled = Locale.currentEffectiveLocale(context) == LocaleOption.KOREAN

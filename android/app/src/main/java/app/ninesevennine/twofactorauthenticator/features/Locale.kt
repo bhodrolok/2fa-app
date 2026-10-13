@@ -16,6 +16,7 @@ enum class LocaleOption(val tag: String, val displayName: String) {
     FRENCH("fr", "Français"),
     RUSSIAN("ru", "Русский"),
     GERMAN("de", "Deutsch"),
+    JAPANESE("ja", "日本語"),
     KOREAN("ko", "한국어"),
     UKRAINIAN("uk", "Українська"),
     DUTCH("nl", "Nederland"),
