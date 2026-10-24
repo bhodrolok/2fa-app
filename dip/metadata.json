@@ -1,6 +1,6 @@
 {
     "name": "default",
-    "timestamp": 1792833272,
+    "timestamp": 1792834171,
     "icons": [
         {
             "issuer": ["addy.io"],
@@ -67,6 +67,12 @@
             "textured": "binance_textured.svg",
             "tinted": "binance.svg",
             "color": "ffbb00"
+        },
+        {
+            "issuer": ["bitbank.cc", "bitbank.cc"],
+            "textured": "bitbank.cc_textured.svg",
+            "tinted": "bitbank.cc.svg",
+            "color": "36c9aa"
         },
         {
             "issuer": ["bitbucket"],
