@@ -1,6 +1,6 @@
 {
     "name": "default",
-    "timestamp": 1792834171,
+    "timestamp": 1793696267,
     "icons": [
         {
             "issuer": ["addy.io"],
@@ -667,6 +667,12 @@
             "textured": "weblate_textured.svg",
             "tinted": "weblate.svg",
             "color": "35caaa"
+        },
+        {
+            "issuer": ["windscribe"],
+            "textured": "windscribe_textured.svg",
+            "tinted": "windscribe.svg",
+            "color": "0069ff"
         },
         {
             "issuer": ["wise"],
