@@ -243,7 +243,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
         for entry in pack.icons {
             let file = if textured {
-                entry.textured
+                entry.textured.or(entry.tinted)
             } else {
                 entry.tinted
             }
