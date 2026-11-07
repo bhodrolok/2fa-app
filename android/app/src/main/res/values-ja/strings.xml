@@ -62,7 +62,7 @@
     <string name="screen_select_icon_packs_installed">インストール済み</string>
     <string name="screen_select_icon_packs_style">スタイル</string>
     <string name="screen_settings_management">管理</string>
-    <string name="screen_settings_management_export_to_aegis">Aegis 用にエクスポート</string>
+    <string name="screen_settings_management_export_to_aegis">Aegis へエクスポート</string>
     <string name="screen_settings_management_import_from_aegis">Aegis からインポート</string>
     <string name="screen_settings_appearance">見た目</string>
     <string name="screen_settings_appearance_card_style">カードの表示スタイル</string>
@@ -70,13 +70,13 @@
     <string name="screen_settings_appearance_language">言語</string>
     <string name="screen_settings_appearance_theme">テーマ</string>
     <string name="screen_settings_behavior">動作</string>
-    <string name="screen_settings_behavior_double_tap_to_copy_codes">ダブルタップでコードをコピーする</string>
-    <string name="screen_settings_behavior_focus_search_on_launch">起動時に検索欄へフォーカスする</string>
-    <string name="screen_settings_behavior_tap_to_reveal_codes">タップでコードを表示する</string>
+    <string name="screen_settings_behavior_double_tap_to_copy_codes">ダブルタップでコードをコピー</string>
+    <string name="screen_settings_behavior_focus_search_on_launch">起動時に検索欄へフォーカス</string>
+    <string name="screen_settings_behavior_tap_to_reveal_codes">タップでコードを表示</string>
     <string name="screen_settings_security">セキュリティ</string>
-    <string name="screen_settings_security_block_intents">インテントをブロックする</string>
+    <string name="screen_settings_security_block_intents">インテントをブロック</string>
     <string name="screen_settings_security_block_intents_secondary">外部のアプリによるアクションを無視します</string>
-    <string name="screen_settings_security_lock_on_exit">終了時にロックする</string>
+    <string name="screen_settings_security_lock_on_exit">終了時にロック</string>
     <string name="screen_settings_security_lock_on_exit_secondary">終了時に機密の含まれるメモリーを消去します</string>
     <string name="screen_settings_security_screen_security">画面のセキュリティ</string>
     <string name="screen_settings_security_screen_security_secondary">スクリーンショットと画面の録画をブロックします</string>
@@ -90,7 +90,7 @@
     <string name="screen_settings_support_donate">寄付</string>
     <string name="screen_settings_support_donate_secondary">979 にはあなたの支援が必要です</string>
     <string name="screen_settings_title">設定</string>
-    <string name="common_title_create_passphrase">パスフレーズを作成する</string>
+    <string name="common_title_create_passphrase">パスフレーズの作成</string>
     <string name="theme_option_dark">ダーク</string>
     <string name="theme_option_light">ライト</string>
     <string name="theme_option_pitch_black">黒</string>
