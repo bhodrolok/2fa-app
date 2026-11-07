@@ -30,6 +30,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -59,7 +61,8 @@ fun ConfidentialTextBox(
     value: String = "",
     error: Boolean = false,
     onValueChange: (String) -> Unit = {},
-    onDone: () -> Unit = {}
+    onDone: () -> Unit = {},
+    focusRequester: FocusRequester = remember { FocusRequester() },
 ) {
     val haptic = LocalHapticFeedback.current
     val view = LocalView.current
@@ -166,7 +169,7 @@ fun ConfidentialTextBox(
                 }
             },
             cursorBrush = SolidColor(Theme.colors.primary),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().focusRequester(focusRequester)
         )
     }
 }

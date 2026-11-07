@@ -30,6 +30,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -72,6 +73,8 @@ fun Greeting(navController: NavController) {
     var importResult by remember { mutableIntStateOf(0) }
     var showImportResultPrompt by remember { mutableStateOf(false) }
 
+    val focusRequester = remember { FocusRequester() }
+
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
 
@@ -82,9 +85,13 @@ fun Greeting(navController: NavController) {
     LaunchedEffect(Signals.authenticate) {
         if (!KeyStoreAES.isBiometricAvailable() || !KeyStoreAES.hasBiometricKey()) {
             fallbackToPassphrase = true
+            focusRequester.requestFocus()
             return@LaunchedEffect
         }
 
+        // note - truebreaker; if we want to focus the passphrase field after biometric
+        //                     dismissal we have to wait otherwise it won't focus. for
+        //                     now we will only focus if biometrics are disabled.
         if (KeyStoreAES.loadBiometricKey() && KeyStoreAES.isBiometricKeyUsable()) {
             KeyStoreAES.loadBiometricKey(
                 promptTitle = promptTitle,
@@ -222,7 +229,8 @@ fun Greeting(navController: NavController) {
 
                             importResult = ImportResult.SUCCESS.value // Reset
                         },
-                        onDone = performPassphraseUnlock
+                        onDone = performPassphraseUnlock,
+                        focusRequester = focusRequester
                     )
 
                     AnimatedVisibility(importResult == ImportResult.INCORRECT_PASSPHRASE.value) {
