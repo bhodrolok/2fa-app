@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.os.ConfigurationCompat
+import java.util.Locale
 
 enum class LocaleOption(val tag: String, val displayName: String) {
     SYSTEM("", "Use System Default"),
@@ -23,8 +24,16 @@ enum class LocaleOption(val tag: String, val displayName: String) {
     ESTONIAN("et", "Eesti");
 
     companion object {
-        fun fromLanguage(language: String): LocaleOption {
-            return entries.firstOrNull { it.tag == language } ?: SYSTEM
+        fun fromLanguage(tag: String): LocaleOption {
+            val wanted = Locale.forLanguageTag(tag)
+            val options = entries.filter { it != SYSTEM }
+
+            return options.firstOrNull {
+                val option = Locale.forLanguageTag(it.tag)
+                option.language == wanted.language && option.country == wanted.country
+            } ?: options.firstOrNull {
+                Locale.forLanguageTag(it.tag).language == wanted.language
+            } ?: SYSTEM
         }
     }
 }
@@ -42,34 +51,26 @@ object Locale {
     // doesn't update rtl, users can live with the black flickering.
     fun set(context: Context, value: LocaleOption) {
         _localeOption = value
-        val localeManager = getLocaleManager(context)
 
-        when (value) {
+        val tag = when (value) {
             LocaleOption.SYSTEM -> {
                 val deviceLocales = LocaleList.getDefault()
-                
-                for (i in 1 until deviceLocales.size()) {
-                    val deviceLang = deviceLocales[i].language
-                    val match = LocaleOption.fromLanguage(deviceLang)
-
-                    if (match != LocaleOption.SYSTEM) {
-                        localeManager.applicationLocales = LocaleList.forLanguageTags(match.tag)
-                        return
-                    }
-                }
-                localeManager.applicationLocales = LocaleList.forLanguageTags(LocaleOption.ENGLISH.tag)
+                (1 until deviceLocales.size())
+                    .map { LocaleOption.fromLanguage(deviceLocales[it].toLanguageTag()) }
+                    .firstOrNull { it != LocaleOption.SYSTEM }
+                    ?.tag
+                    ?: LocaleOption.ENGLISH.tag
             }
-
-            else -> {
-                localeManager.applicationLocales = LocaleList.forLanguageTags(value.tag)
-            }
+            else -> value.tag
         }
+
+        getLocaleManager(context).applicationLocales = LocaleList.forLanguageTags(tag)
     }
 
     fun currentEffectiveLocale(context: Context): LocaleOption {
         val activeLocale = ConfigurationCompat.getLocales(context.resources.configuration).get(0)
             ?: return LocaleOption.ENGLISH
 
-        return LocaleOption.fromLanguage(activeLocale.language)
+        return LocaleOption.fromLanguage(activeLocale.toLanguageTag())
     }
 }
