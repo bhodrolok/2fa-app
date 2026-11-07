@@ -11,17 +11,19 @@ import java.util.Locale
 
 enum class LocaleOption(val tag: String, val displayName: String) {
     SYSTEM("", "Use System Default"),
-    ENGLISH("en", "English International"),
-    CHINESE("zh", "中文"),
-    SPANISH("es", "Español"),
+    CHINESE_SIMPLIFIED("zh-CN", "简体中文"),
+    CHINESE_TRADITIONAL("zh-TW", "繁體中文"),
+    DUTCH("nl", "Nederlands"),
+    ENGLISH("en", "English (United States)"),
+    ESTONIAN("et", "Eesti"),
     FRENCH("fr", "Français"),
-    RUSSIAN("ru", "Русский"),
     GERMAN("de", "Deutsch"),
     JAPANESE("ja", "日本語"),
     KOREAN("ko", "한국어"),
-    UKRAINIAN("uk", "Українська"),
-    DUTCH("nl", "Nederland"),
-    ESTONIAN("et", "Eesti");
+    RUSSIAN("ru", "Русский"),
+    SPANISH("es", "Español"),
+    TAMAZIGHT("tzm", "Tamaziɣt"),
+    UKRAINIAN("uk", "Українська");
 
     companion object {
         fun fromLanguage(tag: String): LocaleOption {
