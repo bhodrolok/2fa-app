@@ -126,14 +126,15 @@ fun OtpCardNormal(
 
     val bitmapSizePx = with(LocalDensity.current) { 52.dp.roundToPx() }
 
-    val bitmap = remember(account.issuer, bitmapSizePx) {
-        rustInterface.features_icons_map_bitmap_get(
+    val icon = remember(account.issuer, bitmapSizePx) {
+        rustInterface.features_icons_map_icon_get(
             issuer = account.issuer,
             size = bitmapSizePx
-        )?.asImageBitmap()
+        )
     }
 
-    val isUsingTexturedIcons = Config.isUsingTexturedIcons
+    val bitmap = remember(icon) { icon?.bitmap?.asImageBitmap() }
+    val isIconTextured = icon?.textured == true
 
     val fallbackInitial = remember(account.issuer, account.name) {
         when {
@@ -231,7 +232,7 @@ fun OtpCardNormal(
                     Box(contentAlignment = Alignment.Center) {
                         if (bitmap != null) {
                             Canvas(Modifier.size(52.dp)) {
-                                if (isUsingTexturedIcons) {
+                                if (isIconTextured) {
                                     drawImage(image = bitmap)
                                 } else {
                                     drawImage(

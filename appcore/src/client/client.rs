@@ -14,12 +14,13 @@ pub struct Client {
     pub accounts: Vec<Account>,
     pub hostages: Vec<Account>,
 
-    // Icons
+    // icons
     pub slot: u32,
     pub name: String,
     pub timestamp: u64,
-    // issuer, (textured/tinted, color)
-    pub map: HashMap<String, (String, u32)>,
+    // key: issuer
+    // value: (file, is_textured, color)
+    pub map: HashMap<String, (String, bool, u32)>,
 }
 
 impl Default for Client {

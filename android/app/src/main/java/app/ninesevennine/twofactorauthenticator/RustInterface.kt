@@ -15,7 +15,7 @@ class RustInterface {
     external fun features_icons_slot_get(): Int
     external fun features_icons_name_get(): String
     external fun features_icons_timestamp_get(): Long
-    external fun features_icons_map_bitmap_get(issuer: String, size: Int): Bitmap?
+    external fun features_icons_map_icon_get(issuer: String, size: Int): IconBitmap?
     external fun features_icons_map_color_get(issuer: String): Int
     external fun features_icons_load(skipAndClearMap: Boolean, textured: Boolean): Long
 
@@ -106,4 +106,9 @@ data class AccountShort(
     val counter: Long,
     val period: Long,
     val color: Int
+)
+
+data class IconBitmap(
+    val bitmap: Bitmap,
+    val textured: Boolean
 )

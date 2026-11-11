@@ -88,7 +88,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_features_1icons_1map_1bitmap_1get(
+pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterface_features_1icons_1map_1icon_1get(
     mut unowned_env: EnvUnowned,
     _class: JClass,
     issuer: JString,
@@ -101,17 +101,22 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
             return Ok(null);
         }
 
-        let path = {
+        let (path, textured) = {
             let issuer = issuer.to_string().to_lowercase();
             let client = CLIENT.lock().unwrap();
 
-            let Some((file, _)) = client.map.get(&issuer).filter(|(file, _)| !file.is_empty())
+            let Some((file, textured, _)) = client
+                .map
+                .get(&issuer)
+                .filter(|(file, _, _)| !file.is_empty())
             else {
                 return Ok(null);
             };
 
-            PathBuf::from(&client.application_directory)
-                .join(format!("no_backup/icons/{}/assets/{}", client.slot, file))
+            let path = PathBuf::from(&client.application_directory)
+                .join(format!("no_backup/icons/{}/assets/{}", client.slot, file));
+
+            (path, *textured)
         };
 
         let Ok(data) = read(&path) else {
@@ -178,7 +183,15 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
             .l()
             .unwrap();
 
-        Ok(bitmap.into_raw())
+        let icon = env
+            .new_object(
+                jni::jni_str!("app/ninesevennine/twofactorauthenticator/IconBitmap"),
+                jni::jni_sig!("(Landroid/graphics/Bitmap;Z)V"),
+                &[JValue::Object(&bitmap), JValue::Bool(textured)],
+            )
+            .unwrap();
+
+        Ok(icon.into_raw())
     });
 
     outcome.resolve::<ThrowRuntimeExAndDefault>()
@@ -196,7 +209,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let client = CLIENT.lock().unwrap();
 
         Ok(match client.map.get(&issuer) {
-            Some((_, color)) => *color as jint,
+            Some((_, _, color)) => *color as jint,
             None => 0,
         })
     });
@@ -242,17 +255,16 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let mut map = HashMap::with_capacity(pack.icons.len());
 
         for entry in pack.icons {
-            let file = if textured {
-                entry.textured.or(entry.tinted)
-            } else {
-                entry.tinted
-            }
-            .unwrap_or_default();
+            let (file, is_textured) = match (textured, entry.textured, entry.tinted) {
+                (true, Some(file), _) => (file, true),
+                (_, _, Some(file)) => (file, false),
+                _ => (String::new(), false),
+            };
 
             let color = u32::from_str_radix(&entry.color, 16).unwrap_or(0xFF808080);
 
             for issuer in &entry.issuer {
-                map.insert(issuer.to_lowercase(), (file.clone(), color));
+                map.insert(issuer.to_lowercase(), (file.clone(), is_textured, color));
             }
         }
 

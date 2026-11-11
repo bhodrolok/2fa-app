@@ -219,7 +219,7 @@ pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impo
                 let client = CLIENT.lock().unwrap();
 
                 match client.map.get(&issuer.to_lowercase()) {
-                    Some((_, color)) => *color,
+                    Some((_, _, color)) => *color,
                     None => 0xFF808080,
                 }
             },

@@ -21,7 +21,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
             let mut client = CLIENT.lock().unwrap();
 
             account.color = match client.map.get(&account.issuer.to_lowercase()) {
-                Some((_, color)) => *color,
+                Some((_, _, color)) => *color,
                 None => 0xFF808080,
             };
 
@@ -61,7 +61,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let mut client = CLIENT.lock().unwrap();
 
         account.color = match client.map.get(&account.issuer.to_lowercase()) {
-            Some((_, color)) => *color,
+            Some((_, _, color)) => *color,
             None => 0xFF808080,
         };
 
@@ -104,7 +104,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
                     let mut client = CLIENT.lock().unwrap();
 
                     account.color = match client.map.get(&account.issuer.to_lowercase()) {
-                        Some((_, color)) => *color,
+                        Some((_, _, color)) => *color,
                         None => 0xFF808080,
                     };
 
