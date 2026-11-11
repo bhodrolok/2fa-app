@@ -1,6 +1,6 @@
 {
     "name": "default",
-    "timestamp": 1793696267,
+    "timestamp": 1794412619,
     "icons": [
         {
             "issuer": ["addy.io"],
@@ -10,43 +10,36 @@
         },
         {
             "issuer": ["aimware", "aimware.net"],
-            "textured": "aimware_textured.svg",
             "tinted": "aimware.svg",
             "color": "d02f2f"
         },
         {
             "issuer": ["aliasvault"],
-            "textured": "aliasvault_textured.svg",
             "tinted": "aliasvault.svg",
             "color": "e4ac1b"
         },
         {
             "issuer": ["amazon"],
-            "textured": "amazon_textured.svg",
             "tinted": "amazon.svg",
             "color": "ff9900"
         },
         {
             "issuer": ["account.arena.net", "arena.net"],
-            "textured": "arena.net_textured.svg",
             "tinted": "arena.net.svg",
             "color": "e0251f"
         },
         {
             "issuer": ["atlassian"],
-            "textured": "atlassian_textured.svg",
             "tinted": "atlassian.svg",
             "color": "196de6"
         },
         {
             "issuer": ["atomic mail"],
-            "textured": "atomicmail_textured.svg",
             "tinted": "atomicmail.svg",
             "color": "24db57"
         },
         {
             "issuer": ["amazon web services"],
-            "textured": "aws_textured.svg",
             "tinted": "aws.svg",
             "color": "ff9900"
         },
@@ -58,13 +51,11 @@
         },
         {
             "issuer": ["battle.net"],
-            "textured": "battlenet_textured.svg",
             "tinted": "battlenet.svg",
             "color": "0084ff"
         },
         {
             "issuer": ["binance", "binance.com"],
-            "textured": "binance_textured.svg",
             "tinted": "binance.svg",
             "color": "ffbb00"
         },
@@ -82,13 +73,11 @@
         },
         {
             "issuer": ["bitwarden"],
-            "textured": "bitwarden_textured.svg",
             "tinted": "bitwarden.svg",
             "color": "1762e8"
         },
         {
             "issuer": ["blizzard"],
-            "textured": "blizzard_textured.svg",
             "tinted": "blizzard.svg",
             "color": "009dff"
         },
@@ -106,13 +95,11 @@
         },
         {
             "issuer": ["cherry servers", "cherryservers.com"],
-            "textured": "cherry_servers_textured.svg",
             "tinted": "cherry_servers.svg",
             "color": "eb1414"
         },
         {
             "issuer": ["claude"],
-            "textured": "claude_textured.svg",
             "tinted": "claude.svg",
             "color": "ff9d00"
         },
@@ -124,7 +111,6 @@
         },
         {
             "issuer": ["codeberg", "codeberg.org (codeberg.org)"],
-            "textured": "codeberg_textured.svg",
             "tinted": "codeberg.svg",
             "color": "238ddc"
         },
@@ -136,7 +122,6 @@
         },
         {
             "issuer": ["credly"],
-            "textured": "credly_textured.svg",
             "tinted": "credly.svg",
             "color": "ff6a00"
         },
@@ -148,25 +133,21 @@
         },
         {
             "issuer": ["digikey"],
-            "textured": "digikey_textured.svg",
             "tinted": "digikey.svg",
             "color": "ff2100"
         },
         {
             "issuer": ["digitalocean"],
-            "textured": "digitalocean_textured.svg",
             "tinted": "digitalocean.svg",
             "color": "0080ff"
         },
         {
             "issuer": ["discord"],
-            "textured": "discord_textured.svg",
             "tinted": "discord.svg",
             "color": "4c55b3"
         },
         {
             "issuer": ["electronic arts"],
-            "textured": "ea_textured.svg",
             "tinted": "ea.svg",
             "color": "0a46f5"
         },
@@ -178,19 +159,16 @@
         },
         {
             "issuer": ["epic games"],
-            "textured": "epic_games_textured.svg",
             "tinted": "epic_games.svg",
             "color": "827d80"
         },
         {
             "issuer": ["facebook"],
-            "textured": "facebook_textured.svg",
             "tinted": "facebook.svg",
             "color": "0866ff"
         },
         {
             "issuer": ["faceit"],
-            "textured": "faceit_textured.svg",
             "tinted": "faceit.svg",
             "color": "ff5500"
         },
@@ -213,13 +191,11 @@
         },
         {
             "issuer": ["godaddy"],
-            "textured": "godaddy_textured.svg",
             "tinted": "godaddy.svg",
             "color": "00fcff"
         },
         {
             "issuer": ["gog", "gog.com"],
-            "textured": "gog_textured.svg",
             "tinted": "gog.svg",
             "color": "b644bb"
         },
@@ -254,7 +230,6 @@
         },
         {
             "issuer": ["infosec.exchange"],
-            "textured": "infosec_textured.svg",
             "tinted": "infosec.svg",
             "color": "eb141c"
         },
@@ -266,13 +241,11 @@
         },
         {
             "issuer": ["ionos"],
-            "textured": "ionos_textured.svg",
             "tinted": "ionos.svg",
             "color": "5378ac"
         },
         {
             "issuer": ["ivpn"],
-            "textured": "ivpn_textured.svg",
             "tinted": "ivpn.svg",
             "color": "ff0000"
         },
@@ -284,7 +257,6 @@
         },
         {
             "issuer": ["kick", "kick.com"],
-            "textured": "kick_textured.svg",
             "tinted": "kick.svg",
             "color": "44fc03"
         },
@@ -296,19 +268,16 @@
         },
         {
             "issuer": ["koofr"],
-            "textured": "koofr_textured.svg",
             "tinted": "koofr.svg",
             "color": "97f807"
         },
         {
             "issuer": ["kraken"],
-            "textured": "kraken_textured.svg",
             "tinted": "kraken.svg",
             "color": "432ad5"
         },
         {
             "issuer": ["kucoin"],
-            "textured": "kucoin_textured.svg",
             "tinted": "kucoin.svg",
             "color": "00ffb1"
         },
@@ -326,13 +295,11 @@
         },
         {
             "issuer": ["loops"],
-            "textured": "loops_textured.svg",
             "tinted": "loops.svg",
             "color": "ffe500"
         },
         {
             "issuer": ["mailbox.org"],
-            "textured": "mailbox.org_textured.svg",
             "tinted": "mailbox.org.svg",
             "color": "8fde21"
         },
@@ -344,13 +311,11 @@
         },
         {
             "issuer": ["meta"],
-            "textured": "meta_textured.svg",
             "tinted": "meta.svg",
             "color": "056bfa"
         },
         {
             "issuer": ["mexc"],
-            "textured": "mexc_textured.svg",
             "tinted": "mexc.svg",
             "color": "0056ff"
         },
@@ -368,7 +333,6 @@
         },
         {
             "issuer": ["mozilla", "firefox"],
-            "textured": "mozilla_textured.svg",
             "tinted": "mozilla.svg",
             "color": "00ff3a"
         },
@@ -380,25 +344,21 @@
         },
         {
             "issuer": ["netim"],
-            "textured": "netim_textured.svg",
             "tinted": "netim.svg",
             "color": "fe6e01"
         },
         {
             "issuer": ["neverlose.cc"],
-            "textured": "neverlose_textured.svg",
             "tinted": "neverlose.svg",
             "color": "00cdff"
         },
         {
             "issuer": ["nextcloud", "nextcloud.com", "managed nextcloud"],
-            "textured": "nextcloud_textured.svg",
             "tinted": "nextcloud.svg",
             "color": "00a5ff"
         },
         {
             "issuer": ["nextdns"],
-            "textured": "nextdns_textured.svg",
             "tinted": "nextdns.svg",
             "color": "007eff"
         },
@@ -410,7 +370,6 @@
         },
         {
             "issuer": ["nitrado"],
-            "textured": "nitrado_textured.svg",
             "tinted": "nitrado.svg",
             "color": "ffc800"
         },
@@ -428,13 +387,11 @@
         },
         {
             "issuer": ["nvidia"],
-            "textured": "nvidia_textured.svg",
             "tinted": "nvidia.svg",
             "color": "a3ff00"
         },
         {
             "issuer": ["okx"],
-            "textured": "okx_textured.svg",
             "tinted": "okx.svg",
             "color": "bcfe2d"
         },
@@ -445,7 +402,6 @@
         },
         {
             "issuer": ["patreon"],
-            "textured": "patreon_textured.svg",
             "tinted": "patreon.svg",
             "color": "f62509"
         },
@@ -463,7 +419,6 @@
         },
         {
             "issuer": ["porkbun"],
-            "textured": "porkbun_textured.svg",
             "tinted": "porkbun.svg",
             "color": "c63978"
         },
@@ -505,13 +460,11 @@
         },
         {
             "issuer": ["riot games"],
-            "textured": "riotgames_textured.svg",
             "tinted": "riotgames.svg",
             "color": "d02f33"
         },
         {
             "issuer": ["rockstar games"],
-            "textured": "rockstar_games_textured.svg",
             "tinted": "rockstar_games.svg",
             "color": "ff9700"
         },
@@ -529,7 +482,6 @@
         },
         {
             "issuer": ["simplelogin"],
-            "textured": "simplelogin_textured.svg",
             "tinted": "simplelogin.svg",
             "color": "eb146c"
         },
@@ -547,7 +499,6 @@
         },
         {
             "issuer": ["stalwart mail"],
-            "textured": "stalwartmail_textured.svg",
             "tinted": "stalwartmail.svg",
             "color": "da254e"
         },
@@ -559,19 +510,16 @@
         },
         {
             "issuer": ["stoat"],
-            "textured": "stoat_textured.svg",
             "tinted": "stoat.svg",
             "color": "725ba4"
         },
         {
             "issuer": ["stripe"],
-            "textured": "stripe_textured.svg",
             "tinted": "stripe.svg",
             "color": "6151ae"
         },
         {
             "issuer": ["teamspeak", "myteamspeak"],
-            "textured": "teamspeak_textured.svg",
             "tinted": "teamspeak.svg",
             "color": "298dd6"
         },
@@ -589,7 +537,6 @@
         },
         {
             "issuer": ["torguard"],
-            "textured": "torguard_textured.svg",
             "tinted": "torguard.svg",
             "color": "00ff41"
         },
@@ -601,19 +548,16 @@
         },
         {
             "issuer": ["tryhackme"],
-            "textured": "tryhackme_textured.svg",
             "tinted": "tryhackme.svg",
             "color": "9be817"
         },
         {
             "issuer": ["tuta", "tutanota", "tuta mail"],
-            "textured": "tuta_textured.svg",
             "tinted": "tuta.svg",
             "color": "ce3131"
         },
         {
             "issuer": ["twitch"],
-            "textured": "twitch_textured.svg",
             "tinted": "twitch.svg",
             "color": "6700ff"
         },
@@ -624,13 +568,11 @@
         },
         {
             "issuer": ["ubisoft"],
-            "textured": "ubisoft_textured.svg",
             "tinted": "ubisoft.svg",
             "color": "0072ff"
         },
         {
             "issuer": ["ubuntu one"],
-            "textured": "ubuntu_one_textured.svg",
             "tinted": "ubuntu_one.svg",
             "color": "e84d17"
         },
@@ -641,13 +583,11 @@
         },
         {
             "issuer": ["unstoppabledomains"],
-            "textured": "unstoppabledomains.svg",
             "tinted": "unstoppabledomains.svg",
             "color": "005cff"
         },
         {
             "issuer": ["uphold"],
-            "textured": "uphold_textured.svg",
             "tinted": "uphold.svg",
             "color": "11f708"
         },
@@ -676,7 +616,6 @@
         },
         {
             "issuer": ["wise"],
-            "textured": "wise_textured.svg",
             "tinted": "wise.svg",
             "color": "6cdc23"
         },
@@ -697,13 +636,11 @@
         },
         {
             "issuer": ["zerossl"],
-            "textured": "zerossl_textured.svg",
             "tinted": "zerossl.svg",
             "color": "3159ce"
         },
         {
             "issuer": ["zoom"],
-            "textured": "zoom_textured.svg",
             "tinted": "zoom.svg",
             "color": "2d8cff"
         }
