@@ -403,7 +403,7 @@ fun Settings(navController: NavController) {
                         primaryText = stringResource(R.string.screen_settings_support_translations_primary),
                         secondaryText = stringResource(R.string.screen_settings_support_translations_secondary)
                     ) {
-                        val intent = Intent(Intent.ACTION_VIEW, "https://translate.codeberg.org/projects/979/2fa/".toUri())
+                        val intent = Intent(Intent.ACTION_VIEW, "https://979.st/translate".toUri())
                         context.startActivity(intent)
                     }
 
