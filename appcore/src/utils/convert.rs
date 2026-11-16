@@ -1,15 +1,8 @@
 pub fn uuid_to_u64(uuid: &str) -> Option<u64> {
-    if uuid.len() < 36 {
-        return None;
-    }
+    let high = u64::from_str_radix(uuid.get(0..8)?, 16).ok()?;
+    let low = u64::from_str_radix(uuid.get(28..36)?, 16).ok()?;
 
-    match (
-        u64::from_str_radix(&uuid[0..8], 16),
-        u64::from_str_radix(&uuid[28..36], 16),
-    ) {
-        (Ok(high), Ok(low)) => Some((high << 32) | low),
-        _ => None,
-    }
+    Some((high << 32) | low)
 }
 
 pub fn u64_to_uuid(id: u64) -> String {
