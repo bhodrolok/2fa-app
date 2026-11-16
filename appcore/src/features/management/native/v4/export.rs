@@ -78,8 +78,10 @@ pub fn export_encrypted(
     let mut derived = Zeroizing::new([0u8; DERIVED_LEN]);
     hk.expand(OKM, derived.as_mut_slice()).unwrap();
 
-    let key: [u8; AEGIS256_KEY_LEN] = derived[..AEGIS256_KEY_LEN].try_into().unwrap();
-    let nonce: [u8; AEGIS256_NONCE_LEN] = derived[AEGIS256_KEY_LEN..].try_into().unwrap();
+    let key =
+        Zeroizing::new(<[u8; AEGIS256_KEY_LEN]>::try_from(&derived[..AEGIS256_KEY_LEN]).unwrap());
+    let nonce =
+        Zeroizing::new(<[u8; AEGIS256_NONCE_LEN]>::try_from(&derived[AEGIS256_KEY_LEN..]).unwrap());
 
     let salt = data_encoding::BASE64.encode(salt);
     let hash = data_encoding::BASE64.encode(&hash);

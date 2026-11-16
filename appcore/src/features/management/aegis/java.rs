@@ -48,7 +48,7 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let mut accounts: Vec<Account> = Vec::new();
 
         let bytes = Zeroizing::new(env.convert_byte_array(&bytes).unwrap());
-        let passphrase = passphrase.to_string();
+        let passphrase = Zeroizing::new(passphrase.to_string());
 
         let json = Zeroizing::new(match std::str::from_utf8(&bytes) {
             Ok(s) => s.to_string(),

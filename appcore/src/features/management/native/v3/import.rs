@@ -90,15 +90,21 @@ pub fn import_encrypted(
         _ => return ImportResult::InvalidFormat,
     };
 
-    let (key, nonce): ([u8; AEGIS256_KEY_LEN], [u8; AEGIS256_NONCE_LEN]) = match salt.len() {
-        16 => (key[..32].try_into().unwrap(), key[32..].try_into().unwrap()),
+    let (key, nonce): (
+        Zeroizing<[u8; AEGIS256_KEY_LEN]>,
+        Zeroizing<[u8; AEGIS256_NONCE_LEN]>,
+    ) = match salt.len() {
+        16 => (
+            Zeroizing::new(key[..32].try_into().unwrap()),
+            Zeroizing::new(key[32..].try_into().unwrap()),
+        ),
         32 => {
             let hk = Hkdf::<Sha3_512>::new(Some(&salt), &key[..]);
             let mut okm = Zeroizing::new([0u8; AEGIS256_AAD_LEN]);
             hk.expand(b"979.2fa.v3", okm.as_mut_slice()).unwrap();
             (
-                okm[..AEGIS256_KEY_LEN].try_into().unwrap(),
-                okm[AEGIS256_KEY_LEN..].try_into().unwrap(),
+                Zeroizing::new(okm[..AEGIS256_KEY_LEN].try_into().unwrap()),
+                Zeroizing::new(okm[AEGIS256_KEY_LEN..].try_into().unwrap()),
             )
         }
         _ => return ImportResult::InvalidFormat,
