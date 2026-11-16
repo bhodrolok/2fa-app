@@ -1,4 +1,4 @@
-Sensitive security issues can be reported to [security@979.st](mailto:security@979.st). If the issue does not need to be kept private it should be reported to the corresponsing public repository.
+Sensitive security issues can be reported to [security@979.st](mailto:security@979.st). If the issue does not need to be kept private it should be reported to the corresponding public repository.
 
 Encryption can be performed via our age public key:
 ```
