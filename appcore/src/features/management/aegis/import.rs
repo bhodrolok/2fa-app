@@ -9,7 +9,7 @@ use crate::{
     account::Account,
     features::{
         management::{
-            aegis::schema::{Database, Vault},
+            aegis::schema::{AEGIS_SCRYPT_MAX_N_TIMES_R, AEGIS_SCRYPT_MAX_P, Database, Vault},
             result::ImportResult,
         },
         otp::{algorithm::Algorithm, r#type::CodeType},
@@ -42,6 +42,14 @@ pub fn import(accounts: &mut Vec<Account>, json: &str, passphrase: &str) -> Impo
                 Ok(s) => s,
                 Err(_) => return ImportResult::InvalidFormat,
             };
+
+            if !slot.n.is_power_of_two()
+                || slot.r == 0
+                || u64::from(slot.n) * u64::from(slot.r) > AEGIS_SCRYPT_MAX_N_TIMES_R
+                || !(1..=AEGIS_SCRYPT_MAX_P).contains(&slot.p)
+            {
+                return ImportResult::InvalidFormat;
+            }
 
             let scrypt_params = match scrypt::Params::new(slot.n.ilog2() as u8, slot.r, slot.p) {
                 Ok(p) => p,

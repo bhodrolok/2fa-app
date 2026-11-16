@@ -75,3 +75,6 @@ pub struct EntryInfo {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub counter: Option<u64>,
 }
+
+pub const AEGIS_SCRYPT_MAX_N_TIMES_R: u64 = (1 << 20) * 8; // max 1 GiB
+pub const AEGIS_SCRYPT_MAX_P: u32 = 4;
