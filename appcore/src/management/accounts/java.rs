@@ -53,6 +53,8 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
             Ok(json) => json,
             Err(e) => {
                 if e.kind() == ErrorKind::NotFound {
+                    CLIENT.lock().unwrap().unlocked = true;
+
                     return Ok(ImportResult::Success as jint);
                 }
 
@@ -88,6 +90,8 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
                 let count = accounts.len() as jint;
 
                 let mut client = CLIENT.lock().unwrap();
+
+                client.unlocked = true;
 
                 client.accounts.zeroize();
                 client.accounts = accounts;
@@ -131,6 +135,8 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
             Ok(json) => json,
             Err(e) => {
                 if e.kind() == ErrorKind::NotFound {
+                    CLIENT.lock().unwrap().unlocked = true;
+
                     return Ok(ImportResult::Success as jint);
                 }
 
@@ -155,6 +161,8 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
                 let count = accounts.len() as jint;
 
                 let mut client = CLIENT.lock().unwrap();
+
+                client.unlocked = true;
 
                 client.accounts.zeroize();
                 client.accounts = accounts;
@@ -191,6 +199,10 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
             if client.application_directory.is_empty() {
                 env.fatal_error(&JNIString::from("application_directory is empty"))
+            }
+
+            if !client.unlocked {
+                return Ok(());
             }
 
             let has_key = client.key.iter().any(|&b| b != 0);
@@ -246,16 +258,27 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
         let mut key = Zeroizing::new([0u8; KEY_LEN]);
 
         let (directory, json) = {
-            let client = CLIENT.lock().unwrap();
+            let mut client = CLIENT.lock().unwrap();
 
             if client.application_directory.is_empty() {
                 env.fatal_error(&JNIString::from("application_directory is empty"))
             }
 
-            (
-                PathBuf::from(&client.application_directory),
-                Zeroizing::new(export(&client.accounts, &passphrase, &mut salt, &mut key)),
-            )
+            if !client.unlocked {
+                return Ok(());
+            }
+
+            let json = Zeroizing::new(export(&client.accounts, &passphrase, &mut salt, &mut key));
+
+            client.salt.zeroize();
+            client.key.zeroize();
+
+            if !passphrase.is_empty() {
+                client.salt = *salt;
+                client.key = *key;
+            }
+
+            (PathBuf::from(&client.application_directory), json)
         };
 
         let path = directory.join("accounts.2fa");
@@ -273,16 +296,6 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
 
         if let Err(e) = result {
             env.fatal_error(&JNIString::from(e.to_string()));
-        }
-
-        let mut client = CLIENT.lock().unwrap();
-
-        client.salt.zeroize();
-        client.key.zeroize();
-
-        if !passphrase.is_empty() {
-            client.salt = *salt;
-            client.key = *key;
         }
 
         Ok(())

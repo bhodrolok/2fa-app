@@ -7,6 +7,12 @@ use crate::{
 
 pub struct Client {
     pub loaded: bool,
+
+    // note - truebreaker; true only while `accounts` holds the content as loaded from disk
+    //                     (or no file exists yet). saving is refused otherwise, so an emptied
+    //                     or never loaded account list cant overwrite the file.
+    pub unlocked: bool,
+
     pub application_directory: String,
     pub salt: [u8; SALT_LEN],
     pub key: [u8; KEY_LEN],
@@ -27,6 +33,7 @@ impl Default for Client {
     fn default() -> Self {
         Self {
             loaded: false,
+            unlocked: false,
             application_directory: String::new(),
             salt: [0u8; SALT_LEN],
             key: [0u8; KEY_LEN],

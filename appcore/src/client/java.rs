@@ -121,6 +121,8 @@ pub extern "system" fn Java_app_ninesevennine_twofactorauthenticator_RustInterfa
     let outcome = unowned_env.with_env(|_env| -> Result<_, Error> {
         let mut client = CLIENT.lock().unwrap();
 
+        client.unlocked = false;
+
         client.salt.zeroize();
         client.key.zeroize();
         if let Some(mut account) = client.edit.take() {
