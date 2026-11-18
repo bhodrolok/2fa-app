@@ -1,8 +1,5 @@
-Changes since the 1.2-rc-1 release:
-
 - Fixed accounts not being normalized when importing from Aegis.
 
 - Updated donation button link to Ko-fi page.
 
-- Increment Android `navigation-compose` to `2.10.2`.
-- Increment Rust `aegis` to `0.9.20`.
+(for more details read the codeberg release)

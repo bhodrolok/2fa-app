@@ -1,27 +1,9 @@
-Changes since the 1.2sp1 release:
-
 - Added passphrase field focus when unlocking the app if biometrics aren't used.
-- Added Chinese (Traditional Han script) translations, thanks to @Voik.
-- Added Tamazight translations, thanks to @zirixov.
 
 - Fixed Dutch typo in language name.
 
 - Updated icons fallback to tinted if no textured option is available.
 - Updated language screen to be ordered alphabetically.
-- Updated English International to English (United States).
-- Updated Japanese translations, thanks to @zpc0.
+- Updated translations.
 
-- Increment Android `gradle` to `9.9.1`.
-- Increment Android `agp` to `9.5.1`.
-- Increment Android `kotlinx-serialization-json` to `1.13.0`.
-- Increment Rust `rustup` to `1.29.3`.
-- Increment Rust `rustc` to `1.100.0`.
-- Increment Rust `resvg` to `0.50.0`.
-
-Changes since the last dip (default icon pack) update:
-
-- Added bitbank.cc icon.
-- Added DigiKey icon.
-- Added Windscribe icon.
-
-- Removed 60+ textured icons.
+(for more details read the codeberg release)
