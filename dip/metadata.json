@@ -1,6 +1,6 @@
 {
     "name": "default",
-    "timestamp": 1794412619,
+    "timestamp": 1795015175,
     "icons": [
         {
             "issuer": ["addy.io"],
@@ -243,6 +243,11 @@
             "issuer": ["ionos"],
             "tinted": "ionos.svg",
             "color": "5378ac"
+        },
+        {
+            "issuer": ["itch.io"],
+            "tinted": "itchio.svg",
+            "color": "f70808"
         },
         {
             "issuer": ["ivpn"],
