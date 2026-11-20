@@ -7,6 +7,7 @@ use crate::CLIENT;
 pub extern "system" fn JNI_OnUnload(_vm: *mut c_void, _reserved: *mut c_void) {
     if let Ok(mut client) = CLIENT.lock() {
         client.loaded = false;
+        client.unlocked = false;
         client.application_directory.zeroize();
         client.salt.zeroize();
         client.key.zeroize();
