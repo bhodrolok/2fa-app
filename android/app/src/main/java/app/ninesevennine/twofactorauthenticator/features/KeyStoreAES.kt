@@ -125,11 +125,7 @@ object KeyStoreAES {
     }
 
     fun isBiometricKeyUsable(): Boolean {
-        if (biometricKey == null) {
-            return false
-        }
-
-        return try {
+        return biometricKey != null && try {
             val cipher = Cipher.getInstance(AES_TRANSFORMATION)
             cipher.init(Cipher.ENCRYPT_MODE, biometricKey)
 

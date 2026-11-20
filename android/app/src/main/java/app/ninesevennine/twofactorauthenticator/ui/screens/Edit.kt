@@ -23,15 +23,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -64,6 +67,7 @@ import app.ninesevennine.twofactorauthenticator.utils.Clipboard
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.utils.Time
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
@@ -95,7 +99,7 @@ fun Edit(navController: NavController) {
     var name by remember { mutableStateOf(account.name) }
     var issuer by remember { mutableStateOf(account.issuer) }
     var note by remember { mutableStateOf(account.note) }
-    var secret by remember { mutableStateOf(account.secret) }
+    val secretState = remember { TextFieldState(account.secret) }
     var codeType by remember { mutableStateOf(CodeType.entries.getOrElse(account.codeType) { CodeType.HOTP }) }
     var algorithm by remember { mutableStateOf(Algorithm.entries.getOrElse(account.algorithm) { Algorithm.SHA1 }) }
     var counter by remember { mutableStateOf(account.counter.toString()) }
@@ -108,7 +112,7 @@ fun Edit(navController: NavController) {
     }
 
     var nameError by remember { mutableStateOf(false) }
-    var secretError by remember { mutableStateOf(secret.isEmpty()) }
+    var secretError by remember { mutableStateOf(account.secret.isEmpty()) }
     var counterError by remember { mutableStateOf(false) }
     var periodError by remember { mutableStateOf(false) }
     var digitsError by remember { mutableStateOf(false) }
@@ -120,6 +124,17 @@ fun Edit(navController: NavController) {
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
+
+    LaunchedEffect(secretState) {
+        snapshotFlow { secretState.text.toString() }
+            .drop(1) // skip the initial value, like the old onValueChange
+            .collect {
+                secretError = !rustInterface.features_edit_secret_set(it)
+                if (!secretError) {
+                    update++
+                }
+            }
+    }
 
     Time.Track()
 
@@ -284,14 +299,7 @@ fun Edit(navController: NavController) {
 
                     SectionConfidentialTextBox(
                         title = stringResource(R.string.screen_edit_section_parameters_secret),
-                        value = secret,
-                        onValueChange = {
-                            secretError = !rustInterface.features_edit_secret_set(it)
-                            secret = it
-                            if (!secretError)  {
-                                update++
-                            }
-                        },
+                        state = secretState,
                         placeholder = "Base32",
                         error = secretError
                     )

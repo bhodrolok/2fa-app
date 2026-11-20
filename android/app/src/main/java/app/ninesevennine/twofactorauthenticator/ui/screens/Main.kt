@@ -36,8 +36,10 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -98,7 +100,8 @@ object MainRoute
 fun Main(navController: NavController) {
     val scope = rememberCoroutineScope()
 
-    var query by remember { mutableStateOf("") }
+    val queryState = remember { TextFieldState() }
+    val query = queryState.text.toString()
     var accounts by remember { mutableStateOf(rustInterface.features_main_search(query).toList()) }
     var showMainGreetingText by remember { mutableStateOf(accounts.isEmpty()) }
 
@@ -115,7 +118,7 @@ fun Main(navController: NavController) {
         lazyGridState = lazyGridState,
         scrollThreshold = 144.dp,
         onMove = { from, to ->
-            if (query.isEmpty()) {
+            if (queryState.text.isEmpty()) {
                 accounts = accounts.toMutableList().apply { add(to.index, removeAt(from.index)) }
                 rustInterface.features_main_reorder(from.index.toLong(), to.index.toLong())
             }
@@ -129,8 +132,8 @@ fun Main(navController: NavController) {
                 rustInterface.management_accounts_save()
             }
 
-            query = ""
-            accounts = rustInterface.features_main_search(query).toList()
+            queryState.clearText()
+            accounts = rustInterface.features_main_search("").toList()
 
             if (accounts.isNotEmpty()) {
                 lazyGridState.scrollToItem(accounts.lastIndex)
@@ -171,7 +174,12 @@ fun Main(navController: NavController) {
 
                 Box(
                     modifier = Modifier
-                        .shadow(elevation, if (Config.UsingOtpCardStyle == OtpCardStyle.NORMAL.value) RoundedCornerShape(24.dp) else RoundedCornerShape(16.dp))
+                        .shadow(
+                            elevation,
+                            if (Config.UsingOtpCardStyle == OtpCardStyle.NORMAL.value) RoundedCornerShape(
+                                24.dp
+                            ) else RoundedCornerShape(16.dp)
+                        )
                         .then(
                             if (query.isEmpty()) {
                                 Modifier.longPressDraggableHandle(
@@ -254,7 +262,9 @@ fun Main(navController: NavController) {
             ) {
                 Text(
                     text = stringResource(R.string.screen_main_greeting),
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
                     color = Theme.colors.primary,
                     fontSize = 14.sp,
                     fontFamily = InterVariable,
@@ -266,10 +276,7 @@ fun Main(navController: NavController) {
     }
 
     TopBar(
-        query,
-        onSearch = {
-            query = it
-        },
+        queryState,
         onSettings = {
             navController.navigateOnce(SettingsRoute)
         },
@@ -285,8 +292,7 @@ fun Main(navController: NavController) {
 
 @Composable
 private fun TopBar(
-    query: String,
-    onSearch: (String) -> Unit,
+    queryState: TextFieldState,
     onSettings: () -> Unit,
     onAdd: () -> Unit,
     onAddLong: () -> Unit
@@ -346,10 +352,7 @@ private fun TopBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             BasicTextField(
-                value = query,
-                onValueChange = {
-                    onSearch(it)
-                },
+                state = queryState,
                 modifier = Modifier
                     .height(48.dp)
                     .weight(1f)
@@ -357,7 +360,7 @@ private fun TopBar(
                     .background(color = Theme.colors.surface, shape = shape)
                     .border(1.dp, Theme.colors.border, shape)
                     .focusRequester(focusRequester),
-                singleLine = true,
+                lineLimits = TextFieldLineLimits.SingleLine,
                 textStyle = TextStyle(
                     fontFamily = InterVariable,
                     fontWeight = FontWeight.W700,
@@ -366,16 +369,13 @@ private fun TopBar(
                 ),
                 cursorBrush = SolidColor(Theme.colors.primary),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(
-                    onSearch = {
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-
-                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                        view.playSoundEffect(SoundEffectConstants.CLICK)
-                    }
-                ),
-                decorationBox = { innerTextField ->
+                onKeyboardAction = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    view.playSoundEffect(SoundEffectConstants.CLICK)
+                },
+                decorator = { innerTextField ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -394,7 +394,7 @@ private fun TopBar(
                                 .padding(start = 6.dp)
                                 .weight(1f)
                         ) {
-                            if (query.isEmpty()) {
+                            if (queryState.text.isEmpty()) {
                                 Text(
                                     text = stringResource(R.string.screen_main_search),
                                     fontFamily = InterVariable,

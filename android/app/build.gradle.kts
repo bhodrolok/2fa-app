@@ -12,7 +12,11 @@ java {
 
 android {
     namespace = "app.ninesevennine.twofactorauthenticator"
-    compileSdk = 37
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 2
+        }
+    }
 
     buildToolsVersion = libs.versions.sdk.get()
     ndkVersion = libs.versions.ndk.get()
@@ -26,8 +30,8 @@ android {
         // minor (000)
         // type (0 alpha, 1 beta, 2 release candidate, 3 release)
         // patch (000)
-        versionCode = 10023002 // M mmm T ppp
-        versionName = "1.2sp2"
+        versionCode = 10023003 // M mmm T ppp
+        versionName = "1.2sp3"
 
         ndk {
             abiFilters.addAll(listOf("arm64-v8a"))
@@ -105,7 +109,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)

@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -28,6 +29,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -52,6 +54,7 @@ import app.ninesevennine.twofactorauthenticator.ui.elements.spinnerText
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import app.ninesevennine.twofactorauthenticator.utils.navigateOnce
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
@@ -69,7 +72,8 @@ fun Greeting(navController: NavController) {
     var fallbackToPassphrase by remember { mutableStateOf(false) }
     var biometricKeyRecreationRequired by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
-    var passphrase by remember { mutableStateOf("") }
+    val passphraseState = remember { TextFieldState() }
+    val passphrase = passphraseState.text.toString()
     var importResult by remember { mutableIntStateOf(0) }
     var showImportResultPrompt by remember { mutableStateOf(false) }
 
@@ -81,6 +85,14 @@ fun Greeting(navController: NavController) {
     val promptTitle = stringResource(R.string.common_title_biometric_unlock)
     val promptTitle2 = stringResource(R.string.common_title_confirm_biometrics)
     val promptNegative = stringResource(R.string.common_button_cancel)
+
+    LaunchedEffect(passphraseState) {
+        snapshotFlow { passphraseState.text.toString() }
+            .drop(1)
+            .collect {
+                importResult = ImportResult.SUCCESS.value // Reset
+            }
+    }
 
     LaunchedEffect(Signals.authenticate) {
         if (!KeyStoreAES.isBiometricAvailable() || !KeyStoreAES.hasBiometricKey()) {
@@ -135,8 +147,10 @@ fun Greeting(navController: NavController) {
         focusManager.clearFocus()
         keyboardController?.hide()
 
+        val enteredPassphrase = passphraseState.text.toString()
+
         scope.launch(Dispatchers.IO) {
-            val result = rustInterface.management_accounts_load(passphrase)
+            val result = rustInterface.management_accounts_load(enteredPassphrase)
 
             if (result < ImportResult.SUCCESS.value) {
                 isLoading = false
@@ -220,15 +234,9 @@ fun Greeting(navController: NavController) {
                     ConfidentialTextBox(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         title = stringResource(R.string.common_title_passphrase),
-                        value = passphrase,
+                        state = passphraseState,
+                        enabled = !isLoading,
                         error = passphrase.isEmpty() || importResult < ImportResult.SUCCESS.value,
-                        onValueChange = {
-                            if (!isLoading) {
-                                passphrase = it
-                            }
-
-                            importResult = ImportResult.SUCCESS.value // Reset
-                        },
                         onDone = performPassphraseUnlock,
                         focusRequester = focusRequester
                     )

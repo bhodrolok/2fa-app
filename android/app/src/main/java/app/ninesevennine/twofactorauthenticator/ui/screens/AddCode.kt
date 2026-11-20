@@ -97,8 +97,7 @@ fun AddCode(navController: NavController) {
                             })
                         }
 
-                        if (bitmap == null) false
-                        else importQRCodeIntoHostages(bitmap).also {
+                        bitmap != null && importQRCodeIntoHostages(bitmap).also {
                             bitmap.recycle()
                         }
                     }

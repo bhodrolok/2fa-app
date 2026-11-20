@@ -18,12 +18,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -60,9 +60,13 @@ object ChangePassphraseRoute
 fun ChangePassphrase(navController: NavController) {
     val scope = rememberCoroutineScope()
 
-    var passphrase by remember { mutableStateOf("") }
-    var passphraseStrength by remember { mutableFloatStateOf(0f) }
-    var confirmPassphrase by remember { mutableStateOf("") }
+    val passphraseState = remember { TextFieldState() }
+    val confirmPassphraseState = remember { TextFieldState() }
+
+    val passphrase = passphraseState.text.toString()
+    val confirmPassphrase = confirmPassphraseState.text.toString()
+    val passphraseStrength = remember(passphrase) { rustInterface.features_zxcvbn_normalized(passphrase) }
+
     var isLoading by remember { mutableStateOf(false) }
 
     var showRemovePrompt by remember { mutableStateOf(false) }
@@ -127,13 +131,8 @@ fun ChangePassphrase(navController: NavController) {
                 ConfidentialTextBox(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     title = stringResource(R.string.common_title_passphrase),
-                    value = passphrase,
-                    onValueChange = {
-                        if (!isLoading) {
-                            passphrase = it
-                            passphraseStrength = rustInterface.features_zxcvbn_normalized(it)
-                        }
-                    }
+                    state = passphraseState,
+                    enabled = !isLoading
                 )
 
                 AnimatedVisibility(passphrase.isNotEmpty()) {
@@ -147,8 +146,8 @@ fun ChangePassphrase(navController: NavController) {
                     ConfidentialTextBox(
                         modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp),
                         title = stringResource(R.string.common_title_confirm_passphrase),
-                        value = confirmPassphrase,
-                        onValueChange = { if (!isLoading) confirmPassphrase = it },
+                        state = confirmPassphraseState,
+                        enabled = !isLoading,
                         error = passphrase != confirmPassphrase
                     )
                 }
@@ -162,8 +161,10 @@ fun ChangePassphrase(navController: NavController) {
 
                         isLoading = true
 
+                        val newPassphrase = passphraseState.text.toString()
+
                         scope.launch(Dispatchers.IO) {
-                            rustInterface.management_accounts_save(passphrase)
+                            rustInterface.management_accounts_save(newPassphrase)
 
                             KeyStoreAES.deleteBiometricKey()
 

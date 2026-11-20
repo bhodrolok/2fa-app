@@ -11,8 +11,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
@@ -26,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.ninesevennine.twofactorauthenticator.features.Theme
 import app.ninesevennine.twofactorauthenticator.ui.InterVariable
+import kotlinx.coroutines.flow.drop
 
 @Composable
 fun SectionTextBox(
@@ -36,6 +45,27 @@ fun SectionTextBox(
     numberField: Boolean = false,
     error: Boolean = false
 ) {
+    val state = remember { TextFieldState(value) }
+
+    val currentValue by rememberUpdatedState(value)
+    val currentOnValueChange by rememberUpdatedState(onValueChange)
+
+    LaunchedEffect(value) {
+        if (state.text.toString() != value) {
+            state.setTextAndPlaceCursorAtEnd(value)
+        }
+    }
+
+    LaunchedEffect(state) {
+        snapshotFlow { state.text.toString() }
+            .drop(1)
+            .collect {
+                if (it != currentValue) {
+                    currentOnValueChange(it)
+                }
+            }
+    }
+
     Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
         Row(
             modifier = Modifier.padding(start = 4.dp, bottom = 4.dp, end = 4.dp),
@@ -54,9 +84,9 @@ fun SectionTextBox(
         }
 
         BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
-            singleLine = true,
+            state = state,
+            modifier = Modifier.fillMaxWidth(),
+            lineLimits = TextFieldLineLimits.SingleLine,
             textStyle = TextStyle(
                 fontSize = 13.sp,
                 fontWeight = FontWeight.W700,
@@ -69,7 +99,8 @@ fun SectionTextBox(
                 keyboardType = if (numberField) KeyboardType.Number else KeyboardType.Text,
                 imeAction = ImeAction.Done
             ),
-            decorationBox = { innerTextField ->
+            cursorBrush = SolidColor(Theme.colors.primary),
+            decorator = { innerTextField ->
                 val shape = RoundedCornerShape(8.dp)
 
                 Box(
@@ -81,7 +112,7 @@ fun SectionTextBox(
                         .padding(horizontal = 12.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {
-                    if (value.isEmpty()) {
+                    if (state.text.isEmpty()) {
                         Text(
                             text = placeholder,
                             fontSize = 13.sp,
@@ -93,9 +124,7 @@ fun SectionTextBox(
 
                     innerTextField()
                 }
-            },
-            cursorBrush = SolidColor(Theme.colors.primary),
-            modifier = Modifier.fillMaxWidth()
+            }
         )
     }
 }

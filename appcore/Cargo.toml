@@ -1,13 +1,13 @@
 [package]
 name = "appcore"
-version = "1.2.2"
+version = "1.2.3"
 edition = "2024"
 
 [lib]
 crate-type = ["cdylib"]
 
 [dependencies]
-aegis = { version = "0.9.20", features = ["std", "pure-rust"] }
+aegis = { version = "0.9.22", features = ["std", "pure-rust"] }
 aes-gcm = { version = "0.11.1", features = ["zeroize"] }
 argon2 = { version = "0.6.0", features = ["zeroize"] }
 crypto-common = { version = "0.2.2", features = ["zeroize"] }
@@ -24,5 +24,5 @@ serde_json = "1.0.154"
 sha1 = { version = "0.11.0", features = ["zeroize"] }
 sha2 = { version = "0.11.1", features = ["zeroize"] }
 sha3 = { version = "0.11.0", features = ["zeroize"] }
-zeroize = { version = "1.9.1", features = ["derive"] }
+zeroize = { version = "1.9.2", features = ["derive"] }
 zxcvbn = "3.1.1"

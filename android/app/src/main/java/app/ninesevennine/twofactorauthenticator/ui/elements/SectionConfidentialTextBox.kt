@@ -16,8 +16,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.BasicSecureTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.TextObfuscationMode
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -41,8 +43,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,8 +53,7 @@ import app.ninesevennine.twofactorauthenticator.ui.InterVariable
 @Composable
 fun SectionConfidentialTextBox(
     title: String,
-    value: String = "",
-    onValueChange: (String) -> Unit = {},
+    state: TextFieldState,
     placeholder: String = "",
     error: Boolean = false
 ) {
@@ -116,11 +115,10 @@ fun SectionConfidentialTextBox(
             }
         }
 
-        BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
-            singleLine = true,
-            visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
+        BasicSecureTextField(
+            state = state,
+            modifier = Modifier.fillMaxWidth(),
+            textObfuscationMode = if (visible) TextObfuscationMode.Visible else TextObfuscationMode.Hidden,
             textStyle = TextStyle(
                 fontSize = 13.sp,
                 fontWeight = FontWeight.W700,
@@ -133,7 +131,8 @@ fun SectionConfidentialTextBox(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             ),
-            decorationBox = { innerTextField ->
+            cursorBrush = SolidColor(Theme.colors.primary),
+            decorator = { innerTextField ->
                 val shape = RoundedCornerShape(8.dp)
 
                 Box(
@@ -145,7 +144,7 @@ fun SectionConfidentialTextBox(
                         .padding(horizontal = 12.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {
-                    if (value.isEmpty()) {
+                    if (state.text.isEmpty()) {
                         Text(
                             text = placeholder,
                             fontSize = 13.sp,
@@ -157,9 +156,7 @@ fun SectionConfidentialTextBox(
 
                     innerTextField()
                 }
-            },
-            cursorBrush = SolidColor(Theme.colors.primary),
-            modifier = Modifier.fillMaxWidth()
+            }
         )
     }
 }

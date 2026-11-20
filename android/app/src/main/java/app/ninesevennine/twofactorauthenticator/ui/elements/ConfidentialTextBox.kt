@@ -16,9 +16,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.BasicSecureTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.TextObfuscationMode
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -45,8 +46,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,9 +57,9 @@ import app.ninesevennine.twofactorauthenticator.ui.InterVariable
 fun ConfidentialTextBox(
     modifier: Modifier = Modifier,
     title: String,
-    value: String = "",
+    state: TextFieldState,
+    enabled: Boolean = true,
     error: Boolean = false,
-    onValueChange: (String) -> Unit = {},
     onDone: () -> Unit = {},
     focusRequester: FocusRequester = remember { FocusRequester() },
 ) {
@@ -126,11 +125,13 @@ fun ConfidentialTextBox(
             }
         }
 
-        BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
-            singleLine = true,
-            visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
+        BasicSecureTextField(
+            state = state,
+            enabled = enabled,
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester),
+            textObfuscationMode = if (visible) TextObfuscationMode.Visible else TextObfuscationMode.Hidden,
             textStyle = TextStyle(
                 fontSize = 14.sp,
                 fontWeight = FontWeight.W700,
@@ -143,13 +144,12 @@ fun ConfidentialTextBox(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    keyboardController?.hide()
-                    onDone()
-                }
-            ),
-            decorationBox = { innerTextField ->
+            onKeyboardAction = {
+                keyboardController?.hide()
+                onDone()
+            },
+            cursorBrush = SolidColor(Theme.colors.primary),
+            decorator = { innerTextField ->
                 val shape = RoundedCornerShape(8.dp)
 
                 Box(
@@ -167,9 +167,7 @@ fun ConfidentialTextBox(
                 ) {
                     innerTextField()
                 }
-            },
-            cursorBrush = SolidColor(Theme.colors.primary),
-            modifier = Modifier.fillMaxWidth().focusRequester(focusRequester)
+            }
         )
     }
 }

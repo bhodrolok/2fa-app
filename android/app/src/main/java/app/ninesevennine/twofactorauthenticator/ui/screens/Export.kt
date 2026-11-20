@@ -21,11 +21,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -67,9 +67,13 @@ fun Export(navController: NavController) {
         .let { if (it < 16.dp) 16.dp else it + 16.dp }
 
     var isLoading by remember { mutableStateOf(false) }
-    var passphrase by remember { mutableStateOf("") }
-    var passphraseStrength by remember { mutableFloatStateOf(0f) }
-    var confirmPassphrase by remember { mutableStateOf("") }
+
+    val passphraseState = remember { TextFieldState() }
+    val confirmPassphraseState = remember { TextFieldState() }
+
+    val passphrase = passphraseState.text.toString()
+    val confirmPassphrase = confirmPassphraseState.text.toString()
+    val passphraseStrength = remember(passphrase) { rustInterface.features_zxcvbn_normalized(passphrase) }
 
     val isPassphraseValid = passphraseStrength > 0.5f
 
@@ -85,8 +89,10 @@ fun Export(navController: NavController) {
 
         isLoading = true
 
+        val exportPassphrase = passphraseState.text.toString()
+
         scope.launch(Dispatchers.IO) {
-            val bytes = rustInterface.features_management_native_export_accounts(passphrase)
+            val bytes = rustInterface.features_management_native_export_accounts(exportPassphrase)
 
             try {
                 val out = context.contentResolver.openOutputStream(uri)
@@ -135,14 +141,9 @@ fun Export(navController: NavController) {
                 ConfidentialTextBox(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     title = stringResource(R.string.common_title_passphrase),
-                    value = passphrase,
-                    error = passphrase.isEmpty(),
-                    onValueChange = {
-                        if (!isLoading) {
-                            passphrase = it
-                            passphraseStrength = rustInterface.features_zxcvbn_normalized(it)
-                        }
-                    }
+                    state = passphraseState,
+                    enabled = !isLoading,
+                    error = passphrase.isEmpty()
                 )
 
                 AnimatedVisibility(passphrase.isNotEmpty()) {
@@ -156,8 +157,8 @@ fun Export(navController: NavController) {
                     ConfidentialTextBox(
                         modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp),
                         title = stringResource(R.string.common_title_confirm_passphrase),
-                        value = confirmPassphrase,
-                        onValueChange = { if (!isLoading) confirmPassphrase = it },
+                        state = confirmPassphraseState,
+                        enabled = !isLoading,
                         error = passphrase != confirmPassphrase
                     )
                 }

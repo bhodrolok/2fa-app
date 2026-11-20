@@ -19,16 +19,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -53,6 +56,7 @@ import app.ninesevennine.twofactorauthenticator.ui.elements.StartButtonHeader
 import app.ninesevennine.twofactorauthenticator.ui.elements.spinnerText
 import app.ninesevennine.twofactorauthenticator.utils.Signals
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
@@ -75,9 +79,18 @@ fun ImportFromAegisEncrypted(navController: NavController, uri: String) {
     val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().let { if (it < 16.dp) 16.dp else it + 16.dp }
 
     var isLoading by remember { mutableStateOf(false) }
-    var passphrase by remember { mutableStateOf("") }
+    val passphraseState = remember { TextFieldState() }
+    val passphrase = passphraseState.text.toString()
     var importResult by remember { mutableIntStateOf(0) }
     var showImportResultPrompt by remember { mutableStateOf(false) }
+
+    LaunchedEffect(passphraseState) {
+        snapshotFlow { passphraseState.text.toString() }
+            .drop(1)
+            .collect {
+                importResult = ImportResult.SUCCESS.value // Reset
+            }
+    }
 
     val importWithPassphrase = importWithPassphrase@{
         if (isLoading) return@importWithPassphrase
@@ -86,6 +99,8 @@ fun ImportFromAegisEncrypted(navController: NavController, uri: String) {
 
         focusManager.clearFocus()
         keyboardController?.hide()
+
+        val enteredPassphrase = passphraseState.text.toString()
 
         scope.launch(Dispatchers.IO) {
             val bytes = try {
@@ -98,7 +113,7 @@ fun ImportFromAegisEncrypted(navController: NavController, uri: String) {
                 return@launch
             }
 
-            val result = rustInterface.features_management_aegis_import_into_hostages(bytes, passphrase)
+            val result = rustInterface.features_management_aegis_import_into_hostages(bytes, enteredPassphrase)
 
             bytes.fill(0)
 
@@ -153,15 +168,9 @@ fun ImportFromAegisEncrypted(navController: NavController, uri: String) {
                 ConfidentialTextBox(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     title = stringResource(R.string.common_title_passphrase),
-                    value = passphrase,
+                    state = passphraseState,
+                    enabled = !isLoading,
                     error = passphrase.isEmpty() || importResult < ImportResult.SUCCESS.value,
-                    onValueChange = {
-                        if (!isLoading) {
-                            passphrase = it
-                        }
-
-                        importResult = ImportResult.SUCCESS.value // Reset
-                    },
                     onDone = importWithPassphrase
                 )
 
