@@ -1,0 +1,4 @@
+- Fixed crash on malformed Aegis import.
+- Fixed data loss when app locks during save.
+
+(for more details read the codeberg release)
