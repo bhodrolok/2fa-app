@@ -90,7 +90,7 @@ class Main : FragmentActivity() {
                 Config.load(this@Main)
 
                 // Update timestamp every time we update dip.zip
-                if (rustInterface.features_icons_slot0_timestamp_get() < 1794412619) {
+                if (rustInterface.features_icons_slot0_timestamp_get() < 1795196813) {
                     IconPacks.extractDipToSlot0(this@Main)
                 }
 
