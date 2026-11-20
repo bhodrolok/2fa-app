@@ -1,6 +1,6 @@
 {
     "name": "default",
-    "timestamp": 1795015175,
+    "timestamp": 1795196813,
     "icons": [
         {
             "issuer": ["addy.io"],
@@ -130,6 +130,11 @@
             "textured": "cryptpad_textured.svg",
             "tinted": "cryptpad.svg",
             "color": "0087ff"
+        },
+        {
+            "issuer": ["desec.io"],
+            "tinted": "desecio.svg",
+            "color": "ffdc00"
         },
         {
             "issuer": ["digikey"],
