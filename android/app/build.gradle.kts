@@ -23,7 +23,7 @@ android {
 
     defaultConfig {
         applicationId = "app.ninesevennine.twofactorauthenticator"
-        minSdk = 35
+        minSdk = 31
         targetSdk = 37
 
         // major
