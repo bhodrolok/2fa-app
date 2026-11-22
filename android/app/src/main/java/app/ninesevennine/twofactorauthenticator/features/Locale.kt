@@ -2,6 +2,7 @@ package app.ninesevennine.twofactorauthenticator.features
 
 import android.app.LocaleManager
 import android.content.Context
+import android.os.Build
 import android.os.LocaleList
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,14 +46,12 @@ object Locale {
 
     val localeOption: LocaleOption get() = _localeOption
 
-    private fun getLocaleManager(context: Context): LocaleManager {
-        return context.getSystemService(LocaleManager::class.java)
-    }
-
     // i'm not wasting time on this, using the old method from 2fa-android
     // doesn't update rtl, users can live with the black flickering.
     fun set(context: Context, value: LocaleOption) {
         _localeOption = value
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
 
         val tag = when (value) {
             LocaleOption.SYSTEM -> {
@@ -66,7 +65,8 @@ object Locale {
             else -> value.tag
         }
 
-        getLocaleManager(context).applicationLocales = LocaleList.forLanguageTags(tag)
+        context.getSystemService(LocaleManager::class.java)?.applicationLocales =
+            LocaleList.forLanguageTags(tag)
     }
 
     fun currentEffectiveLocale(context: Context): LocaleOption {
