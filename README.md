@@ -24,6 +24,22 @@
 
 2fa is the modern privacy and security focused two factor authenticator. It is very easy to use and delivers exceptional security through modern cryptographic algorithms. The core is written in Rust and the app works fully offline without Google Play Services.
 
+This fork is adapted from [979/2fa](https://codeberg.org/979/2fa) and adds Android 12 compatibility. The store links above refer to the original project, not builds of this fork.
+
+### Minimum Android Version
+
+- Android 12 (API 31) or newer.
+- Current builds support ARM64 (`arm64-v8a`) devices.
+- On Android 12, the app uses the system language. In-app language overrides require Android 13 or newer.
+
+### Tech Stack
+
+- **Kotlin and Jetpack Compose:** Native Android interface with Material 3 and Navigation Compose.
+- **Rust:** Native application core, exposed to Android through JNI.
+- **AndroidX:** CameraX for camera integration and Biometric for biometric authentication.
+- **Serialization:** Kotlinx Serialization and Rust Serde for JSON data handling.
+- **Build tooling:** Gradle with Kotlin DSL, Cargo, and the Android NDK.
+
 ### Features
 
 - Support for TOTP, HOTP, and Steam Guard codes via [`.maFile`](https://cs2central.gg/blog/steam-desktop-authenticator-guide).
@@ -35,12 +51,6 @@
 
 ### Contribute
 
-You can contribute in three major ways. The first is [becoming a translator](https://translate.codeberg.org/projects/979/2fa) for the 2fa project, which directly helps us expand our reach. The second is writing a review or telling people about 2fa. The third, and most valuable, is donating to us through Monero or [Ko-fi.](https://ko-fi.com/ninesevennine)
+Contributions are welcome. Feel free to [raise an issue](https://github.com/bhodrolok/2fa-app/issues) to report a bug, suggest a feature, or discuss an improvement, or [open a pull request](https://github.com/bhodrolok/2fa-app/pulls) with code or documentation changes.
 
-#### Monero
-
-<img src="assets/monero.png" alt="Monero QR code" width="152" height="152">
-
-```
-43YaGjafqvwTZKqiE22MwQ1kVKYnG679pUXQnAzkos3WK2uoqJSeu9jRpko4VzKL9tHvFYRWbTUebcDDqkKiwJAL83arU6X
-```
+For bug reports, include your Android version, device model, and steps to reproduce the problem. For larger changes, please open an issue first so the approach can be discussed.
