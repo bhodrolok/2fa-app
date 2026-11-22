@@ -4,11 +4,6 @@
 <h1 align="center">2fa</h1>
 <h4 align="center">The modern privacy and security focused two factor authenticator for HOTP, TOTP and Steam Guard codes</h4>
 <p align="center">
-    <img alt="Get it on Accrescent" src="assets/get-it-on-accrescent.webp" height="80">
-    <img alt="Get it on Google Play" src="assets/get-it-on-google-play.webp" height="80">
-    <img alt="Get it on IzzyOnDroid" src="assets/get-it-on-izzyondroid.webp" height="80">
-</p>
-<p align="center">
     <img src="assets/mustang-preview-2fa-light.webp" width="17%"/>
     <img src="assets/mustang-preview-2fa-dark.webp" width="17%"/>
     <img src="assets/mustang-preview-2fa-pitch-black.webp" width="17%"/>
